@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography';
 
 import { _tasks, _posts, _timeline } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
-
+import { useAppContext } from 'src/context/user-context';
 import { AnalyticsNews } from '../analytics-news';
 import { AnalyticsTasks } from '../analytics-tasks';
 import { AnalyticsCurrentVisits } from '../analytics-current-visits';
@@ -17,10 +17,15 @@ import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
+  const data = useAppContext()
+  console.log(data);
+  const user = {
+    name : 'Rafi Syahbani'
+  }
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
-        Hi, Welcome back 👋
+        Halo, Selamat Datang Kembali {user.name}👋
       </Typography>
 
       <Grid container spacing={3}>

@@ -9,12 +9,12 @@ const carouselImages = [
   '/api/placeholder/1400/500'
 ];
 
-// interface HeroSectionProps {
-//   children: ReactNode;
-// }
+interface HeroSectionProps {
+  children: ReactNode;
+}
 
 
-export default function HeroSection({ children } )  {
+export default function HeroSection({ children } :HeroSectionProps)  {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {

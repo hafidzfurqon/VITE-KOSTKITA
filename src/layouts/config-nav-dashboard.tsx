@@ -6,6 +6,12 @@ import { SvgColor } from 'src/components/svg-color';
 const icon = (name: string) => (
   <SvgColor width="100%" height="100%" src={`/assets/icons/navbar/${name}.svg`} />
 );
+const Anothericon = (name: string) => (
+  <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
+);
+const Kegiatanicon = (name: string) => (
+  <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
+);
 
 export const navData = [
   {
@@ -19,28 +25,33 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
-    title: 'Product',
-    path: '/products',
-    icon: icon('ic-cart'),
+    title: 'Hunian',
+    path: '/hunian',
+    icon: Kegiatanicon('ic-glass-users'),
     info: (
       <Label color="error" variant="inverted">
-        +3
+        🏠
       </Label>
     ),
   },
   {
-    title: 'Blog',
-    path: '/blog',
+    title: 'Mentoring',
+    path: '/mentoring',
     icon: icon('ic-blog'),
   },
+  // {
+  //   title: 'Blog',
+  //   path: '/blog',
+  //   icon: icon('ic-blog'),
+  // },
   {
-    title: 'Sign in',
-    path: '/sign-in',
-    icon: icon('ic-lock'),
+    title: 'Dokumentasi',
+    path: '/dokumentasi',
+    icon: Anothericon('ic-glass-message'),
   },
   {
-    title: 'Not found',
-    path: '/404',
-    icon: icon('ic-disabled'),
+    title: 'Pendaftaran',
+    path: '/pendaftaran',
+    icon: Kegiatanicon('ic-glass-users'),
   },
 ];
