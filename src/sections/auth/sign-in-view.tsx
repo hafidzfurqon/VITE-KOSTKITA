@@ -12,98 +12,152 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
+import { ListItemButton, Stack } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import logo from '../../../public/assets/images/logo.png'
 
 // ----------------------------------------------------------------------
+type Login = {
+  email: string;
+  password: string;
+};
 
 export function SignInView() {
   const router = useRouter();
 
   const [showPassword, setShowPassword] = useState(false);
+  const { register, handleSubmit } = useForm<Login>();
 
   const handleSignIn = useCallback(() => {
     router.push('/dashboard');
   }, [router]);
 
   const renderForm = (
-    <Box display="flex" flexDirection="column" alignItems="flex-end">
-      <TextField
-        fullWidth
-        name="email"
-        label="Email address"
-        defaultValue="hello@gmail.com"
-        InputLabelProps={{ shrink: true }}
-        sx={{ mb: 3 }}
-      />
-
-      <Link variant="body2" color="inherit" sx={{ mb: 1.5 }}>
-        Forgot password?
-      </Link>
-
-      <TextField
-        fullWidth
-        name="password"
-        label="Password"
-        defaultValue="@demo1234"
-        InputLabelProps={{ shrink: true }}
-        type={showPassword ? 'text' : 'password'}
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        sx={{ mb: 3 }}
-      />
-
-      <LoadingButton
-        fullWidth
-        size="large"
-        type="submit"
-        color="inherit"
-        variant="contained"
-        onClick={handleSignIn}
+    <Stack spacing={3}>
+      <Box
+        component="form"
+        display="flex"
+        flexDirection="column"
+        alignItems="flex-end"
+        onSubmit={handleSignIn}
       >
-        Sign in
-      </LoadingButton>
-    </Box>
+        <TextField
+          fullWidth
+          {...register('email')}
+          label="Email address"
+          InputLabelProps={{ shrink: true }}
+          sx={{ mb: 3 }}
+        />
+
+        <TextField
+          fullWidth
+          {...register('password')}
+          label="Password"
+          InputLabelProps={{ shrink: true }}
+          type={showPassword ? 'text' : 'password'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 3 }}
+        />
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          color="inherit"
+          variant="contained"
+          // disabled={isPending}
+        >
+          Sign in
+          {/* {isPending ? 'Loading...' : ' Sign in'} */}
+        </LoadingButton>
+      </Box>
+    </Stack>
   );
 
   return (
     <>
       <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
-        <Typography variant="h5">Sign in</Typography>
-        <Typography variant="body2" color="text.secondary">
-          Don’t have an account?
-          <Link variant="subtitle2" sx={{ ml: 0.5 }}>
-            Get started
-          </Link>
-        </Typography>
-      </Box>
-
+        <Typography variant="h5">Sign in to <Box component="span">Kost</Box></Typography>
+      <img src={logo} alt="ashaj" />
+      </Box>  
       {renderForm}
 
-      <Divider sx={{ my: 3, '&::before, &::after': { borderTopStyle: 'dashed' } }}>
+      <Box
+        sx={{
+          my: 2,
+          '&::before, &::after': { borderTopStyle: 'dashed' },
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <Typography
           variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium' }}
+          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium', mb: 1 }}
         >
-          OR
+          Belum Daftar ? Register disini
         </Typography>
-      </Divider>
+        <Box
+          sx={{ mx: 3, gap: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+        >
+          <ListItemButton
+            disableGutters
+            sx={{
+              pl: 2,
+              py: 1,
+              gap: 3,
+              // display : 'flex',
+              display: 'flex',
+              mt: 2,
 
-      <Box gap={1} display="flex" justifyContent="center">
-        <IconButton color="inherit">
-          <Iconify icon="logos:google-icon" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="eva:github-fill" />
-        </IconButton>
-        <IconButton color="inherit">
-          <Iconify icon="ri:twitter-x-fill" />
-        </IconButton>
+              pr: 1.5,
+              borderRadius: 0.75,
+              typography: 'body2',
+              fontWeight: 'fontWeightMedium',
+              minHeight: 'var(--layout-nav-item-height)',
+              bgcolor: 'var(--layout-nav-item-active-bg)',
+              color: 'var(--layout-nav-item-active-color)',
+              '&:hover': {
+                bgcolor: 'var(--layout-nav-item-hover-bg)',
+              },
+            }}
+            href="/"
+          >
+            <Box component="span">Kembali</Box>
+          </ListItemButton>
+          <ListItemButton
+            disableGutters
+            sx={{
+              pl: 2,
+              py: 1,
+              gap: 3,
+              // display : 'flex',
+              display: 'flex',
+              mt: 2,
+
+              pr: 1.5,
+              borderRadius: 0.75,
+              typography: 'body2',
+              fontWeight: 'fontWeightMedium',
+              minHeight: 'var(--layout-nav-item-height)',
+              bgcolor: 'var(--layout-nav-item-active-bg)',
+              color: 'var(--layout-nav-item-active-color)',
+              '&:hover': {
+                bgcolor: 'var(--layout-nav-item-hover-bg)',
+              },
+            }}
+            href="/sign-up"
+          >
+            <Box component="span">Daftar disini</Box>
+          </ListItemButton>
+        </Box>
       </Box>
     </>
   );

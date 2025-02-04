@@ -55,7 +55,10 @@ export function LandingPage() {
     </Fab>
   </Box>
   );
+  
+  
 
+  
   return (
     <>
     <Box 
@@ -82,7 +85,6 @@ export function LandingPage() {
             <PropertyGrid />
           </Box>
         </SimpleBar>
-
         <PromoPage/>
 
       {/* </Box> */}

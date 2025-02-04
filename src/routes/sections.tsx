@@ -7,6 +7,7 @@ import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgr
 import { varAlpha } from 'src/theme/styles';
 import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
+import { SignUpView } from 'src/sections/auth/sign-up-view';
 
 // ----------------------------------------------------------------------
 
@@ -62,12 +63,23 @@ export function Router() {
       path: '/',
     },
     {
-      path: 'sign-in',
       element: (
         <AuthLayout>
-          <SignInPage />
+          <Suspense fallback={renderFallback}>
+            <Outlet />
+          </Suspense>
         </AuthLayout>
       ),
+      children: [
+        {
+          path: 'sign-in',
+          element: <SignInPage />,
+        },
+        {
+          path: 'sign-up',
+          element: <SignUpView/>,
+        },
+      ],
     },
     {
       path: '404',
