@@ -9,6 +9,8 @@ import CategorySection from './category-section';
 import PropertyGrid from './property-grid';
 import Footer from './footer';
 import PromoPage from './promo-page';
+import PropertyBudget from './property-budget';
+// import { TourListView } from '../tour/view';
 
 
 
@@ -56,9 +58,6 @@ export function LandingPage() {
   </Box>
   );
   
-  
-
-  
   return (
     <>
     <Box 
@@ -82,10 +81,15 @@ export function LandingPage() {
         <SimpleBar style={{ maxHeight: '100%', width: '100%' }}>
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
             <CategorySection />
-            <PropertyGrid />
+            {/* <TourListView /> */}
+            <PropertyGrid/>
           </Box>
         </SimpleBar>
         <PromoPage/>
+
+        <PropertyBudget/>
+
+
 
       {/* </Box> */}
 

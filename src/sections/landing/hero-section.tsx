@@ -1,5 +1,8 @@
+import type { ReactNode } from 'react';
+
+import { useState, useEffect } from 'react';
+
 import { Box } from '@mui/material';
-import { useState, useEffect, ReactNode } from 'react';
 
 
 const carouselImages = [

@@ -10,7 +10,6 @@ export default function Footer() {
         color: "#fff",
         py: 6,
         px: { xs: 4, md: 10 },
-        borderTopLeftRadius: "50px",
         borderTopRightRadius: "50px",
       }}
     >
@@ -18,7 +17,7 @@ export default function Footer() {
         {/* Logo dan QR */}
         <Grid item xs={12} md={3}>
           <Typography variant="h5" fontWeight="bold">
-            KosKata.id
+            KosKita.id
           </Typography>
          
         </Grid>
@@ -36,7 +35,7 @@ export default function Footer() {
         {/* Kerjasama KosKata */}
         <Grid item xs={12} sm={6} md={3}>
           <Typography variant="subtitle1" fontWeight="bold">
-            Kerjasama KosKata
+            Kerjasama KosKita.id
           </Typography>
           <Typography variant="body2" color="gray">Coliving</Typography>
           <Typography variant="body2" color="gray">Apartemen</Typography>
@@ -69,7 +68,7 @@ export default function Footer() {
       {/* Footer Bottom */}
       <Box textAlign="center" mt={4} borderTop="1px solid #333" pt={3}>
         <Typography variant="body2" color="gray">
-          © 2025 KosKata.id. All rights reserved.
+          © 2025 KosKita.id. All rights reserved.
         </Typography>
         <Box mt={1}>
           <IconButton sx={{ color: "#fff" }}>
