@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react';
+import { router } from 'src/hooks/routing/useRouting';
+
 import { AppBar, Toolbar, Box, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
@@ -7,7 +9,6 @@ import BusinessIcon from '@mui/icons-material/Business';
 import InfoIcon from '@mui/icons-material/Info';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { Link } from 'react-router-dom';
-import { router } from 'src/hooks/routing/useRouting';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
 

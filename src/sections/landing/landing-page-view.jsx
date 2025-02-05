@@ -83,11 +83,13 @@ export function LandingPage() {
             <CategorySection />
             {/* <TourListView /> */}
             <PropertyGrid/>
-          </Box>
-        </SimpleBar>
         <PromoPage/>
 
         <PropertyBudget/>
+
+          </Box>
+        </SimpleBar>
+
 
 
 
