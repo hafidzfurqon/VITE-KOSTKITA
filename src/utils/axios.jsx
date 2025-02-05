@@ -38,7 +38,7 @@ export const fetcher = async (args) => {
 
   export const endpoints = {
     auth: {
-    //   me: '/api/user/tampilkan',
+      me: '/api/me',
       login: '/api/login',
       logout: '/api/logout',
     //   register: '/api/daftar',
