@@ -28,18 +28,7 @@ export function SignUpView() {
           alignItems="flex-end"
           onSubmit={Onsubmit}
         >
-               <TextField
-            fullWidth
-            {...register('email')}
-            margin="dense"
-            id="email"
-            name="email"
-            label="Email"
-            type="email"
-            InputLabelProps={{ shrink: true }}
-            sx={{ mb: 3 }}
-          />
-          <TextField
+            <TextField
             fullWidth
             {...register('nama')}
             autoFocus
@@ -48,6 +37,17 @@ export function SignUpView() {
             id="nama"
             name="nama"
             label="Nama Lengkap"
+            InputLabelProps={{ shrink: true }}
+            sx={{ mb: 3 }}
+          />
+               <TextField
+            fullWidth
+            {...register('email')}
+            margin="dense"
+            id="email"
+            name="email"
+            label="Email"
+            type="email"
             InputLabelProps={{ shrink: true }}
             sx={{ mb: 3 }}
           />
@@ -97,7 +97,7 @@ export function SignUpView() {
     return (
       <>
         <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
-          <Typography variant="h5">Daftarkan dirimu RODAMU</Typography>
+          <Typography variant="h5">Daftarkan dirimu KostKita.ID</Typography>
         </Box>
         {renderForm}
         <Box

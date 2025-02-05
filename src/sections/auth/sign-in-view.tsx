@@ -12,24 +12,40 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
+import { ListItemButton, Stack } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { useMutationLogin } from 'src/hooks/auth/useMutationLogin'; 
 
 import logo from '../../../public/assets/images/logo.png'
 
 // ----------------------------------------------------------------------
 type Login = {
   email: string;
+  login: string;
   password: string;
 };
 
+type err = {
+  message : string
+}
+
 export function SignInView() {
   const router = useRouter();
-
+  const {mutate, isPending} = useMutationLogin({
+    onSuccess : () => {
+      router.push('/dashboard')
+      alert('Login berhasil')
+    },
+    onError : (err : err) => {
+      alert(err.message)
+    }
+  })
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit } = useForm<Login>();
-
-  const handleSignIn = useCallback(() => {
-    router.push('/dashboard');
-  }, [router]);
+  
+  const OnSubmit = (data : any) => {
+    mutate(data);
+  }
 
   const renderForm = (
     <Stack spacing={3}>
@@ -38,11 +54,11 @@ export function SignInView() {
         display="flex"
         flexDirection="column"
         alignItems="flex-end"
-        onSubmit={handleSignIn}
+        onSubmit={handleSubmit(OnSubmit)}
       >
         <TextField
           fullWidth
-          {...register('email')}
+          {...register('login')}
           label="Email address"
           InputLabelProps={{ shrink: true }}
           sx={{ mb: 3 }}
@@ -71,10 +87,9 @@ export function SignInView() {
           type="submit"
           color="inherit"
           variant="contained"
-          // disabled={isPending}
+          disabled={isPending}
         >
-          Sign in
-          {/* {isPending ? 'Loading...' : ' Sign in'} */}
+          {isPending ? 'Loading...' : ' Sign in'}
         </LoadingButton>
       </Box>
     </Stack>
@@ -83,7 +98,7 @@ export function SignInView() {
   return (
     <>
       <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
-        <Typography variant="h5">Sign in to <Box component="span">Kost</Box></Typography>
+        <Typography variant="h5">Sign in to <Box component="span">KostKita.ID</Box></Typography>
       <img src={logo} alt="ashaj" />
       </Box>  
       {renderForm}
@@ -99,7 +114,7 @@ export function SignInView() {
       >
         <Typography
           variant="overline"
-          sx={{ color: 'text.secondary', fontWeight: 'fontWeightMedium', mb: 1 }}
+          sx={{ color: 'text.secondary', mb: 1 }}
         >
           Belum Daftar ? Register disini
         </Typography>
@@ -129,7 +144,7 @@ export function SignInView() {
             }}
             href="/"
           >
-            <Box component="span">Kembali</Box>
+            <Box component="span" sx={{color : '#000000'}}>Kembali</Box>
           </ListItemButton>
           <ListItemButton
             disableGutters
@@ -154,7 +169,7 @@ export function SignInView() {
             }}
             href="/sign-up"
           >
-            <Box component="span">Daftar disini</Box>
+            <Box component="span" sx={{color : '#000000'}}>Daftar disini</Box>
           </ListItemButton>
         </Box>
       </Box>
