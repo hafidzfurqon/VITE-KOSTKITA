@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-import { _users } from 'src/_mock';
+
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -23,6 +23,8 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
+import { useFetchAllUser } from 'src/hooks/users/useFetchAllUser';
+import Loading from 'src/components/loading/loading';
 
 // ----------------------------------------------------------------------
 
@@ -30,9 +32,13 @@ export function UserView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-
+  const {data, isLoading, isFetching} = useFetchAllUser()
+  console.log(data);
+  if(isLoading || isFetching) {
+    return <Loading/>
+  }
   const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+    inputData: data.data,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -70,21 +76,20 @@ export function UserView() {
               <UserTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={_users.length}
+                rowCount={data.data.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    _users.map((user) => user.id)
+                    data.map((user : UserProps) => user.id)
                   )
                 }
                 headLabel={[
                   { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
+                  { id: 'email', label: 'email' },
+                  { id: 'phone_number', label: 'phone_number' },
                   { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
                   { id: '' },
                 ]}
               />
@@ -105,7 +110,7 @@ export function UserView() {
 
                 <TableEmptyRows
                   height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, _users.length)}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, data.data.length)}
                 />
 
                 {notFound && <TableNoData searchQuery={filterName} />}
@@ -117,7 +122,7 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={_users.length}
+          count={data.data.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}

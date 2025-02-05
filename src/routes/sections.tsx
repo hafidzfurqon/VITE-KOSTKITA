@@ -9,6 +9,7 @@ import { AuthLayout } from 'src/layouts/auth';
 import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { SignUpView } from 'src/sections/auth/sign-up-view';
+import BannerPage from 'src/pages/banner';
 
 // ----------------------------------------------------------------------
 
@@ -52,7 +53,19 @@ export function Router() {
         },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        {
+          path: 'banner',
+          children: [
+            {
+              path: '',
+              element: <BannerPage />,
+            },
+            {
+              path: 'create',
+              element: <div>Create Banner</div>,
+            },
+          ],
+        },
       ],
     },
     {

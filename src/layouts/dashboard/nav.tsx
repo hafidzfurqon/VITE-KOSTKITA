@@ -18,6 +18,8 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import { WorkspacesPopover } from '../components/workspaces-popover';
 
+import imageLogo from '../../../public/assets/images/logo.png'
+
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
 
 // ----------------------------------------------------------------------
@@ -118,11 +120,24 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
 
   return (
     <>
-      <Logo />
+      {/* <Logo /> */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          mb: 3,
+          mt: 3,
+          flexDirection: 'column',
+          justifyContent: 'center',
+        }}
+      >
+        <img src={imageLogo} alt="" width={150} />
+        {/* <Typography>Hello Selamat Datang di dashboard RODAMU</Typography> */}
+      </Box>
 
       {slots?.topArea}
 
-      <WorkspacesPopover data={workspaces} sx={{ my: 2 }} />
+      {/* <WorkspacesPopover data={workspaces} sx={{ my: 2 }} /> */}
 
       <Scrollbar fillContent>
         <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>

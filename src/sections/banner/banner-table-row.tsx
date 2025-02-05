@@ -16,16 +16,16 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id: string;
+  id?: string;
   name: string;
-  role: string;
-  email: string;
-  phone_number : string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  photo_profile_path: string;
-  photo_profile_url: string;
+  role?: string;
+  email?: string;
+  phone_number? : string;
+  status?: string;
+  company?: string;
+  avatarUrl?: string;
+  photo_profile_path?: string;
+  photo_profile_url?: string;
   isVerified: boolean;
 };
 
@@ -35,7 +35,7 @@ type UserTableRowProps = {
   onSelectRow: () => void;
 };
 
-export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {

@@ -1,6 +1,4 @@
-import { Button, DialogActions, Stack } from '@mui/material';
-import { DialogContentText } from '@mui/material';
-import { Dialog, DialogContent, DialogTitle } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, DialogContentText,Button, DialogActions, Stack } from '@mui/material';
 
 export function UpdateDialog({
   SubmitForm,

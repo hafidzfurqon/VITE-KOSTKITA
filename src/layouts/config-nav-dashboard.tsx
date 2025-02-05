@@ -20,13 +20,18 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
+    title: 'Banner',
+    path: '/banner',
+    icon: Anothericon('ic-glass-message'),
+  },
+  {
     title: 'User',
     path: '/user',
     icon: icon('ic-user'),
   },
   {
     title: 'Hunian',
-    path: '/hunian',
+    path: '/products',
     icon: Kegiatanicon('ic-glass-users'),
     info: (
       <Label color="error" variant="inverted">
@@ -35,23 +40,8 @@ export const navData = [
     ),
   },
   {
-    title: 'Mentoring',
-    path: '/mentoring',
+    title: 'apartement',
+    path: '/blog',
     icon: icon('ic-blog'),
-  },
-  // {
-  //   title: 'Blog',
-  //   path: '/blog',
-  //   icon: icon('ic-blog'),
-  // },
-  {
-    title: 'Dokumentasi',
-    path: '/dokumentasi',
-    icon: Anothericon('ic-glass-message'),
-  },
-  {
-    title: 'Pendaftaran',
-    path: '/pendaftaran',
-    icon: Kegiatanicon('ic-glass-users'),
   },
 ];

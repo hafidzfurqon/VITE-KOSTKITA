@@ -16,6 +16,9 @@ import { useRouter, usePathname } from 'src/routes/hooks';
 
 import { _myAccount } from 'src/_mock';
 import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
+import { err } from 'src/sections/auth';
+import DialogDelete from 'src/component/DialogDelete';
+// import DialogDelete from 'src/component/DialogDelete';
 
 // ----------------------------------------------------------------------
 
@@ -30,7 +33,19 @@ export type AccountPopoverProps = IconButtonProps & {
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const router = useRouter();
-  const {mutate} = useMutationLogout()
+  const [open, setOpen] = useState<boolean>(false);
+  const handleClickOpened = () => {
+    setOpen(true);
+  };
+  const {mutate, isPending} = useMutationLogout({
+    onSuccess : () => {
+      alert('Logout Berhasil')
+      router.push('/');
+    },
+    onError : (err : err) => {
+      alert(err.message)
+    }
+  })
   const pathname = usePathname();
 
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
@@ -53,8 +68,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
   const handleLogout = () => {
     mutate()
-    alert('Logout Berhasil')
-    router.push('/');
+    // return;
   }
 
   return (
@@ -136,11 +150,19 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text" onClick={handleLogout}>
+          <Button fullWidth color="error" size="medium" variant="text" onClick={handleClickOpened}>
             Logout
           </Button>
         </Box>
       </Popover>
+      <DialogDelete
+            title="Apakah anda yakin akan Logout?"
+            description="Anda akan keluar dari dashboard"
+            setOpen={setOpen}
+            open={open}
+            Submit={handleLogout}
+            pending={isPending}
+          />
     </>
   );
 }

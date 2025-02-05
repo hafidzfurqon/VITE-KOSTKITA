@@ -23,7 +23,7 @@ type Login = {
   password: string;
 };
 
-type err = {
+export type err = {
   message : string
 }
 

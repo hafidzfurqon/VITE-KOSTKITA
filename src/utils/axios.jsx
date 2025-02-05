@@ -43,4 +43,11 @@ export const fetcher = async (args) => {
       logout: '/api/logout',
     //   register: '/api/daftar',
     },
+    user : {
+      list : '/api/admin/users/list',
+      detail : '/api/admin/users/detail', //need id here
+      create : '/api/admin/users/create',
+      update : '/api/admin/users/create',
+      update : '/api/admin/users/update_user_password', // need id here
+    }
   };

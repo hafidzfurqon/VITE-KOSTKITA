@@ -1,6 +1,4 @@
-import { Button, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { DialogContentText } from '@mui/material';
-import { Dialog } from '@mui/material';
+import { Button, DialogActions, DialogContent, DialogTitle, DialogContentText, Dialog } from '@mui/material';
 
 export default function DialogDelete({ title, description, Submit, open, setOpen, pending }) {
   const handleClose = () => {
