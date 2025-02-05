@@ -3,10 +3,10 @@ import { useState, useEffect, ReactNode } from 'react';
 
 
 const carouselImages = [
-  '/api/placeholder/1400/500',
-  '/api/placeholder/1400/500',
-  '/api/placeholder/1400/500',
-  '/api/placeholder/1400/500'
+  'https://images.rukita.co/promotions/promotion/d28e0cc3-929.jpg?tr=c-at_max%2Cw-1440',
+  'https://images.rukita.co/buildings/building/e48a2a40-318.jpg?tr=c-at_max%2Cw-1040',
+  'https://images.rukita.co/buildings/building/f297bfe6-649.jpg?tr=c-at_max%2Cw-1040',
+  'https://images.rukita.co/buildings/building/ac52429c-2fe.jpg?tr=c-at_max%2Cw-1040'
 ];
 
 interface HeroSectionProps {
