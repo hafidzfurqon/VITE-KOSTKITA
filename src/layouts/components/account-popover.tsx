@@ -1,7 +1,7 @@
+import { useState, useCallback } from 'react';
 import type { IconButtonProps } from '@mui/material/IconButton';
 
-import { useState, useCallback } from 'react';
-
+// MUI Components
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -12,13 +12,15 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import { useRouter, usePathname } from 'src/routes/hooks';
+// External Hooks
+import { useSnackbar } from 'notistack';
 
+// Internal Modules
+import { useRouter, usePathname } from 'src/routes/hooks';
 import { _myAccount } from 'src/_mock';
 import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import { err } from 'src/sections/auth';
 import DialogDelete from 'src/component/DialogDelete';
-// import DialogDelete from 'src/component/DialogDelete';
 
 // ----------------------------------------------------------------------
 
@@ -32,24 +34,26 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
+  const snackbar = useSnackbar();
   const router = useRouter();
-  const [open, setOpen] = useState<boolean>(false);
-  const handleClickOpened = () => {
-    setOpen(true);
-  };
-  const {mutate, isPending} = useMutationLogout({
-    onSuccess : () => {
-      alert('Logout Berhasil')
-      router.push('/');
-    },
-    onError : (err : err) => {
-      alert(err.message)
-    }
-  })
   const pathname = usePathname();
 
+  // State Management
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
+  // Logout Mutation
+  const { mutate: handleLogout, isPending } = useMutationLogout({
+    onSuccess: () => {
+      router.push('/');
+      snackbar.enqueueSnackbar('Logout berhasil', { variant: 'success' });
+    },
+    onError: (error: err) => {
+      snackbar.enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
+
+  // Popover Handlers
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
   }, []);
@@ -66,13 +70,9 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
     [handleClosePopover, router]
   );
 
-  const handleLogout = () => {
-    mutate()
-    // return;
-  }
-
   return (
     <>
+      {/* Profile Button */}
       <IconButton
         onClick={handleOpenPopover}
         sx={{
@@ -90,23 +90,20 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         </Avatar>
       </IconButton>
 
+      {/* Popover Menu */}
       <Popover
         open={!!openPopover}
         anchorEl={openPopover}
         onClose={handleClosePopover}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-        slotProps={{
-          paper: {
-            sx: { width: 200 },
-          },
-        }}
+        slotProps={{ paper: { sx: { width: 200 } } }}
       >
+        {/* User Info */}
         <Box sx={{ p: 2, pb: 1.5 }}>
           <Typography variant="subtitle2" noWrap>
             {_myAccount?.displayName}
           </Typography>
-
           <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
             {_myAccount?.email}
           </Typography>
@@ -114,6 +111,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
+        {/* Navigation Menu */}
         <MenuList
           disablePadding
           sx={{
@@ -149,20 +147,23 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
         <Divider sx={{ borderStyle: 'dashed' }} />
 
+        {/* Logout Button */}
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text" onClick={handleClickOpened}>
+          <Button fullWidth color="error" size="medium" variant="text" onClick={() => setOpenDeleteDialog(true)}>
             Logout
           </Button>
         </Box>
       </Popover>
+
+      {/* Logout Confirmation Dialog */}
       <DialogDelete
-            title="Apakah anda yakin akan Logout?"
-            description="Anda akan keluar dari dashboard"
-            setOpen={setOpen}
-            open={open}
-            Submit={handleLogout}
-            pending={isPending}
-          />
+        title="Apakah anda yakin akan Logout?"
+        description="Anda akan keluar dari dashboard"
+        setOpen={setOpenDeleteDialog}
+        open={openDeleteDialog}
+        Submit={handleLogout}
+        pending={isPending}
+      />
     </>
   );
 }
