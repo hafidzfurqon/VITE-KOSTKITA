@@ -19,7 +19,7 @@ import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 
 export function OverviewAnalyticsView() {
   const data = useAppContext()
-  console.log(data);
+  // console.log(data); 
   const user = {
     name : 'Rafi Syahbani'
   }

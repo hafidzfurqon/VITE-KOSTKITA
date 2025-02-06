@@ -63,7 +63,6 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
   });
 
   const handleSubmit = () => {
-    console.log(typeof row.id)
     DeleteBanner(row.id)
   }
   const renderCover = (
