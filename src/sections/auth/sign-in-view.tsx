@@ -27,6 +27,7 @@ type Login = {
 
 export type err = {
   message : string
+  errors : string
 }
 
 export function SignInView() {
@@ -40,7 +41,7 @@ export function SignInView() {
        enqueueSnackbar('Login berhasil', { variant: 'success' });
       },
       onError : (err : err) => {
-        enqueueSnackbar(err.message, { variant: 'error' });
+        enqueueSnackbar(err.errors, { variant: 'error' });
       }
     });
     

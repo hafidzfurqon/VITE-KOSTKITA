@@ -12,11 +12,15 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import DialogDelete from 'src/component/DialogDelete';
+import { useDeleteBanner } from 'src/hooks/banner';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
 
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id?: string;
+  id?: string | undefined | any;
   title: string;
   name : string;
   image_path : string;
@@ -40,9 +44,28 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
-
+  const [open, setOpen] = useState(false);
+   const handleClickOpen = () => {
+    setOpen(true)
+   }
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
   // console.log(row)
+  const { mutate: DeleteBanner, isPending } = useDeleteBanner({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      setOpen(false);
+      enqueueSnackbar('Banner berhasil dihapus', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('gagal menghapus banner', { variant: 'error' });
+    },
+  });
 
+  const handleSubmit = () => {
+    // console.log(row.id)
+    DeleteBanner(row.id)
+  }
   const renderCover = (
     <Box
       component="img"
@@ -50,9 +73,10 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
       src={row.image_url}
       sx={{
         top: 0,
-        width: 300,
+        width: 100,
         height: 1,
         objectFit: 'cover',
+        borderRadius : '10px'
         // position: 'absolute',
       }}
     />
@@ -123,12 +147,20 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
             Edit
           </MenuItem>
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </MenuItem>
         </MenuList>
       </Popover>
+      <DialogDelete 
+      title="yakin untuk menghapus banner ?"
+       description="data yang telah di hapus tidak akan kembali"
+       setOpen={setOpen}
+       open={open}
+       Submit={handleSubmit}
+       pending={isPending}
+      />
     </>
   );
 }
