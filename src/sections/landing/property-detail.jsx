@@ -1,4 +1,3 @@
-import PropTypes from 'prop-types';
 import { m } from 'framer-motion';
 // @mui
 import Box from '@mui/material/Box';
@@ -9,35 +8,40 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import ListItemText from '@mui/material/ListItemText';
-// utils
-import { fDate } from 'src/utils/format-time';
-// _mock
-import { TOUR_SERVICE_OPTIONS } from 'src/_mock';
 // components
-import Image from 'src/components/image';
-import Iconify from 'src/components/iconify';
-import Markdown from 'src/components/markdown';
-import { varTranHover } from 'src/components/animate';
 import Lightbox, { useLightBox } from 'src/components/lightbox';
+import Image from 'src/components/image';
+import { Iconify } from 'src/components/iconify';
 
-// ----------------------------------------------------------------------
+// Data Dummy
+const name = "Amazing Bali Tour";
+const ratingNumber = 4.8;
+const destination = "Bali, Indonesia";
+const tourGuides = [
+  { name: "John Doe", phoneNumber: "+62 812 3456 7890" },
+  { name: "Jane Smith", phoneNumber: "+62 811 2233 4455" }
+];
+const available = { startDate: "2024-08-01", endDate: "2024-08-15" };
+const durations = "5 Days / 4 Nights";
+const services = ["Hotel", "Transport", "Guide", "Food"];
+const images = [
+    "https://via.placeholder.com/500x500.png?text=Image+1",
+    "https://via.placeholder.com/500x500.png?text=Image+2",
+    "https://via.placeholder.com/500x500.png?text=Image+3",
+    "https://via.placeholder.com/500x500.png?text=Image+4",
+    "https://via.placeholder.com/500x500.png?text=Image+5"
+];
+const content = "This is an amazing tour package that takes you through the beauty of Bali.";
+const TOUR_SERVICE_OPTIONS = [
+  { label: "Hotel" },
+  { label: "Transport" },
+  { label: "Guide" },
+  { label: "Food" }
+];
 
-export default function TourDetailsContent({ tour }) {
-  const {
-    name,
-    images,
-    content,
-    services,
-    tourGuides,
-    available,
-    durations,
-    destination,
-    ratingNumber,
-  } = tour;
-
-  const slides = images.map((slide) => ({
-    src: slide,
-  }));
+// Component utama
+export default function PropertyDetail() {
+  const slides = images.map((slide) => ({ src: slide }));
 
   const {
     selected: selectedImage,
@@ -62,18 +66,17 @@ export default function TourDetailsContent({ tour }) {
         <m.div
           key={slides[0].src}
           whileHover="hover"
-          variants={{
-            hover: { opacity: 0.8 },
-          }}
-          transition={varTranHover()}
+          variants={{ hover: { opacity: 0.8 } }}
+          transition={{}}
         >
           <Image
-            alt={slides[0].src}
-            src={slides[0].src}
-            ratio="1/1"
-            onClick={() => handleOpenLightbox(slides[0].src)}
-            sx={{ borderRadius: 2, cursor: 'pointer' }}
-          />
+  alt={slides[0].src}
+  src={slides[0].src}
+  ratio="1/1"
+  onClick={() => handleOpenLightbox(slides[0].src)}
+  sx={{ borderRadius: 2, cursor: 'pointer', width: '100%', height: 'auto' }}
+/>
+
         </m.div>
 
         <Box gap={1} display="grid" gridTemplateColumns="repeat(2, 1fr)">
@@ -81,10 +84,8 @@ export default function TourDetailsContent({ tour }) {
             <m.div
               key={slide.src}
               whileHover="hover"
-              variants={{
-                hover: { opacity: 0.8 },
-              }}
-              transition={varTranHover()}
+              variants={{ hover: { opacity: 0.8 } }}
+              transition={{}}
             >
               <Image
                 alt={slide.src}
@@ -163,12 +164,12 @@ export default function TourDetailsContent({ tour }) {
       {[
         {
           label: 'Available',
-          value: `${fDate(available.startDate)} - ${fDate(available.endDate)}`,
+          value: `${available.startDate} - ${available.endDate}`,
           icon: <Iconify icon="solar:calendar-date-bold" />,
         },
         {
           label: 'Contact name',
-          value: tourGuides.map((tourGuide) => tourGuide.phoneNumber).join(', '),
+          value: tourGuides.map((guide) => guide.name).join(', '),
           icon: <Iconify icon="solar:user-rounded-bold" />,
         },
         {
@@ -178,73 +179,16 @@ export default function TourDetailsContent({ tour }) {
         },
         {
           label: 'Contact phone',
-          value: tourGuides.map((tourGuide) => tourGuide.name).join(', '),
+          value: tourGuides.map((guide) => guide.phoneNumber).join(', '),
           icon: <Iconify icon="solar:phone-bold" />,
         },
       ].map((item) => (
         <Stack key={item.label} spacing={1.5} direction="row">
           {item.icon}
-          <ListItemText
-            primary={item.label}
-            secondary={item.value}
-            primaryTypographyProps={{
-              typography: 'body2',
-              color: 'text.secondary',
-              mb: 0.5,
-            }}
-            secondaryTypographyProps={{
-              typography: 'subtitle2',
-              color: 'text.primary',
-              component: 'span',
-            }}
-          />
+          <ListItemText primary={item.label} secondary={item.value} />
         </Stack>
       ))}
     </Box>
-  );
-
-  const renderContent = (
-    <>
-      <Markdown children={content} />
-
-      <Stack spacing={2}>
-        <Typography variant="h6"> Services</Typography>
-
-        <Box
-          rowGap={2}
-          display="grid"
-          gridTemplateColumns={{
-            xs: 'repeat(1, 1fr)',
-            md: 'repeat(2, 1fr)',
-          }}
-        >
-          {TOUR_SERVICE_OPTIONS.map((service) => (
-            <Stack
-              key={service.label}
-              spacing={1}
-              direction="row"
-              alignItems="center"
-              sx={{
-                ...(services.includes(service.label) && {
-                  color: 'text.disabled',
-                }),
-              }}
-            >
-              <Iconify
-                icon="eva:checkmark-circle-2-outline"
-                sx={{
-                  color: 'primary.main',
-                  ...(services.includes(service.label) && {
-                    color: 'text.disabled',
-                  }),
-                }}
-              />
-              {service.label}
-            </Stack>
-          ))}
-        </Box>
-      </Stack>
-    </>
   );
 
   return (
@@ -260,12 +204,20 @@ export default function TourDetailsContent({ tour }) {
 
         <Divider sx={{ borderStyle: 'dashed', my: 5 }} />
 
-        {renderContent}
+        {/* Google Maps */}
+        <Box sx={{ width: '100%', height: 400, mb: 5 }}>
+          <iframe
+            src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.4076172379855!2d115.23597717522925!3d-8.652726191394335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd241ccad458ded%3A0x594d84b0149481ae!2sAmazing%20Bali%20Tour!5e0!3m2!1sid!2sid!4v1738828006668!5m2!1sid!2sid`}
+            width="100%"
+            height="100%"
+            style={{ border: 0 }}
+            allowFullScreen=""
+            loading="lazy"
+          ></iframe>
+        </Box>
+
+        {/* <Markdown children={content} /> */}
       </Stack>
     </>
   );
 }
-
-TourDetailsContent.propTypes = {
-  tour: PropTypes.object,
-};
