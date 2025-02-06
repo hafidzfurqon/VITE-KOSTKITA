@@ -4,7 +4,10 @@ import axiosInstance, { endpoints } from "src/utils/axios";
 export const useMutationLogout = ({onSuccess, onError}) => useMutation({
     mutationKey : ['auth.logout'],
     mutationFn : async () => {
-        const response = await axiosInstance.post(endpoints.auth.logout)
+        const token_refresh = sessionStorage.getItem('refresh_token');
+        const response = await axiosInstance.post(endpoints.auth.logout, {
+            refreshToken : token_refresh
+        })
         sessionStorage.clear('user_id');
         sessionStorage.clear('token');
         sessionStorage.clear('refresh_token');
