@@ -18,7 +18,7 @@ import { Iconify } from 'src/components/iconify';
 export type UserProps = {
   id: string;
   name: string;
-  role: string;
+  roles: { name: string }[];
   email: string;
   phone_number : string;
   status: string;
@@ -45,7 +45,8 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
-
+    const role_name = row.roles.map((role : any) => role.name);
+ 
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -64,15 +65,16 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
         <TableCell>{row.phone_number}</TableCell>
 
-        <TableCell align="center">
-          {row.isVerified ? (
+        <TableCell>
+        {role_name[0]}
+        </TableCell>
+    {/* {row.isVerified ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
           ) : (
             '-'
-          )}
-        </TableCell>
-
+          )} */}
         {/* <TableCell>
+        
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
         </TableCell> */}
 

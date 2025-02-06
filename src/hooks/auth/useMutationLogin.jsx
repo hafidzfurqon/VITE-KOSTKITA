@@ -5,7 +5,6 @@ export const useMutationLogin = ({onSuccess, onError}) => useMutation({
     mutationKey : ['auth.login'],
     mutationFn : async (body) => {
         const response = await axiosInstance.post(endpoints.auth.login, body)
-        console.log(response.data)
         const {
             success,
             accessToken,

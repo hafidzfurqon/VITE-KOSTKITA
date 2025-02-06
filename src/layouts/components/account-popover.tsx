@@ -20,6 +20,7 @@ import { _myAccount } from 'src/_mock';
 import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import { err } from 'src/sections/auth';
 import DialogDelete from 'src/component/DialogDelete';
+import { useAppContext } from 'src/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -35,8 +36,10 @@ export type AccountPopoverProps = IconButtonProps & {
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
-  const pathname = usePathname();
-
+  const pathname = usePathname(); 
+  const { UserContextValue: authUser }: any = useAppContext();
+  const {user} = authUser;
+  console.log(user)
   // State Management
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
@@ -100,14 +103,19 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
       >
         {/* User Info */}
         <Box sx={{ p: 2, pb: 1.5 }}>
-          <Typography variant="subtitle2" noWrap>
-            {_myAccount?.displayName}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-            {_myAccount?.email}
-          </Typography>
-        </Box>
+        <Typography variant="subtitle2" noWrap>
+        {user?.name}
+              </Typography>
 
+              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+              {user?.email}
+              </Typography>
+
+              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+                No Telp : {user.phone_number}
+              </Typography>
+        </Box>
+        
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {/* Navigation Menu */}

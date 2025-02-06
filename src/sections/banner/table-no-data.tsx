@@ -17,13 +17,14 @@ export function TableNoData({ searchQuery, ...other }: TableNoDataProps) {
       <TableCell align="center" colSpan={7}>
         <Box sx={{ py: 15, textAlign: 'center' }}>
           <Typography variant="h6" sx={{ mb: 1 }}>
-            Not found
+           Hasil tak ditemukan
           </Typography>
 
           <Typography variant="body2">
-            No results found for &nbsp;
+            Hasil dari &nbsp;
             <strong>&quot;{searchQuery}&quot;</strong>.
-            <br /> Try checking for typos or using complete words.
+            tidak ditemukan
+            <br /> Dalam list data ini coba cari data dengan keyword lain.
           </Typography>
         </Box>
       </TableCell>
