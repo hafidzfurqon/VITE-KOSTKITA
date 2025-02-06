@@ -12,6 +12,8 @@ import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
 import BannerCreate from 'src/sections/banner/banner-create';
 import PropertyDetail from 'src/sections/landing/property-detail';
+import Header from 'src/sections/landing/header';
+import Footer from 'src/sections/landing/footer';
 
 // ----------------------------------------------------------------------
 
@@ -82,7 +84,9 @@ export function Router() {
     {
       element: (
         <Suspense fallback={renderFallback}>
+        <Header/>
           <PropertyDetail />
+          <Footer/>
         </Suspense>
       ),
       path: 'property/:id',

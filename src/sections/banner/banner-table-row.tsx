@@ -20,7 +20,7 @@ import { useSnackbar } from 'notistack';
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id?: string | undefined | any;
+  id?: undefined | any | number;
   title: string;
   name : string;
   image_path : string;
@@ -63,7 +63,7 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
   });
 
   const handleSubmit = () => {
-    // console.log(row.id)
+    console.log(typeof row.id)
     DeleteBanner(row.id)
   }
   const renderCover = (
