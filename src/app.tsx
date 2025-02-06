@@ -9,6 +9,7 @@ import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import { ThemeProvider } from 'src/theme/theme-provider';
 
 import { UserProvider } from './context/user-context';
+import { SnackbarProvider } from './components/snackbar';
 // ----------------------------------------------------------------------
 
 export default function App() {
@@ -17,11 +18,13 @@ export default function App() {
   const queryClient  = new QueryClient();
   return (
     <ThemeProvider>
+      <SnackbarProvider>
       <QueryClientProvider client={queryClient}>
       <UserProvider>
       <Router />
       </UserProvider>
       </QueryClientProvider>
+      </SnackbarProvider>
     </ThemeProvider>
   );
 }

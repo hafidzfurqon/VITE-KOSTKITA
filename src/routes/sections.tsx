@@ -10,6 +10,8 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
+import BannerCreate from 'src/sections/banner/banner-create';
+import PropertyDetail from 'src/sections/landing/property-detail';
 
 // ----------------------------------------------------------------------
 
@@ -53,6 +55,7 @@ export function Router() {
         },
         { path: 'user', element: <UserPage /> },
         { path: 'products', element: <ProductsPage /> },
+        { path: 'blog', element: <BlogPage /> },
         {
           path: 'banner',
           children: [
@@ -62,7 +65,7 @@ export function Router() {
             },
             {
               path: 'create',
-              element: <div>Create Banner</div>,
+              element: <BannerCreate/>,
             },
           ],
         },
@@ -75,6 +78,14 @@ export function Router() {
         </Suspense>
       ),
       path: '/',
+    },
+    {
+      element: (
+        <Suspense fallback={renderFallback}>
+          <PropertyDetail />
+        </Suspense>
+      ),
+      path: 'property/:id',
     },
     {
       element: (

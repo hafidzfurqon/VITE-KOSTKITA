@@ -15,7 +15,8 @@ import { useForm } from 'react-hook-form';
 import { useMutationLogin } from 'src/hooks/auth/useMutationLogin'; 
 
 import logo from '../../../public/assets/images/logo.png'
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from 'src/components/snackbar';
+
 
 // ----------------------------------------------------------------------
 type Login = {
@@ -29,17 +30,17 @@ export type err = {
 }
 
 export function SignInView() {
-const snackbar = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
 
     const {mutate, isPending} = useMutationLogin({
       onSuccess : () => {
         router.push('/dashboard')
-        snackbar.enqueueSnackbar('Login berhasil', { variant: 'success' });
+       enqueueSnackbar('Login berhasil', { variant: 'success' });
       },
       onError : (err : err) => {
-        snackbar.enqueueSnackbar(err.message, { variant: 'error' });
+        enqueueSnackbar(err.message, { variant: 'error' });
       }
     });
     

@@ -17,16 +17,11 @@ import { Iconify } from 'src/components/iconify';
 
 export type UserProps = {
   id?: string;
-  name: string;
-  role?: string;
-  email?: string;
-  phone_number? : string;
-  status?: string;
-  company?: string;
-  avatarUrl?: string;
-  photo_profile_path?: string;
-  photo_profile_url?: string;
-  isVerified: boolean;
+  title: string;
+  name : string;
+  image_path : string;
+  image_url : string;
+  url_reference: string;
 };
 
 type UserTableRowProps = {
@@ -46,6 +41,23 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
     setOpenPopover(null);
   }, []);
 
+  // console.log(row)
+
+  const renderCover = (
+    <Box
+      component="img"
+      alt={row.name}
+      src={row.image_url}
+      sx={{
+        top: 0,
+        width: 300,
+        height: 1,
+        objectFit: 'cover',
+        // position: 'absolute',
+      }}
+    />
+  );
+
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -55,22 +67,22 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
 
         <TableCell component="th" scope="row">
           <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={row.photo_profile_url} />
-            {row.name}
+            
+          {renderCover}
           </Box>
         </TableCell>
 
-        <TableCell>{row.email}</TableCell>
+        <TableCell>{row.title}</TableCell>
 
-        <TableCell>{row.phone_number}</TableCell>
+        {/* <TableCell>{row.phone_number}</TableCell> */}
 
-        <TableCell align="center">
+        {/* <TableCell align="center">
           {row.isVerified ? (
             <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
           ) : (
             '-'
           )}
-        </TableCell>
+        </TableCell> */}
 
         {/* <TableCell>
           <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>

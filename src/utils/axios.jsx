@@ -47,7 +47,22 @@ export const fetcher = async (args) => {
       list : '/api/admin/users/list',
       detail : '/api/admin/users/detail', //need id here
       create : '/api/admin/users/create',
-      update : '/api/admin/users/create',
+      update : '/api/admin/users/update',
       update : '/api/admin/users/update_user_password', // need id here
+    },
+    banner : {
+      list : '/api/admin/banner/list',
+      detail : '/api/admin/banner/detail', //need id here
+      create : '/api/admin/banner/create',
+      update : '/api/admin/banner/update', //need id here
+      delete : '/api/admin/banner/delete', //need id here
+    },
+    property : {
+      list : '/api/admin/property/list',
+      detail : '/api/admin/property/detail/id', //need id here
+      detail : '/api/admin/property/detail/slug', //need slug here
+      create : '/api/admin/property/create',
+      update : '/api/admin/property/update', //need id here
+      delete: '/api/admin/property/delete', //need id here
     }
   };

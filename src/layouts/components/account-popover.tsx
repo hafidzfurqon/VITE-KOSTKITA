@@ -13,8 +13,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 // External Hooks
-import { useSnackbar } from 'notistack';
-
+import { useSnackbar } from 'src/components/snackbar';
 // Internal Modules
 import { useRouter, usePathname } from 'src/routes/hooks';
 import { _myAccount } from 'src/_mock';
@@ -34,7 +33,7 @@ export type AccountPopoverProps = IconButtonProps & {
 };
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
-  const snackbar = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const pathname = usePathname();
 
@@ -46,10 +45,10 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       router.push('/');
-      snackbar.enqueueSnackbar('Logout berhasil', { variant: 'success' });
+      enqueueSnackbar('Logout berhasil', { variant: 'success' });
     },
     onError: (error: err) => {
-      snackbar.enqueueSnackbar(error.message, { variant: 'error' });
+      enqueueSnackbar(error.message, { variant: 'error' });
     },
   });
 

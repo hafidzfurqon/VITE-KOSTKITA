@@ -5,17 +5,17 @@ import { SnackbarProvider as NotistackProvider, closeSnackbar } from 'notistack'
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 //
-import Iconify from '../iconify';
-// import { useSettingsContext } from '../settings';
+import {Iconify} from '../iconify';
+import { useSettingsContext } from 'src/components/settings/context';
 //
 import { StyledIcon, StyledNotistack } from './styles';
 
 // ----------------------------------------------------------------------
 
 export default function SnackbarProvider({ children }) {
-  // const settings = useSettingsContext();
+  const settings = useSettingsContext();
 
-  // const isRTL = settings.themeDirection === 'rtl';
+  const isRTL = settings.themeDirection === 'rtl';
 
   const notistackRef = useRef(null);
 
@@ -25,7 +25,7 @@ export default function SnackbarProvider({ children }) {
       maxSnack={5}
       preventDuplicate
       autoHideDuration={3000}
-      // TransitionComponent={isRTL ? Collapse : undefined}
+      TransitionComponent={isRTL ? Collapse : undefined}
       variant="success" // Set default variant
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       iconVariant={{

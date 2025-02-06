@@ -1,12 +1,12 @@
 export const paths = {
-    tour: {
-      root: `/tour`,
-      new: `/tour/new`,
-      details: (id) => `/tour/${id}`,
-      edit: (id) => `/tour/edit/${id}`,
+    property: {
+      root: `/property`,
+      new: `/property/new`,
+      details: (id) => `/property/${id}`,
+      edit: (id) => `/property/edit/${id}`,
       demo: {
-        details: (id) => `/tour/demo/${id}`,
-        edit: (id) => `/tour/demo/edit/${id}`,
+        details: (id) => `/property/demo/${id}`,
+        edit: (id) => `/property/demo/edit/${id}`,
       },
     },
   };
