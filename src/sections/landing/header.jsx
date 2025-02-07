@@ -32,7 +32,7 @@ export default function Header() {
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
-  };
+  };  
 
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
@@ -103,7 +103,7 @@ export default function Header() {
 
         {/* Hamburger Menu (Hanya tampil di layar kecil) */}
         {isSmallScreen && (
-          <IconButton edge="end" color="inherit" onClick={toggleDrawer}>
+          <IconButton edge="end" color="primary" onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
         )}
