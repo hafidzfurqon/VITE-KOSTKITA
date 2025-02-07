@@ -12,6 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Lightbox, { useLightBox } from 'src/components/lightbox';
 import Image from 'src/components/image';
 import { Iconify } from 'src/components/iconify';
+import { Container } from '@mui/material';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
@@ -110,6 +111,7 @@ export default function PropertyDetail() {
 
   const renderHead = (
     <>
+    <Container>
       <Stack direction="row" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
           {name}
@@ -149,10 +151,12 @@ export default function PropertyDetail() {
           {tourGuides.map((tourGuide) => tourGuide.name).join(', ')}
         </Stack>
       </Stack>
+    </Container>
     </>
   );
 
   const renderOverview = (
+    <Container>
     <Box
       gap={3}
       display="grid"
@@ -189,6 +193,7 @@ export default function PropertyDetail() {
         </Stack>
       ))}
     </Box>
+    </Container>
   );
 
   return (
@@ -205,6 +210,7 @@ export default function PropertyDetail() {
         <Divider sx={{ borderStyle: 'dashed', my: 5 }} />
 
         {/* Google Maps */}
+        <Container>
         <Box sx={{ width: '100%', height: 400, mb: 5 }}>
           <iframe
             src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.4076172379855!2d115.23597717522925!3d-8.652726191394335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd241ccad458ded%3A0x594d84b0149481ae!2sAmazing%20Bali%20Tour!5e0!3m2!1sid!2sid!4v1738828006668!5m2!1sid!2sid`}
@@ -215,6 +221,7 @@ export default function PropertyDetail() {
             loading="lazy"
           ></iframe>
         </Box>
+        </Container>
 
         {/* <Markdown children={content} /> */}
       </Stack>

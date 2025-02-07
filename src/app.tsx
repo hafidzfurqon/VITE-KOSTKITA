@@ -15,7 +15,13 @@ import { SnackbarProvider } from './components/snackbar';
 export default function App() {
 
   useScrollToTop();
-  const queryClient  = new QueryClient();
+  const queryClient  = new QueryClient({
+    defaultOptions : {
+      queries : {
+        refetchOnWindowFocus : false
+      }
+    }
+  });
   return (
     <ThemeProvider>
       <SnackbarProvider>

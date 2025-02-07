@@ -18,11 +18,8 @@ import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
-  const data = useAppContext()
-  // console.log(data); 
-  const user = {
-    name : 'Rafi Syahbani'
-  }
+  const { UserContextValue: authUser }: any = useAppContext();
+  const {user} = authUser;
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>

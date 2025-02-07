@@ -44,4 +44,9 @@ export const navData = [
     path: '/blog',
     icon: icon('ic-blog'),
   },
+  {
+    title: 'Fasilitas',
+    path: '/fasilitas',
+    icon:   Anothericon('ic-glass-bag'),
+  },
 ];

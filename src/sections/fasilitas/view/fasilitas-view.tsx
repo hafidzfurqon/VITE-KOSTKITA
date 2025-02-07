@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -8,39 +7,32 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
-
-
 import { DashboardContent } from 'src/layouts/dashboard';
-
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
-
 import { TableNoData } from '../table-no-data';
-import { UserTableRow } from '../user-table-row';
-import { UserTableHead } from '../user-table-head';
+import { FasilitasTableRow } from '../fasilitas-table-row';
+import { FasilitasTableHead } from '../fasilitas-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { UserTableToolbar } from '../user-table-toolbar';
+import { FasilitasTableToolbar } from '../fasilitas-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
-
-import type { UserProps } from '../user-table-row';
-import { useFetchAllUser } from 'src/hooks/users/useFetchAllUser';
 import Loading from 'src/components/loading/loading';
 import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
+import { useGetBanner } from 'src/hooks/banner';
+import { useFetchFacilities } from 'src/hooks/facilities';
 
-// ----------------------------------------------------------------------
-
-export function UserView() {
+export function FasilitasView() {
   const table = useTable();
-
+  const { data = [], isLoading, isFetching } = useFetchFacilities();
   const [filterName, setFilterName] = useState('');
-  const {data, isLoading, isFetching} = useFetchAllUser()
-  console.log(data);
-  if(isLoading || isFetching) {
-    return <Loading/>
+
+  if (isLoading || isFetching) {
+    return <Loading />;
   }
-  const dataFiltered: UserProps[] = applyFilter({
-    inputData: data.data,
+
+  const dataFiltered = applyFilter({
+    inputData: data,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -51,24 +43,20 @@ export function UserView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Users
+          Management Fasilitas
         </Typography>
-        <Link to={router.users.create}>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          New user
-        </Button>
+        <Link to={router.fasilitas.create}>
+          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+            Tambah Fasilitas
+          </Button>
         </Link>
       </Box>
 
       <Card>
-        <UserTableToolbar
+        <FasilitasTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
-          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
+          onFilterName={(event) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
@@ -77,46 +65,35 @@ export function UserView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <UserTableHead
+              <FasilitasTableHead
                 order={table.order}
                 orderBy={table.orderBy}
-                rowCount={data.data.length}
+                rowCount={data.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-                onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(
-                    checked,
-                    data.map((user : UserProps) => user.id)
-                  )
+                onSelectAllRows={(checked : any) =>
+                  table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'email', label: 'email' },
-                  { id: 'phone_number', label: 'phone_number' },
-                  { id: 'role', label: 'Role' },
-                  { id: '' },
+                  { id: 'title_banner', label: 'Title Banner' },
+                  // { id: 'title_banner', label: 'Title Banner' },
+                  { id: 'action', label: 'Action' },
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <UserTableRow
-                      key={row.id}
-                      row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
-                    />
-                  ))}
+                {dataFiltered.slice(
+                  table.page * table.rowsPerPage,
+                  table.page * table.rowsPerPage + table.rowsPerPage
+                ).map((row : any) => (
+                  <FasilitasTableRow
+                    key={row.id}
+                    row={row}
+                    selected={table.selected.includes(row.id)}
+                    onSelectRow={() => table.onSelectRow(row.id)}
+                  />
+                ))}
 
-                <TableEmptyRows
-                  height={68}
-                  emptyRows={emptyRows(table.page, table.rowsPerPage, data.data.length)}
-                />
-
+                <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
@@ -126,7 +103,7 @@ export function UserView() {
         <TablePagination
           component="div"
           page={table.page}
-          count={data.data.length}
+          count={data.length}
           rowsPerPage={table.rowsPerPage}
           onPageChange={table.onChangePage}
           rowsPerPageOptions={[5, 10, 25]}
@@ -137,7 +114,6 @@ export function UserView() {
   );
 }
 
-// ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);

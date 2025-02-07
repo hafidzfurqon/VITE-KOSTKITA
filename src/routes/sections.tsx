@@ -10,10 +10,11 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 
 import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
-import BannerCreate from 'src/sections/banner/banner-create';
+import BannerCreate from 'src/sections/banner/crud/banner-create';
 import PropertyDetail from 'src/sections/landing/property-detail';
 import Header from 'src/sections/landing/header';
 import Footer from 'src/sections/landing/footer';
+import FasilitasPage from 'src/pages/fasilitas';
 
 // ----------------------------------------------------------------------
 
@@ -55,7 +56,19 @@ export function Router() {
           path: 'dashboard',
           element: <HomePage />,
         },
-        { path: 'user', element: <UserPage /> },
+        {
+          path: 'user',
+          children: [
+            {
+              path: '',
+              element: <UserPage />,
+            },
+            {
+              path: 'create',
+              element: <div>Helo world...</div>,
+            },
+          ],
+        },
         { path: 'products', element: <ProductsPage /> },
         { path: 'blog', element: <BlogPage /> },
         {
@@ -68,6 +81,19 @@ export function Router() {
             {
               path: 'create',
               element: <BannerCreate/>,
+            },
+          ],
+        },
+        {
+          path: 'fasilitas',
+          children: [
+            {
+              path: '',
+              element: <FasilitasPage/>,
+            },
+            {
+              path: 'create',
+              element: <div>Helo world...</div>,
             },
           ],
         },
