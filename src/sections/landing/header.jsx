@@ -103,7 +103,7 @@ export default function Header() {
 
         {/* Hamburger Menu (Hanya tampil di layar kecil) */}
         {isSmallScreen && (
-          <IconButton edge="end" color="primary" onClick={toggleDrawer}>
+        <IconButton edge="end" color="primary" onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
         )}
