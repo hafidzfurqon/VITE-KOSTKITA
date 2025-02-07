@@ -16,6 +16,7 @@ import { useMutationLogin } from 'src/hooks/auth/useMutationLogin';
 
 import logo from '../../../public/assets/images/logo.png'
 import { useSnackbar } from 'src/components/snackbar';
+import { useQueryClient } from '@tanstack/react-query';
 
 
 // ----------------------------------------------------------------------
@@ -34,14 +35,22 @@ export function SignInView() {
   const { enqueueSnackbar } = useSnackbar();
 
   const router = useRouter();
-
+  const queryClient = useQueryClient();
     const {mutate, isPending} = useMutationLogin({
       onSuccess : () => {
+        queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
         router.push('/dashboard')
        enqueueSnackbar('Login berhasil', { variant: 'success' });
       },
-      onError : (err : err) => {
-        enqueueSnackbar(err.errors, { variant: 'error' });
+      onError : (err : any) => {
+        if(err.errors.password) {
+          enqueueSnackbar(err.errors.password[0], { variant: 'error' });
+        } 
+        if(err.errors.login) {
+          enqueueSnackbar(err.errors.login[0], { variant: 'error' });
+        } else {
+          enqueueSnackbar(err.errors, { variant: 'error' });
+        }
       }
     });
     
@@ -122,7 +131,7 @@ export function SignInView() {
           variant="overline"
           sx={{ color: 'text.secondary', mb: 1 }}
         >
-          Belum Daftar ? Register disini
+          Belum Daftar ? Daftar dibawah ini.
         </Typography>
         <Box
           sx={{ mx: 3, gap: 3, display: 'flex', alignItems: 'center', justifyContent: 'center' }}

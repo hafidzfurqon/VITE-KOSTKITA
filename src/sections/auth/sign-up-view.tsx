@@ -10,14 +10,39 @@ import { Stack, IconButton, InputAdornment, ListItemButton } from '@mui/material
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
+import { useMutationRegister } from 'src/hooks/auth/useMutationRegister';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { DataArraySharp } from '@mui/icons-material';
 
 
 
 export function SignUpView() {
     const router = useRouter();
+     const { enqueueSnackbar } = useSnackbar();
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const {register, handleSubmit} = useForm()
-    const Onsubmit = () => console.log('ajsdkajs')
+    const queryClient = useQueryClient()
+    const {mutate, isPending} = useMutationRegister({onSuccess : () => {
+      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      router.push('/sign-in')
+      enqueueSnackbar('Pendaftaran Berhasil', { variant: 'success' });
+    },
+     onError : (err : any) => {
+      if(err.errors.phone_number) {
+        enqueueSnackbar(err.errors.phone_number[0], { variant: 'error' });
+      }
+      if(err.errors.email) {
+        enqueueSnackbar(err.errors.email[0], { variant: 'error' });
+      }
+      if(err.errors.password) {
+        enqueueSnackbar(err.errors.password[0], { variant: 'error' });
+      }
+    }})
+    const Onsubmit = (data : any) => {
+      mutate(data)
+      // console.log(data)
+    }
   
     const renderForm = (
       <Stack spacing={3}>
@@ -26,16 +51,16 @@ export function SignUpView() {
           display="flex"
           flexDirection="column"
           alignItems="flex-end"
-          onSubmit={Onsubmit}
+          onSubmit={handleSubmit(Onsubmit)}
         >
             <TextField
             fullWidth
-            {...register('nama')}
+            {...register('name')}
             autoFocus
             margin="dense"
             required
             id="nama"
-            name="nama"
+            name="name"
             label="Nama Lengkap"
             InputLabelProps={{ shrink: true }}
             sx={{ mb: 3 }}
@@ -53,12 +78,13 @@ export function SignUpView() {
           />
           <TextField
             fullWidth
-            {...register('no_telp')}
+            {...register('phone_number')}
             margin="dense"
             id="Nomor Telepon"
-            name="Nomor Telepon"
+            name="phone_number"
             label="Nomor Telepon (0851 XXXX XXXX)"
             type="number"
+            inputMode='numeric'
             InputLabelProps={{ shrink: true }}
             sx={{ mb: 3 }}
           />
@@ -79,16 +105,32 @@ export function SignUpView() {
           }}
           sx={{ mb: 3 }}
         />
+          <TextField
+          fullWidth
+          {...register('password_confirmation')}
+          label="Konfirmasi Password"
+          InputLabelProps={{ shrink: true }}
+          type={showPassword ? 'text' : 'password'}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+          sx={{ mb: 3 }}
+        />
           <LoadingButton
             fullWidth
             size="large"
             type="submit"
             color="inherit"
             variant="contained"
-            // disabled={isPending}
+            disabled={isPending}
           >
-            {/* {isPending ? 'Loading...' : ' Sign in'} */}
-           Sign Up
+            {isPending ? 'Loading...' : 'Sign Up'}
           </LoadingButton>
         </Box>
       </Stack>

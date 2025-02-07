@@ -41,7 +41,7 @@ export const fetcher = async (args) => {
       me: '/api/me',
       login: '/api/login',
       logout: '/api/logout',
-    //   register: '/api/daftar',
+      register: '/api/register',
     },
     user : {
       list : '/api/admin/users/list',
