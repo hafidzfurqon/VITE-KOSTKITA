@@ -57,7 +57,9 @@ export default function Header() {
         
         {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Link to='/'>
           <img src={Logo} alt="Logo" width={120} style={{ filter: 'brightness(1.2)' }} />
+          </Link>
         </Box>
 
         {/* Navigation (Hanya tampil di layar besar) */}

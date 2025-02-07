@@ -15,7 +15,6 @@ const Image = forwardRef(
       ratio,
       overlay,
       disabledEffect = false,
-      //
       alt,
       src,
       afterLoad,
@@ -52,24 +51,8 @@ const Image = forwardRef(
 
     const content = (
       <Box
-        // component={LazyLoadImage}
-        //
         alt={alt}
         src={src}
-        afterLoad={afterLoad}
-        delayTime={delayTime}
-        threshold={threshold}
-        beforeLoad={beforeLoad}
-        delayMethod={delayMethod}
-        placeholder={placeholder}
-        wrapperProps={wrapperProps}
-        scrollPosition={scrollPosition}
-        visibleByDefault={visibleByDefault}
-        effect={disabledEffect ? undefined : effect}
-        useIntersectionObserver={useIntersectionObserver}
-        wrapperClassName={wrapperClassName || 'component-image-wrapper'}
-        placeholderSrc={disabledEffect ? '/assets/transparent.png' : '/assets/placeholder.svg'}
-        //
         sx={{
           width: 1,
           height: 1,

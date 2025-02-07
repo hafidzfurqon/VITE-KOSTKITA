@@ -1,14 +1,21 @@
 export const router = {
-    auth: {
-      login: '/sign-in', 
-    },
-    banner: {
-      list: '/banner',
-      create: '/banner/create',
-    },
-    property: {
-      list: '/property',
-      create: '/property/create',
-    },
-  };
-  
+  auth: {
+    login: '/sign-in', 
+  },
+  users : {
+    list : '/user',
+    create: '/user/create',
+  },
+  banner: {
+    list: '/banner',
+    create: '/banner/create',
+  },
+  property: {
+    list: '/property',
+    create: '/property/create',
+  },
+  fasilitas: {
+    list: '/fasilitas',
+    create: '/fasilitas/create',
+  },
+};
