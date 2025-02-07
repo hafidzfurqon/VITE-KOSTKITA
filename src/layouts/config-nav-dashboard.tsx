@@ -25,6 +25,11 @@ export const navData = [
     icon: Anothericon('ic-glass-message'),
   },
   {
+    title: 'Property',
+    path: '/property',
+    icon: Anothericon('ic-glass-message'),  
+  },
+  {
     title: 'User',
     path: '/user',
     icon: icon('ic-user'),

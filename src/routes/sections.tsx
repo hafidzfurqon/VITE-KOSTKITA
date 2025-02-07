@@ -14,6 +14,8 @@ import BannerCreate from 'src/sections/banner/banner-create';
 import PropertyDetail from 'src/sections/landing/property-detail';
 import Header from 'src/sections/landing/header';
 import Footer from 'src/sections/landing/footer';
+import PropertyPage from 'src/pages/property';
+import PropertyCreate from 'src/sections/property/property-create';
 
 // ----------------------------------------------------------------------
 
@@ -68,6 +70,19 @@ export function Router() {
             {
               path: 'create',
               element: <BannerCreate/>,
+            },
+          ],
+        },
+        {
+          path: 'property',
+          children: [
+            {
+              path: '',
+              element: <PropertyPage />,
+            },
+            {
+              path: 'create',
+              element: <PropertyCreate/>,
             },
           ],
         },

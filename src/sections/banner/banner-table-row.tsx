@@ -13,9 +13,10 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import DialogDelete from 'src/component/DialogDelete';
-import { useDeleteBanner } from 'src/hooks/banner';
+import { useDeleteBanner,useUpdateBanner } from 'src/hooks/banner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
+import { DialogUpdate } from 'src/component/DialogUpdate';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +36,11 @@ type UserTableRowProps = {
 };
 
 export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  const [openEdit, setOpenEdit] = useState(false);
+
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
@@ -48,8 +53,11 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
    const handleClickOpen = () => {
     setOpen(true)
    }
-  const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
+   const handleEditOpen = () => {
+    setOpenEdit(true);
+    handleClosePopover();
+  };
+ 
   // console.log(row)
   const { mutate: DeleteBanner, isPending } = useDeleteBanner({
     onSuccess: () => {
@@ -59,6 +67,17 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
     },
     onError: () => {
       enqueueSnackbar('gagal menghapus banner', { variant: 'error' });
+    },
+  });
+
+  const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      setOpen(false);
+      enqueueSnackbar('Banner berhasil diupdate', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('gagal mengupdate banner', { variant: 'error' });
     },
   });
 
@@ -141,7 +160,7 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
+            <MenuItem onClick={handleEditOpen}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </MenuItem>
@@ -152,6 +171,14 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
           </MenuItem>
         </MenuList>
       </Popover>
+      {/* <DialogUpdate
+        title="Edit Banner"
+        open={openEdit}
+        setOpen={setOpenEdit}
+        SubmitForm={() => UpdateBanner({ id: row.id, data: { title: row.title, url_reference: row.url_reference } })}
+        SubmitFormValue={{ title: row.title, url_reference: row.url_reference }}
+      /> */}
+
       <DialogDelete 
       title="yakin untuk menghapus banner ?"
        description="data yang telah di hapus tidak akan kembali"

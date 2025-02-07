@@ -6,5 +6,9 @@ export const router = {
       list: '/banner',
       create: '/banner/create',
     },
+    property: {
+      list: '/property',
+      create: '/property/create',
+    },
   };
   
