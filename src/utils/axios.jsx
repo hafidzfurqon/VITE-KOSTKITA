@@ -75,8 +75,8 @@ axiosInstance.interceptors.response.use(
       sessionStorage.setItem("refresh_token", newRefreshToken);
       
       axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-        processQueue(null, newToken);
-        return axiosInstance(originalRequest);
+      processQueue(null, newToken);
+      return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
         alert(err)
@@ -128,9 +128,9 @@ export const fetcher = async (args) => {
     facilities : {
       list : '/api/admin/facility/list',
       // detail : '/api/admin/users/detail', //need id here
-      create : '/api/admin/users/create',
-      // update : '/api/admin/users/update',
-      // update : '/api/admin/users/update_user_password', // need id here
+      create : '/api/admin/facility/create',
+      delete : '/api/admin/facility/delete',
+      update : '/api/admin/facility/update', // need id here
     },
     banner : {
       list : '/api/admin/banner/list',

@@ -23,7 +23,7 @@ export default function HeroSection({ children } :HeroSectionProps)  {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentImage((prev) => (prev + 1) % carouselImages.length);
-    }, 5000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, []);

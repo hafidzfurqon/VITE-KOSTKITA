@@ -1,23 +1,22 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
+
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Iconify } from 'src/components/iconify';
 import DialogDelete from 'src/component/DialogDelete';
-import { useDeleteBanner } from 'src/hooks/banner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
+import { useMutationDeleteFacilities, useMutationUpdateFacilities } from 'src/hooks/facilities';
+import { DialogUpdate } from 'src/component/DialogUpdate';
+import { TextField } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
+export type FacilitiesProps = {
   id?: undefined | any | number;
   name : string;
   properties: [],
@@ -26,132 +25,122 @@ export type UserProps = {
   }]
 };
 
-type UserTableRowProps = {
-  row: UserProps;
+type FacilitiesTableRowProps = {
+  row: FacilitiesProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
-export function FasilitasTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
+export function FasilitasTableRow({ row, selected, onSelectRow }: FacilitiesTableRowProps) {
+  
   const [open, setOpen] = useState(false);
+  const [opened, setOpened] = useState(false);
    const handleClickOpen = () => {
     setOpen(true)
    }
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  // console.log(row)
-  const { mutate: DeleteBanner, isPending } = useDeleteBanner({
+
+  const {mutate, isPending : isPendingMutate} = useMutationUpdateFacilities({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
       setOpen(false);
-      enqueueSnackbar('Banner berhasil dihapus', { variant: 'success' });
+      enqueueSnackbar('Fasilitas berhasil diupdate', { variant: 'success' });
     },
     onError: () => {
-      enqueueSnackbar('gagal menghapus banner', { variant: 'error' });
+      enqueueSnackbar('fasilitas gagal diupdate', { variant: 'error' });
+    },
+  },
+  row.id
+)
+
+  const { mutate: DeleteFacilities, isPending } = useMutationDeleteFacilities({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
+      setOpen(false);
+      enqueueSnackbar('Fasilitas berhasil dihapus', { variant: 'success' });
+    },
+    onError: (err : any) => {
+      enqueueSnackbar('fasilitas gagal dihapus', { variant: 'error' });
     },
   });
 
   const handleSubmit = () => {
-    DeleteBanner(row.id)
+    DeleteFacilities(row.id)
   }
-  // const renderCover = (
-  //   <Box
-  //     component="img"
-  //     alt={row.name}
-  //     src={row.image_url}
-  //     sx={{
-  //       top: 0,
-  //       width: 100,
-  //       height: 1,
-  //       objectFit: 'cover',
-  //       borderRadius : '10px'
-  //       // position: 'absolute',
-  //     }}
-  //   />
-  // );
-  // console.log(row.apartments.map((apart) => apart.name[0]))
+  const handleClickOpened = () => {
+    setOpened(true);
+  };
+  const defaultValues = {
+    name: row?.name || '',
+  };
+
+  const { register, handleSubmit : handleSubmitForm} = useForm({
+    defaultValues
+  });
+  // const { register, handleSubmit: submitEdit } = useForm();
+
+  const FieldRHF = (
+    <>
+      <TextField
+        {...register('name')}
+        autoFocus
+        required
+        margin="dense"
+        id="nama"
+        label="Nama Fasilitas"
+        type="text"
+        fullWidth
+        variant="outlined"
+      />
+      </>
+      )
+      
+  const handleClose = () => {
+    setOpened(false);
+  };
+
+    const handleCreate = (data : any) => {
+      // console.log(data)
+      mutate(data)
+      handleClose();
+    }
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-
-      
-
-        <TableCell>{row.name}</TableCell>
-
-        {/* <TableCell>{row.phone_number}</TableCell> */}
-
-        {/* <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )}
-        </TableCell> */}
-
-        {/* <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell> */}
-
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-          <MenuItem onClick={handleClosePopover}>
+        <TableCell align='center'>{row.name}</TableCell>
+        <TableCell align="center">
+        <Button onClick={handleClickOpened}>
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </Button>
 
-          <MenuItem onClick={handleClickOpen} sx={{ color: 'error.main' }}>
+          <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
-        </MenuList>
-      </Popover>
+          </Button>
+        </TableCell>
+      </TableRow>
       <DialogDelete 
-      title="yakin untuk menghapus banner ?"
+      title="yakin untuk menghapus fasilitas ?"
        description="data yang telah di hapus tidak akan kembali"
        setOpen={setOpen}
        open={open}
        Submit={handleSubmit}
        pending={isPending}
+      />
+      <DialogUpdate 
+      pending={isPendingMutate}
+      SubmitFormValue={handleCreate}
+      open={opened}
+      title="Update Nama Fasilitas"
+      subTitle="Fasilitas untuk coliving maupun apartemen"
+      setOpen={setOpened}
+      field={FieldRHF}
+      SubmitForm={handleSubmitForm}
       />
     </>
   );

@@ -10,7 +10,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const token = sessionStorage.getItem("token"); 
   const refresh_token = sessionStorage.getItem("refresh_token"); 
   const isAuthenticated = Boolean(token || refresh_token); 
-  const { data = [], isLoading, isPending } = useFetchAuthenticatedUser(isAuthenticated);
+  const { data = [], isLoading, isPending, } = useFetchAuthenticatedUser(isAuthenticated);
   // const data : any = []
   // const isLoading = false
   // const isPending = false

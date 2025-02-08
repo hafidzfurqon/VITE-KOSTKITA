@@ -1,4 +1,4 @@
-import type { UserProps } from './fasilitas-table-row';
+import type { FacilitiesProps } from './fasilitas-table-row';
 
 // ----------------------------------------------------------------------
 
@@ -53,7 +53,7 @@ export function getComparator<Key extends keyof any>(
 // ----------------------------------------------------------------------
 
 type ApplyFilterProps = {
-  inputData: UserProps[];
+  inputData: FacilitiesProps[];
   filterName: string;
   comparator: (a: any, b: any) => number;
 };

@@ -10,6 +10,6 @@ export type ConfigValue = {
 // ----------------------------------------------------------------------
 
 export const CONFIG: ConfigValue = {
-  appName: 'kostKita.id',
+  appName: 'KostKita.id',
   appVersion: packageJson.version,
 };

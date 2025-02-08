@@ -17,6 +17,7 @@ import { useDeleteBanner,useUpdateBanner } from 'src/hooks/banner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { DialogUpdate } from 'src/component/DialogUpdate';
+import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -38,24 +39,15 @@ type UserTableRowProps = {
 export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
   const [openEdit, setOpenEdit] = useState(false);
 
-
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
   const [open, setOpen] = useState(false);
    const handleClickOpen = () => {
     setOpen(true)
    }
    const handleEditOpen = () => {
     setOpenEdit(true);
-    handleClosePopover();
+    // handleClosePopover();
   };
  
   // console.log(row)
@@ -107,77 +99,29 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell component="th" scope="row">
-          <Box gap={2} display="flex" alignItems="center">
+        <TableCell align='center' component="th" scope="row">
+          {/* <Box gap={2} display="flex" alignItems="center"> */}
             
           {renderCover}
-          </Box>
+          {/* </Box> */}
         </TableCell>
 
-        <TableCell>{row.title}</TableCell>
+        <TableCell align='center'>{row.title}</TableCell>
 
-        {/* <TableCell>{row.phone_number}</TableCell> */}
 
-        {/* <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )}
-        </TableCell> */}
-
-        {/* <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell> */}
-
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-            <MenuItem onClick={handleEditOpen}>
+<TableCell align="center">
+        <Button onClick={handleEditOpen}>
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </Button>
 
-          <MenuItem onClick={handleClickOpen} sx={{ color: 'error.main' }}>
+          <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
-        </MenuList>
-      </Popover>
-      {/* <DialogUpdate
-        title="Edit Banner"
-        open={openEdit}
-        setOpen={setOpenEdit}
-        SubmitForm={() => UpdateBanner({ id: row.id, data: { title: row.title, url_reference: row.url_reference } })}
-        SubmitFormValue={{ title: row.title, url_reference: row.url_reference }}
-      /> */}
+          </Button>
+        </TableCell>
+      </TableRow>
+      
 
       <DialogDelete 
       title="yakin untuk menghapus banner ?"

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -19,37 +19,87 @@ import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
 import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
-import { useGetBanner } from 'src/hooks/banner';
-import { useFetchFacilities } from 'src/hooks/facilities';
+import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { TextField } from '@mui/material';
+import { DialogCreate } from 'src/component/DialogCreate';
 
 export function FasilitasView() {
   const table = useTable();
-  const { data = [], isLoading, isFetching } = useFetchFacilities();
-  const [filterName, setFilterName] = useState('');
+const { data = [], isLoading, isFetching } = useFetchFacilities();
+const [filterName, setFilterName] = useState('');
+const [opened, setOpened] = useState(false);
+const queryClient = useQueryClient();
+const { enqueueSnackbar } = useSnackbar();
+const { register, handleSubmit: handleSubmitForm } = useForm();
 
-  if (isLoading || isFetching) {
-    return <Loading />;
-  }
-
-  const dataFiltered = applyFilter({
+// Menghindari re-render berulang saat data berubah
+const dataFiltered = useMemo(() => 
+  applyFilter({
     inputData: data,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
-  });
+  }), 
+  [data, table.order, table.orderBy, filterName]
+);
 
-  const notFound = !dataFiltered.length && !!filterName;
+const notFound = !dataFiltered.length && !!filterName;
 
+// Menggunakan useCallback untuk menghindari re-render
+const handleClickOpened = useCallback(() => setOpened(true), []);
+const handleClose = useCallback(() => setOpened(false), []);
+
+const { mutate, isPending: isPendingMutate } = useMutationCreateFacilities({
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
+    setOpened(false);
+    enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
+  },
+  onError: () => {
+    enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
+  },
+});
+
+// Fungsi submit juga menggunakan useCallback agar tidak dibuat ulang setiap render
+const handleCreate = useCallback(
+  (data: any) => {
+    mutate(data);
+    handleClose();
+  },
+  [mutate, handleClose]
+);
+
+if (isLoading || isFetching) {
+  return <Loading />;
+}
+
+const FieldRHF = (
+  <TextField
+    {...register('name')}
+    autoFocus
+    required
+    margin="dense"
+    id="nama"
+    label="Nama Fasilitas"
+    type="text"
+    fullWidth
+    variant="outlined"
+  />
+);
   return (
+    <>
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
           Management Fasilitas
         </Typography>
-        <Link to={router.fasilitas.create}>
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+        {/* <Link to={router.fasilitas.create}> */}
+          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleClickOpened}>
             Tambah Fasilitas
           </Button>
-        </Link>
+        {/* </Link> */}
       </Box>
 
       <Card>
@@ -77,7 +127,7 @@ export function FasilitasView() {
                 headLabel={[
                   { id: 'title_banner', label: 'Title Banner' },
                   // { id: 'title_banner', label: 'Title Banner' },
-                  { id: 'action', label: 'Action' },
+                  { id: 'action', label: 'Action',  },
                 ]}
               />
               <TableBody>
@@ -111,6 +161,17 @@ export function FasilitasView() {
         />
       </Card>
     </DashboardContent>
+     <DialogCreate 
+          pending={isPendingMutate}
+          SubmitFormValue={handleCreate}
+          open={opened}
+          title="Create Nama Fasilitas"
+          subTitle="Fasilitas untuk coliving maupun apartemen"
+          setOpen={setOpened}
+          field={FieldRHF}
+          SubmitForm={handleSubmitForm}
+          />
+    </>
   );
 }
 
