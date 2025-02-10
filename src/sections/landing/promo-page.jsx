@@ -83,12 +83,12 @@ export default function PromoPage() {
   const [sliderRef, instanceRef] = useKeenSlider({
     initial: 0,
     slides: {
-      perView: 1.2,
+      perView: 1.7, // Ubah menjadi 2 untuk 2 grid tiap slide
       spacing: 10,
     },
     breakpoints: {
-      "(min-width: 640px)": { perView: 2, spacing: 15 },
-      "(min-width: 1024px)": { perView: 3, spacing: 20 },
+      "(min-width: 640px)": { perView: 2, spacing: 15 }, // Tetap 2 untuk layar lebih besar
+      "(min-width: 1024px)": { perView: 3, spacing: 20 }, // Bisa ditingkatkan jika ingin 3 untuk layar besar
     },
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
@@ -97,6 +97,7 @@ export default function PromoPage() {
       setLoaded(true);
     },
   });
+  
 
   return (
     <Box sx={{ p: { xs: 4, md: 4 }, minHeight: '100vh' }}>

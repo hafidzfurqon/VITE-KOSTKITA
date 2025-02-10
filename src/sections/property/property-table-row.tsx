@@ -25,14 +25,15 @@ import { Tooltip } from '@mui/material';
 
 export type UserProps = {
     id?: undefined | any | number;
-    image_url: string; // Sesuai dengan 'Image'
     name: string; // 'Nama Properti'
+    city: string; // 'Nama Properti'
+    state: string; // 'Nama Properti'
     type: string; // 'Tipe'
     address: string; // 'Alamat'
     link_googlemaps: string; // 'Google Maps'
     description: string; // 'Deskripsi'
     status: string; // 'Status'
-    price: number; // 'Harga'
+    start_price: number; // 'Harga'
     action?: string; // 'Action' (opsional, karena biasanya ini berupa tombol)
   };
   
@@ -92,21 +93,21 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
   const handleSubmit = () => {
     DeleteProperty(row.id)
   }
-  const renderCover = (
-    <Box
-      component="img"
-      alt={row.name}
-      src={row.image_url}
-      sx={{
-        top: 0,
-        width: 100,
-        height: 1,
-        objectFit: 'cover',
-        borderRadius : '10px'
-        // position: 'absolute',
-      }}
-    />
-  );
+  // const renderCover = (
+  //   <Box
+  //     component="img"
+  //     alt={row.name}
+  //     src={row.image_url}
+  //     sx={{
+  //       top: 0,
+  //       width: 100,
+  //       height: 1,
+  //       objectFit: 'cover',
+  //       borderRadius : '10px'
+  //       // position: 'absolute',
+  //     }}
+  //   />
+  // );
 
   return (
     <>
@@ -115,14 +116,14 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
         <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
       </TableCell>
 
-      <TableCell>
+      {/* <TableCell>
         <Box
           component="img"
           src={row.image_url}
           alt={row.name}
           sx={{ width: 80, height: 80, borderRadius: 2, objectFit: 'cover' }}
         />
-      </TableCell>
+      </TableCell> */}
 
       <TableCell>
         <Typography variant="subtitle2" noWrap>
@@ -131,20 +132,39 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
       </TableCell>
       <TableCell>{row.type}</TableCell>
       <TableCell>{row.address}</TableCell>
+      <TableCell>{row.state?.name}</TableCell>
+      <TableCell>{row.city?.name}</TableCell>
       <TableCell>
         <a href={row.link_googlemaps} target="_blank" rel="noopener noreferrer">
           Lihat di Maps
         </a>
       </TableCell>
-      <TableCell>
+      {/* <TableCell>
         <Typography variant="body2" sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {row.description}
         </Typography>
-      </TableCell>
-      <TableCell>
-        <Typography color={row.status === 'available' ? 'green' : 'red'}>{row.status}</Typography>
-      </TableCell>
-      <TableCell>Rp {row.price.toLocaleString()}</TableCell>
+      </TableCell> */}
+
+<TableCell>
+  <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box 
+      sx={{ 
+        width: 10, 
+        height: 10, 
+        borderRadius: '50%', 
+        
+        bgcolor: row.status === 'available' ? 'green' : 'red', 
+        mr: 1 
+      }} 
+    />
+    <Typography color={row.status === 'available' ? 'green' : 'red'}>
+      {row.status}
+    </Typography>
+  </Box>
+</TableCell>
+
+
+      {/* <TableCell>Rp {row.start_price.toLocaleString()}</TableCell> */}
 
       <TableCell align="right">
         <IconButton onClick={handleOpenPopover}>

@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 
 import { Box } from '@mui/material';
+import "keen-slider/keen-slider.min.css";
+import { useKeenSlider } from "keen-slider/react";
 
 
 const carouselImages = [

@@ -50,6 +50,7 @@
     "react-dom": "^18.3.1",
     "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.54.2",
+    "react-number-format": "^5.4.3",
     "react-router-dom": "^6.26.1",
     "simplebar-react": "^3.2.6",
     "yet-another-react-lightbox": "^3.12.0",
