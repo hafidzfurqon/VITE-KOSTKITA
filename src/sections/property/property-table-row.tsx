@@ -26,8 +26,14 @@ import { Tooltip } from '@mui/material';
 export type UserProps = {
     id?: undefined | any | number;
     name: string; // 'Nama Properti'
-    city: string; // 'Nama Properti'
-    state: string; // 'Nama Properti'
+    city:  {
+      name : string,
+      
+    }; // 'Nama Properti'
+    state: {
+      name : string,
+      
+    }; // 'Nama Properti'
     type: string; // 'Tipe'
     address: string; // 'Alamat'
     link_googlemaps: string; // 'Google Maps'
