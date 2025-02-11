@@ -33,7 +33,7 @@ const [filterName, setFilterName] = useState('');
 const [opened, setOpened] = useState(false);
 const queryClient = useQueryClient();
 const { enqueueSnackbar } = useSnackbar();
-const { register, handleSubmit: handleSubmitForm } = useForm();
+const { register, handleSubmit: handleSubmitForm, reset } = useForm();
 
 // Menghindari re-render berulang saat data berubah
 const dataFiltered = useMemo(() => 
@@ -56,6 +56,7 @@ const { mutate, isPending: isPendingMutate } = useMutationCreateFacilities({
     queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
     setOpened(false);
     enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
+    reset();
   },
   onError: () => {
     enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });

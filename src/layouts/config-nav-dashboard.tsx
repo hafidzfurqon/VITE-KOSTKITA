@@ -9,6 +9,9 @@ const icon = (name: string) => (
 const Anothericon = (name: string) => (
   <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
 );
+const iconsNavbar = (name: string) => (
+  <SvgColor width="100%" height="100%" src={`/assets/icons/notification/${name}.svg`} />
+);
 const Kegiatanicon = (name: string) => (
   <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
 );
@@ -22,7 +25,7 @@ export const navData = [
   {
     title: 'Banner',
     path: '/banner',
-    icon: Anothericon('ic-glass-message'),
+    icon: iconsNavbar('ic-notification-mail'),
   },
   {
     title: 'Property',

@@ -10,11 +10,14 @@ import PropertyGrid from './property-grid';
 import Footer from './footer';
 import PromoPage from './promo-page';
 import PropertyBudget from './property-budget';
+// import { useFetchBannerPublic } from 'src/hooks/banner';
 // import { TourListView } from '../tour/view';
 
 
 
 export function LandingPage() {
+  // const {data : Banners} = useFetchBannerPublic()
+  // console.log(Banners);
   const WhatsAppButton = (
     <Box
     sx={{
