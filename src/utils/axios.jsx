@@ -56,7 +56,7 @@ axiosInstance.interceptors.response.use(
         const token = sessionStorage.getItem("token"); 
         const refresh_token = sessionStorage.getItem("refresh_token"); 
         if (!refresh_token) {
-          throw new Error("No refresh token available");
+          throw new Error("Sesi anda telah berakhir, Silahkan login");
         }
 
         const { data } = await axiosInstance.post("/api/refresh_token", {
@@ -138,6 +138,10 @@ export const fetcher = async (args) => {
       create : '/api/admin/banner/create',
       update : '/api/admin/banner/update', //need id here
       delete : '/api/admin/banner/delete', //need id here
+      public : {
+        list : '/api/public/banner/all',
+        detail : '/api/public/banner/detail'
+      }
     },
     property : {
       list : '/api/admin/property/list',

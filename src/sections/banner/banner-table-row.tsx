@@ -16,7 +16,7 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useDeleteBanner,useUpdateBanner } from 'src/hooks/banner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
-import { DialogUpdate } from 'src/component/DialogUpdate';
+
 import { Button } from '@mui/material';
 
 // ----------------------------------------------------------------------

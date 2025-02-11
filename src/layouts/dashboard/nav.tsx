@@ -117,8 +117,7 @@ export function NavMobile({
 
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
   const pathname = usePathname();
-
-  return (
+  return (  
     <>
       {/* <Logo /> */}
       <Box
@@ -143,8 +142,8 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
         <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
           <Box component="ul" gap={0.5} display="flex" flexDirection="column">
             {data.map((item) => {
-              const isActived = item.path === pathname;
-
+              const isActived = pathname.startsWith(item.path);
+              // console.log(isActived)
               return (
                 <ListItem disableGutters disablePadding key={item.title}>
                   <ListItemButton

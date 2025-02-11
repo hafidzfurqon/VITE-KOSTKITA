@@ -12,7 +12,10 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <StrictMode>
     <HelmetProvider>
-      <BrowserRouter>
+      <BrowserRouter future={{
+       v7_relativeSplatPath: true,
+       v7_startTransition : true
+       }}>
         <Suspense>
           <App />
         </Suspense>
