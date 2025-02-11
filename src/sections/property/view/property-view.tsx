@@ -74,14 +74,16 @@ export function PropertyView() {
                   table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                    { id: 'image', label: 'Image' },
+                    // { id: 'image', label: 'Image' },
                     { id: 'name', label: 'Nama Properti' },
                     { id: 'type', label: 'Tipe' },
                     { id: 'address', label: 'Alamat' },
+                    { id: 'city', label: 'Kota' },
+                    { id: 'state', label: 'Provinsi' },
                     { id: 'link_googlemaps', label: 'Google Maps' },
-                    { id: 'description', label: 'Deskripsi' },
+                    // { id: 'description', label: 'Deskripsi' },
                     { id: 'status', label: 'Status' },
-                    { id: 'price', label: 'Harga' },
+                    // { id: 'price', label: 'Harga' },
                     { id: 'action', label: 'Action' }
                   ]}
                   

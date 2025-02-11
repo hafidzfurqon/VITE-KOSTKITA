@@ -150,5 +150,11 @@ export const fetcher = async (args) => {
       create : '/api/admin/property/create',
       update : '/api/admin/property/update', //need id here
       delete: '/api/admin/property/delete', //need id here
+    },
+    state : {
+      list : '/api/admin/state/list',
+    },
+    city : {
+      list : '/api/admin/city/list',
     }
   };
