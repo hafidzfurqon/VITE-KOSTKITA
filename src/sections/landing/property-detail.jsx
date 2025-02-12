@@ -13,6 +13,8 @@ import Lightbox, { useLightBox } from 'src/components/lightbox';
 import Image from 'src/components/image';
 import { Iconify } from 'src/components/iconify';
 import { Container } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
@@ -43,7 +45,9 @@ const TOUR_SERVICE_OPTIONS = [
 // Component utama
 export default function PropertyDetail() {
   const slides = images.map((slide) => ({ src: slide }));
-
+  const {slug} = useParams()
+  const {data, isLoading, isFetching} = useFetchPropertySlug(slug)
+  console.log(data)
   const {
     selected: selectedImage,
     open: openLightbox,
@@ -114,7 +118,7 @@ export default function PropertyDetail() {
     <Container>
       <Stack direction="row" sx={{ mb: 3 }}>
         <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          {name}
+          {data.name}
         </Typography>
 
         <IconButton>

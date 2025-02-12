@@ -152,7 +152,7 @@ export const fetcher = async (args) => {
       delete: '/api/admin/property/delete', //need id here
       public : {
         list : '/api/public/property/all',
-        detail : '/api/public/property/detail'
+        detail : '/api/public/property/detail/slug'
       }
     },
     state : {

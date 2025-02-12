@@ -126,7 +126,7 @@ export function Router() {
           <Footer/>
         </Suspense>
       ),
-      path: 'property/:id',
+      path: 'property/:slug',
     },
     {
       element: (

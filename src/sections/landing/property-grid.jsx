@@ -7,9 +7,12 @@ import { paths } from 'src/routes/paths';
 import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
+import Loading from 'src/components/loading/loading';
 
 export default function PropertyGrid() {
-  const { data } = useListProperty();
+  const { data, isLoading, isFetching } = useListProperty();
+  console.log(data);
+  
   const router = useRouter();
 
   const formatCurrency = (price) =>
@@ -19,6 +22,12 @@ export default function PropertyGrid() {
     if (type.toLowerCase().includes('apartment')) return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
+
+  if( isLoading|| isFetching) {
+    return <Loading/>
+  }
+ 
+  const Isdiscount = data.map((property) => property.discounts.map((discount) => discount.price_after_discount))
 
   return (
     <Container>
@@ -42,12 +51,19 @@ export default function PropertyGrid() {
               '&:hover': { boxShadow: 3 },
             }}
           >
-            <Link to={paths.property.details(property.id)} style={{ textDecoration: 'none', display: 'block' }}>
+            <Link to={`/property/${property.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
               <ImageSlider images={property.files} />
               <Box sx={{ p: 2 }}>
                 <Chip icon={getPropertyIcon(property.type)} label={property.type} sx={{ mb: 1, fontWeight: 600 }} />
-                <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>{property.name}</Typography>
-                <Typography variant="body2" sx={{ color: 'black', mb: 1 }}>{property.address}</Typography>
+                <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
+                  {property.name}
+                  </Typography>
+                  <Box sx={{color : 'gray'}}>
+                  <Typography variant="body2" sx={{ mb: 1 }}>{property.address},  <Box component="span" sx={{fontSize : '11px'}}>
+                     {property.city.name}
+                    </Box>
+                    </Typography>
+                  </Box>
                 {property.discount_price ? (
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="body2" sx={{ color: 'gray', textDecoration: 'line-through' }}>
@@ -56,9 +72,24 @@ export default function PropertyGrid() {
                     <Chip label="-12%" color="error" size="small" />
                   </Stack>
                 ) : null}
-                <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'green' }}>
-                  {formatCurrency(property.discount_price || property.start_price)}
+                {/* {property.} */}
+                {Isdiscount ? <>
+                 <Box sx={{display : 'flex', alignItems : 'center', color : "gray",}}> 
+                  <Typography sx={{fontSize : '14px',  mr : 1}} >mulai dari</Typography>
+                  <Typography variant="subtitle1" sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize : '12px' }}>
+                  {formatCurrency(property.start_price)}
                 </Typography>
+                </Box>
+                <Box sx={{display : 'flex', alignItems : 'center', gap : '10px'}}>
+                <Box sx={{ backgroundColor : 'red', color : 'white', fontSize : '12px', borderRadius : '10px', px : '5px'}}>
+                  -{property.discounts.map((discount) => discount.discount_value)}%
+                  </Box> 
+                <Typography variant='subtitle1' sx={{color : 'black', fontSize : '14px'}}>{formatCurrency(property.discounts.map((discount) => discount.price_after_discount))}</Typography>
+                </Box>
+                </>
+                : <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black' }}>
+                  {formatCurrency(property.discount_price || property.start_price)} / bulan
+                </Typography>}
               </Box>
             </Link>
           </Box>
