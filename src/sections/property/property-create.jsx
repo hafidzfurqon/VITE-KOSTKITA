@@ -11,14 +11,15 @@ import { useFetchFacilities } from "src/hooks/facilities";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState } from "react";
+import { MultiFilePreview, Upload } from "src/components/upload";
 
 const schema = yup.object().shape({
-   name: yup.string().required("Nama Properti wajib diisi").min(3, "Minimal 3 karakter").max(255, "Maksimal 255 karakter"),
+   name: yup.string().required("Nama Properti wajib diisi").min(3).max(255),
    type: yup.string().required("Tipe Properti wajib dipilih"),
    status: yup.string().required("Status wajib dipilih"),
-   address: yup.string().required("Alamat wajib diisi").min(3, "Minimal 3 karakter").max(255, "Maksimal 255 karakter"),
+   address: yup.string().required("Alamat wajib diisi").min(3).max(255),
    link_googlemaps: yup.string().required("Link Google Maps wajib diisi").url("Format URL tidak valid"),
-   description: yup.string().required("Deskripsi wajib diisi").min(3, "Minimal 3 karakter"),
+   description: yup.string().required("Deskripsi wajib diisi").min(3),
    state_id: yup.string().required("Provinsi wajib dipilih"),
    city_id: yup.string().required("Kota wajib dipilih"),
    price: yup.string().required("Harga wajib diisi"),
@@ -31,8 +32,9 @@ export default function PropertyCreate() {
    const routers = useRouter();
    const queryClient = useQueryClient();
    const [photoPreviews, setPhotoPreviews] = useState([]);
+   const [files, setFiles] = useState([]);
 
-   const { control, register, handleSubmit, watch, formState: { errors } } = useForm({
+   const { control, register, handleSubmit, watch, setValue, formState: { errors } } = useForm({
       resolver: yupResolver(schema),
       defaultValues: {
          name: "",
@@ -65,14 +67,16 @@ export default function PropertyCreate() {
    });
 
    const handlePhotoChange = (event) => {
-      const files = Array.from(event.target.files);
-      if (files.length > 0) {
-         setPhotoPreviews(files.map(file => URL.createObjectURL(file)));
+      const selectedFiles = Array.from(event.target.files);
+      if (selectedFiles.length > 0) {
+         setFiles([...files, ...selectedFiles]);
+         setPhotoPreviews([...photoPreviews, ...selectedFiles.map(file => URL.createObjectURL(file))]);
+         setValue("photos", [...files, ...selectedFiles]);
       }
    };
    
    const OnSubmit = (data) => {
-      if (!data.photos || data.photos.length === 0) {
+      if (files.length === 0) {
          enqueueSnackbar("Minimal satu foto harus diunggah", { variant: "error" });
          return;
       }
@@ -87,21 +91,35 @@ export default function PropertyCreate() {
       formData.append("state_id", data.state_id);
       formData.append("city_id", data.city_id);
       formData.append("price", cleanPrice(data.price));
-   
-      // Pastikan data.photos adalah array
-      const photosArray = Array.isArray(data.photos) ? data.photos : Array.from(data.photos);
-   
-      photosArray.forEach((file) => formData.append("files[]", file));
+
+      files.forEach((file) => formData.append("files[]", file));
    
       mutate(formData);
    };
    
-   
+   const handleDropMultiFile = (acceptedFiles) => {
+      const newFiles = [...files, ...acceptedFiles];
+      setFiles(newFiles);
+      setPhotoPreviews(newFiles.map(file => URL.createObjectURL(file)));
+      setValue("photos", newFiles);
+   };
+
+   const handleRemoveFile = (file) => {
+      const filteredFiles = files.filter(f => f !== file);
+      setFiles(filteredFiles);
+      setPhotoPreviews(filteredFiles.map(f => URL.createObjectURL(f)));
+      setValue("photos", filteredFiles);
+   };
+
+   const handleRemoveAllFiles = () => {
+      setFiles([]);
+      setPhotoPreviews([]);
+      setValue("photos", []);
+   };
    
    const cleanPrice = (price) => {
       return parseInt(price.replace(/[^\d]/g, ""), 10);
    };
-   
 
    return (
       <Container>
@@ -120,23 +138,6 @@ export default function PropertyCreate() {
                   <TextField {...register('address')} label="Alamat" fullWidth error={!!errors.address} helperText={errors.address?.message} />
                   <TextField {...register('link_googlemaps')} label="Link Google Maps" fullWidth error={!!errors.link_googlemaps} helperText={errors.link_googlemaps?.message} />
                   <TextField {...register('description')} label="Deskripsi" fullWidth multiline rows={3} error={!!errors.description} helperText={errors.description?.message} />
-
-                  <TextField select {...register('status')} defaultValue="" label="Status" fullWidth error={!!errors.status} helperText={errors.status?.message}>
-                     <MenuItem value="available">Available</MenuItem>
-                     <MenuItem value="unavailable">Unavailable</MenuItem>
-                  </TextField>
-
-                  <TextField select {...register('state_id')} defaultValue="" label="Provinsi" fullWidth disabled={isLoadingStates} error={!!errors.state_id} helperText={errors.state_id?.message}>
-                     {states?.map((state) => (
-                        <MenuItem key={state.state_code} value={state.state_code}>{state.name}</MenuItem>
-                     ))}
-                  </TextField>
-
-                  <TextField select {...register('city_id')} defaultValue="" label="Kota" fullWidth disabled={isLoadingCities || !selectedState} error={!!errors.city_id} helperText={errors.city_id?.message}>
-                     {cities?.map((city) => (
-                        <MenuItem key={city.city_code} value={city.city_code}>{city.name}</MenuItem>
-                     ))}
-                  </TextField>
 
                   <Controller
                      name="price"
@@ -159,42 +160,18 @@ export default function PropertyCreate() {
                   <FormLabel>Fasilitas</FormLabel>
                   <FormGroup>
                      {facilities?.map((facility) => (
-                        <FormControlLabel
-                           key={facility.id}
-                           control={<Checkbox {...register("facilities")} value={facility.id} />}
-                           label={facility.name}
-                        />
+                        <FormControlLabel key={facility.id} control={<Checkbox {...register("facilities")} value={facility.id} />} label={facility.name} />
                      ))}
                   </FormGroup>
 
-                  {/* Input File untuk Foto */}
                   <FormLabel>Upload Foto</FormLabel>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    {...register("photos", { required: "Minimal satu foto harus diunggah" })}
-                    onChange={(e) => {
-                    handlePhotoChange(e);
-                    setValue("photos", Array.from(e.target.files) || []); // Menyimpan file ke state React Hook Form
-                  }}
-                  />
-
+                  <Upload multiple files={files} onDrop={handleDropMultiFile} onRemove={handleRemoveFile} onRemoveAll={handleRemoveAllFiles} />
                   {errors.photos && <Typography color="error">{errors.photos.message}</Typography>}
-
-                  {/* Preview Foto */}
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                     {photoPreviews.map((src, index) => (
-                        <img key={index} src={src} alt={`preview-${index}`} width={100} height={100} style={{ borderRadius: 8 }} />
-                     ))}
+                     {photoPreviews.map((src, index) => <img key={index} src={src} alt={`preview-${index}`} width={100} height={100} style={{ borderRadius: 8 }} />)}
                   </Box>
 
-                  <Box sx={{ display: 'flex', gap: 2, py: 2 }}>
-                     <Button type="submit" variant="contained" disabled={isPending}>Submit</Button>
-                     <Link to={router.property.list}>
-                        <Button variant="outlined">Kembali</Button>
-                     </Link>
-                  </Box>
+                  <Button type="submit" variant="contained" disabled={isPending}>Submit</Button>
                </Stack>
             </Box>
          </form>
