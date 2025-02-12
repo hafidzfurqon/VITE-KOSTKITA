@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 // assets
 import { UploadIllustration } from 'src/assets/illustrations';
 //
-import Iconify from '../iconify';
+import {Iconify} from '../iconify';
 //
 import RejectionFiles from './errors-rejection-files';
 import MultiFilePreview from './preview-multi-file';

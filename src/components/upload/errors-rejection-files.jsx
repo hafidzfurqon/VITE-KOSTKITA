@@ -7,7 +7,8 @@ import Typography from '@mui/material/Typography';
 // utils
 import { fData } from 'src/utils/format-number';
 //
-import { fileData } from '../file-thumbnail';
+import { fileData } from './file-thumbnail';
+
 
 // ----------------------------------------------------------------------
 

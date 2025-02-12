@@ -1,2 +1,2 @@
-export * from '../background-shape'
-export * from '../upload-illustration'
+// export * from '../background-shape'
+export { default as UploadIllustration } from '../upload-illustration';

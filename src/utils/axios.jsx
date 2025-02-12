@@ -150,6 +150,10 @@ export const fetcher = async (args) => {
       create : '/api/admin/property/create',
       update : '/api/admin/property/update', //need id here
       delete: '/api/admin/property/delete', //need id here
+      public : {
+        list : '/api/public/property/all',
+        detail : '/api/public/property/detail'
+      }
     },
     state : {
       list : '/api/admin/state/list',
