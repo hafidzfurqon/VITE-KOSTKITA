@@ -106,10 +106,6 @@ export function Router() {
             path: '',
             element: <FasilitasPage/>,
           },
-          {
-            path: 'create',
-            element: <div>Helo world...</div>,
-            },
           ],
         },
       ],
