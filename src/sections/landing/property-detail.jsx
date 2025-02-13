@@ -16,7 +16,6 @@ import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import Loading from 'src/components/loading/loading';
-import Loading from 'src/components/loading/loading';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
