@@ -107,20 +107,12 @@ export function LandingPage() {
             <CategorySection />
             {/* <TourListView /> */}
             <PropertyGrid/>
-        <PromoPage/>
-
-        <PropertyBudget/>
-
+            <PromoPage/>
+            <PropertyBudget/>
           </Box>
-        </SimpleBar>
-
-
-
-
-      {/* </Box> */}
-
-      <Footer/>
-    </Box>
+         </SimpleBar>
+        <Footer/>
+      </Box>
     {WhatsAppButton}
     </>
   );
