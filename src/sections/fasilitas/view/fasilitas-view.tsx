@@ -126,7 +126,7 @@ const FieldRHF = (
                   table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                  { id: 'title_banner', label: 'Title Banner' },
+                  { id: 'nama', label: 'Nama' },
                   // { id: 'title_banner', label: 'Title Banner' },
                   { id: 'action', label: 'Action',  },
                 ]}
