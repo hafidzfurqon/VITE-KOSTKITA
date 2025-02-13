@@ -88,7 +88,7 @@ export default function PropertyGrid() {
                 </Box>
                 </>
                 : <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black' }}>
-                  {formatCurrency(property.discount_price || property.start_price)} / bulan
+                  {formatCurrency(property.start_price)} / bulan
                 </Typography>}
               </Box>
             </Link>

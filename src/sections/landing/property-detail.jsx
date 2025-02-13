@@ -15,6 +15,7 @@ import { Iconify } from 'src/components/iconify';
 import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
+import Loading from 'src/components/loading/loading';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
@@ -46,8 +47,8 @@ const TOUR_SERVICE_OPTIONS = [
 export default function PropertyDetail() {
   const slides = images.map((slide) => ({ src: slide }));
   const {slug} = useParams()
-  const {data, isLoading, isFetching} = useFetchPropertySlug(slug)
-  console.log(data)
+  const {data = [], isLoading, isFetching} = useFetchPropertySlug(slug)
+
   const {
     selected: selectedImage,
     open: openLightbox,
@@ -112,7 +113,9 @@ export default function PropertyDetail() {
       />
     </>
   );
-
+  if(isLoading || isFetching) {
+    return <Loading/>
+  }
   const renderHead = (
     <>
     <Container>
