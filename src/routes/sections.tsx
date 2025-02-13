@@ -121,7 +121,7 @@ export function Router() {
     {
       element: (
         <Suspense fallback={renderFallback}>
-        <Header/>
+          <Header/>
           <PropertyDetail />
           <Footer/>
         </Suspense>
