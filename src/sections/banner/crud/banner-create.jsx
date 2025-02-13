@@ -1,8 +1,10 @@
 import { Box, Button, Container, Stack, TextField, Typography, FormLabel } from "@mui/material";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
+import path from "path";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import CustomBreadcrumbs from "src/components/custom-breadcrumbs";
 import { useCreateBanner } from "src/hooks/banner";
 import { router } from "src/hooks/routing/useRouting";
 import { useRouter } from "src/routes/hooks";
@@ -36,6 +38,31 @@ export default function BannerCreate() {
    <>
    <Container>
    <Typography variant="h4">Tambah Banner baru disini</Typography>
+   <CustomBreadcrumbs
+        heading="List"
+        links={[
+          { name: 'Dashboard', href: paths.dashboard.root },
+          {
+            name: 'Tour',
+            href: path.dashboard.tour.root,
+          },
+          { name: 'List' },
+        ]}
+        action={
+          <Button
+            component={RouterLink}
+            href={path.dashboard.tour.new}
+            variant="contained"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
+            New Tour
+          </Button>
+        }
+        sx={{
+          mb: { xs: 3, md: 5 },
+        }}
+      />
+
    <Box sx={{ mt: 5 }}>
     <Box component='form' onSubmit={handleSubmit(OnSubmit)}>
     <Stack spacing={3}>
