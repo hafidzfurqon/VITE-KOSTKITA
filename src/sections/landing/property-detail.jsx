@@ -16,6 +16,7 @@ import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import Loading from 'src/components/loading/loading';
+import Loading from 'src/components/loading/loading';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
@@ -26,29 +27,34 @@ const tourGuides = [
   { name: "Jane Smith", phoneNumber: "+62 811 2233 4455" }
 ];
 const available = { startDate: "2024-08-01", endDate: "2024-08-15" };
-const durations = "5 Days / 4 Nights";
-const services = ["Hotel", "Transport", "Guide", "Food"];
+// const durations = "5 Days / 4 Nights";
+// const services = ["Hotel", "Transport", "Guide", "Food"];
 const images = [
-    "https://via.placeholder.com/500x500.png?text=Image+1",
-    "https://via.placeholder.com/500x500.png?text=Image+2",
-    "https://via.placeholder.com/500x500.png?text=Image+3",
-    "https://via.placeholder.com/500x500.png?text=Image+4",
-    "https://via.placeholder.com/500x500.png?text=Image+5"
+  {
+   name : "https://via.placeholder.com/500x500.png?text=Image+1"
+  }
+   
 ];
-const content = "This is an amazing tour package that takes you through the beauty of Bali.";
-const TOUR_SERVICE_OPTIONS = [
-  { label: "Hotel" },
-  { label: "Transport" },
-  { label: "Guide" },
-  { label: "Food" }
-];
+// const content = "This is an amazing tour package that takes you through the beauty of Bali.";
+// const TOUR_SERVICE_OPTIONS = [
+//   { label: "Hotel" },
+//   { label: "Transport" },
+//   { label: "Guide" },
+//   { label: "Food" }
+// ];
 
 // Component utama
 export default function PropertyDetail() {
-  const slides = images.map((slide) => ({ src: slide }));
+  const slides = images.map((image) => image.name);
   const {slug} = useParams()
-  const {data = [], isLoading, isFetching} = useFetchPropertySlug(slug)
-
+  const { data = [], isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  const allFiles = data?.files?.map((file) => file)
+  if(allFiles) {
+    console.log(allFiles.map((files) => files.file_url))
+  }
+  // console.log()
+  console.log("Data:", data);
+  
   const {
     selected: selectedImage,
     open: openLightbox,
@@ -70,18 +76,19 @@ export default function PropertyDetail() {
         }}
       >
         <m.div
-          key={slides[0].src}
+          key={slides.src}
           whileHover="hover"
           variants={{ hover: { opacity: 0.8 } }}
           transition={{}}
         >
           <Image
-  alt={slides[0].src}
-  src={slides[0].src}
-  ratio="1/1"
-  onClick={() => handleOpenLightbox(slides[0].src)}
-  sx={{ borderRadius: 2, cursor: 'pointer', width: '100%', height: 'auto' }}
-/>
+          alt={slides.src}
+          src={slides.src}
+          ratio="1/1"
+          onClick={() => handleOpenLightbox(slides.src)}
+          sx={{ borderRadius: 2, cursor: 'pointer', width: '100%', height: 'auto' }}
+         />
+         <img src={data.files}/>
 
         </m.div>
 
@@ -120,9 +127,10 @@ export default function PropertyDetail() {
     <>
     <Container>
       <Stack direction="row" sx={{ mb: 3 }}>
-        <Typography variant="h4" sx={{ flexGrow: 1 }}>
-          {data.name}
-        </Typography>
+      <Typography variant="h4" sx={{ flexGrow: 1 }}>
+  {data?.name || "Loading..."}
+</Typography>
+
 
         <IconButton>
           <Iconify icon="solar:share-bold" />
@@ -180,17 +188,17 @@ export default function PropertyDetail() {
         },
         {
           label: 'Contact name',
-          value: tourGuides.map((guide) => guide.name).join(', '),
+          value: tourGuides?.map((guide) => guide.name).join(', '),
           icon: <Iconify icon="solar:user-rounded-bold" />,
         },
-        {
-          label: 'Durations',
-          value: durations,
-          icon: <Iconify icon="solar:clock-circle-bold" />,
-        },
+        // {
+        //   label: 'Durations',
+        //   value: durations,
+        //   icon: <Iconify icon="solar:clock-circle-bold" />,
+        // },
         {
           label: 'Contact phone',
-          value: tourGuides.map((guide) => guide.phoneNumber).join(', '),
+          value: tourGuides?.map((guide) => guide.phoneNumber).join(', '),
           icon: <Iconify icon="solar:phone-bold" />,
         },
       ].map((item) => (
@@ -220,7 +228,7 @@ export default function PropertyDetail() {
         <Container>
         <Box sx={{ width: '100%', height: 400, mb: 5 }}>
           <iframe
-            src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.4076172379855!2d115.23597717522925!3d-8.652726191394335!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd241ccad458ded%3A0x594d84b0149481ae!2sAmazing%20Bali%20Tour!5e0!3m2!1sid!2sid!4v1738828006668!5m2!1sid!2sid`}
+            src={data?.link_googlemaps}
             width="100%"
             height="100%"
             style={{ border: 0 }}

@@ -3,6 +3,7 @@ export const paths = {
       root: `/property`,
       new: `/property/new`,
       details: (id) => `/property/${id}`,
+      slug: (slug) => `/property/${slug}`,
       edit: (id) => `/property/edit/${id}`,
       demo: {
         details: (id) => `/property/demo/${id}`,

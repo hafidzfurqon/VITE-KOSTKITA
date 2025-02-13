@@ -64,7 +64,7 @@ export default function PropertyGrid() {
                     </Box>
                     </Typography>
                   </Box>
-                {property.discount_price ? (
+                {property.discount_prifile_urlce ? (
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <Typography variant="body2" sx={{ color: 'gray', textDecoration: 'line-through' }}>
                       {formatCurrency(property.start_price)}
