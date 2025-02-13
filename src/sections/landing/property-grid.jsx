@@ -27,8 +27,7 @@ export default function PropertyGrid() {
     return <Loading/>
   }
  
-  const Isdiscount = data.map((property) => property.discounts.map((discount) => discount.price_after_discount))
-
+  
   return (
     <Container>
       <Box
@@ -40,7 +39,9 @@ export default function PropertyGrid() {
           mb: 4,
         }}
       >
-        {data?.map((property) => (
+        {data?.map((property) => {
+           const hasDiscount = property.discounts.length > 0;
+          return (
           <Box
             key={property.id}
             sx={{
@@ -59,10 +60,7 @@ export default function PropertyGrid() {
                   {property.name}
                   </Typography>
                   <Box sx={{color : 'gray'}}>
-                  <Typography variant="body2" sx={{ mb: 1 }}>{property.address},  <Box component="span" sx={{fontSize : '11px'}}>
-                     {property.city.name}
-                    </Box>
-                    </Typography>
+                  <Typography variant="body2" sx={{ mb: 1, fontSize : '12px' }}>{property.address}, {property.city.name}</Typography>
                   </Box>
                 {property.discount_prifile_urlce ? (
                   <Stack direction="row" alignItems="center" spacing={1}>
@@ -73,27 +71,36 @@ export default function PropertyGrid() {
                   </Stack>
                 ) : null}
                 {/* {property.} */}
-                {Isdiscount ? <>
-                 <Box sx={{display : 'flex', alignItems : 'center', color : "gray",}}> 
-                  <Typography sx={{fontSize : '14px',  mr : 1}} >mulai dari</Typography>
-                  <Typography variant="subtitle1" sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize : '12px' }}>
-                  {formatCurrency(property.start_price)}
-                </Typography>
-                </Box>
-                <Box sx={{display : 'flex', alignItems : 'center', gap : '10px'}}>
-                <Box sx={{ backgroundColor : 'red', color : 'white', fontSize : '12px', borderRadius : '10px', px : '5px'}}>
-                  -{property.discounts.map((discount) => discount.discount_value)}%
-                  </Box> 
-                <Typography variant='subtitle1' sx={{color : 'black', fontSize : '14px'}}>{formatCurrency(property.discounts.map((discount) => discount.price_after_discount))}</Typography>
-                </Box>
-                </>
-                : <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black' }}>
-                  {formatCurrency(property.start_price)} / bulan
-                </Typography>}
+                
+                {hasDiscount ? (
+                  <>
+                    <Box sx={{ display: 'flex', alignItems: 'center', color: "gray" }}>
+                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                      <Typography variant="subtitle1" sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}>
+                        {formatCurrency(property.start_price)}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Box sx={{ backgroundColor: 'red', color: 'white', fontSize: '12px', borderRadius: '10px', px: '5px' }}>
+                        -{property.discounts.map((discount) => discount.discount_value)}%
+                      </Box>
+                      <Typography variant='subtitle1' sx={{ color: 'black', fontSize: '14px' }}>
+                        {formatCurrency(property.discounts.map((discount) => discount.price_after_discount))}
+                      </Typography>
+                    </Box>
+                  </>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black', fontSize : 
+                    '14px'
+                   }}>
+                    {formatCurrency(property.start_price)} / bulan
+                  </Typography>
+                )}
               </Box>
             </Link>
           </Box>
-        ))}
+          )
+      })}
       </Box>
     </Container>
   );

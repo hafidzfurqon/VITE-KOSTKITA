@@ -48,13 +48,13 @@ export const navData = [
     ),
   },
   {
-    title: 'apartement',
+    title: 'promo',
     path: '/blog',
-    icon: icon('ic-blog'),
+    icon:  Anothericon('ic-glass-buy'),
   },
   {
     title: 'Fasilitas',
     path: '/fasilitas',
-    icon:   Anothericon('ic-glass-bag'),
+    icon: Anothericon('ic-glass-bag'),
   },
 ];

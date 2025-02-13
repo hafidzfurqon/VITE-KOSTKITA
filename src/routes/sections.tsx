@@ -100,7 +100,7 @@ export function Router() {
           ],
         },
         {
-           path: 'fasilitas',
+        path: 'fasilitas',
         children: [
           {
             path: '',

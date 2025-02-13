@@ -25,6 +25,8 @@ export type PostItemProps = {
   totalShares: number;
   totalComments: number;
   totalFavorites: number;
+  name :string;
+  created_at : string | any;
   postedAt: string | number | null;
   author: {
     name: string;
@@ -43,22 +45,21 @@ export function PostItem({
   latestPost: boolean;
   latestPostLarge: boolean;
 }) {
-  const renderAvatar = (
-    <Avatar
-      alt={post.author.name}
-      src={post.author.avatarUrl}
-      sx={{
-        left: 24,
-        zIndex: 9,
-        bottom: -24,
-        position: 'absolute',
-        ...((latestPostLarge || latestPost) && {
-          top: 24,
-        }),
-      }}
-    />
-  );
-
+  // const renderAvatar = (
+  //   <Avatar
+  //     alt={post.name}
+  //     src={post.author.avatarUrl}
+  //     sx={{
+  //       left: 24,
+  //       zIndex: 9,
+  //       bottom: -24,
+  //       position: 'absolute',
+  //       ...((latestPostLarge || latestPost) && {
+  //         top: 24,
+  //       }),
+  //     }}
+  //   />
+  // );
   const renderTitle = (
     <Link
       color="inherit"
@@ -76,7 +77,7 @@ export function PostItem({
         }),
       }}
     >
-      {post.title}
+      {post.name}
     </Link>
   );
 
@@ -117,7 +118,7 @@ export function PostItem({
     <Box
       component="img"
       alt={post.title}
-      src={post.coverUrl}
+      src={`https://images.rukita.co/promotions/promotion/af7a7d1a-8b6.jpg?tr=c-at_max%2Cw-1440`}
       sx={{
         top: 0,
         width: 1,
@@ -141,7 +142,7 @@ export function PostItem({
         }),
       }}
     >
-      {fDate(post.postedAt)}
+      {fDate(post.created_at)}
     </Typography>
   );
 
@@ -186,8 +187,8 @@ export function PostItem({
           }),
         })}
       >
-        {renderShape}
-        {renderAvatar}
+        {/* {renderShape} */}
+        {/* {renderAvatar} */}
         {renderCover}
       </Box>
 

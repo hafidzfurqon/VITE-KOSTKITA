@@ -14,6 +14,8 @@ import { Iconify } from 'src/components/iconify';
 import { PostItem } from '../post-item';
 import { PostSort } from '../post-sort';
 import { PostSearch } from '../post-search';
+import { useFetchPromo } from 'src/hooks/promo';
+import Loading from 'src/components/loading/loading';
 
 // ----------------------------------------------------------------------
 
@@ -24,11 +26,18 @@ export function BlogView() {
     setSortBy(newSort);
   }, []);
 
+  const {data, isFetching, isPending} = useFetchPromo();
+
+  if(isFetching || isPending) {
+    return <Loading/>
+  }
+
+  console.log(data)
   return (
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Blog
+          Management Promo
         </Typography>
         <Button
           variant="contained"
@@ -53,7 +62,7 @@ export function BlogView() {
       </Box>
 
       <Grid container spacing={3}>
-        {_posts.map((post, index) => {
+        {data.map((post : any, index : number) => {
           const latestPostLarge = index === 0;
           const latestPost = index === 1 || index === 2;
 

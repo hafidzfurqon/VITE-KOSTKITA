@@ -160,5 +160,9 @@ export const fetcher = async (args) => {
     },
     city : {
       list : '/api/admin/city/list',
+    },
+    promo : {
+      list : "/api/admin/discount/list",
+      create : "/api/admin/discount/create"
     }
   };
