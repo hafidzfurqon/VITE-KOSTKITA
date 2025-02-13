@@ -26,21 +26,7 @@ const tourGuides = [
   { name: "Jane Smith", phoneNumber: "+62 811 2233 4455" }
 ];
 const available = { startDate: "2024-08-01", endDate: "2024-08-15" };
-// const durations = "5 Days / 4 Nights";
-// const services = ["Hotel", "Transport", "Guide", "Food"];
-const images = [
-  {
-   name : "https://via.placeholder.com/500x500.png?text=Image+1"
-  }
-   
-];
-// const content = "This is an amazing tour package that takes you through the beauty of Bali.";
-// const TOUR_SERVICE_OPTIONS = [
-//   { label: "Hotel" },
-//   { label: "Transport" },
-//   { label: "Guide" },
-//   { label: "Food" }
-// ];
+
 
 // Component utama
 export default function PropertyDetail() {
@@ -73,20 +59,20 @@ export default function PropertyDetail() {
         }}
       >
         <m.div
-          key={slides.src}
+          key={slides[0].src}
           whileHover="hover"
-          variants={{ hover: { opacity: 0.8 } }}
-          transition={{}}
+          variants={{
+            hover: { opacity: 0.8 },
+          }}
+          transition={varTranHover()}
         >
           <Image
-          alt={slides.src}
-          src={slides.src}
-          ratio="1/1"
-          onClick={() => handleOpenLightbox(slides.src)}
-          sx={{ borderRadius: 2, cursor: 'pointer', width: '100%', height: 'auto' }}
-         />
-         <img src={data.files}/>
-
+            alt={slides[0].src}
+            src={slides[0].src}
+            ratio="1/1"
+            onClick={() => handleOpenLightbox(slides[0].src)}
+            sx={{ borderRadius: 2, cursor: 'pointer' }}
+          />
         </m.div>
 
         <Box gap={1} display="grid" gridTemplateColumns="repeat(2, 1fr)">
@@ -94,8 +80,10 @@ export default function PropertyDetail() {
             <m.div
               key={slide.src}
               whileHover="hover"
-              variants={{ hover: { opacity: 0.8 } }}
-              transition={{}}
+              variants={{
+                hover: { opacity: 0.8 },
+              }}
+              transition={varTranHover()}
             >
               <Image
                 alt={slide.src}
@@ -117,6 +105,8 @@ export default function PropertyDetail() {
       />
     </>
   );
+  
+  
   if(isLoading || isFetching) {
     return <Loading/>
   }

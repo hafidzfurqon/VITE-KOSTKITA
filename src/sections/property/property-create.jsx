@@ -2,10 +2,8 @@ import { Box, Button, Container, Stack, TextField, Typography, FormLabel, MenuIt
 import { useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import { useForm, Controller } from "react-hook-form";
-import { Link } from "react-router-dom";
 import { NumericFormat } from "react-number-format";
 import { useCreateProperty, useGetCity, useGetState } from "src/hooks/property";
-import { router } from "src/hooks/routing/useRouting";
 import { useRouter } from "src/routes/hooks";
 import { useFetchFacilities } from "src/hooks/facilities";
 import * as yup from "yup";
@@ -23,13 +21,14 @@ const schema = yup.object().shape({
    state_id: yup.string().required("Provinsi wajib dipilih"),
    city_id: yup.string().required("Kota wajib dipilih"),
    price: yup.string().required("Harga wajib diisi"),
+   payment_type: yup.string().required("Tipe pembayaran wajib diisi"),
    facilities: yup.array(),
    photos: yup.mixed().required("Minimal satu foto harus diunggah"),
 });
 
 export default function PropertyCreate() {
    const { enqueueSnackbar } = useSnackbar();
-   const routers = useRouter();
+   const router = useRouter();
    const queryClient = useQueryClient();
    const [photoPreviews, setPhotoPreviews] = useState([]);
    const [files, setFiles] = useState([]);
@@ -46,19 +45,20 @@ export default function PropertyCreate() {
          state_id: "",
          city_id: "",
          price: "",
+         payment_type: "",
          facilities: [],
          photos: [],
       }
    });
 
-   const { data: states = [], isLoading: isLoadingStates } = useGetState();
+   const { data: states = [] } = useGetState();
    const selectedState = watch("state_id", "");
-   const { data: cities = [], isLoading: isLoadingCities } = useGetCity(selectedState);
+   const { data: cities = [] } = useGetCity(selectedState);
    const { data: facilities = [] } = useFetchFacilities();
    const { mutate, isPending } = useCreateProperty({
       onSuccess: () => {
          queryClient.invalidateQueries({ queryKey: ['list.property'] });
-         routers.push('/property');
+         router.push('/property');
          enqueueSnackbar('Properti berhasil ditambahkan', { variant: 'success' });
       },
       onError: () => {
@@ -66,21 +66,12 @@ export default function PropertyCreate() {
       }
    });
 
-   const handlePhotoChange = (event) => {
-      const selectedFiles = Array.from(event.target.files);
-      if (selectedFiles.length > 0) {
-         setFiles([...files, ...selectedFiles]);
-         setPhotoPreviews([...photoPreviews, ...selectedFiles.map(file => URL.createObjectURL(file))]);
-         setValue("photos", [...files, ...selectedFiles]);
-      }
-   };
-   
    const OnSubmit = (data) => {
       if (files.length === 0) {
          enqueueSnackbar("Minimal satu foto harus diunggah", { variant: "error" });
          return;
       }
-   
+
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("type", data.type);
@@ -91,12 +82,13 @@ export default function PropertyCreate() {
       formData.append("state_id", data.state_id);
       formData.append("city_id", data.city_id);
       formData.append("price", cleanPrice(data.price));
+      formData.append("payment_type", data.payment_type);
 
       files.forEach((file) => formData.append("files[]", file));
-   
+
       mutate(formData);
    };
-   
+
    const handleDropMultiFile = (acceptedFiles) => {
       const newFiles = [...files, ...acceptedFiles];
       setFiles(newFiles);
@@ -116,7 +108,7 @@ export default function PropertyCreate() {
       setPhotoPreviews([]);
       setValue("photos", []);
    };
-   
+
    const cleanPrice = (price) => {
       return parseInt(price.replace(/[^\d]/g, ""), 10);
    };
@@ -127,7 +119,7 @@ export default function PropertyCreate() {
             <Typography variant="h4">Tambah Properti Baru</Typography>
             <Box sx={{ mt: 5 }}>
                <Stack spacing={3}>
-                  <TextField {...register('name')} label="Nama Properti" fullWidth error={!!errors.name} helperText={errors.name?.message}/>
+                  <TextField {...register('name')} label="Nama Properti" fullWidth error={!!errors.name} helperText={errors.name?.message} />
 
                   <TextField select {...register('type')} defaultValue="" label="Tipe Properti" fullWidth error={!!errors.type} helperText={errors.type?.message}>
                      <MenuItem value="Coliving">Coliving</MenuItem>
@@ -157,6 +149,8 @@ export default function PropertyCreate() {
                      )}
                   />
 
+                  <TextField {...register('payment_type')} label="Tipe Pembayaran" fullWidth error={!!errors.payment_type} helperText={errors.payment_type?.message} />
+
                   <FormLabel>Fasilitas</FormLabel>
                   <FormGroup>
                      {facilities?.map((facility) => (
@@ -168,8 +162,11 @@ export default function PropertyCreate() {
                   <Upload multiple files={files} onDrop={handleDropMultiFile} onRemove={handleRemoveFile} onRemoveAll={handleRemoveAllFiles} />
                   {errors.photos && <Typography color="error">{errors.photos.message}</Typography>}
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                     {photoPreviews.map((src, index) => <img key={index} src={src} alt={`preview-${index}`} width={100} height={100} style={{ borderRadius: 8 }} />)}
-                  </Box>
+                   {files.map((file, index) => (
+                  <img key={file.name || index} src={photoPreviews[index]} alt={`preview-${index}`} width={100} height={100} style={{ borderRadius: 8 }} />
+                  ))}
+                 </Box>
+
 
                   <Button type="submit" variant="contained" disabled={isPending}>Submit</Button>
                </Stack>
