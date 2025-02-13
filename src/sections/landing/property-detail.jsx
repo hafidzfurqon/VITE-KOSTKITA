@@ -44,14 +44,12 @@ const images = [
 
 // Component utama
 export default function PropertyDetail() {
-  const slides = images.map((image) => image.name);
   const {slug} = useParams()
   const { data = [], isLoading, isFetching, error } = useFetchPropertySlug(slug);
   const allFiles = data?.files?.map((file) => file)
-  if(allFiles) {
-    console.log(allFiles.map((files) => files.file_url))
-  }
-  // console.log()
+  const slides = allFiles ? allFiles.map((files) => files.file_url) : []
+  console.log(allFiles)
+  console.log(slides)
   console.log("Data:", data);
   
   const {
