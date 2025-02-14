@@ -46,65 +46,50 @@ export default function PropertyDetail() {
   } = useLightBox(slides);
 
   const renderGallery = (
-    <>
-      <Box
-        gap={1}
-        display="grid"
-        gridTemplateColumns={{
-          xs: 'repeat(1, 1fr)',
-          md: 'repeat(2, 1fr)',
-        }}
-        sx={{
-          mb: { xs: 3, md: 5 },
-        }}
-      >
-        <m.div
-          key={slides[0].src}
-          whileHover="hover"
-          variants={{
-            hover: { opacity: 0.8 },
+    <Box
+      display="flex" // Pastikan flex digunakan
+      justifyContent="center" // Posisi horizontal tengah
+      alignItems="center" // Posisi vertikal tengah (jika diperlukan)
+      flexWrap="wrap" // Agar responsif
+      gap={2}
+      sx={{ mb: { xs: 3, md: 5 } }}
+    >
+      {slides.map((src, index) => (
+        <Box 
+          key={index} 
+          onClick={() => handleOpenLightbox(index)} 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'center', 
+            alignItems: 'center', 
+            width: '100%', // Biar gambar tidak meluas berlebihan
+            maxWidth: '400px', // Batasi ukuran maksimal gambar
+            cursor: 'pointer' 
           }}
-          transition={varTranHover()}
         >
-          <Image
-            alt={slides[0].src}
-            src={slides[0].src}
-            ratio="1/1"
-            onClick={() => handleOpenLightbox(slides[0].src)}
-            sx={{ borderRadius: 2, cursor: 'pointer' }}
+          <img
+            src={src}
+            alt={`Image ${index + 1}`}
+            style={{
+              width: '100%', // Agar tetap responsif
+              height: 'auto',
+              borderRadius: '8px',
+              objectFit: 'cover',
+            }}
           />
-        </m.div>
-
-        <Box gap={1} display="grid" gridTemplateColumns="repeat(2, 1fr)">
-          {slides.slice(1, 5).map((slide) => (
-            <m.div
-              key={slide.src}
-              whileHover="hover"
-              variants={{
-                hover: { opacity: 0.8 },
-              }}
-              transition={varTranHover()}
-            >
-              <Image
-                alt={slide.src}
-                src={slide.src}
-                ratio="1/1"
-                onClick={() => handleOpenLightbox(slide.src)}
-                sx={{ borderRadius: 2, cursor: 'pointer' }}
-              />
-            </m.div>
-          ))}
         </Box>
-      </Box>
-
-      <Lightbox
-        index={selectedImage}
-        slides={slides}
-        open={openLightbox}
-        close={handleCloseLightbox}
-      />
-    </>
+      ))}
+    </Box>
   );
+  
+  // Tambahkan Lightbox agar gambar bisa diperbesar
+  <Lightbox
+    slides={slides}
+    open={openLightbox}
+    close={handleCloseLightbox}
+    selected={selectedImage}
+  />
+  
   
   
   if(isLoading || isFetching) {
@@ -142,7 +127,7 @@ export default function PropertyDetail() {
 
         <Stack direction="row" alignItems="center" spacing={0.5} sx={{ typography: 'body2' }}>
           <Iconify icon="mingcute:location-fill" sx={{ color: 'error.main' }} />
-          {destination}
+          {data.address}
         </Stack>
 
         <Stack direction="row" alignItems="center" spacing={0.5} sx={{ typography: 'subtitle2' }}>
@@ -167,41 +152,23 @@ export default function PropertyDetail() {
         md: 'repeat(2, 1fr)',
       }}
     >
-      {[
-        {
-          label: 'Available',
-          value: `${available.startDate} - ${available.endDate}`,
-          icon: <Iconify icon="solar:calendar-date-bold" />,
-        },
-        {
-          label: 'Contact name',
-          value: tourGuides?.map((guide) => guide.name).join(', '),
-          icon: <Iconify icon="solar:user-rounded-bold" />,
-        },
-        // {
-        //   label: 'Durations',
-        //   value: durations,
-        //   icon: <Iconify icon="solar:clock-circle-bold" />,
-        // },
-        {
-          label: 'Contact phone',
-          value: tourGuides?.map((guide) => guide.phoneNumber).join(', '),
-          icon: <Iconify icon="solar:phone-bold" />,
-        },
-      ].map((item) => (
-        <Stack key={item.label} spacing={1.5} direction="row">
-          {item.icon}
-          <ListItemText primary={item.label} secondary={item.value} />
-        </Stack>
-      ))}
+     
+        {/* <Typography variant="body1">{data.description}</Typography> */}
+        <Typography variant="subtitle1">Tipe: {data.type}</Typography>
+        {/* <Typography variant="subtitle1">Harga Mulai: Rp {data.start_price?.toLocaleString()}</Typography> */}
+        <Typography variant="subtitle1">Alamat: {data.address}</Typography>
+        <Typography variant="subtitle1">Kota: {data.city?.name}</Typography>
+        <Typography variant="subtitle1">Provinsi: {data.state?.name}</Typography>
+      
     </Box>
     </Container>
   );
 
   return (
     <>
+    <Stack sx={{mx: 'auto'}}>
       {renderGallery}
-
+      </Stack>
       <Stack sx={{ maxWidth: 720, mx: 'auto' }}>
         {renderHead}
 
