@@ -100,8 +100,8 @@ export default function PropertyDetail() {
     <Container>
       <Stack direction="row" sx={{ mb: 3 }}>
       <Typography variant="h4" sx={{ flexGrow: 1 }}>
-  {data?.name || "Loading..."}
-</Typography>
+      {data?.name || "Loading..."}
+    </Typography>
 
 
         <IconButton>
@@ -182,7 +182,7 @@ export default function PropertyDetail() {
         <Container>
         <Box sx={{ width: '100%', height: 400, mb: 5 }}>
           <iframe
-            src={data?.link_googlemaps}
+            src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.1660035799!2d106.8363308!3d-6.2418409!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3004387f7ad%3A0xe5f8396672af0f36!2sKementerian%20UMKM!5e0!3m2!1sid!2sid!4v1739507646343!5m2!1sid!2sid`}
             width="100%"
             height="100%"
             style={{ border: 0 }}
