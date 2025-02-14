@@ -12,11 +12,10 @@ import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
 import BannerCreate from 'src/sections/banner/crud/banner-create';
 import PropertyDetail from 'src/sections/landing/property-detail';
-import Header from 'src/sections/landing/header';
-import Footer from 'src/sections/landing/footer';
 import PropertyPage from 'src/pages/property';
 import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
+import { LandingLayout } from 'src/layouts/landing';
 
 // ----------------------------------------------------------------------
 
@@ -27,6 +26,7 @@ export const SignInPage = lazy(() => import('src/pages/sign-in'));
 export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Landing = lazy(() => import('src/pages/landing'));
+export const PromoPage = lazy(() => import('src/pages/promo'));
 
 // ----------------------------------------------------------------------
 
@@ -118,16 +118,27 @@ export function Router() {
       ),
       path: '/',
     },
-    {
-      element: (
-        <Suspense fallback={renderFallback}>
-          <Header/>
-          <PropertyDetail />
-          <Footer/>
-        </Suspense>
-      ),
-      path: 'property/:slug',
-    },
+   {
+  element: (
+    <Suspense fallback={renderFallback}>
+      <LandingLayout>
+        <PromoPage />
+      </LandingLayout>
+    </Suspense>
+  ),
+  path: "/promo",
+},
+{
+  element: (
+    <Suspense fallback={renderFallback}>
+      <LandingLayout>
+        <PropertyDetail />
+      </LandingLayout>
+    </Suspense>
+  ),
+  path: "property/:slug",
+},
+
     {
       element: (
         <AuthLayout>

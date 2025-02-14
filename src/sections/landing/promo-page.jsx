@@ -3,6 +3,7 @@ import { Box, Typography, Button } from "@mui/material";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
+import { Link } from 'react-router-dom';
 
 const promoData = [
   { id: 1, image: "https://images.rukita.co/promotions/promotion/b0c6b6fb-a44.jpg?tr=c-at_max%2Cw-800" },
@@ -75,12 +76,14 @@ export default function PromoPage() {
           <Typography variant="h3" sx={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1F2937' }}>
             Promo berlangsung
           </Typography>
+          <Link to='/promo'>
           <Button
-            sx={{ color: 'black', '&:hover': { color: 'gray' }, display: 'flex', alignItems: 'center', gap: 1, fontWeight: '500' }}
+            sx={{ color: 'black', display: 'flex', alignItems: 'center', gap: 1, fontWeight: '500' }}
             endIcon={<ArrowForwardIcon sx={{ fontSize: 20 }} />}
           >
             <Typography sx={{ textDecoration: 'underline' }}>Lihat Semua</Typography>
           </Button>
+          </Link>
         </Box>
 
         <Box sx={{ position: 'relative', cursor: 'pointer' }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>

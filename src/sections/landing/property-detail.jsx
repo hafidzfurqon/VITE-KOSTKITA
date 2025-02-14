@@ -58,22 +58,22 @@ export default function PropertyDetail() {
           mb: { xs: 3, md: 5 },
         }}
       >
-        <m.div
+        {/* <m.div
           key={slides[0].src}
           whileHover="hover"
           variants={{
             hover: { opacity: 0.8 },
           }}
           transition={varTranHover()}
-        >
+        > */}
           <Image
-            alt={slides[0].src}
-            src={slides[0].src}
+            alt={'sdsdsd'}
+            src={`http://backend-koskita.hafidzfrqn.serv00.net/storage/property_files/1/XI1eKtPgq4HyALRXzMdFJj6OraS15jsMhIyg0y3c.png`}
             ratio="1/1"
             onClick={() => handleOpenLightbox(slides[0].src)}
             sx={{ borderRadius: 2, cursor: 'pointer' }}
           />
-        </m.div>
+        {/* </m.div> */}
 
         <Box gap={1} display="grid" gridTemplateColumns="repeat(2, 1fr)">
           {slides.slice(1, 5).map((slide) => (

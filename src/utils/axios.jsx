@@ -163,6 +163,9 @@ export const fetcher = async (args) => {
     },
     promo : {
       list : "/api/admin/discount/list",
-      create : "/api/admin/discount/create"
+      create : "/api/admin/discount/create",
+      public : {
+        list : "/api/public/discount/all"
+      }
     }
   };
