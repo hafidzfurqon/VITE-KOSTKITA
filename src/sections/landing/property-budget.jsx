@@ -75,20 +75,20 @@ export default function PropertyBudget() {
                   display: 'flex',
                   gap: 1
                 }}>
-                  {property.hasVideo && (
-                    <Chip
-                      icon={<VideocamIcon />}
-                      label="Video"
-                      size="small"
-                      sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white' }}
-                    />
-                  )}
-                  <Chip
+                    {/* {property.hasVideo && (
+                      <Chip
+                        icon={<VideocamIcon />}
+                        label="Video"
+                        size="small"
+                        sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white' }}
+                      />
+                    )} */}
+                  {/* <Chip
                     icon={<ThreeSixtyIcon />}
                     label="360"
                     size="small"
                     sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white' }}
-                  />
+                  /> */}
                 </Box>
                 {property.discount && (
                   <Chip

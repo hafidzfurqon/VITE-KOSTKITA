@@ -16,6 +16,7 @@ import { Container } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import Loading from 'src/components/loading/loading';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 // Data Dummy
 const name = "Amazing Bali Tour";
@@ -63,7 +64,7 @@ export default function PropertyDetail() {
             justifyContent: 'center', 
             alignItems: 'center', 
             width: '100%', // Biar gambar tidak meluas berlebihan
-            maxWidth: '400px', // Batasi ukuran maksimal gambar
+            maxWidth: '700px', // Batasi ukuran maksimal gambar
             cursor: 'pointer' 
           }}
         >
@@ -167,6 +168,16 @@ export default function PropertyDetail() {
   return (
     <>
     <Stack sx={{mx: 'auto'}}>
+    <Box sx={{ display: 'grid', justifyContent: 'center', width: '100%' }}>
+  <CustomBreadcrumbs
+    links={[
+      { name: 'Home', href: '/' },
+      { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
+    ]}
+    sx={{ mb: { xs: 3, md: 5 } }}
+  />
+</Box>
+
       {renderGallery}
       </Stack>
       <Stack sx={{ maxWidth: 720, mx: 'auto' }}>

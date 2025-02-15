@@ -26,6 +26,35 @@ export default function PropertyGrid() {
   if( isLoading|| isFetching) {
     return <Loading/>
   }
+
+  if (!data || (Array.isArray(data) && data.length === 0)) {
+
+    return (
+      <Container sx={{ textAlign: 'center', mt: 6 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {/* <img
+            src="/assets/no-data.svg"
+            alt="No Data"
+            style={{ width: 250, marginBottom: 16 }}
+          /> */}
+          <Typography variant="h6" color="textSecondary">
+            Tidak ada data properti yang tersedia.
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            Coba lagi nanti atau cari kategori lainnya.
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+  
  
   
   return (
@@ -40,6 +69,7 @@ export default function PropertyGrid() {
         }}
       >
         {data?.map((property) => {
+          
            const hasDiscount = property.discounts.length > 0;
           return (
           <Box
@@ -130,6 +160,7 @@ function ImageSlider({ images }) {
         '&:hover .slider-arrow': { opacity: 1 },
       }}
     >
+      
       <Box ref={sliderRef} className="keen-slider">
         {images.length > 0 ? (
           images.map((image, index) => (
