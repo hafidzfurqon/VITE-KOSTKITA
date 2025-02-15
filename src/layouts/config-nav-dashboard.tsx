@@ -49,7 +49,7 @@ export const navData = [
   },
   {
     title: 'promo',
-    path: '/blog',
+    path: '/management-promo',
     icon:  Anothericon('ic-glass-buy'),
   },
   {
