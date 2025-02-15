@@ -18,4 +18,7 @@ export const router = {
     list: '/fasilitas',
     create: '/fasilitas/create',
   },
+  promo : {
+    create : '/management-promo/create'
+  }
 };

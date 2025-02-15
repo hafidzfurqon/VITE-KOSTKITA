@@ -16,6 +16,7 @@ import PropertyPage from 'src/pages/property';
 import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
 import { LandingLayout } from 'src/layouts/landing';
+import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
 
 // ----------------------------------------------------------------------
 
@@ -72,7 +73,19 @@ export function Router() {
           ],
         },
         { path: 'products', element: <ProductsPage /> },
-        { path: 'blog', element: <BlogPage /> },
+        {
+        path: 'management-promo', 
+        children: [
+        { 
+          path: '',
+          element: <BlogPage /> 
+        },
+        {
+          path: 'create',
+          element: <CreatePromo/>,
+        },
+       ]
+      },
         {
           path: 'banner',
           children: [
