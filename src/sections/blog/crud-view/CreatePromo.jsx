@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Button, Box, Container, Stack, Typography, TextField, FormLabel } from "@mui/material";
 import { useForm } from "react-hook-form";
 import ReactQuill from "react-quill";
@@ -14,17 +13,6 @@ import { useSnackbar } from "notistack";
 import { useRouter } from "src/routes/hooks";
 import { Link } from "react-router-dom";
 import { router } from "src/hooks/routing/useRouting";
-=======
-import { Button, Box, Container, Stack, Typography, TextField, FormLabel } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill';
-import { useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
-import { Grid } from '@mui/material';
-import { MenuItem } from '@mui/material';
-import { FormControlLabel } from '@mui/material';
-import { Switch } from '@mui/material';
->>>>>>> faff60054a1865dd194c631eddb9988b0bcc461f
 
 export const CreatePromo = () => {
   const {
@@ -190,7 +178,6 @@ export const CreatePromo = () => {
           <ReactQuill theme="snow" value={description} onChange={handleQuillChange} />
           <Typography>Cara Pakai : </Typography>
           <ReactQuill theme="snow" value={howToUse} onChange={handleQuillHowToUse} />
-<<<<<<< HEAD
          
           <TextField
           {...register('disclaimer')}
@@ -201,25 +188,9 @@ export const CreatePromo = () => {
           fullWidth
           variant="outlined"
         />
-=======
->>>>>>> faff60054a1865dd194c631eddb9988b0bcc461f
-
-          <TextField
-            {...register('disclaimer')}
-            margin="dense"
-            label="Disclaimer"
-            multiline
-            rows={4}
-            fullWidth
-            variant="outlined"
-          />
         </Stack>
-<<<<<<< HEAD
         
         <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
-=======
-        <Button type="submit" variant="contained" sx={{ mt: 3, mb: 5 }}>
->>>>>>> faff60054a1865dd194c631eddb9988b0bcc461f
           Submit
         </Button>
         <Link to={router.promo.list}>
