@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import { PostSort } from '../blog/post-sort';
 
 export default function CategorySection() {
   // State untuk menyimpan kategori yang dipilih
   const [selectedCategory, setSelectedCategory] = useState('kost');
+const [sortBy, setSortBy] = useState('latest');
+
+  const handleSort = useCallback((newSort) => {
+    setSortBy(newSort);
+  }, []);
 
   // Data kategori berdasarkan pilihan
   const categories = {
@@ -15,30 +21,16 @@ export default function CategorySection() {
   return (
     <>
       {/* Pilihan Kost Coliving dan Apartemen */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3, flexWrap: 'wrap' }}>
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            color: selectedCategory === 'kost' ? '#FFD700' : 'gray',
-            cursor: 'pointer',
-            mb: { xs: 2, md: 0 }
-          }}
-          onClick={() => setSelectedCategory('kost')}
-        >
-          <HomeIcon sx={{ mr: 1 }} />
-          <Typography>Kost Coliving</Typography>
-        </Box>
-
-        <Typography
-          sx={{
-            color: selectedCategory === 'apartemen' ? '#FFD700' : 'gray',
-            cursor: 'pointer'
-          }}
-          onClick={() => setSelectedCategory('apartemen')}
-        >
-          Apartemen
-        </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 10, flexWrap: 'wrap', }}>
+        <Typography sx={{ fontSize : {xs : '12px', md: '28px'}, fontWeight : 'bold'}}>Property terbaru dari kami</Typography>
+         <PostSort
+                  sortBy={sortBy}
+                  onSort={handleSort}
+                  options={[
+                    { value: 'latest', label: 'Kost Coliving' },
+                    { value: 'oldest', label: 'Apartement' },
+                  ]}
+                />
       </Box>
 
       {/* Container kategori dengan scroll horizontal */}

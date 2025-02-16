@@ -7,12 +7,21 @@ import { Grid } from "@mui/material";
 import { MenuItem } from "@mui/material";
 import { FormControlLabel } from "@mui/material";
 import { Switch } from "@mui/material";
+import { useMutationCreatePromo } from "src/hooks/promo";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSnackbar } from "notistack";
+import { useRouter } from "src/routes/hooks";
+import { Link } from "react-router-dom";
+import { router } from "src/hooks/routing/useRouting";
 
 export const CreatePromo = () => {
   const { register, handleSubmit, setValue,  formState: { errors },} = useForm();
   const [description, setDescription] = useState("");
   const [howToUse, sethowToUse] = useState("");
   const [isActive, setIsActive] = useState(false);
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const routers = useRouter();
 
   const handleToggle = (event) => {
     const status = event.target.checked ? "active" : "non-active";
@@ -30,8 +39,24 @@ export const CreatePromo = () => {
     setValue("how_to_use", value); // Update value untuk react-hook-form
   };
 
+  const {mutate, isPending} = useMutationCreatePromo({
+    onSuccess : () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
+      routers.push('/management-promo');
+      enqueueSnackbar('Promo berhasil dibuat', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('Promo gagal dibuat', { variant: 'error' });
+    },
+  })
   const Submitted = (data) => {
-    console.log(data); // Akan mencetak data termasuk "description"
+    const { image: gambar, ...rest } = data;
+    const formData = new FormData();
+    Object.entries(rest).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    formData.append('image', gambar[0]);
+    mutate(formData);
   };
 
   return (
@@ -134,19 +159,25 @@ export const CreatePromo = () => {
           <ReactQuill theme="snow" value={howToUse} onChange={handleQuillHowToUse} />
          
           <TextField
-  {...register('disclaimer')}
-  margin="dense"
-  label="Disclaimer"
-  multiline
-  rows={4}
-  fullWidth
-  variant="outlined"
-/>
+          {...register('disclaimer')}
+          margin="dense"
+          label="Disclaimer"
+          multiline
+          rows={4}
+          fullWidth
+          variant="outlined"
+        />
 
         </Stack>
-        <Button type="submit" variant="contained" sx={{ mt: 3, mb:5 }}>
+        
+        <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
           Submit
         </Button>
+        <Link to={router.promo.list}>
+        <Button type="button" variant="outlined" sx={{ mt: 3, mb:5 }}>
+          Kembali
+        </Button>
+        </Link>
       </Box>
     </Container>
   );

@@ -38,8 +38,8 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
-    title: 'Hunian',
-    path: '/products',
+    title: 'Property',
+    path: '/apartement',
     icon: Kegiatanicon('ic-glass-users'),
     info: (
       <Label color="error" variant="inverted">

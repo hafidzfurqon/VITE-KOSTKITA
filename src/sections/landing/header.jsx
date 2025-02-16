@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { router } from 'src/hooks/routing/useRouting';
 
-import { AppBar, Toolbar, Box, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider } from '@mui/material';
+import { AppBar, Toolbar, Box, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import HomeIcon from '@mui/icons-material/Home';
@@ -11,12 +11,13 @@ import HandshakeIcon from '@mui/icons-material/Handshake';
 import { Link } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
+import { usePathname } from 'src/routes/hooks';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
-
+  const pathname = usePathname()
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -37,9 +38,9 @@ export default function Header() {
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/' },
-    { label: 'For Business', icon: <BusinessIcon />, path: '/' },
-    { label: 'Tentang', icon: <InfoIcon />, path: '/' }
+    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/sadasd' },
+    { label: 'For Business', icon: <BusinessIcon />, path: '/dsada' },
+    { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' }
   ];
 
   return (
@@ -58,30 +59,38 @@ export default function Header() {
         {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <Link to='/'>
-          <img src={Logo} alt="Logo" width={120} style={{ filter: 'brightness(1.2)' }} />
+          <img src={Logo} alt="Logo" width={150} style={{ filter: 'brightness(1.2)' }} />
           </Link>
-        </Box>
+       
 
         {/* Navigation (Hanya tampil di layar besar) */}
         {!isSmallScreen && (
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3 }}>
-            {navItems.map((item, index) => (
-              <Button 
-                key={index} 
-                color="inherit" 
-                sx={{ 
-                  textTransform: 'none', 
-                  color: '#000', // Mengubah warna teks menjadi hitam
-                  transition: '0.3s', 
-                  '&:hover': { color: '#FFD700' } // Warna emas saat hover
-                }}
-              >
-                {item.label} {/* Tidak menampilkan ikon di layar besar */}
-              </Button>
-            ))}
+          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p : 2, }}>
+           {navItems.map((item, index) => {
+                const isActived = item.path === pathname;
+
+              return (
+                <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
+                  <Typography
+                    sx={{
+                      fontSize : '16px',
+                      px : 1,
+                      textTransform: 'none',
+                      color: isActived ? '#FFD700' : 'black', // Warna kuning jika aktif
+                      fontWeight: isActived ? 'bold' : 'normal', // Tebalkan teks jika aktif
+                      transition: '0.3s',
+                      '&:hover': { textDecoration : 'underline' }, // Warna emas saat hover
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                </Link>
+              );
+            })}
+
           </Box>
         )}
-
+ </Box>
         {/* Login Button */}
         {!isSmallScreen && (
           <Box sx={{ ml: 'auto' }}>
@@ -90,7 +99,7 @@ export default function Header() {
                 color="inherit" 
                 sx={{ 
                   textTransform: 'none', 
-                  color: '#000', // Mengubah warna teks menjadi hitam
+                  color: 'black', // Mengubah warna teks menjadi hitam
                   transition: '0.3s', 
                   '&:hover': { color: '#FFD700' } // Warna emas saat hover
                 }}

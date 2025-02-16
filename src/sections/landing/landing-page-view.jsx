@@ -10,35 +10,15 @@ import PropertyGrid from './property-grid';
 import Footer from './footer';
 import PromoPage from './promo-page';
 import PropertyBudget from './property-budget';
+import Loading from 'src/components/loading/loading';
 // import { useFetchBannerPublic } from 'src/hooks/banner';
 
 
 
 export function LandingPage() {
-  // const {data : Banners} = useFetchBannerPublic()
-  // console.log(Banners);
-  // const [data, setData] = useState({
-  //   banners: null,
-  //   properties: null,
-  // });
+  
 
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const [banners, properties] = await Promise.all([
-  //         useFetchBannerPublic(), 
-         
-  //       ]);
-
-  //       setData({ banners, properties });
-  //     } catch (error) {
-  //       console.error('Error fetching data:', error);
-  //     }
-  //   }
-
-  //   fetchData();
-  // }, []);
-
+  
   const WhatsAppButton = (
     <Box
     sx={{
@@ -107,7 +87,7 @@ export function LandingPage() {
             <CategorySection />
             {/* <TourListView /> */}
             <PropertyGrid/>
-            <PromoPage/>
+              <PromoPage/>
             <PropertyBudget/>
           </Box>
          </SimpleBar>

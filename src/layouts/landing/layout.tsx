@@ -10,7 +10,7 @@ export function LandingLayout ({children} : {children : React.ReactNode}) {
       <Container>
         <Toolbar sx={{ marginBottom: "40px" }} /> {/* Tambahkan Toolbar sebelum konten */}
         {children}
-        <Toolbar sx={{ marginTop: "20px" }} /> {/* Tambahkan Toolbar setelah konten */}
+        <Toolbar sx={{ marginTop: "40px" }} /> 
       </Container>
       <Footer />
     </>

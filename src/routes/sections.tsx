@@ -28,6 +28,7 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Landing = lazy(() => import('src/pages/landing'));
 export const PromoPage = lazy(() => import('src/pages/promo'));
+export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
 
 // ----------------------------------------------------------------------
 
@@ -72,7 +73,10 @@ export function Router() {
             },
           ],
         },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'apartement',
+          //  element: <ProductsPage />
+           element: <ApartmenetPage />
+           },
         {
         path: 'management-promo', 
         children: [
@@ -131,25 +135,28 @@ export function Router() {
       ),
       path: '/',
     },
-   {
-  element: (
-    <Suspense fallback={renderFallback}>
-      <LandingLayout>
-        <PromoPage />
-      </LandingLayout>
-    </Suspense>
-  ),
-  path: "/promo",
-},
 {
-  element: (
-    <Suspense fallback={renderFallback}>
-      <LandingLayout>
-        <PropertyDetail />
-      </LandingLayout>
-    </Suspense>
+  element : (
+    <LandingLayout>
+      <Suspense fallback={renderFallback}>
+        <Outlet/>
+      </Suspense>
+    </LandingLayout>
   ),
-  path: "property/:slug",
+  children : [
+    {
+      path: "property/:slug",
+      element :  <PropertyDetail />
+    },
+    {
+      path: "/promo",
+      element : <PromoPage />
+    },
+    {
+      path: "/about-us",
+      element : <div>Hello world..</div>
+    },
+  ]
 },
 
     {
