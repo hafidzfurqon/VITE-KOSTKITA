@@ -12,95 +12,153 @@ import Loading from 'src/components/loading/loading';
 export default function PropertyGrid() {
   const { data, isLoading, isFetching } = useListProperty();
   console.log(data);
-  
+
   const router = useRouter();
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
   const getPropertyIcon = (type) => {
-    if (type.toLowerCase().includes('apartment')) return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
+    if (type.toLowerCase().includes('apartment'))
+      return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
 
-  if( isLoading|| isFetching) {
-    return <Loading/>
+  if (isLoading || isFetching) {
+    return <Loading />;
   }
- 
-  
+
+  if (!data || (Array.isArray(data) && data.length === 0)) {
+    return (
+      <Container sx={{ textAlign: 'center', mt: 6 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {/* <img
+            src="/assets/no-data.svg"
+            alt="No Data"
+            style={{ width: 250, marginBottom: 16 }}
+          /> */}
+          <Typography variant="h6" color="textSecondary">
+            Tidak ada data properti yang tersedia.
+          </Typography>
+          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
+            Coba lagi nanti atau cari kategori lainnya.
+          </Typography>
+        </Box>
+      </Container>
+    );
+  }
+
   return (
     <Container>
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' },
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
           gap: 3,
           mt: 4,
           mb: 4,
         }}
       >
         {data?.map((property) => {
-           const hasDiscount = property.discounts.length > 0;
+          const hasDiscount = property.discounts.length > 0;
           return (
-          <Box
-            key={property.id}
-            sx={{
-              backgroundColor: 'white',
-              borderRadius: 2,
-              overflow: 'hidden',
-              boxShadow: 1,
-              '&:hover': { boxShadow: 3 },
-            }}
-          >
-            <Link to={`/property/${property.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+            <Box
+              key={property.id}
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: 1,
+                '&:hover': { boxShadow: 3 },
+              }}
+            >
               <ImageSlider images={property.files} />
-              <Box sx={{ p: 2 }}>
-                <Chip icon={getPropertyIcon(property.type)} label={property.type} sx={{ mb: 1, fontWeight: 600 }} />
-                <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-                  {property.name}
+              <Link
+                to={`/property/${property.slug}`}
+                style={{ textDecoration: 'none', display: 'block' }}
+              >
+                <Box sx={{ p: 2 }}>
+                  <Chip
+                    icon={getPropertyIcon(property.type)}
+                    label={property.type}
+                    sx={{ mb: 1, fontWeight: 600 }}
+                  />
+                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
+                    {property.name}
                   </Typography>
-                  <Box sx={{color : 'gray'}}>
-                  <Typography variant="body2" sx={{ mb: 1, fontSize : '12px' }}>{property.address}, {property.city.name}</Typography>
-                  </Box>
-                {property.discount_prifile_urlce ? (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography variant="body2" sx={{ color: 'gray', textDecoration: 'line-through' }}>
-                      {formatCurrency(property.start_price)}
+                  <Box sx={{ color: 'gray' }}>
+                    <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
+                      {property.address}, {property.city.name}
                     </Typography>
-                    <Chip label="-12%" color="error" size="small" />
-                  </Stack>
-                ) : null}
-                {/* {property.} */}
-                
-                {hasDiscount ? (
-                  <>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: "gray" }}>
-                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
-                      <Typography variant="subtitle1" sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}>
+                  </Box>
+                  {property.discount_prifile_urlce ? (
+                    <Stack direction="row" alignItems="center" spacing={1}>
+                      <Typography
+                        variant="body2"
+                        sx={{ color: 'gray', textDecoration: 'line-through' }}
+                      >
                         {formatCurrency(property.start_price)}
                       </Typography>
-                    </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Box sx={{ backgroundColor: 'red', color: 'white', fontSize: '12px', borderRadius: '10px', px: '5px' }}>
-                        -{property.discounts.map((discount) => discount.discount_value)}%
+                      <Chip label="-12%" color="error" size="small" />
+                    </Stack>
+                  ) : null}
+                  {/* {property.} */}
+
+                  {hasDiscount ? (
+                    <>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                        >
+                          {formatCurrency(property.start_price)}
+                        </Typography>
                       </Box>
-                      <Typography variant='subtitle1' sx={{ color: 'black', fontSize: '14px' }}>
-                        {formatCurrency(property.discounts.map((discount) => discount.price_after_discount))}
-                      </Typography>
-                    </Box>
-                  </>
-                ) : (
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black', fontSize : 
-                    '14px'
-                   }}>
-                    {formatCurrency(property.start_price)} / bulan
-                  </Typography>
-                )}
-              </Box>
-            </Link>
-          </Box>
-          )
-      })}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Box
+                          sx={{
+                            backgroundColor: 'red',
+                            color: 'white',
+                            fontSize: '12px',
+                            borderRadius: '10px',
+                            px: '5px',
+                          }}
+                        >
+                          -{property.discounts.map((discount) => discount.discount_value)}%
+                        </Box>
+                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                          {formatCurrency(
+                            property.discounts.map((discount) => discount.price_after_discount)
+                          )}
+                        </Typography>
+                      </Box>
+                    </>
+                  ) : (
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                    >
+                      {formatCurrency(property.start_price)} / bulan
+                    </Typography>
+                  )}
+                </Box>
+              </Link>
+            </Box>
+          );
+        })}
       </Box>
     </Container>
   );
@@ -133,8 +191,7 @@ function ImageSlider({ images }) {
       <Box ref={sliderRef} className="keen-slider">
         {images.length > 0 ? (
           images.map((image, index) => (
-             
-              <Box sx={{ borderRadius: 2}} key={index} className="keen-slider__slide">
+            <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
               <img
                 src={image.file_url}
                 alt={`Property Image ${index}`}
@@ -143,8 +200,19 @@ function ImageSlider({ images }) {
             </Box>
           ))
         ) : (
-          <Box className="keen-slider__slide" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', backgroundColor: 'gray' }}>
-            <Typography variant="caption" color="white">No Image Available</Typography>
+          <Box
+            className="keen-slider__slide"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              backgroundColor: 'gray',
+            }}
+          >
+            <Typography variant="caption" color="white">
+              No Image Available
+            </Typography>
           </Box>
         )}
       </Box>
