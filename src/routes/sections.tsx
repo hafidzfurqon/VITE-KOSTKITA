@@ -154,7 +154,15 @@ export function Router() {
     },
     {
       path: "/about-us",
-      element : <div>Hello world..</div>
+      element : <div>Laman tentang ini masih dalam pengembangan</div>
+    },
+    {
+      path: "/kerja-sama",
+      element : <div>Laman kerja sama ini masih dalam pengembangan</div>
+    },
+    {
+      path: "/bussines",
+      element : <div>Laman bussines ini masih dalam pengembangan</div>
     },
   ]
 },

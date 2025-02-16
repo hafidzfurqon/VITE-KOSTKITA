@@ -38,8 +38,8 @@ export default function Header() {
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/sadasd' },
-    { label: 'For Business', icon: <BusinessIcon />, path: '/dsada' },
+    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
+    { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' }
   ];
 

@@ -14,7 +14,7 @@ const priceRanges = [
 const properties = [
   {
     id: 1,
-    name: 'Rukita Smart Cipete',
+    name: 'Kostkita Smart Cipete',
     location: 'Gandaria Selatan, Cilandak',
     price: 2625000,
     originalPrice: 2900000,
@@ -22,7 +22,7 @@ const properties = [
     type: 'Coliving',
     hasVideo: true,
     discount: '-9%',
-    image: '/api/placeholder/400/300'
+    image: 'https://images.rukita.co/buildings/building/5a977d64-f87.jpg?tr=c-at_max%2Cw-800'
   },
   // Add more properties as needed
 ];
@@ -137,7 +137,7 @@ export default function PropertyBudget() {
                   </Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                <Box sx={{ display: 'flex', gap: 1, mt: 2, overflow : 'auto' }}>
                   <Chip
                     icon={<LocalOfferIcon />}
                     label="Diskon sewa 6 Bulan"

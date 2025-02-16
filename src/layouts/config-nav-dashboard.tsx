@@ -38,7 +38,7 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
-    title: 'Property',
+    title: 'Apartement',
     path: '/apartement',
     icon: Kegiatanicon('ic-glass-users'),
     info: (
