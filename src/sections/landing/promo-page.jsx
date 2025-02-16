@@ -77,15 +77,15 @@ export default function PromoPage() {
     <Box sx={{ p: { xs: 4, md: 4 } }}>
       <Box sx={{ maxWidth: '1120px', mx: 'auto' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h3" sx={{ fontSize: {xs : '15px', md : '1.875rem'}, fontWeight: 'bold', color: '#1F2937' }}>
+          <Typography variant="h3" sx={{ fontSize: {xs : '14px', md : '30px'}, fontWeight: 'bold', color: '#1F2937' }}>
             Promo berlangsung
           </Typography>
           <Link to='/promo'>
           <Button
             sx={{ color: 'black', display: 'flex', alignItems: 'center', gap: 1, fontWeight: '500' }}
-            endIcon={<ArrowForwardIcon sx={{ fontSize: {xs : '10px', md :20} }} />}
+            endIcon={<ArrowForwardIcon sx={{ fontSize: {xs : '10px', md :10} }} />}
           >
-            <Typography sx={{ textDecoration: 'underline' }}>Lihat Semua</Typography>
+            <Typography sx={{ fontSize: {xs : '12px', md : '16px'}, textDecoration: 'underline' }}>Lihat Semua</Typography>
           </Button>
           </Link>
         </Box>

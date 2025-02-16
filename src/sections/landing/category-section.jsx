@@ -21,8 +21,8 @@ const [sortBy, setSortBy] = useState('latest');
   return (
     <>
       {/* Pilihan Kost Coliving dan Apartemen */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 10, flexWrap: 'wrap', }}>
-        <Typography sx={{ fontSize : {xs : '12px', md: '28px'}, fontWeight : 'bold'}}>Property terbaru dari kami</Typography>
+      <Box sx={{ display: 'flex', flexDirection : {xs : 'column', md : 'row'}, justifyContent: 'space-between', mb: {xs : 5, md :10}, flexWrap: 'wrap', alignItems : {xs : 'left', md : 'center'}, gap : 3 }}>
+        <Typography variant="h3" sx={{ fontWeight : 'bold', }}>Property terbaru dari kami</Typography>
          <PostSort
                   sortBy={sortBy}
                   onSort={handleSort}

@@ -11,7 +11,6 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
 import BannerCreate from 'src/sections/banner/crud/banner-create';
-import PropertyDetail from 'src/sections/landing/property-detail';
 import PropertyPage from 'src/pages/property';
 import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
@@ -29,6 +28,7 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Landing = lazy(() => import('src/pages/landing'));
 export const PromoPage = lazy(() => import('src/pages/promo'));
 export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
+export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 
 // ----------------------------------------------------------------------
 
@@ -146,7 +146,7 @@ export function Router() {
   children : [
     {
       path: "property/:slug",
-      element :  <PropertyDetail />
+      element :  <PropertyDetailPage />
     },
     {
       path: "/promo",
