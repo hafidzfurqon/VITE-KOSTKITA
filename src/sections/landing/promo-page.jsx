@@ -4,12 +4,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import "keen-slider/keen-slider.min.css";
 import { useKeenSlider } from "keen-slider/react";
 import { Link } from 'react-router-dom';
+import { useFetchPromo } from 'src/hooks/promo';
+import Loading from 'src/components/loading/loading';
 
-const promoData = [
-  { id: 1, image: "https://images.rukita.co/promotions/promotion/b0c6b6fb-a44.jpg?tr=c-at_max%2Cw-800" },
-  { id: 2, image: "https://images.rukita.co/promotions/promotion/6860d357-bfc.jpg?tr=c-at_max%2Cw-800" },
-  { id: 3, image: "https://images.rukita.co/promotions/promotion/af7a7d1a-8b6.jpg?tr=c-at_max%2Cw-800" }
-];
 
 const Arrow = ({ left = false, onClick, disabled, show }) => (
   <Box
@@ -46,49 +43,56 @@ const Arrow = ({ left = false, onClick, disabled, show }) => (
 );
 
 export default function PromoPage() {
+  
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loaded, setLoaded] = useState(false);
   const [hovered, setHovered] = useState(false);
-
+ 
   const [sliderRef, instanceRef] = useKeenSlider({
-    initial: 0,
-    slides: { perView: 3, spacing: 12 },
+    loop: true,
+    slides: { perView: 1, spacing: 12 }, // Default mobile
     breakpoints: {
-      "(min-width: 640px)": { perView: 2, spacing: 15 },
-      "(min-width: 1024px)": { perView: 3, spacing: 20 },
+      "(min-width: 768px)": { slides: { perView: 2, spacing: 15 } }, // Tablet
+      "(min-width: 1024px)": { slides: { perView: 3, spacing: 20 } }, // Desktop
     },
     slideChanged(slider) {
       setCurrentSlide(slider.track.details.rel);
     },
-    created() {
+    created(slider) {
+      console.log("Current perView:", slider.options.slides.perView);
       setLoaded(true);
     },
   });
 
-  const totalSlides = promoData.length;
-  const maxSlides = instanceRef.current?.options.slides.perView || 3;
+  const {data : promos , isLoading, isFetching} = useFetchPromo()
+  if(isLoading || isFetching) {
+    return <Loading/>
+  }
+  const totalSlides = promos.length;
+  const maxSlides = instanceRef.current?.options.slides.perView || 1; // Default 1 untuk mobile
   const isSlideDisabled = totalSlides <= maxSlides;
 
+ 
   return (
     <Box sx={{ p: { xs: 4, md: 4 } }}>
       <Box sx={{ maxWidth: '1120px', mx: 'auto' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography variant="h3" sx={{ fontSize: '1.875rem', fontWeight: 'bold', color: '#1F2937' }}>
+          <Typography variant="h3" sx={{ fontSize: {xs : '14px', md : '30px'}, fontWeight: 'bold', color: '#1F2937' }}>
             Promo berlangsung
           </Typography>
           <Link to='/promo'>
           <Button
             sx={{ color: 'black', display: 'flex', alignItems: 'center', gap: 1, fontWeight: '500' }}
-            endIcon={<ArrowForwardIcon sx={{ fontSize: 20 }} />}
+            endIcon={<ArrowForwardIcon sx={{ fontSize: {xs : '10px', md :10} }} />}
           >
-            <Typography sx={{ textDecoration: 'underline' }}>Lihat Semua</Typography>
+            <Typography sx={{ fontSize: {xs : '12px', md : '16px'}, textDecoration: 'underline' }}>Lihat Semua</Typography>
           </Button>
           </Link>
         </Box>
 
         <Box sx={{ position: 'relative', cursor: 'pointer' }} onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
           <Box ref={sliderRef} className="keen-slider">
-            {promoData.map((promo) => (
+            {promos.map((promo) => (
               <Box
                 key={promo.id}
                 className="keen-slider__slide"
@@ -101,10 +105,10 @@ export default function PromoPage() {
                 }}
               >
                 <Box sx={{ position: 'relative' }}>
-                  <img src={promo.image} alt="Promo" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
+                  <img src={promo.discount_image_url} alt="Promo" style={{ width: '100%', height: '220px', objectFit: 'cover' }} />
                 </Box>
               </Box>
-            ))}
+            ))} 
           </Box>
 
           {loaded && instanceRef.current && !isSlideDisabled && (

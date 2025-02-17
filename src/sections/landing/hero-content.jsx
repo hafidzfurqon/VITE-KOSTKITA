@@ -8,11 +8,11 @@ export default function HeroContent() {
   return (
     <Box sx={{ position: 'relative', pt: 8, px: 4, color: 'white' }}>
       {/* Bagian Teks dengan Margin Responsif */}
-      <Box sx={{ mt: { xs: 5, md: 10 }, mb: { xs: 2, md: 4 } }}>
-        <Typography variant="h4" component="h1" sx={{ mb: 2, color: '#FFD700' }}>
+      <Box sx={{ mt: { xs: 10, md: 30 }, mb: { xs: 2, md: 4 }, mx: { xs: 2, md: 5 } }}>
+        <Typography variant="h2" component="h1" sx={{ mb: 2, color: '#FFD700' }}>
           Kost, Coliving, Apartemen
         </Typography>
-        <Typography variant="h6" sx={{ mb: 4 }}>
+        <Typography variant="h4" sx={{ mb: 4 }}>
           Sewa hunian impian untuk setiap fase kehidupan
         </Typography>
       </Box>

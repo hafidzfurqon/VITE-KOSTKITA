@@ -8,8 +8,8 @@ import { useKeenSlider } from "keen-slider/react";
 
 
 const carouselImages = [
-  'https://images.rukita.co/promotions/promotion/d28e0cc3-929.jpg?tr=c-at_max%2Cw-1440',
-  'https://images.rukita.co/buildings/building/e48a2a40-318.jpg?tr=c-at_max%2Cw-1040',
+  'https://images.rukita.co/web/static/img/landing-page/about-us/hero.png?tr=c-at_max%2Cw-1040',
+  'https://images.rukita.co/web/static/img/landing-page/about-us/rukita_apartment.png?tr=c-at_max%2Cw-1040',
   'https://images.rukita.co/buildings/building/f297bfe6-649.jpg?tr=c-at_max%2Cw-1040',
   'https://images.rukita.co/buildings/building/ac52429c-2fe.jpg?tr=c-at_max%2Cw-1040'
 ];
@@ -34,7 +34,7 @@ export default function HeroSection({ children } :HeroSectionProps)  {
     <Box
       sx={{
         position: 'relative',
-        height: '500px',
+        height: '600px',
         // overflow: 'hidden',
         borderBottomLeftRadius: '50px',
         borderBottomRightRadius: '50px',

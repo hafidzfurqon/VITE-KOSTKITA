@@ -26,6 +26,7 @@ import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetai
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
 import { WhatsApp } from '@mui/icons-material';
+import { Helmet } from 'react-helmet-async';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -77,6 +78,14 @@ export default function PropertyDetail() {
   }
 
   return (
+    <>
+    <Helmet>
+       <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
+        <meta property="og:type" content={`website`} />
+        <meta property="og:title" content={`KostKita Property ${data.name}`} />
+        <meta property="og:description" content={`${data.description}`} />
+        <meta property="og:image" content={`${data.files[0].file_url}`} />
+    </Helmet>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       {/* Breadcrumbs */}
       <Box sx={{ display: 'grid', justifyContent: 'center', width: '100%' }}>
@@ -283,5 +292,6 @@ export default function PropertyDetail() {
         )}
       </Box>
     </Container>
+    </>
   );
 }

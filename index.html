@@ -18,7 +18,23 @@
     <link rel="manifest" href="/icons_web/site.webmanifest" />
     <title>KostKita.id</title>
   </head>
+  <style>
+    .slider-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
+.keen-slider {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.keen-slider__slide {
+  min-width: 33.33%; /* Sesuai dengan 3 perView */
+}
+
+  </style>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

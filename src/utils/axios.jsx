@@ -167,5 +167,8 @@ export const fetcher = async (args) => {
       public : {
         list : "/api/public/discount/all"
       }
+    },
+    apartement : {
+      list : '/api/admin/apartment/list',
     }
   };

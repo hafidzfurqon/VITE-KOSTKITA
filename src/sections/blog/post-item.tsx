@@ -19,6 +19,7 @@ import { SvgColor } from 'src/components/svg-color';
 export type PostItemProps = {
   id: string;
   title: string;
+  discount_image_url: string;
   coverUrl: string;
   totalViews: number;
   description: string;
@@ -93,9 +94,9 @@ export function PostItem({
       }}
     >
       {[
-        { number: post.totalComments, icon: 'solar:chat-round-dots-bold' },
-        { number: post.totalViews, icon: 'solar:eye-bold' },
-        { number: post.totalShares, icon: 'solar:share-bold' },
+        { color: 'orange', icon: 'solar:pen-bold' },
+        { color: 'common.white', icon: 'solar:eye-bold' },
+        { color: 'red', icon: 'solar:trash-bin-trash-bold' },
       ].map((info, _index) => (
         <Box
           key={_index}
@@ -103,12 +104,11 @@ export function PostItem({
           sx={{
             ...((latestPostLarge || latestPost) && {
               opacity: 0.64,
-              color: 'common.white',
+              color: info.color,
             }),
           }}
         >
           <Iconify width={16} icon={info.icon} sx={{ mr: 0.5 }} />
-          <Typography variant="caption">{fShortenNumber(info.number)}</Typography>
         </Box>
       ))}
     </Box>
@@ -118,7 +118,7 @@ export function PostItem({
     <Box
       component="img"
       alt={post.title}
-      src={`https://images.rukita.co/promotions/promotion/af7a7d1a-8b6.jpg?tr=c-at_max%2Cw-1440`}
+      src={post.discount_image_url}
       sx={{
         top: 0,
         width: 1,

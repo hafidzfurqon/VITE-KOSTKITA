@@ -11,13 +11,13 @@ import { DashboardLayout } from 'src/layouts/dashboard';
 import { SignUpView } from 'src/sections/auth/sign-up-view';
 import BannerPage from 'src/pages/banner';
 import BannerCreate from 'src/sections/banner/crud/banner-create';
-import PropertyDetail from 'src/sections/landing/property-detail';
 import PropertyPage from 'src/pages/property';
 import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
 import { LandingLayout } from 'src/layouts/landing';
 import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
 import PropertyEdit from 'src/sections/property/property-edit';
+import PropertyDetail from 'src/sections/landing/property-detail';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +29,8 @@ export const ProductsPage = lazy(() => import('src/pages/products'));
 export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Landing = lazy(() => import('src/pages/landing'));
 export const PromoPage = lazy(() => import('src/pages/promo'));
+export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
+export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 
 // ----------------------------------------------------------------------
 
@@ -73,7 +75,10 @@ export function Router() {
             },
           ],
         },
-        { path: 'products', element: <ProductsPage /> },
+        { path: 'apartement',
+          //  element: <ProductsPage />
+           element: <ApartmenetPage />
+           },
         {
           path: 'management-promo',
           children: [
@@ -136,6 +141,37 @@ export function Router() {
       ),
       path: '/',
     },
+{
+  element : (
+    <LandingLayout>
+      <Suspense fallback={renderFallback}>
+        <Outlet/>
+      </Suspense>
+    </LandingLayout>
+  ),
+  children : [
+    {
+      path: "property/:slug",
+      element :  <PropertyDetailPage />
+    },
+    {
+      path: "/promo",
+      element : <PromoPage />
+    },
+    {
+      path: "/about-us",
+      element : <div>Laman tentang ini masih dalam pengembangan</div>
+    },
+    {
+      path: "/kerja-sama",
+      element : <div>Laman kerja sama ini masih dalam pengembangan</div>
+    },
+    {
+      path: "/bussines",
+      element : <div>Laman bussines ini masih dalam pengembangan</div>
+    },
+  ]
+},
     {
       element: (
         <Suspense fallback={renderFallback}>
