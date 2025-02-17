@@ -12,19 +12,24 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useForm, Controller } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
-import { useCreateProperty, useGetCity, useGetState } from 'src/hooks/property';
+import { useCreateProperty, useGetCity, useGetState, useUpdateProperty } from 'src/hooks/property';
 import { useRouter } from 'src/routes/hooks';
 import { Link } from 'react-router-dom';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { router } from 'src/hooks/routing/useRouting';
+import { useLocation } from 'react-router-dom';
 
-export default function PropertyCreate() {
+export default function PropertyEdit() {
+  const location = useLocation();
+  const propertyData = location.state?.propertyData || {}; // Ensure the data is loaded from state
+  console.log(propertyData)
+
   const { enqueueSnackbar } = useSnackbar();
-  // const router = useRouter();
   const queryClient = useQueryClient();
 
-  const { control, register, handleSubmit, watch } = useForm({
-    defaultValues: {
+  // Initialize form with propertyData if available
+  const { control, register, handleSubmit, watch, setValue } = useForm({
+    defaultValues: propertyData || {
       name: '',
       type: '',
       address: '',
@@ -39,15 +44,16 @@ export default function PropertyCreate() {
     },
   });
 
+  // Automatically set state and city based on the loaded property data
   const selectedState = watch('state_id');
 
   const { data: states = [], isLoading: isLoadingStates } = useGetState();
   const { data: cities = [], isLoading: isLoadingCities } = useGetCity(selectedState);
 
-  const { mutate, isPending } = useCreateProperty({
+  const { mutate, isPending } = useUpdateProperty({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['list.property'] });
-      enqueueSnackbar('Properti berhasil ditambahkan', { variant: 'success' });
+      enqueueSnackbar('Properti berhasil diperbarui', { variant: 'success' });
       router.push('/property');
     },
     onError: (error) => {
@@ -76,10 +82,9 @@ export default function PropertyCreate() {
 
   return (
     <Container>
-      <Typography variant="h4">Tambah Properti Baru</Typography>
+      <Typography variant="h4">Edit Properti</Typography>
       <CustomBreadcrumbs
-        // heading="List"
-        links={[{ name: 'List Property', href: router.property.list }, { name: 'Create Property' }]}
+        links={[{ name: 'List Property', href: router.property.list }, { name: 'Edit Property' }]}
         sx={{ mb: { xs: 3, md: 5 } }}
       />
       <Box sx={{ mt: 5 }}>
@@ -90,6 +95,7 @@ export default function PropertyCreate() {
               label="Nama Properti"
               fullWidth
               required
+              defaultValue={propertyData.name || ''}
             />
 
             <TextField
@@ -98,6 +104,7 @@ export default function PropertyCreate() {
               label="Tipe Properti"
               fullWidth
               required
+              defaultValue={propertyData.type || ''}
             >
               <MenuItem value="Coliving">Coliving</MenuItem>
               <MenuItem value="Kostan">Kostan</MenuItem>
@@ -110,6 +117,7 @@ export default function PropertyCreate() {
               label="Tipe Pembayaran"
               fullWidth
               required
+              defaultValue={propertyData.payment_type || ''}
             >
               <MenuItem value="monthly">Monthly</MenuItem>
               <MenuItem value="yearly">Yearly</MenuItem>
@@ -120,6 +128,7 @@ export default function PropertyCreate() {
               label="Alamat"
               fullWidth
               required
+              defaultValue={propertyData.address || ''}
             />
 
             <TextField
@@ -128,6 +137,7 @@ export default function PropertyCreate() {
               fullWidth
               required
               type="url"
+              defaultValue={propertyData.link_googlemaps || ''}
             />
             <TextField
               {...register('description', { required: true })}
@@ -136,6 +146,7 @@ export default function PropertyCreate() {
               required
               multiline
               rows={3}
+              defaultValue={propertyData.description || ''}
             />
 
             <TextField
@@ -144,20 +155,20 @@ export default function PropertyCreate() {
               label="Status"
               fullWidth
               required
+              defaultValue={propertyData.status || ''}
             >
               <MenuItem value="available">Available</MenuItem>
               <MenuItem value="unavailable">Unavailable</MenuItem>
             </TextField>
+
             {/* Select Provinsi */}
             <TextField
               select
               {...register('state_id')}
-              defaultValue=""
+              defaultValue={propertyData.state?.state_code || ''}
               label="Provinsi"
               fullWidth
               disabled={isLoadingStates}
-              //   error={!!errors.state_id}
-              //   helperText={errors.state_id?.message}
             >
               {states?.map((state) => (
                 <MenuItem key={state.state_code} value={state.state_code}>
@@ -169,12 +180,10 @@ export default function PropertyCreate() {
             <TextField
               select
               {...register('city_id')}
-              defaultValue=""
+              defaultValue={propertyData.city?.city_code || ''}
               label="Kota"
               fullWidth
               disabled={isLoadingCities || !selectedState}
-              //   error={!!errors.city_id}
-              //   helperText={errors.city_id?.message}
             >
               {cities?.map((city) => (
                 <MenuItem key={city.city_code} value={city.city_code}>
@@ -186,7 +195,7 @@ export default function PropertyCreate() {
             <Controller
               name="price"
               control={control}
-              defaultValue=""
+              defaultValue={propertyData.start_price || ''}
               rules={{ required: 'Harga wajib diisi' }}
               render={({ field, fieldState }) => (
                 <NumericFormat
@@ -214,11 +223,8 @@ export default function PropertyCreate() {
 
             <Box sx={{ display: 'flex', gap: 2, py: 2 }}>
               <Button type="submit" variant="contained" disabled={isPending}>
-                Submit
+                {isPending ? 'Saving...' : 'Save'}
               </Button>
-              <Link to="/property">
-                <Button variant="outlined">Kembali</Button>
-              </Link>
             </Box>
           </Stack>
         </Box>

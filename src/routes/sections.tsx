@@ -16,6 +16,8 @@ import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
 import { LandingLayout } from 'src/layouts/landing';
 import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
+import PropertyEdit from 'src/sections/property/property-edit';
+import PropertyDetail from 'src/sections/landing/property-detail';
 import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
 
 // ----------------------------------------------------------------------
@@ -88,18 +90,18 @@ export function Router() {
           ]
         },
         {
-        path: 'management-promo', 
-        children: [
-        { 
-          path: '',
-          element: <BlogPage /> 
+          path: 'management-promo',
+          children: [
+            {
+              path: '',
+              element: <BlogPage />,
+            },
+            {
+              path: 'create',
+              element: <CreatePromo />,
+            },
+          ],
         },
-        {
-          path: 'create',
-          element: <CreatePromo/>,
-        },
-       ]
-      },
         {
           path: 'banner',
           children: [
@@ -109,7 +111,7 @@ export function Router() {
             },
             {
               path: 'create',
-              element: <BannerCreate/>,
+              element: <BannerCreate />,
             },
           ],
         },
@@ -122,17 +124,21 @@ export function Router() {
             },
             {
               path: 'create',
-              element: <PropertyCreate/>,
+              element: <PropertyCreate />,
+            },
+            {
+              path: 'edit/:id',
+              element: <PropertyEdit />,
             },
           ],
         },
         {
-        path: 'fasilitas',
-        children: [
-          {
-            path: '',
-            element: <FasilitasPage/>,
-          },
+          path: 'fasilitas',
+          children: [
+            {
+              path: '',
+              element: <FasilitasPage />,
+            },
           ],
         },
       ],
@@ -176,6 +182,26 @@ export function Router() {
     },
   ]
 },
+    {
+      element: (
+        <Suspense fallback={renderFallback}>
+          <LandingLayout>
+            <PromoPage />
+          </LandingLayout>
+        </Suspense>
+      ),
+      path: '/promo',
+    },
+    {
+      element: (
+        <Suspense fallback={renderFallback}>
+          <LandingLayout>
+            <PropertyDetail />
+          </LandingLayout>
+        </Suspense>
+      ),
+      path: 'property/:slug',
+    },
 
     {
       element: (
@@ -192,7 +218,7 @@ export function Router() {
         },
         {
           path: 'sign-up',
-          element: <SignUpView/>,
+          element: <SignUpView />,
         },
       ],
     },
