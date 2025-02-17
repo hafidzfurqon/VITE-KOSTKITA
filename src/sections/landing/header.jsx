@@ -122,12 +122,15 @@ export default function Header() {
       <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
         <Box sx={{ width: 250, p: 2 }}>
           <List>
-            {navItems.map((item, index) => (
-              <ListItem button key={index} onClick={toggleDrawer}>
+            {navItems.map((item, index) => {
+              const isActived = item.path === pathname;
+              return (
+              <ListItem button component={Link} to={item.path} key={index} onClick={toggleDrawer} sx={{backgroundColor: isActived && '#FFD700', borderRadius : '10px', color: isActived && 'white' }}>
                 {item.icon} {/* Ikon hanya tampil di layar kecil */}
-                <ListItemText primary={item.label} sx={{ ml: 1 }} />
+                <ListItemText primary={item.label} sx={{ ml: 1, }} />
               </ListItem>
-            ))}
+              )
+            })}
             <Divider sx={{ my: 1 }} />
             <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
               <LoginIcon />
