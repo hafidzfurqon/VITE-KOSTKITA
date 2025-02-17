@@ -13,7 +13,7 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import DialogDelete from 'src/component/DialogDelete';
-import { useDeleteBanner,useUpdateBanner } from 'src/hooks/banner';
+
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
@@ -22,15 +22,29 @@ import { useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { FormLabel } from '@mui/material';
 import { DialogUpdate } from 'src/component/DialogUpdate';
+import { useMutationDeleteApartement } from 'src/hooks/apartement';
 
 // ----------------------------------------------------------------------
 
 export type ApartmentProps = {
   id?: undefined | any | number;
-  // title: string;
+  link_googlemaps: string;
+  total_floors: string;
+  type: string;
+  slug: string;
+  payment_type: string;
   name : string;
-  image_path : string;
-  image_url : string;
+  "state": {
+    "state_code": number,
+    "name": string
+},
+  start_price : string;
+  address : string;
+  "files": [
+  {
+  file_url : string
+  }
+  ],
   url_reference: string;
 };
 
@@ -50,127 +64,125 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
    }
    
  
-  const defaultValues = {
-  title : row?.name || '',
-  image_path  : row.image_path || '',
-  image_url  : row.image_url || '',
-  url_reference : row.url_reference || ''
-  };
-  const [preview, setPreview] = useState<string>(defaultValues.image_url)
-  const handleClickOpened = () => {
-    setPreview(defaultValues.image_url)
-    setOpened(true);
-  };
-  const handleImageChange = (e : any) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl); // Mengupdate preview dengan gambar baru
-    }
-  };
-  const { register, handleSubmit : handleSubmitForm} = useForm({
-      defaultValues
-    });
-    const FieldRHF = (
-      <>
-             <TextField
-               {...register('title')}
-                 autoFocus
-                required
-                margin="dense"
-               id="nama"
-               label="Nama Fasilitas"
-               type="text"
-               fullWidth
-               variant="outlined"
-            />
-             <TextField
-              {...register('url_reference')}
-              autoFocus
-              required
-              margin="dense"
-              id="nama"
-              label="url Banner"
-              type="text"
-              fullWidth
-              variant="outlined"
-            />
-            <FormLabel>
-                Image
-                <TextField
-                  {...register('image_path')}
-                  margin="dense"
-                  id="image"
-                  type="file"
-                  fullWidth
-                  variant="outlined"
-                  onChange={handleImageChange}
-                />
-              </FormLabel>
-              {preview && (
-        <Box mt={2} textAlign="center">
-          <img
-            src={preview}
-            alt="Preview"
-            style={{
-              width: "100%",
-              maxWidth: "300px",
-              borderRadius: "8px",
-              border: "1px solid #ddd",
-              padding: "5px",
-            }}
-          />
-        </Box>
-      )}
-      </>
-    )
-    const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner({
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ['list.banner'] });
-        setOpen(false);
-        enqueueSnackbar('Banner berhasil diupdate', { variant: 'success' });
-      },
-      onError: () => {
-        enqueueSnackbar('gagal mengupdate banner', { variant: 'error' });
-      },
-    },
-  row.id);
+  // const defaultValues = {
+  // title : row?.name || '',
+  // image_path  : row.image_path || '',
+  // image_url  : row.image_url || '',
+  // url_reference : row.url_reference || ''
+  // };
+  // const [preview, setPreview] = useState<string>(defaultValues.image_url)
+  // const handleClickOpened = () => {
+  //   setPreview(defaultValues.image_url)
+  //   setOpened(true);
+  // };
+  // const handleImageChange = (e : any) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     const imageUrl = URL.createObjectURL(file);
+  //     setPreview(imageUrl); // Mengupdate preview dengan gambar baru
+  //   }
+  // };
+  const { register, handleSubmit : handleSubmitForm} = useForm();
+    // const FieldRHF = (
+    //   <>
+    //          <TextField
+    //            {...register('title')}
+    //              autoFocus
+    //             required
+    //             margin="dense"
+    //            id="nama"
+    //            label="Nama Fasilitas"
+    //            type="text"
+    //            fullWidth
+    //            variant="outlined"
+    //         />
+    //          <TextField
+    //           {...register('url_reference')}
+    //           autoFocus
+    //           required
+    //           margin="dense"
+    //           id="nama"
+    //           label="url Banner"
+    //           type="text"
+    //           fullWidth
+    //           variant="outlined"
+    //         />
+    //         <FormLabel>
+    //             Image
+    //             <TextField
+    //               {...register('image_path')}
+    //               margin="dense"
+    //               id="image"
+    //               type="file"
+    //               fullWidth
+    //               variant="outlined"
+    //               onChange={handleImageChange}
+    //             />
+    //           </FormLabel>
+    //           {preview && (
+    //     <Box mt={2} textAlign="center">
+    //       <img
+    //         src={preview}
+    //         alt="Preview"
+    //         style={{
+    //           width: "100%",
+    //           maxWidth: "300px",
+    //           borderRadius: "8px",
+    //           border: "1px solid #ddd",
+    //           padding: "5px",
+    //         }}
+    //       />
+    //     </Box>
+    //   )}
+    //   </>
+    // )
+  //   const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner({
+  //     onSuccess: () => {
+  //       queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+  //       setOpen(false);
+  //       enqueueSnackbar('Banner berhasil diupdate', { variant: 'success' });
+  //     },
+  //     onError: () => {
+  //       enqueueSnackbar('gagal mengupdate banner', { variant: 'error' });
+  //     },
+  //   },
+  // row.id);
   
-    const handleClose = () => {
-      setOpened(false);
-    };
+    // const handleClose = () => {
+    //   setOpened(false);
+    // };
 
-    const handleCreate = (data : any) => {
-      const { image_path: gambar, ...rest } = data;
-      const formData  : any = new FormData();
-      Object.entries(rest).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      formData.append('image', gambar[0]);
-      formData.append('_method', 'PUT');
-      UpdateBanner(formData)
-      handleClose();
-    }
-  const { mutate: DeleteBanner, isPending } = useDeleteBanner({
+    // const handleCreate = (data : any) => {
+    //   const { image_path: gambar, ...rest } = data;
+    //   const formData  : any = new FormData();
+    //   Object.entries(rest).forEach(([key, value]) => {
+    //     formData.append(key, value);
+    //   });
+    //   formData.append('image', gambar[0]);
+    //   formData.append('_method', 'PUT');
+    //   UpdateBanner(formData)
+    //   handleClose();
+    // }
+  const { mutate: DeleteApartement, isPending } = useMutationDeleteApartement({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
       setOpen(false);
-      enqueueSnackbar('Banner berhasil dihapus', { variant: 'success' });
+      enqueueSnackbar('Apartement berhasil dihapus', { variant: 'success' });
     },
     onError: () => {
-      enqueueSnackbar('gagal menghapus banner', { variant: 'error' });
+      enqueueSnackbar('gagal menghapus apartement', { variant: 'error' });
     },
   });
 
   
   const handleSubmit = () => {
-    DeleteBanner(row.id)
+    DeleteApartement(row.id)
   }
   const renderCover = (
     <Box
       component="img"
       alt={row.name}
-      src={row.image_url}
+      src={row.files[0].file_url}
       sx={{
         top: 0,
         width: 100,
@@ -200,7 +212,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
 
 
 <TableCell align="center">
-        <Button onClick={handleClickOpened}>
+        <Button onClick={() => alert('sdjshad')}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
@@ -209,12 +221,16 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </Button>
+          <Button onClick={() => alert('detail')} sx={{ color: 'secondary.main' }}>
+            <Iconify icon="solar:eye-bold" />
+            Lihat
+          </Button>
         </TableCell>
       </TableRow>
       
 
       <DialogDelete 
-      title="yakin untuk menghapus banner ?"
+      title="yakin untuk menghapus Apartement ?"
        description="data yang telah di hapus tidak akan kembali"
        setOpen={setOpen}
        open={open}
@@ -222,7 +238,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
        pending={isPending}
       />
 
-       <DialogUpdate 
+       {/* <DialogUpdate 
             pending={isLoading}
             SubmitFormValue={handleCreate}
             open={opened}
@@ -231,7 +247,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
             setOpen={setOpened}
             field={FieldRHF}
             SubmitForm={handleSubmitForm}
-            />
+            /> */}
     </>
   );
 }

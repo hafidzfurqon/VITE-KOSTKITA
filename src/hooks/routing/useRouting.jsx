@@ -21,5 +21,9 @@ export const router = {
   promo : {
     list: '/management-promo',
     create : '/management-promo/create'
+  },
+  apartement :  {
+    list: '/apartement',
+    create : '/apartement/create'
   }
 };

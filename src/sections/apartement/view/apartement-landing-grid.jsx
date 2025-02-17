@@ -8,17 +8,15 @@ import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
+import { useFetchAllPublicApartement } from 'src/hooks/apartement/public';
 
-export default function PropertyGrid() {
-  const { data, isLoading, isFetching } = useListProperty();
-  
-
+export default function ApartementGrid() {
+  const {data, isLoading, isFetching} = useFetchAllPublicApartement();
   const router = useRouter();
-
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
-  const getPropertyIcon = (type) => {
+  const getApartementIcon = (type) => {
     if (type.toLowerCase().includes('apartment'))
       return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
@@ -71,11 +69,11 @@ export default function PropertyGrid() {
           mb: 4,
         }}
       >
-        {data?.map((property) => {
-          const hasDiscount = property.discounts.length > 0;
+        {data?.map((apartement) => {
+          const hasDiscount = apartement.discounts.length > 0;
           return (
             <Box
-              key={property.id}
+              key={apartement.id}
               sx={{
                 backgroundColor: 'white',
                 borderRadius: 2,
@@ -84,37 +82,37 @@ export default function PropertyGrid() {
                 '&:hover': { boxShadow: 3 },
               }}
             >
-              <ImageSlider images={property.files} />
+              <ImageSlider images={apartement.files} />
               <Link
-                to={`/property/${property.slug}`}
+                to={`/apartement/${apartement.slug}`}
                 style={{ textDecoration: 'none', display: 'block' }}
               >
                 <Box sx={{ p: 2 }}>
                   <Chip
-                    icon={getPropertyIcon(property.type)}
-                    label={property.type}
+                    icon={getApartementIcon(apartement.type)}
+                    label={apartement.type}
                     sx={{ mb: 1, fontWeight: 600 }}
                   />
                   <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-                    {property.name}
+                    {apartement.name}
                   </Typography>
                   <Box sx={{ color: 'gray' }}>
                     <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
-                      {property.address}, {property.city.name}
+                      {apartement.address}, {apartement.city.name}
                     </Typography>
                   </Box>
-                  {property.discount_prifile_urlce ? (
+                  {apartement.discount_prifile_urlce ? (
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Typography
                         variant="body2"
                         sx={{ color: 'gray', textDecoration: 'line-through' }}
                       >
-                        {formatCurrency(property.start_price)}
+                        {formatCurrency(apartement.start_price)}
                       </Typography>
                       <Chip label="-12%" color="error" size="small" />
                     </Stack>
                   ) : null}
-                  {/* {property.} */}
+                  {/* {apartement.} */}
 
                   {hasDiscount ? (
                     <>
@@ -124,7 +122,7 @@ export default function PropertyGrid() {
                           variant="subtitle1"
                           sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
                         >
-                          {formatCurrency(property.start_price)}
+                          {formatCurrency(apartement.start_price)}
                         </Typography>
                       </Box>
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -137,11 +135,11 @@ export default function PropertyGrid() {
                             px: '5px',
                           }}
                         >
-                          -{property.discounts.map((discount) => discount.discount_value)}%
+                          -{apartement.discounts.map((discount) => discount.discount_value)}%
                         </Box>
                         <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
                           {formatCurrency(
-                            property.discounts.map((discount) => discount.price_after_discount)
+                            apartement.discounts.map((discount) => discount.price_after_discount)
                           )}
                         </Typography>
                       </Box>
@@ -151,7 +149,7 @@ export default function PropertyGrid() {
                       variant="subtitle1"
                       sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                     >
-                      {formatCurrency(property.start_price)} / bulan
+                      {formatCurrency(apartement.start_price)} / bulan
                     </Typography>
                   )}
                 </Box>
@@ -194,7 +192,7 @@ function ImageSlider({ images }) {
             <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
               <img
                 src={image.file_url}
-                alt={`Property Image ${index}`}
+                alt={`Apartement Image ${index}`}
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }}
               />
             </Box>

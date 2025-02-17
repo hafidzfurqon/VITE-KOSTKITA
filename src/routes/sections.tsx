@@ -16,6 +16,7 @@ import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
 import { LandingLayout } from 'src/layouts/landing';
 import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
+import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
 
 // ----------------------------------------------------------------------
 
@@ -74,9 +75,18 @@ export function Router() {
           ],
         },
         { path: 'apartement',
-          //  element: <ProductsPage />
-           element: <ApartmenetPage />
-           },
+          children: [
+            {
+              path: '',
+              // element: <ProductsPage />
+             element: <ApartmenetPage />
+            },
+            {
+              path: 'create',
+              element: <CreateApartement/>,
+            },
+          ]
+        },
         {
         path: 'management-promo', 
         children: [
