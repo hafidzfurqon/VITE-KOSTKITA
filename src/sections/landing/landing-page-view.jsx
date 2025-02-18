@@ -10,15 +10,16 @@ import PropertyGrid from './property-grid';
 import Footer from './footer';
 import PromoPage from './promo-page';
 import PropertyBudget from './property-budget';
+import "keen-slider/keen-slider.min.css";
+import { useKeenSlider } from "keen-slider/react";
 import Loading from 'src/components/loading/loading';
-// import { useFetchBannerPublic } from 'src/hooks/banner';
+import ApartementGrid from '../apartement/view/apartement-landing-grid';
+import { Container } from '@mui/material';
+
 
 
 
 export function LandingPage() {
-  
-
-  
   const WhatsAppButton = (
     <Box
     sx={{
@@ -88,6 +89,10 @@ export function LandingPage() {
             {/* <TourListView /> */}
             <PropertyGrid/>
               <PromoPage/>
+              <Container>
+              <Typography sx={{ fontSize : {xs : '20px', md : '30px', fontWeight : 'bold'}}}>Cari Apartement</Typography>
+              </Container>
+              <ApartementGrid/>
             <PropertyBudget/>
           </Box>
          </SimpleBar>

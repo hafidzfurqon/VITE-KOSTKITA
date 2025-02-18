@@ -43,11 +43,11 @@ export function ApartementView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Management Banner
+          Management Apartement
         </Typography>
-        <Link to={router.banner.create}>
+        <Link to={router.apartement.create}>
           <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
-            Tambah Banner
+            Tambah Apartement
           </Button>
         </Link>
       </Box>
@@ -86,13 +86,12 @@ export function ApartementView() {
                   table.page * table.rowsPerPage,
                   table.page * table.rowsPerPage + table.rowsPerPage
                 ).map((row : any) => (
-                  <></>
-                  // <ApartementTableRow
-                  //   key={row.id}
-                  //   row={row}
-                  //   selected={table.selected.includes(row.id)}
-                  //   onSelectRow={() => table.onSelectRow(row.id)}
-                  // />
+                  <ApartementTableRow
+                    key={row.id}
+                    row={row}
+                    selected={table.selected.includes(row.id)}
+                    onSelectRow={() => table.onSelectRow(row.id)}
+                  />
                 ))}
 
                 <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />

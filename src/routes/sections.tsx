@@ -18,6 +18,7 @@ import { LandingLayout } from 'src/layouts/landing';
 import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
 import PropertyEdit from 'src/sections/property/property-edit';
 import PropertyDetail from 'src/sections/landing/property-detail';
+import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
 
 // ----------------------------------------------------------------------
 
@@ -76,9 +77,18 @@ export function Router() {
           ],
         },
         { path: 'apartement',
-          //  element: <ProductsPage />
-           element: <ApartmenetPage />
-           },
+          children: [
+            {
+              path: '',
+              // element: <ProductsPage />
+             element: <ApartmenetPage />
+            },
+            {
+              path: 'create',
+              element: <CreateApartement/>,
+            },
+          ]
+        },
         {
           path: 'management-promo',
           children: [
