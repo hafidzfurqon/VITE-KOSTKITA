@@ -68,7 +68,7 @@ export default function PromoPage() {
   if(isLoading || isFetching) {
     return <Loading/>
   }
-  const totalSlides = promos.length;
+  const totalSlides = promos?.length;
   const maxSlides = instanceRef.current?.options.slides.perView || 1; // Default 1 untuk mobile
   const isSlideDisabled = totalSlides <= maxSlides;
 
