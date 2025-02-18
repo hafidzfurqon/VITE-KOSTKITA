@@ -18,11 +18,11 @@ export default function PropertyGrid() {
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
-  const getPropertyIcon = (type) => {
-    if (type.toLowerCase().includes('apartment'))
-      return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
-    return <Home fontSize="small" sx={{ mr: 0.5 }} />;
-  };
+  // const getPropertyIcon = (type) => {
+  //   if (type.toLowerCase().includes('apartment'))
+  //     return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
+  //   return <Home fontSize="small" sx={{ mr: 0.5 }} />;
+  // };
 
   if (isLoading || isFetching) {
     return <Loading />;
@@ -90,11 +90,11 @@ export default function PropertyGrid() {
                 style={{ textDecoration: 'none', display: 'block' }}
               >
                 <Box sx={{ p: 2 }}>
-                  <Chip
+                  {/* <Chip
                     icon={getPropertyIcon(property.type)}
                     label={property.type}
                     sx={{ mb: 1, fontWeight: 600 }}
-                  />
+                  /> */}
                   <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
                     {property.name}
                   </Typography>

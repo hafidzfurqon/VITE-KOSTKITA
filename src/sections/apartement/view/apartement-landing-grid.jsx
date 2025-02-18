@@ -13,6 +13,10 @@ import { useFetchAllPublicApartement } from 'src/hooks/apartement/public';
 export default function ApartementGrid() {
   const {data, isLoading, isFetching} = useFetchAllPublicApartement();
   const router = useRouter();
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
+  
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
@@ -22,9 +26,7 @@ export default function ApartementGrid() {
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
 
-  if (isLoading || isFetching) {
-    return <Loading />;
-  }
+  
 
   if (!data || (Array.isArray(data) && data.length === 0)) {
     return (
@@ -71,6 +73,7 @@ export default function ApartementGrid() {
       >
         {data?.map((apartement) => {
           const hasDiscount = apartement.discounts.length > 0;
+          console.log(apartement.type.name)
           return (
             <Box
               key={apartement.id}
@@ -88,11 +91,11 @@ export default function ApartementGrid() {
                 style={{ textDecoration: 'none', display: 'block' }}
               >
                 <Box sx={{ p: 2 }}>
-                  <Chip
-                    icon={getApartementIcon(apartement.type)}
+                  {/* <Chip
+                    icon={getApartementIcon(apartement.type.name)}
                     label={apartement.type}
                     sx={{ mb: 1, fontWeight: 600 }}
-                  />
+                  /> */}
                   <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
                     {apartement.name}
                   </Typography>
