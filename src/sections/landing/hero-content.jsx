@@ -18,42 +18,60 @@ export default function HeroContent() {
       </Box>
 
       {/* Search Bar */}
-      <Box sx={{
-        maxWidth: '1000px',
-        mx: 'auto',
-        backgroundColor: 'white',
-        borderRadius: 1,
-        display: 'flex',
-        flexWrap: 'wrap',
-        p: 1,
-        gap: 1,
-      }}>
+      <Box
+        sx={{
+          maxWidth: '1000px',
+          mx: 'auto',
+          backgroundColor: 'white',
+          borderRadius: 1,
+          display: 'flex',
+          flexWrap: 'wrap',
+          p: 1,
+          gap: 1,
+        }}
+      >
         {/* Input Lokasi */}
-        <Box sx={{
-          flex: 1, display: 'flex', alignItems: 'center', px: 2,
-          borderRight: { xs: 'none', md: 1 }, borderColor: 'grey.300',
-          width: { xs: '100%', md: 'auto' }
-        }}>
+        <Box
+          sx={{
+            flex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            px: 2,
+            borderRight: { xs: 'none', md: 1 },
+            borderColor: 'grey.300',
+            width: { xs: '100%', md: 'auto' },
+          }}
+        >
           <LocationOnIcon sx={{ color: '#FFD700', mr: 1 }} />
           <InputBase placeholder="Cari lokasi, nama gedung atau landmark..." fullWidth />
         </Box>
 
         {/* Input Tanggal */}
-        <Box sx={{
-          display: 'flex', alignItems: 'center', px: 2,
-          borderRight: { xs: 'none', md: 1 }, borderColor: 'grey.300',
-          width: { xs: '100%', md: 'auto' }
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            px: 2,
+            borderRight: { xs: 'none', md: 1 },
+            borderColor: 'grey.300',
+            width: { xs: '100%', md: 'auto' },
+          }}
+        >
           <CalendarTodayIcon sx={{ color: '#FFD700', mr: 1 }} />
           <InputBase placeholder="Pilih tanggal" sx={{ flex: 1 }} />
         </Box>
 
         {/* Pilihan Tipe Hunian */}
-        <Box sx={{
-          display: 'flex', alignItems: 'center', px: 2,
-          borderRight: { xs: 'none', md: 1 }, borderColor: 'grey.300',
-          width: { xs: '100%', md: 'auto' }
-        }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            px: 2,
+            borderRight: { xs: 'none', md: 1 },
+            borderColor: 'grey.300',
+            width: { xs: '100%', md: 'auto' },
+          }}
+        >
           <HomeIcon sx={{ color: '#FFD700', mr: 1 }} />
           <Select value="" displayEmpty variant="standard" sx={{ flex: 1 }}>
             <MenuItem value="">Semua tipe</MenuItem>
@@ -61,11 +79,16 @@ export default function HeroContent() {
         </Box>
 
         {/* Tombol Cari */}
-        <Button variant="contained" startIcon={<SearchIcon />} sx={{
-          backgroundColor: '#FFD700', color: 'black',
-          width: { xs: '100%', md: 'auto' },
-          '&:hover': { backgroundColor: '#FFC700' }
-        }}>
+        <Button
+          variant="contained"
+          startIcon={<SearchIcon />}
+          sx={{
+            backgroundColor: '#FFD700',
+            color: 'black',
+            width: { xs: '100%', md: 'auto' },
+            '&:hover': { backgroundColor: '#FFC700' },
+          }}
+        >
           Cari Hunian
         </Button>
       </Box>

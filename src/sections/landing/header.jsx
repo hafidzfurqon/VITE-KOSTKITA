@@ -1,7 +1,19 @@
 import { useState, useEffect } from 'react';
 import { router } from 'src/hooks/routing/useRouting';
 
-import { AppBar, Toolbar, Box, Button, IconButton, Drawer, List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  Button,
+  IconButton,
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Typography,
+} from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import HomeIcon from '@mui/icons-material/Home';
@@ -17,7 +29,7 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
-  const pathname = usePathname()
+  const pathname = usePathname();
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -33,75 +45,72 @@ export default function Header() {
 
   const toggleDrawer = () => {
     setMobileOpen(!mobileOpen);
-  };  
+  };
 
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
-    { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' }
+    { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
   ];
 
   return (
-    <AppBar 
+    <AppBar
       position="fixed"
-      sx={{ 
-        background: navBg, 
-        backdropFilter: 'blur(10px)', 
+      sx={{
+        background: navBg,
+        backdropFilter: 'blur(10px)',
         boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.2)',
         px: 2,
-        transition: 'background 0.3s ease-in-out'
+        transition: 'background 0.3s ease-in-out',
       }}
     >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        
         {/* Logo */}
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Link to='/'>
-          <img src={Logo} alt="Logo" width={150} style={{ filter: 'brightness(1.2)' }} />
+          <Link to="/">
+            <img src={Logo} alt="Logo" width={150} style={{ filter: 'brightness(1.2)' }} />
           </Link>
-       
 
-        {/* Navigation (Hanya tampil di layar besar) */}
-        {!isSmallScreen && (
-          <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p : 2, }}>
-           {navItems.map((item, index) => {
+          {/* Navigation (Hanya tampil di layar besar) */}
+          {!isSmallScreen && (
+            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p: 2 }}>
+              {navItems.map((item, index) => {
                 const isActived = item.path === pathname;
 
-              return (
-                <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
-                  <Typography
-                    sx={{
-                      fontSize : '16px',
-                      px : 1,
-                      textTransform: 'none',
-                      color: isActived ? '#FFD700' : 'black', // Warna kuning jika aktif
-                      fontWeight: isActived ? 'bold' : 'normal', // Tebalkan teks jika aktif
-                      transition: '0.3s',
-                      '&:hover': { textDecoration : 'underline' }, // Warna emas saat hover
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </Link>
-              );
-            })}
-
-          </Box>
-        )}
- </Box>
+                return (
+                  <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
+                    <Typography
+                      sx={{
+                        fontSize: '16px',
+                        px: 1,
+                        textTransform: 'none',
+                        color: isActived ? '#FFD700' : 'black', // Warna kuning jika aktif
+                        fontWeight: isActived ? 'bold' : 'normal', // Tebalkan teks jika aktif
+                        transition: '0.3s',
+                        '&:hover': { textDecoration: 'underline' }, // Warna emas saat hover
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Link>
+                );
+              })}
+            </Box>
+          )}
+        </Box>
         {/* Login Button */}
         {!isSmallScreen && (
           <Box sx={{ ml: 'auto' }}>
             <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Button 
-                color="inherit" 
-                sx={{ 
-                  textTransform: 'none', 
+              <Button
+                color="inherit"
+                sx={{
+                  textTransform: 'none',
                   color: 'black', // Mengubah warna teks menjadi hitam
-                  transition: '0.3s', 
-                  '&:hover': { color: '#FFD700' } // Warna emas saat hover
+                  transition: '0.3s',
+                  '&:hover': { color: '#FFD700' }, // Warna emas saat hover
                 }}
               >
                 Masuk / Daftar
@@ -125,11 +134,22 @@ export default function Header() {
             {navItems.map((item, index) => {
               const isActived = item.path === pathname;
               return (
-              <ListItem button component={Link} to={item.path} key={index} onClick={toggleDrawer} sx={{backgroundColor: isActived && '#FFD700', borderRadius : '10px', color: isActived && 'white' }}>
-                {item.icon} {/* Ikon hanya tampil di layar kecil */}
-                <ListItemText primary={item.label} sx={{ ml: 1, }} />
-              </ListItem>
-              )
+                <ListItem
+                  button
+                  component={Link}
+                  to={item.path}
+                  key={index}
+                  onClick={toggleDrawer}
+                  sx={{
+                    backgroundColor: isActived && '#FFD700',
+                    borderRadius: '10px',
+                    color: isActived && 'white',
+                  }}
+                >
+                  {item.icon} {/* Ikon hanya tampil di layar kecil */}
+                  <ListItemText primary={item.label} sx={{ ml: 1 }} />
+                </ListItem>
+              );
             })}
             <Divider sx={{ my: 1 }} />
             <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
