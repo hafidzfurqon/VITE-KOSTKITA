@@ -45,13 +45,18 @@ export default function PropertyDetail() {
     setCurrentImageIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const formatCurrency = (price) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
+
+  const hasDiscount = data?.discounts && data?.discounts?.length > 0;
+
+  // const formatPrice = (price) => {
+  //   return new Intl.NumberFormat('id-ID', {
+  //     style: 'currency',
+  //     currency: 'IDR',
+  //     minimumFractionDigits: 0,
+  //   }).format(price);
+  // };
 
   if (isLoading || isFetching) {
     return (
@@ -235,9 +240,42 @@ export default function PropertyDetail() {
             <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
               <Card sx={{ p: 2, boxShadow: 3 }}>
                 {/* <Typography variant="subtitle1">Price:</Typography> */}
-                <Typography color="primary.main" variant="h5" sx={{ mb: 1 }}>
-                  {formatPrice(data.start_price)}/{data.payment_type}
-                </Typography>
+                <Card sx={{ p: 2, boxShadow: 3 }}>
+                  {hasDiscount ? (
+                    <>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                        >
+                          {formatCurrency(data.start_price)}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Box
+                          sx={{
+                            backgroundColor: 'red',
+                            color: 'white',
+                            fontSize: '12px',
+                            borderRadius: '10px',
+                            px: '5px',
+                          }}
+                        >
+                          -{data.discounts[0].discount_value}%
+                        </Box>
+                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                          {formatCurrency(data.discounts[0].price_after_discount)}
+                        </Typography>
+                      </Box>
+                    </>
+                  ) : (
+                    <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                      {formatCurrency(data.start_price)}
+                    </Typography>
+                  )}
+                </Card>
+
                 {/* Tombol WhatsApp */}
                 <Button
                   variant="contained"
@@ -258,7 +296,9 @@ export default function PropertyDetail() {
             <Card sx={{ mb: 4 }}>
               <CardContent>
                 <Typography variant="subtitle1">Description</Typography>
-                <Typography color="text.secondary">{data.description}</Typography>
+                <Typography color="text.secondary">
+                  <span dangerouslySetInnerHTML={{ __html: data.description }} />
+                </Typography>
               </CardContent>
             </Card>
           )}
