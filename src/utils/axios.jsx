@@ -162,6 +162,10 @@ export const fetcher = async (args) => {
       list : '/api/admin/city/list',
       detail : '/api/admin/state/detail'
     },
+    sector : {
+      list : '/api/admin/city/list',
+      detail : '/api/admin/city/detail'
+    },
     promo : {
       list : "/api/admin/promo/list",
       create : "/api/admin/promo/create",
@@ -172,9 +176,15 @@ export const fetcher = async (args) => {
     apartement : {
       create : "/api/admin/apartment/create",
       list : '/api/admin/property/list',
-      delete : '/api/admin/apartment/delete',
+      delete : '/api/admin/property/delete',
       public : {
         list : "/api/public/property/all"
       }
+    },
+    property_type : {
+      list : '/api/admin/property/type/list',
+      create : '/api/admin/property/type/create',
+      update : '/api/admin/property/type/update',
+      delete : '/api/admin/property/type/delete',
     }
   };

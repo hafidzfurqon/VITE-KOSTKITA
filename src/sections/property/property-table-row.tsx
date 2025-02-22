@@ -17,13 +17,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { DialogUpdate } from 'src/component/DialogUpdate';
 import { useDeleteProperty, useUpdateProperty } from 'src/hooks/property';
-import { DialogContent, Typography } from '@mui/material';
+import { DialogContent, TextField, Typography } from '@mui/material';
 import { Tooltip } from '@mui/material';
 import { Dialog } from '@mui/material';
 import { DialogTitle } from '@mui/material';
 import { DialogActions } from '@mui/material';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { useMutationDeleteFacilities, useMutationUpdatePropertyType } from 'src/hooks/property_type';
 
 // ----------------------------------------------------------------------
 
@@ -52,204 +54,114 @@ type UserTableRowProps = {
 };
 
 export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
+  const [open, setOpen] = useState(false);
+  const [opened, setOpened] = useState(false);
+   const handleClickOpen = () => {
+    setOpen(true)
+   }
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openView, setOpenView] = useState(false);
 
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
-  const [open, setOpen] = useState(false);
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-  const handleEditOpen = () => {
-    setOpenEdit(true);
-    handleClosePopover();
-  };
-  const handleViewOpen = () => {
-    setOpenView(true);
-    handleClosePopover();
-  };
-
-  const handleViewClose = () => {
-    setOpenView(false);
-  };
-
-  // console.log(row)
-  const { mutate: DeleteProperty, isPending } = useDeleteProperty({
+  const {mutate, isPending : isPendingMutate} = useMutationUpdatePropertyType({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['list.property'] });
+      queryClient.invalidateQueries({ queryKey: ['fetch.property_type'] });
       setOpen(false);
-      enqueueSnackbar('Property berhasil dihapus', { variant: 'success' });
+      enqueueSnackbar('Tipe Property berhasil diupdate', { variant: 'success' });
     },
     onError: () => {
-      enqueueSnackbar('gagal menghapus property', { variant: 'error' });
+      enqueueSnackbar('Tipe Property gagal diupdate', { variant: 'error' });
     },
-  });
+  },
+  row.id
+)
 
-  const { mutate: UpdateBanner, isPending: isLoading } = useUpdateProperty({
+  const { mutate: DeleteFacilities, isPending } = useMutationDeleteFacilities({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['list.property'] });
+      queryClient.invalidateQueries({ queryKey: ['fetch.property_type'] });
       setOpen(false);
-      enqueueSnackbar('Property berhasil diupdate', { variant: 'success' });
+      enqueueSnackbar('Tipe Property berhasil dihapus', { variant: 'success' });
     },
-    onError: () => {
-      enqueueSnackbar('gagal mengupdate property', { variant: 'error' });
+    onError: (err : any) => {
+      enqueueSnackbar('Tipe Property gagal dihapus', { variant: 'error' });
     },
   });
 
   const handleSubmit = () => {
-    DeleteProperty(row.id);
+    DeleteFacilities(row.id)
+  }
+  const handleClickOpened = () => {
+    setOpened(true);
   };
-  // const renderCover = (
-  //   <Box
-  //     component="img"
-  //     alt={row.name}
-  //     src={row.image_url}
-  //     sx={{
-  //       top: 0,
-  //       width: 100,
-  //       height: 1,
-  //       objectFit: 'cover',
-  //       borderRadius : '10px'
-  //       // position: 'absolute',
-  //     }}
-  //   />
-  // );
+  const defaultValues = {
+    name: row?.name || '',
+  };
 
+  const { register, handleSubmit : handleSubmitForm} = useForm({
+    defaultValues
+  });
+  // const { register, handleSubmit: submitEdit } = useForm();
+
+  const FieldRHF = (
+    <>
+      <TextField
+        {...register('name')}
+        autoFocus
+        required
+        margin="dense"
+        id="nama"
+        label="Nama Tipe Property"
+        type="text"
+        fullWidth
+        variant="outlined"
+      />
+      </>
+      )
+      
+  const handleClose = () => {
+    setOpened(false);
+  };
+
+    const handleCreate = (data : any) => {
+      // console.log(data)
+      mutate(data)
+      handleClose();
+    }
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
+        <TableCell align='center'>{row.name}</TableCell>
+        <TableCell align="center">
+        <Button onClick={handleClickOpened}>
+            <Iconify icon="solar:pen-bold" />
+            Edit
+          </Button>
 
-        {/* <TableCell>
-        <Box
-          component="img"
-          src={row.image_url}
-          alt={row.name}
-          sx={{ width: 80, height: 80, borderRadius: 2, objectFit: 'cover' }}
-        />
-      </TableCell> */}
-
-        <TableCell>
-          <Typography variant="subtitle2" noWrap>
-            {row.name}
-          </Typography>
-        </TableCell>
-        <TableCell>{row.type}</TableCell>
-        <TableCell>{row.address}</TableCell>
-        <TableCell>{row.state?.name}</TableCell>
-        <TableCell>{row.city?.name}</TableCell>
-        <TableCell>
-          <a href={row.link_googlemaps} target="_blank" rel="noopener noreferrer">
-            Lihat di Maps
-          </a>
-        </TableCell>
-        {/* <TableCell>
-        <Typography variant="body2" sx={{ maxWidth: 200, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {row.description}
-        </Typography>
-      </TableCell> */}
-
-        <TableCell>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Box
-              sx={{
-                width: 10,
-                height: 10,
-                borderRadius: '50%',
-
-                bgcolor: row.status === 'available' ? 'green' : 'red',
-                mr: 1,
-              }}
-            />
-            <Typography color={row.status === 'available' ? 'green' : 'red'}>
-              {row.status}
-            </Typography>
-          </Box>
-        </TableCell>
-
-        {/* <TableCell>Rp {row.start_price.toLocaleString()}</TableCell> */}
-
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList sx={{ p: 1 }}>
-          <MenuItem onClick={handleViewOpen}>
-            <Iconify icon="eva:eye-fill" sx={{ mr: 1 }} /> View
-          </MenuItem>
-          <MenuItem component={Link} to={`/property/edit/${row.id}`} state={{ propertyData: row }}>
-            <Iconify icon="solar:pen-bold" sx={{ mr: 1 }} /> Edit
-          </MenuItem>
-          <MenuItem onClick={handleClickOpen} sx={{ color: 'error.main' }}>
+          <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
-        </MenuList>
-      </Popover>
-
-      <Dialog open={openView} onClose={handleViewClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Detail Properti</DialogTitle>
-        <DialogContent dividers>
-          <Typography variant="body1">
-            <strong>Nama:</strong> {row.name}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Tipe:</strong> {row.type}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Alamat:</strong> {row.address}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Provinsi:</strong> {row.state?.name}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Kota:</strong> {row.city?.name}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Deskripsi:</strong> {row.description}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Harga:</strong> Rp {row.start_price.toLocaleString()}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Status:</strong> {row.status}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleViewClose} color="primary">
-            Tutup
           </Button>
-        </DialogActions>
-      </Dialog>
-
-      <DialogDelete
-        title="yakin untuk menghapus property ?"
-        description="data yang telah di hapus tidak akan kembali"
-        setOpen={setOpen}
-        open={open}
-        Submit={handleSubmit}
-        pending={isPending}
+        </TableCell>
+      </TableRow>
+      <DialogDelete 
+      title="yakin untuk menghapus tipe property ?"
+       description="data yang telah di hapus tidak akan kembali"
+       setOpen={setOpen}
+       open={open}
+       Submit={handleSubmit}
+       pending={isPending}
+      />
+      <DialogUpdate 
+      pending={isPendingMutate}
+      SubmitFormValue={handleCreate}
+      open={opened}
+      title="Update Nama Tipe Property"
+      subTitle="Tipe Property untuk coliving maupun apartemen"
+      setOpen={setOpened}
+      field={FieldRHF}
+      SubmitForm={handleSubmitForm}
       />
     </>
   );

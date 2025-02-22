@@ -27,6 +27,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
 import { WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
+import { Iconify } from 'src/components/iconify';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -76,7 +77,6 @@ export default function PropertyDetail() {
       </Container>
     );
   }
-
   return (
     <>
       <Helmet>
@@ -236,8 +236,16 @@ export default function PropertyDetail() {
               <Card sx={{ p: 2, boxShadow: 3 }}>
                 {/* <Typography variant="subtitle1">Price:</Typography> */}
                 <Typography color="primary.main" variant="h5" sx={{ mb: 1 }}>
-                  {formatPrice(data.start_price)}/{data.payment_type}
+                  {formatPrice(data.start_price)} /{data.payment_type === 'monthly' ? "bulan" : "Tahun"}
                 </Typography>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  sx={{mb :2}} 
+                  fullWidth
+                >
+                  Lihat Kamar
+                </Button>
                 {/* Tombol WhatsApp */}
                 <Button
                   variant="contained"
@@ -258,35 +266,55 @@ export default function PropertyDetail() {
             <Card sx={{ mb: 4 }}>
               <CardContent>
                 <Typography variant="subtitle1">Description</Typography>
-                <Typography color="text.secondary">{data.description}</Typography>
+                <Typography color="text.secondary" dangerouslySetInnerHTML={{ __html: data.description }} />
               </CardContent>
             </Card>
           )}
-
+<hr />
+          {data.facilities && (
+            <Box sx={{mx : 2, my : 3}}>
+                <Typography variant="subtitle1">Fasilitas Bersama</Typography>
+                <Box sx={{display  : 'flex', gap : 1, mt: 3, alignItems : 'center', mb:3}} >
+                {data.facilities?.slice(0,5).map((fasilitas, idx) => (
+                  <>
+                  {/* <Iconify icon="material-symbols:check" /> */}
+                  <Iconify icon="mingcute:check-line" />
+                <Typography color="text.secondary" key={idx}>{fasilitas.name}</Typography>
+                  </>
+                ))}
+                </Box>
+                <Typography variant="subtitle1" sx={{ textDecoration : 'underline'}}>Lihat Selengkapnya</Typography>
+                {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
+            </Box>
+          )}
+<hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
-            <Card>
+            <Card sx={{mt : 5}}>
               <CardContent>
                 <Typography variant="subtitle1" gutterBottom>
                   Location
                 </Typography>
                 <Box
-                  sx={{
-                    position: 'relative',
-                    height: 400,
-                    borderRadius: 1,
-                    overflow: 'hidden',
-                  }}
-                >
-                  <iframe
-                    src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.1660035799!2d106.8363308!3d-6.2418409!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3004387f7ad%3A0xe5f8396672af0f36!2sKementerian%20UMKM!5e0!3m2!1sid!2sid!4v1739507646343!5m2!1sid!2sid`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                  ></iframe>
-                </Box>
+              sx={{
+                position: "relative",
+                width: "100%",
+               
+                height: 400,
+                borderRadius: 1,
+                overflow: "hidden",
+              }}
+            >
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: data.link_googlemaps
+                    .replace(/width="\d+"/, 'width="100%"')
+                    .replace(/height="\d+"/, 'height="100%"'),
+                }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            </Box>
+
               </CardContent>
             </Card>
           )}

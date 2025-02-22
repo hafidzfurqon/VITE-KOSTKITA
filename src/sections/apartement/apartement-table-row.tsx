@@ -1,16 +1,9 @@
-import { useState, useCallback, HTMLInputTypeAttribute } from 'react';
+import { useState,} from 'react';
 
 import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
-
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import DialogDelete from 'src/component/DialogDelete';
 
@@ -18,11 +11,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
 import { Button } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { FormLabel } from '@mui/material';
-import { DialogUpdate } from 'src/component/DialogUpdate';
 import { useMutationDeleteApartement } from 'src/hooks/apartement';
+import { Link } from 'react-router-dom';
+import { router } from 'src/hooks/routing/useRouting';
 
 // ----------------------------------------------------------------------
 
@@ -58,111 +49,11 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
-  const [opened, setOpened] = useState(false);
    const handleClickOpen = () => {
     setOpen(true)
    }
    
- 
-  // const defaultValues = {
-  // title : row?.name || '',
-  // image_path  : row.image_path || '',
-  // image_url  : row.image_url || '',
-  // url_reference : row.url_reference || ''
-  // };
-  // const [preview, setPreview] = useState<string>(defaultValues.image_url)
-  // const handleClickOpened = () => {
-  //   setPreview(defaultValues.image_url)
-  //   setOpened(true);
-  // };
-  // const handleImageChange = (e : any) => {
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     const imageUrl = URL.createObjectURL(file);
-  //     setPreview(imageUrl); // Mengupdate preview dengan gambar baru
-  //   }
-  // };
-  const { register, handleSubmit : handleSubmitForm} = useForm();
-    // const FieldRHF = (
-    //   <>
-    //          <TextField
-    //            {...register('title')}
-    //              autoFocus
-    //             required
-    //             margin="dense"
-    //            id="nama"
-    //            label="Nama Fasilitas"
-    //            type="text"
-    //            fullWidth
-    //            variant="outlined"
-    //         />
-    //          <TextField
-    //           {...register('url_reference')}
-    //           autoFocus
-    //           required
-    //           margin="dense"
-    //           id="nama"
-    //           label="url Banner"
-    //           type="text"
-    //           fullWidth
-    //           variant="outlined"
-    //         />
-    //         <FormLabel>
-    //             Image
-    //             <TextField
-    //               {...register('image_path')}
-    //               margin="dense"
-    //               id="image"
-    //               type="file"
-    //               fullWidth
-    //               variant="outlined"
-    //               onChange={handleImageChange}
-    //             />
-    //           </FormLabel>
-    //           {preview && (
-    //     <Box mt={2} textAlign="center">
-    //       <img
-    //         src={preview}
-    //         alt="Preview"
-    //         style={{
-    //           width: "100%",
-    //           maxWidth: "300px",
-    //           borderRadius: "8px",
-    //           border: "1px solid #ddd",
-    //           padding: "5px",
-    //         }}
-    //       />
-    //     </Box>
-    //   )}
-    //   </>
-    // )
-  //   const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner({
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries({ queryKey: ['list.banner'] });
-  //       setOpen(false);
-  //       enqueueSnackbar('Banner berhasil diupdate', { variant: 'success' });
-  //     },
-  //     onError: () => {
-  //       enqueueSnackbar('gagal mengupdate banner', { variant: 'error' });
-  //     },
-  //   },
-  // row.id);
-  
-    // const handleClose = () => {
-    //   setOpened(false);
-    // };
-
-    // const handleCreate = (data : any) => {
-    //   const { image_path: gambar, ...rest } = data;
-    //   const formData  : any = new FormData();
-    //   Object.entries(rest).forEach(([key, value]) => {
-    //     formData.append(key, value);
-    //   });
-    //   formData.append('image', gambar[0]);
-    //   formData.append('_method', 'PUT');
-    //   UpdateBanner(formData)
-    //   handleClose();
-    // }
+  //  console.log(row.files[0]?.file_url)
   const { mutate: DeleteApartement, isPending } = useMutationDeleteApartement({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
@@ -182,7 +73,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
     <Box
       component="img"
       alt={row.name}
-      src={row.files[0].file_url}
+      src={row.files[0]?.file_url}
       sx={{
         top: 0,
         width: 100,
@@ -212,6 +103,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
 
 
 <TableCell align="center">
+  <Box>
         <Button onClick={() => alert('sdjshad')}>
             <Iconify icon="solar:pen-bold" />
             Edit
@@ -221,16 +113,25 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </Button>
-          <Button onClick={() => alert('detail')} sx={{ color: 'secondary.main' }}>
+  </Box>
+  <Box>
+    <Link to={`${router.property.list}/${row.slug}`} target='_blank'>
+          <Button sx={{ color: 'secondary.main' }}>
             <Iconify icon="solar:eye-bold" />
             Lihat
           </Button>
+    </Link>
+          <Button onClick={() => alert('room')} sx={{ color: 'secondary.main' }}>
+            <Iconify icon="mingcute:add-line" />
+            Add Room
+          </Button>
+  </Box>
         </TableCell>
       </TableRow>
       
 
       <DialogDelete 
-      title="yakin untuk menghapus Apartement ?"
+      title="yakin untuk menghapus Property ?"
        description="data yang telah di hapus tidak akan kembali"
        setOpen={setOpen}
        open={open}
@@ -238,16 +139,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
        pending={isPending}
       />
 
-       {/* <DialogUpdate 
-            pending={isLoading}
-            SubmitFormValue={handleCreate}
-            open={opened}
-            title="Update Banner"
-            subTitle="Banner untuk landing page"
-            setOpen={setOpened}
-            field={FieldRHF}
-            SubmitForm={handleSubmitForm}
-            /> */}
+     
     </>
   );
 }

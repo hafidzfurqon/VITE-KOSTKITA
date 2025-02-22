@@ -76,7 +76,7 @@ export function Router() {
             },
           ],
         },
-        { path: 'apartement',
+        { path: 'property',
           children: [
             {
               path: '',
@@ -116,7 +116,7 @@ export function Router() {
           ],
         },
         {
-          path: 'property',
+          path: 'management-property-type',
           children: [
             {
               path: '',

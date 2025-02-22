@@ -23,14 +23,9 @@ export const navData = [
     icon: icon('ic-analytics'),
   },
   {
-    title: 'Banner',
-    path: '/banner',
-    icon: iconsNavbar('ic-notification-mail'),
-  },
-  {
-    title: 'Property',
-    path: '/property',
-    icon: Anothericon('ic-glass-message'),  
+    title: 'Property Tipe',
+    path: '/management-property-type',
+    icon: iconsNavbar('ic-notification-package'),
   },
   {
     title: 'User',
@@ -38,15 +33,21 @@ export const navData = [
     icon: icon('ic-user'),
   },
   {
-    title: 'Apartement',
-    path: '/apartement',
-    icon: Kegiatanicon('ic-glass-users'),
+    title: 'Banner',
+    path: '/banner',
+    icon: iconsNavbar('ic-notification-mail'),
+  },
+  {
+    title: 'Property',
+    path: '/property',
+    icon: Anothericon('ic-glass-message'), 
     info: (
       <Label color="error" variant="inverted">
         🏠
       </Label>
-    ),
+    ), 
   },
+  
   {
     title: 'promo',
     path: '/management-promo',
