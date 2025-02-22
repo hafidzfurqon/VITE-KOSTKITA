@@ -17,18 +17,22 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { PropertyTableToolbar } from '../property-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-import { Link } from 'react-router-dom';
-import { router } from 'src/hooks/routing/useRouting';
-import { useGetProperty } from 'src/hooks/property';
+import { useFetchAllPropertyType, useMutationCreateTypeProperty } from 'src/hooks/property_type';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useForm } from 'react-hook-form';
+import { TextField } from '@mui/material';
+import { DialogCreate } from 'src/component/DialogCreate';
 
 export function PropertyView() {
   const table = useTable();
-  const { data = [], isLoading, isFetching } = useGetProperty();
+  const { data = [], isLoading, isFetching } = useFetchAllPropertyType();
   const [filterName, setFilterName] = useState('');
+  const [opened, setOpened] = useState(false);
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const { register, handleSubmit: handleSubmitForm, reset } = useForm();
 
-  if (isLoading || isFetching) {
-    return <Loading />;
-  }
 
   const dataFiltered = applyFilter({
     inputData: data,
@@ -37,18 +41,54 @@ export function PropertyView() {
   });
 
   const notFound = !dataFiltered.length && !!filterName;
+  const handleClickOpened = useCallback(() => setOpened(true), []);
+  const handleClose = useCallback(() => setOpened(false), []);
+  const { mutate, isPending: isPendingMutate } = useMutationCreateTypeProperty({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch.property_type'] });
+      setOpened(false);
+      enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
+      reset();
+    },
+    onError: () => {
+      enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
+    },
+  });
 
+  const handleCreate = useCallback(
+    (data: any) => {
+      mutate(data);
+      handleClose();
+    },
+    [mutate, handleClose]
+  );
+
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
+  const FieldRHF = (
+    <TextField
+      {...register('name')}
+      autoFocus
+      required
+      margin="dense"
+      id="nama"
+      label="Nama Tipe Property"
+      type="text"
+      fullWidth
+      variant="outlined"
+    />
+  );
   return (
+    <>
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Management Property
+          Management Tipe Property
         </Typography>
-        <Link to={router.property.create}>
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
-            Tambah Property
+        <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleClickOpened}>
+            Tambah Tipe Property
           </Button>
-        </Link>
       </Box>
 
       <Card>
@@ -75,15 +115,8 @@ export function PropertyView() {
                 }
                 headLabel={[
                     // { id: 'image', label: 'Image' },
-                    { id: 'name', label: 'Nama Properti' },
-                    { id: 'type', label: 'Tipe' },
-                    { id: 'address', label: 'Alamat' },
-                    { id: 'city', label: 'Kota' },
-                    { id: 'state', label: 'Provinsi' },
-                    { id: 'link_googlemaps', label: 'Google Maps' },
-                    // { id: 'description', label: 'Deskripsi' },
-                    { id: 'status', label: 'Status' },
-                    // { id: 'price', label: 'Harga' },
+                    { id: 'name', label: 'Tipe Properti' },
+                    // { id: 'type', label: 'Tipe' },
                     { id: 'action', label: 'Action' }
                   ]}
                   
@@ -93,6 +126,7 @@ export function PropertyView() {
                   table.page * table.rowsPerPage,
                   table.page * table.rowsPerPage + table.rowsPerPage
                 ).map((row : any) => (
+                  // <></>
                   <PropertyTableRow
                     key={row.id}
                     row={row}
@@ -119,6 +153,17 @@ export function PropertyView() {
         />
       </Card>
     </DashboardContent>
+    <DialogCreate 
+              pending={isPendingMutate}
+              SubmitFormValue={handleCreate}
+              open={opened}
+              title="Create Nama Tipe Property"
+              subTitle="Property untuk coliving maupun apartemen"
+              setOpen={setOpened}
+              field={FieldRHF}
+              SubmitForm={handleSubmitForm}
+              />
+    </>
   );
 }
 

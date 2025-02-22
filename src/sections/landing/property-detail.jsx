@@ -27,6 +27,8 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
 import { WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
+import { Iconify } from 'src/components/iconify';
+import { fPercent } from 'src/utils/format-number';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -50,13 +52,13 @@ export default function PropertyDetail() {
 
   const hasDiscount = data?.discounts && data?.discounts?.length > 0;
 
-  // const formatPrice = (price) => {
-  //   return new Intl.NumberFormat('id-ID', {
-  //     style: 'currency',
-  //     currency: 'IDR',
-  //     minimumFractionDigits: 0,
-  //   }).format(price);
-  // };
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
   if (isLoading || isFetching) {
     return (
@@ -81,7 +83,6 @@ export default function PropertyDetail() {
       </Container>
     );
   }
-
   return (
     <>
       <Helmet>
@@ -206,20 +207,23 @@ export default function PropertyDetail() {
         <Box sx={{ mb: 4 }}>
           <Grid sx={{ mb: 5 }} container spacing={3} alignItems="center">
             {/* Bagian Judul */}
-            <Grid item xs={12} sm={8} sx={{ mt: 2 }}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
               <Typography variant="h4" gutterBottom>
                 {data.name}
               </Typography>
-            </Grid>
-
-            {/* Bagian Tombol Favorite dan Share */}
-            <Grid item xs={12} sm={4} sx={{ textAlign: 'right', mt: 2 }}>
-              <IconButton onClick={() => setIsFavorite(!isFavorite)} color="error">
-                {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-              </IconButton>
-              <IconButton>
-                <ShareIcon />
-              </IconButton>
+              <Box sx={{ display: 'flex' }}>
+                <IconButton onClick={() => setIsFavorite(!isFavorite)} color="error">
+                  {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+                <IconButton>
+                  <ShareIcon />
+                </IconButton>
+              </Box>
             </Grid>
 
             {/* Bagian Lokasi dan Jenis Properti */}
@@ -239,54 +243,64 @@ export default function PropertyDetail() {
             {/* Bagian Harga dengan Card */}
             <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
               <Card sx={{ p: 2, boxShadow: 3 }}>
-                {/* <Typography variant="subtitle1">Price:</Typography> */}
-                <Card sx={{ p: 2, boxShadow: 3 }}>
-                  {hasDiscount ? (
-                    <>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
-                        <Typography
-                          variant="subtitle1"
-                          sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
-                        >
-                          {formatCurrency(data.start_price)}
-                        </Typography>
+                {hasDiscount ? (
+                  <>
+                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                      >
+                        {formatCurrency(data.start_price)}/
+                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Box
+                        sx={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          fontSize: '11px',
+                          borderRadius: '10px',
+                          px: '5px',
+                        }}
+                      >
+                        -Rp {fPercent(data.discounts[0].discount_value)}
                       </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Box
-                          sx={{
-                            backgroundColor: 'red',
-                            color: 'white',
-                            fontSize: '12px',
-                            borderRadius: '10px',
-                            px: '5px',
-                          }}
-                        >
-                          -{data.discounts[0].discount_value}%
-                        </Box>
-                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                          {formatCurrency(data.discounts[0].price_after_discount)}
-                        </Typography>
-                      </Box>
-                    </>
-                  ) : (
-                    <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                      {formatCurrency(data.start_price)}
-                    </Typography>
-                  )}
-                </Card>
+                      <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                        {formatCurrency(data.discounts[0].price_after_discount)}/
+                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                      </Typography>
+                    </Box>
+                  </>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                    {formatCurrency(data.start_price)}/
+                    {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                  </Typography>
+                )}
 
-                {/* Tombol WhatsApp */}
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<WhatsApp />}
-                  href={`https://wa.me/${data.phone}`}
-                  target="_blank"
-                  fullWidth
-                >
-                  WhatsApp
-                </Button>
+                <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+                  <Button variant="outlined" color="primary" sx={{ mb: 2, height: 48 }} fullWidth>
+                    Lihat Kamar
+                  </Button>
+
+                  {/* Tombol WhatsApp */}
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<WhatsApp />}
+                    href={`https://wa.me/${data.phone}`}
+                    target="_blank"
+                    fullWidth
+                    sx={{
+                      color: '#25D366 ',
+                      height: 48,
+                    }}
+                  >
+                    WhatsApp
+                  </Button>
+                </Box>
               </Card>
             </Grid>
           </Grid>
@@ -296,16 +310,56 @@ export default function PropertyDetail() {
             <Card sx={{ mb: 4 }}>
               <CardContent>
                 <Typography variant="subtitle1">Description</Typography>
+                <Typography
+                  color="text.secondary"
+                  dangerouslySetInnerHTML={{ __html: data.description }}
+                />
                 <Typography color="text.secondary">
                   <span dangerouslySetInnerHTML={{ __html: data.description }} />
                 </Typography>
               </CardContent>
             </Card>
           )}
-
+          <hr />
+          {data.facilities && (
+            <Box sx={{ mx: 2, my: 3 }}>
+              <Typography variant="subtitle1">Fasilitas Bersama</Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  whiteSpace: 'nowrap',
+                  mt: 4,
+                  gap: 2,
+                  pb: 1, // Agar scrollbar tidak menutupi konten
+                  '&::-webkit-scrollbar': {
+                    display: 'none', // Sembunyikan scrollbar
+                  },
+                }}
+                direction="row"
+                spacing={1}
+                mb={3}
+              >
+                {data.facilities?.slice(0, 5).map((fasilitas, idx) => (
+                  <>
+                    {/* <Iconify icon="material-symbols:check" /> */}
+                    <Iconify icon="mingcute:check-line" />
+                    <Typography color="text.secondary" key={idx}>
+                      {fasilitas.name}
+                    </Typography>
+                  </>
+                ))}
+              </Box>
+              <Typography variant="subtitle1" sx={{ textDecoration: 'underline' }}>
+                Lihat Selengkapnya
+              </Typography>
+              {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
+            </Box>
+          )}
+          <hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
-            <Card>
+            <Card sx={{ mt: 5 }}>
               <CardContent>
                 <Typography variant="subtitle1" gutterBottom>
                   Location
@@ -313,19 +367,21 @@ export default function PropertyDetail() {
                 <Box
                   sx={{
                     position: 'relative',
+                    width: '100%',
+
                     height: 400,
                     borderRadius: 1,
                     overflow: 'hidden',
                   }}
                 >
-                  <iframe
-                    src={`https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.1660035799!2d106.8363308!3d-6.2418409!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3004387f7ad%3A0xe5f8396672af0f36!2sKementerian%20UMKM!5e0!3m2!1sid!2sid!4v1739507646343!5m2!1sid!2sid`}
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0 }}
-                    allowFullScreen=""
-                    loading="lazy"
-                  ></iframe>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: data.link_googlemaps
+                        .replace(/width="\d+"/, 'width="100%"')
+                        .replace(/height="\d+"/, 'height="100%"'),
+                    }}
+                    style={{ width: '100%', height: '100%' }}
+                  />
                 </Box>
               </CardContent>
             </Card>

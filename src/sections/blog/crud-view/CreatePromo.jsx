@@ -14,6 +14,7 @@ import { useRouter } from "src/routes/hooks";
 import { Link } from "react-router-dom";
 import { router } from "src/hooks/routing/useRouting";
 
+
 export const CreatePromo = () => {
   const {
     register,
@@ -189,7 +190,6 @@ export const CreatePromo = () => {
           variant="outlined"
         />
         </Stack>
-        
         <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
           Submit
         </Button>

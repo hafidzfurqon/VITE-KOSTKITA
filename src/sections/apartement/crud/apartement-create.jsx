@@ -16,26 +16,43 @@
   import { useGetState, useGetCity } from "src/hooks/property";
   import { useDropzone } from "react-dropzone";
 import { useMutationCreateApartement } from "src/hooks/apartement";
+import { useFetchFacilities } from "src/hooks/facilities";
+import Loading from "src/components/loading/loading";
+import { Checkbox } from "@mui/material";
+import { FormGroup } from "@mui/material";
+import { useFetchAllPropertyType } from "src/hooks/property_type";
+import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
 
 
   export const CreateApartement = () => {
+    const {data : facilities, isLoading, isFetching} = useFetchFacilities();
+    const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = useFetchAllPropertyType();
+    
     const {
       control,
       register,
       handleSubmit,
       setValue,
+      watch,
       formState: { errors },
-    } = useForm({
-      defaultValues: {
-        type: "Apartment", // Set default value langsung
-      },
-    });
+    } = useForm({defaultValues: {
+      facilities: [],
+    },});
     const [description, setDescription] = useState('');
     const [isActive, setIsActive] = useState(false);
     const queryClient = useQueryClient();
     const { enqueueSnackbar } = useSnackbar();
     const routers = useRouter();
     const [selectedImages, setSelectedImages] = useState([]);
+
+    const handleCheckboxChange = (facilityId) => {
+      const currentFacilities = watch('facilities') || []; // Ambil value saat ini
+      const updatedFacilities = currentFacilities.includes(facilityId)
+        ? currentFacilities.filter(id => id !== facilityId)
+        : [...currentFacilities, facilityId];
+    
+      setValue('facilities', updatedFacilities); // Update nilai dengan array baru
+    }
 
     // ✅ Handle file selection
     const handleFileChange = (event) => {
@@ -60,8 +77,10 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
       setValue('description', value); // Update value untuk react-hook-form
     };
     const [selectedState, setSelectedState] = useState(null);
+    const [selectedCity, setSelectedCity] = useState(null);
     const { data: states = [], isLoading: isLoadingStates } = useGetState();
     const { data: cities = [], isLoading: loadingCities } = useGetCity(selectedState);
+    const { data: sector = [], isLoading: LoadingSector } = useGetSector(selectedCity);
 
     const {
       getRootProps,
@@ -80,7 +99,7 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
     const {mutate, isPending} = useMutationCreateApartement({
       onSuccess : () => {
         queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
-        routers.push('/apartement');
+        routers.push('/property');
         enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
       },
       onError: () => {
@@ -89,56 +108,49 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
     })
     const Submitted = (data) => {
       const formData = new FormData();
+    
       Object.entries(data).forEach(([key, value]) => {
-        if (key === "files") {
-          value.forEach((file) => formData.append("files[]", file)); // ✅ Kirim semua file
-        } else {
-          formData.append(key, value);
+        if (key !== "price") { // Hindari duplikasi harga
+          if (Array.isArray(value)) {
+            value.forEach(item => formData.append(`${key}[]`, item));
+          } else {
+            formData.append(key, value);
+          }
         }
       });
-      formData.append('price', cleanPrice(data.price));
+    
+      formData.append("price", cleanPrice(data.price)); // Tambahkan hanya satu price
+    
       mutate(formData);
     };
+
+    const selectedType = watch("property_type_id");
+    console.log(selectedType)
     const cleanPrice = (price) => {
       return parseInt(price.replace(/[^\d]/g, ''), 10);
     };
+    if ( isLoading||isFetching || loadingPropertyType || FetchingPropertyType) {
+      return <Loading/>
+    }
     return (
       <Container>
         <Typography variant="h3" sx={{ mb: 5 }}>
-          Tambah Apartement
+          Tambah Property
         </Typography>
         <Box component="form" onSubmit={handleSubmit(Submitted)}>
-        <input type="hidden" {...register("type")} />
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <TextField
                 {...register('name', { required: 'Nama Wajib Diisi' })}
                 margin="dense"
                 id="name"
-                label="Nama Apartement"
+                label="Nama Property"
                 type="text"
                 fullWidth
                 variant="outlined"
                 error={!!errors.name}
                 helperText={errors.name?.message}
               />
-            <TextField
-          {...register("land_area", { required: "Luas tanah Wajib Diisi" })}
-          margin="dense"
-          id="land_area"
-          label="Luas tanah"
-          type="text"
-          inputMode="numeric"
-          fullWidth
-          variant="outlined"
-          error={!!errors.land_area}
-          helperText={errors.land_area?.message}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">m²</InputAdornment>,
-          }}
-        />
-            </Stack>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <Controller
                 name="price"
                 control={control}
@@ -159,6 +171,39 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
                   />
                 )}
               />
+            </Stack>
+            <TextField
+              select
+              {...register('property_type_id', { required: true })}
+              label="Tipe Properti"
+              fullWidth
+              required
+            >
+              {property_type.map((property, idx) => {
+                return (
+                  <MenuItem key={idx} value={property.id}>{property.name}</MenuItem>
+                )
+              })}
+            </TextField>
+            {selectedType === 3 && (
+              <>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <TextField
+          {...register("land_area", { required: "Luas tanah Wajib Diisi" })}
+          margin="dense"
+          id="land_area"
+          label="Luas tanah" // harus ada 3 min
+          type="text"
+          inputMode="numeric"
+          fullWidth
+          variant="outlined"
+          error={!!errors.land_area}
+          helperText={errors.land_area?.message}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">m²</InputAdornment>,
+          }}
+        />
+           
             <TextField
           {...register("total_floors", { required: "Total Lantai Wajib Diisi" })}
           margin="dense"
@@ -175,7 +220,8 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
           }}
         />
             </Stack>
-          
+          </>
+            )}
             <Typography>Status : </Typography>
             <FormControlLabel
               control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
@@ -186,7 +232,8 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
               margin="dense"
               id="link_googlemaps"
               label="Link Gmaps"
-              type="text"
+              multiline
+              rows={4}
               fullWidth
               variant="outlined"
               error={!!errors.link_googlemaps}
@@ -222,12 +269,23 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
     isOptionEqualToValue={(option, value) => option.city_code === value.city_code}
     loading={loadingCities}
     disabled={!selectedState} // Hanya aktif jika provinsi sudah dipilih
-    // onChange={(_, value) => setValue("city_id", value ? value.city_code : "")}
-    onChange={(_, value) => setValue("city_id", 3201)}
+    onChange={(_, value) => {
+      setSelectedCity(value ? value.city_code : null);
+      setValue("city_id", value ? value.city_code : "");
+    }}
     renderInput={(params) => <TextField {...params} label="Kab / Kota" fullWidth variant="outlined" />}
   />
-        {/* </Stack> */}
-
+        <Autocomplete
+        options={sector || []}
+        getOptionLabel={(option) => option.name}
+        isOptionEqualToValue={(option, value) => option.sector_code === value.sector_code}
+        loading={LoadingSector}
+        disabled={!selectedCity} // Hanya aktif jika provinsi sudah dipilih
+        onChange={(_, value) => setValue("sector_id", value ? value.sector_code : "")}
+        // onChange={(_, value) => setValue("sector_id", 3201)}
+        renderInput={(params) => <TextField {...params} label="Kecamatan" fullWidth variant="outlined" />}
+      />
+          
      <FormLabel>Upload Images (Max 5)</FormLabel>
 <Box
   {...getRootProps()}
@@ -268,11 +326,27 @@ import { useMutationCreateApartement } from "src/hooks/apartement";
               <MenuItem value="monthly">Monthly</MenuItem>
               <MenuItem value="yearly">Yearly</MenuItem>
             </TextField>
+            <Typography sx={{ mb : 2}}>Fasilitas Property : </Typography>
+            <FormGroup>
+  {facilities?.map((facility) => (
+    <FormControlLabel
+      key={facility.id}
+      control={
+        <Checkbox
+          checked={watch('facilities')?.includes(facility.id)}
+          onChange={() => handleCheckboxChange(facility.id)}
+        />
+      }
+      label={facility.name}
+    />
+  ))}
+</FormGroup>
+
           </Stack>
           <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
             Submit
           </Button>
-          <Link to={router.apartement.list}>
+          <Link to={router.property.list}>
           <Button type="button" variant="outlined" sx={{ mt: 3, mb:5 }}>
             Kembali
           </Button>

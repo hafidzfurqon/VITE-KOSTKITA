@@ -6,7 +6,7 @@ export default function ApartmenetPage() {
   return (
     <>
       <Helmet>
-        <title> {`Apartmenet - ${CONFIG.appName}`}</title>
+        <title> {`Property - ${CONFIG.appName}`}</title>
         <meta
           name="description"
           content="Apartmenet"

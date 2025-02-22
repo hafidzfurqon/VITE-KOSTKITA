@@ -8,6 +8,7 @@ import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
+import { fPercent } from 'src/utils/format-number';
 
 export default function PropertyGrid() {
   const { data, isLoading, isFetching } = useListProperty();
@@ -131,12 +132,12 @@ export default function PropertyGrid() {
                           sx={{
                             backgroundColor: 'red',
                             color: 'white',
-                            fontSize: '12px',
+                            fontSize: '11px',
                             borderRadius: '10px',
                             px: '5px',
                           }}
                         >
-                          -{property.discounts.map((discount) => discount.discount_value)}%
+                          -Rp {fPercent(property.discounts[0]?.discount_value)}
                         </Box>
                         <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
                           {formatCurrency(

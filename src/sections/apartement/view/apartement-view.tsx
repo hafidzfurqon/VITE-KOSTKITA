@@ -43,11 +43,11 @@ export function ApartementView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Management Apartement
+          Management Property
         </Typography>
-        <Link to={router.apartement.create}>
+        <Link to={router.property.create}>
           <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
-            Tambah Apartement
+            Tambah Property
           </Button>
         </Link>
       </Box>
@@ -75,8 +75,8 @@ export function ApartementView() {
                   table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                  { id: 'image_banner', label: 'Gambar Apartement' },
-                  { id: 'title_banner', label: 'Judul Apartement' },
+                  { id: 'image_banner', label: 'Gambar Property' },
+                  { id: 'title_banner', label: 'Judul Property' },
                   // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}
