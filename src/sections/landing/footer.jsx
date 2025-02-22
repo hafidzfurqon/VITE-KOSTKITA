@@ -1,17 +1,17 @@
-import React from "react";
-import { Box, Grid, Typography, Button, IconButton } from "@mui/material";
-import { Facebook, Instagram, Twitter, WhatsApp, Mail } from "@mui/icons-material";
-import image from '../../../public/assets/images/Kost.pdf (2).png'
+import React from 'react';
+import { Box, Grid, Typography, Button, IconButton } from '@mui/material';
+import { Facebook, Instagram, Twitter, WhatsApp, Mail } from '@mui/icons-material';
+import image from '../../../public/assets/images/Kost.pdf (2).png';
 
 export default function Footer() {
   return (
     <Box
       sx={{
-        backgroundColor: "#000",
-        color: "#fff",
+        backgroundColor: '#000',
+        color: '#fff',
         py: 6,
         px: { xs: 4, md: 10 },
-        borderTopRightRadius: "50px",
+        borderTopRightRadius: '50px',
       }}
     >
       <Grid container spacing={4} maxWidth="lg" margin="auto" alignItems={'center'}>
@@ -20,33 +20,47 @@ export default function Footer() {
           <Typography variant="h5" fontWeight="bold">
             KosKita.id
           </Typography>
-         <img src={image} alt="gambar.log" width={150} />
+          <img src={image} alt="gambar.log" width={150} />
         </Grid>
 
         {/* Tenant */}
-        <Grid item xs={12} sm={6}  md={2}>
-          <Typography variant="subtitle1" fontWeight="bold" sx={{mb : 3}}>
+        <Grid item xs={12} sm={6} md={2}>
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
             Tenant
           </Typography>
-          <Typography variant="body2" color="gray">Kost</Typography>
-          <Typography variant="body2" color="gray">Apartemen</Typography>
-          <Typography variant="body2" color="gray">Community</Typography>
+          <Typography variant="body2" color="gray">
+            Kost
+          </Typography>
+          <Typography variant="body2" color="gray">
+            Apartemen
+          </Typography>
+          <Typography variant="body2" color="gray">
+            Community
+          </Typography>
         </Grid>
 
         {/* Kerjasama KosKata */}
-        <Grid item xs={12} sm={6}  md={3}>
-          <Typography variant="subtitle1" fontWeight="bold" sx={{mb : 3}}>
+        <Grid item xs={12} sm={6} md={3}>
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
             Kerjasama KosKita.id
           </Typography>
-          <Typography variant="body2" color="gray">Coliving</Typography>
-          <Typography variant="body2" color="gray">Apartemen</Typography>
-          <Typography variant="body2" color="gray">Build to Rent</Typography>
-          <Typography variant="body2" color="gray">KosFinance</Typography>
+          <Typography variant="body2" color="gray">
+            Coliving
+          </Typography>
+          <Typography variant="body2" color="gray">
+            Apartemen
+          </Typography>
+          <Typography variant="body2" color="gray">
+            Build to Rent
+          </Typography>
+          <Typography variant="body2" color="gray">
+            KosFinance
+          </Typography>
         </Grid>
 
         {/* Support */}
-        <Grid item xs={12} md={4} >
-          <Typography variant="subtitle1" fontWeight="bold" sx={{mb : 3}}>
+        <Grid item xs={12} md={4}>
+          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
             Support
           </Typography>
           <Box display="flex" alignItems="center">
@@ -72,13 +86,13 @@ export default function Footer() {
           © 2025 KosKita.id. All rights reserved.
         </Typography>
         <Box mt={1}>
-          <IconButton sx={{ color: "#fff" }}>
+          <IconButton sx={{ color: '#fff' }}>
             <Facebook />
           </IconButton>
-          <IconButton sx={{ color: "#fff" }}>
+          <IconButton sx={{ color: '#fff' }}>
             <Instagram />
           </IconButton>
-          <IconButton sx={{ color: "#fff" }}>
+          <IconButton sx={{ color: '#fff' }}>
             <Twitter />
           </IconButton>
         </Box>

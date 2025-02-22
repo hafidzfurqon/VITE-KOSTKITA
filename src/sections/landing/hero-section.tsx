@@ -3,23 +3,21 @@ import type { ReactNode } from 'react';
 import { useState, useEffect } from 'react';
 
 import { Box } from '@mui/material';
-import "keen-slider/keen-slider.min.css";
-import { useKeenSlider } from "keen-slider/react";
-
+import 'keen-slider/keen-slider.min.css';
+import { useKeenSlider } from 'keen-slider/react';
 
 const carouselImages = [
   'https://images.rukita.co/web/static/img/landing-page/about-us/hero.png?tr=c-at_max%2Cw-1040',
   'https://images.rukita.co/web/static/img/landing-page/about-us/rukita_apartment.png?tr=c-at_max%2Cw-1040',
   'https://images.rukita.co/buildings/building/f297bfe6-649.jpg?tr=c-at_max%2Cw-1040',
-  'https://images.rukita.co/buildings/building/ac52429c-2fe.jpg?tr=c-at_max%2Cw-1040'
+  'https://images.rukita.co/buildings/building/ac52429c-2fe.jpg?tr=c-at_max%2Cw-1040',
 ];
 
 interface HeroSectionProps {
   children: ReactNode;
 }
 
-
-export default function HeroSection({ children } :HeroSectionProps)  {
+export default function HeroSection({ children }: HeroSectionProps) {
   const [currentImage, setCurrentImage] = useState(0);
 
   useEffect(() => {
@@ -67,7 +65,7 @@ export default function HeroSection({ children } :HeroSectionProps)  {
               backgroundColor: 'rgba(0, 0, 0, 0.6)',
               borderBottomLeftRadius: '50px',
               borderBottomRightRadius: '50px',
-            }
+            },
           }}
         />
       ))}
@@ -81,7 +79,7 @@ export default function HeroSection({ children } :HeroSectionProps)  {
           transform: 'translateX(-50%)',
           // zIndex: 2,
           display: 'flex',
-          gap: 1
+          gap: 1,
         }}
       >
         {carouselImages.map((_, index) => (
@@ -94,7 +92,7 @@ export default function HeroSection({ children } :HeroSectionProps)  {
               borderRadius: '50%',
               backgroundColor: currentImage === index ? '#FFD700' : 'rgba(255, 255, 255, 0.5)',
               cursor: 'pointer',
-              transition: 'background-color 0.3s'
+              transition: 'background-color 0.3s',
             }}
           />
         ))}

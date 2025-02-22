@@ -11,7 +11,6 @@ import Loading from 'src/components/loading/loading';
 
 export default function PropertyGrid() {
   const { data, isLoading, isFetching } = useListProperty();
-  
 
   const router = useRouter();
 

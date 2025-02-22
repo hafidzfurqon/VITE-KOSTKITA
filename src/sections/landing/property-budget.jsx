@@ -1,161 +1,286 @@
-import React from 'react';
-import { Box, Typography, Button, Chip, Grid } from '@mui/material';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import VideocamIcon from '@mui/icons-material/Videocam';
-import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
-import LocalOfferIcon from '@mui/icons-material/LocalOffer';
+import { useState } from 'react';
+import { Box, Typography, Chip, Stack, Container } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { useListProperty } from 'src/hooks/property/public/useListProperty';
+import { useRouter } from 'src/routes/hooks';
+import Loading from 'src/components/loading/loading';
+import 'keen-slider/keen-slider.min.css';
+import { Home, Apartment } from '@mui/icons-material';
+import { useKeenSlider } from 'keen-slider/react';
 
-const priceRanges = [
-  { label: '< 3 juta', active: true },
-  { label: '3-5 juta', active: false },
-  { label: '> 5 juta', active: false },
-];
+export default function PropertyBudgety() {
+  const { data, isLoading, isFetching } = useListProperty();
+  const router = useRouter();
+  const [selectedRange, setSelectedRange] = useState(null);
 
-const properties = [
-  {
-    id: 1,
-    name: 'Kostkita Smart Cipete',
-    location: 'Gandaria Selatan, Cilandak',
-    price: 2625000,
-    originalPrice: 2900000,
-    distance: '520 m dari Stasiun MRT Cipete Raya',
-    type: 'Coliving',
-    hasVideo: true,
-    discount: '-9%',
-    image: 'https://images.rukita.co/buildings/building/5a977d64-f87.jpg?tr=c-at_max%2Cw-800'
-  },
-  // Add more properties as needed
-];
+  const formatCurrency = (price) =>
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+    }).format(price);
 
-export default function PropertyBudget() {
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
+
+  if (!data || data.length === 0) {
+    return (
+      <Container sx={{ textAlign: 'center', mt: 6 }}>
+        <Typography variant="h6" color="textSecondary">
+          Tidak ada data properti yang tersedia.
+        </Typography>
+      </Container>
+    );
+  }
+
+  // Urutkan properti berdasarkan start_price (tertinggi ke terendah)
+  const sortedProperties = [...data].sort((a, b) => b.start_price - a.start_price);
+
+  // Ambil harga tertinggi & terendah dari properti
+  const maxPrice = Math.max(...data.map((p) => p.start_price));
+  const minPrice = Math.min(...data.map((p) => p.start_price));
+
+  // Buat rentang harga secara dinamis berdasarkan harga tertinggi & terendah
+  const step = Math.floor((maxPrice - minPrice) / 4); // Bagi jadi 4 range
+  const priceRanges = Array.from({ length: 4 }, (_, i) => {
+    const min = minPrice + step * i;
+    const max = i === 3 ? maxPrice : min + step;
+    return {
+      label: `${formatCurrency(max)} - ${formatCurrency(min)}`,
+      min,
+      max,
+    };
+  }).reverse(); // Urutkan dari harga tertinggi ke terendah
+
+  // Filter properti berdasarkan rentang harga yang dipilih
+  const filteredProperties = selectedRange
+    ? sortedProperties.filter(
+        (property) =>
+          property.start_price >= selectedRange.min && property.start_price <= selectedRange.max
+      )
+    : sortedProperties;
+
+  // const formatPriceLabel = (price) => {
+  //   if (price >= 1_000_000_000) {
+  //     return `${(price / 1_000_000_000).toFixed(1)} M`;
+  //   } else if (price >= 1_000_000) {
+  //     return `${(price / 1_000_000).toFixed(1)} Jt`;
+  //   } else if (price >= 1_000) {
+  //     return `${(price / 1_000).toFixed(0)}Rb`;
+  //   }
+  //   return price.toString();
+  // };
+
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
-        Cari hunian sesuai budgetmu
-      </Typography>
+    <Container>
+      <Box sx={{ mt: 10 }}>
+        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+          Cari hunian sesuai budgetmu
+        </Typography>
 
-      <Box sx={{ display: 'flex', gap: 1, mb: 4 }}>
-        {priceRanges.map((range) => (
-          <Button
-            key={range.label}
-            variant={range.active ? 'contained' : 'outlined'}
-            color={range.active ? 'primary' : 'inherit'}
-            sx={{ 
-              bgcolor: range.active ? '#00A693' : 'transparent',
-              '&:hover': { bgcolor: range.active ? '#009688' : 'rgba(0,0,0,0.04)' }
-            }}
-          >
-            {range.label}
-          </Button>
-        ))}
+        {/* Filter berdasarkan range harga */}
+        <Stack
+          sx={{
+            display: 'flex',
+            overflowX: 'auto',
+            // overflow: 'hidden',
+            whiteSpace: 'nowrap',
+            gap: 2,
+            pb: 1, // Agar scrollbar tidak menutupi konten
+            '&::-webkit-scrollbar': {
+              display: 'none', // Sembunyikan scrollbar
+            },
+          }}
+          direction="row"
+          spacing={1}
+          mb={3}
+        >
+          {priceRanges.map((range) => (
+            <Chip
+              key={range.label}
+              label={range.label}
+              variant={selectedRange === range ? 'filled' : 'outlined'}
+              color={selectedRange === range ? 'primary' : 'default'}
+              onClick={() => setSelectedRange(selectedRange === range ? null : range)}
+            />
+          ))}
+        </Stack>
       </Box>
 
-      <Grid container spacing={2}>
-        {properties.map((property) => (
-          <Grid item xs={12} sm={6} md={3} key={property.id}>
-            <Box sx={{ 
-              border: '1px solid #e0e0e0',
+      {/* List Properti */}
+      <Box
+        sx={{
+          display: 'grid',
+          gridTemplateColumns: {
+            xs: '1fr',
+            sm: 'repeat(2, 1fr)',
+            md: 'repeat(3, 1fr)',
+            lg: 'repeat(4, 1fr)',
+          },
+          gap: 3,
+          mt: 4,
+          mb: 4,
+        }}
+      >
+        {filteredProperties.map((property) => (
+          <Box
+            key={property.id}
+            sx={{
+              backgroundColor: 'white',
               borderRadius: 2,
-              overflow: 'hidden'
-            }}>
-              <Box sx={{ position: 'relative' }}>
-                <img
-                  src={property.image}
-                  alt={property.name}
-                  style={{
-                    width: '100%',
-                    height: '200px',
-                    objectFit: 'cover'
-                  }}
-                />
-                <Box sx={{ 
-                  position: 'absolute',
-                  top: 10,
-                  left: 10,
-                  display: 'flex',
-                  gap: 1
-                }}>
-                    {/* {property.hasVideo && (
-                      <Chip
-                        icon={<VideocamIcon />}
-                        label="Video"
-                        size="small"
-                        sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white' }}
-                      />
-                    )} */}
-                  {/* <Chip
-                    icon={<ThreeSixtyIcon />}
-                    label="360"
-                    size="small"
-                    sx={{ bgcolor: 'rgba(0,0,0,0.6)', color: 'white' }}
-                  /> */}
-                </Box>
-                {property.discount && (
-                  <Chip
-                    label={property.discount}
-                    size="small"
-                    sx={{
-                      position: 'absolute',
-                      top: 10,
-                      right: 10,
-                      bgcolor: '#ff4444',
-                      color: 'white'
-                    }}
-                  />
-                )}
-              </Box>
-
+              overflow: 'hidden',
+              boxShadow: 1,
+              '&:hover': { boxShadow: 3 },
+            }}
+          >
+            <ImageSlider images={property.files} />
+            <Link
+              to={`/property/${property.slug}`}
+              style={{ textDecoration: 'none', display: 'block' }}
+            >
               <Box sx={{ p: 2 }}>
-                <Typography variant="subtitle2" color="text.secondary">
-                  {property.type}
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 'bold', my: 1 }}>
+                <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
                   {property.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {property.location}
+                <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
+                  {property.address}, {property.city.name}
                 </Typography>
-
                 <Typography
-                  variant="body2"
-                  sx={{
-                    textDecoration: 'line-through',
-                    color: 'text.secondary',
-                    mt: 2
-                  }}
+                  variant="subtitle1"
+                  sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                 >
-                  Rp{property.originalPrice.toLocaleString()}
+                  {formatCurrency(property.start_price)} / bulan
                 </Typography>
-                <Typography variant="h6" sx={{ color: '#00A693', fontWeight: 'bold' }}>
-                  Rp{property.price.toLocaleString()} /bulan
-                </Typography>
-
-                <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                  <LocationOnIcon sx={{ fontSize: 16, color: 'text.secondary', mr: 1 }} />
-                  <Typography variant="caption" color="text.secondary">
-                    {property.distance}
-                  </Typography>
-                </Box>
-
-                <Box sx={{ display: 'flex', gap: 1, mt: 2, overflow : 'auto' }}>
-                  <Chip
-                    icon={<LocalOfferIcon />}
-                    label="Diskon sewa 6 Bulan"
-                    size="small"
-                    sx={{ color: '#00A693', border: '1px solid #00A693' }}
-                  />
-                  <Chip
-                    icon={<LocalOfferIcon />}
-                    label="5 Voucher s.d. 21%"
-                    size="small"
-                    sx={{ color: '#00A693', border: '1px solid #00A693' }}
-                  />
-                </Box>
               </Box>
-            </Box>
-          </Grid>
+            </Link>
+          </Box>
         ))}
-      </Grid>
-    </Box>
+      </Box>
+    </Container>
   );
+
+  function ImageSlider({ images }) {
+    const [currentSlide, setCurrentSlide] = useState(0);
+
+    const [sliderRef, instanceRef] = useKeenSlider({
+      loop: true,
+      slides: { perView: 1 },
+      mode: 'free-snap',
+      slideChanged(s) {
+        setCurrentSlide(s.track.details.rel);
+      },
+    });
+
+    const prevSlide = () => instanceRef.current?.prev();
+    const nextSlide = () => instanceRef.current?.next();
+
+    return (
+      <Box
+        sx={{
+          position: 'relative',
+          height: 200,
+          backgroundColor: 'grey.300',
+          '&:hover .slider-arrow': { opacity: 1 },
+        }}
+      >
+        <Box ref={sliderRef} className="keen-slider">
+          {images.length > 0 ? (
+            images.map((image, index) => (
+              <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
+                <img
+                  src={image.file_url}
+                  alt={`Property Image ${index}`}
+                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                />
+              </Box>
+            ))
+          ) : (
+            <Box
+              className="keen-slider__slide"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                backgroundColor: 'gray',
+              }}
+            >
+              <Typography variant="caption" color="white">
+                No Image Available
+              </Typography>
+            </Box>
+          )}
+        </Box>
+
+        {images.length > 1 && (
+          <>
+            <Box
+              className="slider-arrow"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: 10,
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                backgroundColor: 'white',
+                color: 'black',
+                p: 1,
+                borderRadius: '50%',
+                opacity: 0,
+                transition: 'opacity 0.3s',
+              }}
+              onClick={prevSlide}
+            >
+              {'<'}
+            </Box>
+            <Box
+              className="slider-arrow"
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                right: 10,
+                transform: 'translateY(-50%)',
+                cursor: 'pointer',
+                backgroundColor: 'white',
+                color: 'black',
+                p: 1,
+                borderRadius: '50%',
+                opacity: 0,
+                transition: 'opacity 0.3s',
+              }}
+              onClick={nextSlide}
+            >
+              {'>'}
+            </Box>
+          </>
+        )}
+
+        {images.length > 1 && (
+          <Box
+            sx={{
+              position: 'absolute',
+              bottom: 10,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              display: 'flex',
+              gap: 1,
+            }}
+          >
+            {images.map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  backgroundColor: index === currentSlide ? 'black' : 'white',
+                  opacity: index === currentSlide ? 1 : 0.5,
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+    );
+  }
 }

@@ -6,7 +6,7 @@ import { PostSort } from '../blog/post-sort';
 export default function CategorySection() {
   // State untuk menyimpan kategori yang dipilih
   const [selectedCategory, setSelectedCategory] = useState('kost');
-const [sortBy, setSortBy] = useState('latest');
+  const [sortBy, setSortBy] = useState('latest');
 
   const handleSort = useCallback((newSort) => {
     setSortBy(newSort);
@@ -14,23 +14,58 @@ const [sortBy, setSortBy] = useState('latest');
 
   // Data kategori berdasarkan pilihan
   const categories = {
-    kost: ['Populer', 'Terbaru', 'Bandung', 'Surabaya', 'Dekat MRT', 'Dekat KRL', 'Dekat LRT', 'Jakarta Selatan', 'Jakarta Barat', 'Jakarta Utara', 'Depok', 'Bekasi', 'Tangsel', 'Cikarang'],
-    apartemen: ['Jakarta Selatan', 'Jakarta Barat', 'Jakarta Utara', 'Depok', 'Bekasi', 'Tangsel', 'Cikarang'],
+    kost: [
+      'Populer',
+      'Terbaru',
+      'Bandung',
+      'Surabaya',
+      'Dekat MRT',
+      'Dekat KRL',
+      'Dekat LRT',
+      'Jakarta Selatan',
+      'Jakarta Barat',
+      'Jakarta Utara',
+      'Depok',
+      'Bekasi',
+      'Tangsel',
+      'Cikarang',
+    ],
+    apartemen: [
+      'Jakarta Selatan',
+      'Jakarta Barat',
+      'Jakarta Utara',
+      'Depok',
+      'Bekasi',
+      'Tangsel',
+      'Cikarang',
+    ],
   };
 
   return (
     <>
       {/* Pilihan Kost Coliving dan Apartemen */}
-      <Box sx={{ display: 'flex', flexDirection : {xs : 'column', md : 'row'}, justifyContent: 'space-between', mb: {xs : 5, md :10}, flexWrap: 'wrap', alignItems : {xs : 'left', md : 'center'}, gap : 3 }}>
-        <Typography variant="h3" sx={{ fontWeight : 'bold', }}>Property terbaru dari kami</Typography>
-         <PostSort
-                  sortBy={sortBy}
-                  onSort={handleSort}
-                  options={[
-                    { value: 'latest', label: 'Kost Coliving' },
-                    { value: 'oldest', label: 'Apartement' },
-                  ]}
-                />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          mb: { xs: 5, md: 10 },
+          flexWrap: 'wrap',
+          alignItems: { xs: 'left', md: 'center' },
+          gap: 3,
+        }}
+      >
+        <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+          Property terbaru dari kami
+        </Typography>
+        <PostSort
+          sortBy={sortBy}
+          onSort={handleSort}
+          options={[
+            { value: 'latest', label: 'Kost Coliving' },
+            { value: 'oldest', label: 'Apartement' },
+          ]}
+        />
       </Box>
 
       {/* Container kategori dengan scroll horizontal */}
@@ -43,8 +78,8 @@ const [sortBy, setSortBy] = useState('latest');
           gap: 7,
           pb: 1, // Agar scrollbar tidak menutupi konten
           '&::-webkit-scrollbar': {
-            display: 'none' // Sembunyikan scrollbar
-          }
+            display: 'none', // Sembunyikan scrollbar
+          },
         }}
         onWheel={(e) => {
           const container = e.currentTarget;
@@ -59,7 +94,7 @@ const [sortBy, setSortBy] = useState('latest');
                 width: 48,
                 height: 48,
                 mb: 1,
-                '&:hover': { backgroundColor: '#FFC700' }
+                '&:hover': { backgroundColor: '#FFC700' },
               }}
             >
               <HomeIcon sx={{ color: 'black' }} />
