@@ -23,7 +23,7 @@ const StyledCard = styled(Card)(({ theme }) => ({
 
 const ImageContainer = styled(Box)({
   position: 'relative',
-  height: '85%',
+  height: '100%',
 });
 
 const OverlayButton = styled(Button)(({ theme }) => ({
@@ -43,6 +43,7 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
   left: theme.spacing(2),
   backgroundColor: theme.palette.success.main,
   color: 'white',
+  // top : '30px'
 }));
 
 // Map facility names to icons
@@ -118,13 +119,15 @@ const PropertyRoom = ({ rooms = [] }) => {
                 <Grid container spacing={2} mb={3}>
                   {room.room_facilities?.map((facility, index) => {
                     return (
-                      <Grid item xs={6} key={index}>
-                        <Box display="flex" alignItems="center" gap={1}>
+                      <Grid item xs={3} md={2} key={index}>
+                        <Box key={index} display="flex" alignItems="center" gap={1}>
                           <Typography variant="body2" color="text.secondary">
+                          {/* <Stack direction={{ xs: 'column', sm: 'row' }} > */}
                             {facility.name}
+                        {/* </Stack> */}
                           </Typography>
                         </Box>
-                      </Grid>
+                     </Grid>  
                     );
                   })}
                 </Grid>
@@ -160,7 +163,7 @@ const PropertyRoom = ({ rooms = [] }) => {
                         {room.room_discounts?.map((discount) => {
                           return (
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-                              {discount.payment_type}
+                              {discount.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                             </Typography>
                           );
                         })}
@@ -204,7 +207,7 @@ function ImageSlider({ images }) {
     <Box
       sx={{
         position: 'relative',
-        height: 200,
+        // height: 200,
         backgroundColor: 'grey.300',
         '&:hover .slider-arrow': { opacity: 1 },
       }}
@@ -251,7 +254,7 @@ function ImageSlider({ images }) {
               backgroundColor: 'white',
               color: 'black',
               p: 1,
-              borderRadius: '50%',
+              borderRadius: '20%',
               opacity: 0,
               transition: 'opacity 0.3s',
             }}
@@ -270,7 +273,7 @@ function ImageSlider({ images }) {
               backgroundColor: 'white',
               color: 'black',
               p: 1,
-              borderRadius: '50%',
+              borderRadius: '20%',
               opacity: 0,
               transition: 'opacity 0.3s',
             }}
@@ -299,7 +302,7 @@ function ImageSlider({ images }) {
                 width: 8,
                 height: 8,
                 borderRadius: '50%',
-                backgroundColor: index === currentSlide ? 'black' : 'white',
+                backgroundColor: index === currentSlide ? 'black' : 'gray',
                 opacity: index === currentSlide ? 1 : 0.5,
               }}
             />
