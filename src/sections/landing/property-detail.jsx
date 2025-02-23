@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -13,15 +13,16 @@ import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 // icons
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
-import PaymentIcon from '@mui/icons-material/Payment';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
@@ -29,10 +30,14 @@ import { WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
+import BookingView from './user/bookingView';
+import PropertyRoom from './property-room';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  const [open, setOpen] = useState(false);
+  console.log(data);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -90,7 +95,7 @@ export default function PropertyDetail() {
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
-        <meta property="og:image" content={`${data.files[0].file_url}`} />
+        {/* <meta property="og:image" content={`${data?.files[0].file_url}`} /> */}
       </Helmet>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Breadcrumbs */}
@@ -301,6 +306,15 @@ export default function PropertyDetail() {
                     WhatsApp
                   </Button>
                 </Box>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  sx={{ mb: 2, height: 48 }}
+                  fullWidth
+                  onClick={() => setOpen(true)}
+                >
+                  Booking
+                </Button>
               </Card>
             </Grid>
           </Grid>
@@ -387,7 +401,25 @@ export default function PropertyDetail() {
             </Card>
           )}
         </Box>
+        <Divider />
+        <PropertyRoom rooms={data.rooms} />
       </Container>
+
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>
+          Form Booking
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpen(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <BookingView defaultValues={data} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

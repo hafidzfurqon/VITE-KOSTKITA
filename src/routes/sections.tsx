@@ -76,18 +76,19 @@ export function Router() {
             },
           ],
         },
-        { path: 'property',
+        {
+          path: 'property',
           children: [
             {
               path: '',
               // element: <ProductsPage />
-             element: <ApartmenetPage />
+              element: <ApartmenetPage />,
             },
             {
               path: 'create',
-              element: <CreateApartement/>,
+              element: <CreateApartement />,
             },
-          ]
+          ],
         },
         {
           path: 'management-promo',
@@ -151,37 +152,37 @@ export function Router() {
       ),
       path: '/',
     },
-{
-  element : (
-    <LandingLayout>
-      <Suspense fallback={renderFallback}>
-        <Outlet/>
-      </Suspense>
-    </LandingLayout>
-  ),
-  children : [
     {
-      path: "property/:slug",
-      element :  <PropertyDetailPage />
+      element: (
+        <LandingLayout>
+          <Suspense fallback={renderFallback}>
+            <Outlet />
+          </Suspense>
+        </LandingLayout>
+      ),
+      children: [
+        {
+          path: 'property/:slug',
+          element: <PropertyDetailPage />,
+        },
+        {
+          path: '/promo',
+          element: <PromoPage />,
+        },
+        {
+          path: '/about-us',
+          element: <div>Laman tentang ini masih dalam pengembangan</div>,
+        },
+        {
+          path: '/kerja-sama',
+          element: <div>Laman kerja sama ini masih dalam pengembangan</div>,
+        },
+        {
+          path: '/bussines',
+          element: <div>Laman bussines ini masih dalam pengembangan</div>,
+        },
+      ],
     },
-    {
-      path: "/promo",
-      element : <PromoPage />
-    },
-    {
-      path: "/about-us",
-      element : <div>Laman tentang ini masih dalam pengembangan</div>
-    },
-    {
-      path: "/kerja-sama",
-      element : <div>Laman kerja sama ini masih dalam pengembangan</div>
-    },
-    {
-      path: "/bussines",
-      element : <div>Laman bussines ini masih dalam pengembangan</div>
-    },
-  ]
-},
     {
       element: (
         <Suspense fallback={renderFallback}>
