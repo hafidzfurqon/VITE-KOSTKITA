@@ -33,7 +33,7 @@ export function PropertyRoomView() {
   if (isLoading || isFetching) {
     return <Loading />;
   }
-
+  console.log(data)
   const dataFiltered = applyFilter({
     inputData: data,
     comparator: getComparator(table.order, table.orderBy),

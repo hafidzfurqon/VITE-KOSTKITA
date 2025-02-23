@@ -21,6 +21,7 @@ import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import { err } from 'src/sections/auth';
 import DialogDelete from 'src/component/DialogDelete';
 import { useAppContext } from 'src/context/user-context';
+import { useQueryClient } from '@tanstack/react-query';
 
 // ----------------------------------------------------------------------
 
@@ -35,11 +36,12 @@ export type AccountPopoverProps = IconButtonProps & {
 
 export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps) {
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const { UserContextValue: authUser }: any = useAppContext();
-  const {user} = authUser;
-  console.log(user)
+  const { user } = authUser;
+  console.log(user);
   // State Management
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
@@ -47,8 +49,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   // Logout Mutation
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
-      router.push('/');
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
+      router.push('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
+
+      setTimeout(() => {
+        window.location.reload(); // Refresh halaman agar reset state
+      }, 500);
     },
     onError: (error: err) => {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -103,19 +110,19 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
       >
         {/* User Info */}
         <Box sx={{ p: 2, pb: 1.5 }}>
-        <Typography variant="subtitle2" noWrap>
-        {user?.name}
-              </Typography>
+          <Typography variant="subtitle2" noWrap>
+            {user?.name}
+          </Typography>
 
-              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-              {user?.email}
-              </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            {user?.email}
+          </Typography>
 
-              <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
-                No Telp : {user.phone_number}
-              </Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary' }} noWrap>
+            No Telp : {user.phone_number}
+          </Typography>
         </Box>
-        
+
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         {/* Navigation Menu */}
@@ -156,7 +163,13 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
         {/* Logout Button */}
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text" onClick={() => setOpenDeleteDialog(true)}>
+          <Button
+            fullWidth
+            color="error"
+            size="medium"
+            variant="text"
+            onClick={() => setOpenDeleteDialog(true)}
+          >
             Logout
           </Button>
         </Box>

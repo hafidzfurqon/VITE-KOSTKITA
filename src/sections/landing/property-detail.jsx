@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -13,25 +13,31 @@ import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
+import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 // icons
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
-import PaymentIcon from '@mui/icons-material/Payment';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
 import { WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
+import { fPercent } from 'src/utils/format-number';
+import BookingView from './user/bookingView';
+import PropertyRoom from './property-room';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  const [open, setOpen] = useState(false);
+  console.log(data);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -45,6 +51,11 @@ export default function PropertyDetail() {
   const handleNextImage = () => {
     setCurrentImageIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
+
+  const formatCurrency = (price) =>
+    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
+
+  const hasDiscount = data?.discounts && data?.discounts?.length > 0;
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -84,7 +95,7 @@ export default function PropertyDetail() {
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
-        <meta property="og:image" content={`${data.files[0].file_url}`} />
+        {/* <meta property="og:image" content={`${data?.files[0].file_url}`} /> */}
       </Helmet>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Breadcrumbs */}
@@ -201,20 +212,23 @@ export default function PropertyDetail() {
         <Box sx={{ mb: 4 }}>
           <Grid sx={{ mb: 5 }} container spacing={3} alignItems="center">
             {/* Bagian Judul */}
-            <Grid item xs={12} sm={8} sx={{ mt: 2 }}>
+            <Grid
+              item
+              xs={12}
+              sm={12}
+              sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+            >
               <Typography variant="h4" gutterBottom>
                 {data.name}
               </Typography>
-            </Grid>
-
-            {/* Bagian Tombol Favorite dan Share */}
-            <Grid item xs={12} sm={4} sx={{ textAlign: 'right', mt: 2 }}>
-              <IconButton onClick={() => setIsFavorite(!isFavorite)} color="error">
-                {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-              </IconButton>
-              <IconButton>
-                <ShareIcon />
-              </IconButton>
+              <Box sx={{ display: 'flex' }}>
+                <IconButton onClick={() => setIsFavorite(!isFavorite)} color="error">
+                  {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                </IconButton>
+                <IconButton>
+                  <ShareIcon />
+                </IconButton>
+              </Box>
             </Grid>
 
             {/* Bagian Lokasi dan Jenis Properti */}
@@ -234,28 +248,72 @@ export default function PropertyDetail() {
             {/* Bagian Harga dengan Card */}
             <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
               <Card sx={{ p: 2, boxShadow: 3 }}>
-                {/* <Typography variant="subtitle1">Price:</Typography> */}
-                <Typography color="primary.main" variant="h5" sx={{ mb: 1 }}>
-                  {formatPrice(data.start_price)} /{data.payment_type === 'monthly' ? "bulan" : "Tahun"}
-                </Typography>
+                {hasDiscount ? (
+                  <>
+                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                      >
+                        {formatCurrency(data.start_price)}/
+                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Box
+                        sx={{
+                          backgroundColor: 'red',
+                          color: 'white',
+                          fontSize: '11px',
+                          borderRadius: '10px',
+                          px: '5px',
+                        }}
+                      >
+                        -Rp {fPercent(data.discounts[0].discount_value)}
+                      </Box>
+                      <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                        {formatCurrency(data.discounts[0].price_after_discount)}/
+                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                      </Typography>
+                    </Box>
+                  </>
+                ) : (
+                  <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                    {formatCurrency(data.start_price)}/
+                    {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                  </Typography>
+                )}
+
+                <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+                  <Button variant="outlined" color="primary" sx={{ mb: 2, height: 48 }} fullWidth>
+                    Lihat Kamar
+                  </Button>
+
+                  {/* Tombol WhatsApp */}
+                  <Button
+                    variant="outlined"
+                    color="primary"
+                    startIcon={<WhatsApp />}
+                    href={`https://wa.me/${data.phone}`}
+                    target="_blank"
+                    fullWidth
+                    sx={{
+                      color: '#25D366 ',
+                      height: 48,
+                    }}
+                  >
+                    WhatsApp
+                  </Button>
+                </Box>
                 <Button
                   variant="outlined"
                   color="primary"
-                  sx={{mb :2}} 
+                  sx={{ mb: 2, height: 48 }}
                   fullWidth
+                  onClick={() => setOpen(true)}
                 >
-                  Lihat Kamar
-                </Button>
-                {/* Tombol WhatsApp */}
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<WhatsApp />}
-                  href={`https://wa.me/${data.phone}`}
-                  target="_blank"
-                  fullWidth
-                >
-                  WhatsApp
+                  Booking
                 </Button>
               </Card>
             </Grid>
@@ -266,60 +324,102 @@ export default function PropertyDetail() {
             <Card sx={{ mb: 4 }}>
               <CardContent>
                 <Typography variant="subtitle1">Description</Typography>
-                <Typography color="text.secondary" dangerouslySetInnerHTML={{ __html: data.description }} />
+                <Typography
+                  color="text.secondary"
+                  dangerouslySetInnerHTML={{ __html: data.description }}
+                />
+                <Typography color="text.secondary">
+                  <span dangerouslySetInnerHTML={{ __html: data.description }} />
+                </Typography>
               </CardContent>
             </Card>
           )}
-<hr />
+          <hr />
           {data.facilities && (
-            <Box sx={{mx : 2, my : 3}}>
-                <Typography variant="subtitle1">Fasilitas Bersama</Typography>
-                <Box sx={{display  : 'flex', gap : 1, mt: 3, alignItems : 'center', mb:3}} >
-                {data.facilities?.slice(0,5).map((fasilitas, idx) => (
+            <Box sx={{ mx: 2, my: 3 }}>
+              <Typography variant="subtitle1">Fasilitas Bersama</Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  overflowX: 'auto',
+                  whiteSpace: 'nowrap',
+                  mt: 4,
+                  gap: 2,
+                  pb: 1, // Agar scrollbar tidak menutupi konten
+                  '&::-webkit-scrollbar': {
+                    display: 'none', // Sembunyikan scrollbar
+                  },
+                }}
+                direction="row"
+                spacing={1}
+                mb={3}
+              >
+                {data.facilities?.slice(0, 5).map((fasilitas, idx) => (
                   <>
-                  {/* <Iconify icon="material-symbols:check" /> */}
-                  <Iconify icon="mingcute:check-line" />
-                <Typography color="text.secondary" key={idx}>{fasilitas.name}</Typography>
+                    {/* <Iconify icon="material-symbols:check" /> */}
+                    <Iconify icon="mingcute:check-line" />
+                    <Typography color="text.secondary" key={idx}>
+                      {fasilitas.name}
+                    </Typography>
                   </>
                 ))}
-                </Box>
-                <Typography variant="subtitle1" sx={{ textDecoration : 'underline'}}>Lihat Selengkapnya</Typography>
-                {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
+              </Box>
+              <Typography variant="subtitle1" sx={{ textDecoration: 'underline' }}>
+                Lihat Selengkapnya
+              </Typography>
+              {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
             </Box>
           )}
-<hr />
+          <hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
-            <Card sx={{mt : 5}}>
+            <Card sx={{ mt: 5 }}>
               <CardContent>
                 <Typography variant="subtitle1" gutterBottom>
                   Location
                 </Typography>
                 <Box
-              sx={{
-                position: "relative",
-                width: "100%",
-               
-                height: 400,
-                borderRadius: 1,
-                overflow: "hidden",
-              }}
-            >
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: data.link_googlemaps
-                    .replace(/width="\d+"/, 'width="100%"')
-                    .replace(/height="\d+"/, 'height="100%"'),
-                }}
-                style={{ width: "100%", height: "100%" }}
-              />
-            </Box>
+                  sx={{
+                    position: 'relative',
+                    width: '100%',
 
+                    height: 400,
+                    borderRadius: 1,
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: data.link_googlemaps
+                        .replace(/width="\d+"/, 'width="100%"')
+                        .replace(/height="\d+"/, 'height="100%"'),
+                    }}
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                </Box>
               </CardContent>
             </Card>
           )}
         </Box>
+        <Divider />
+        <PropertyRoom rooms={data.rooms} />
       </Container>
+
+      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
+        <DialogTitle>
+          Form Booking
+          <IconButton
+            aria-label="close"
+            onClick={() => setOpen(false)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent dividers>
+          <BookingView defaultValues={data} />
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

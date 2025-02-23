@@ -36,23 +36,34 @@ export function SignInView() {
 
   const router = useRouter();
   const queryClient = useQueryClient();
-    const {mutate, isPending} = useMutationLogin({
-      onSuccess : () => {
-        queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
-        router.push('/dashboard')
-       enqueueSnackbar('Login berhasil', { variant: 'success' });
-      },
-      onError : (err : any) => {
-        if(err.errors.password) {
-          enqueueSnackbar(err.errors.password[0], { variant: 'error' });
-        } 
-        if(err.errors.login) {
-          enqueueSnackbar(err.errors.login[0], { variant: 'error' });
-        } else {
-          enqueueSnackbar(err.errors, { variant: 'error' });
-        }
+  const { mutate, isPending } = useMutationLogin({
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
+  
+      // Ambil peran pertama dari array roles
+      const role = data.user?.roles?.[0]?.name || 'user';
+  
+      // Redirect sesuai role
+      if (role === 'admin') {
+        router.push('/dashboard');
+      } else {
+        router.push('/');
       }
-    });
+  
+      enqueueSnackbar('Login berhasil', { variant: 'success' });
+    },
+    onError: (err: any) => {
+      if (err.errors.password) {
+        enqueueSnackbar(err.errors.password[0], { variant: 'error' });
+      }
+      if (err.errors.login) {
+        enqueueSnackbar(err.errors.login[0], { variant: 'error' });
+      } else {
+        enqueueSnackbar(err.errors, { variant: 'error' });
+      }
+    }
+  });
+  
     
   
   const [showPassword, setShowPassword] = useState(false);

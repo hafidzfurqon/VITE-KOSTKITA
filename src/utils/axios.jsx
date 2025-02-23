@@ -1,10 +1,10 @@
-import axios from "axios";
+import axios from 'axios';
 
 const HOST_API = import.meta.env.VITE_HOST_API;
 const axiosInstance = axios.create({ baseURL: HOST_API });
 
 let isRefreshing = false;
-let failedQueue = []
+let failedQueue = [];
 
 const processQueue = (error, token = null) => {
   failedQueue.forEach((prom) => {
@@ -16,7 +16,6 @@ const processQueue = (error, token = null) => {
   });
   failedQueue = [];
 };
-
 
 axiosInstance.interceptors.request.use(
   (config) => {
@@ -34,18 +33,18 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    
+
     // Jika error 401 dan request belum dicoba ulang
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-        .then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
-          return axiosInstance(originalRequest);
-        })
-        .catch((err) => Promise.reject(err));
+          .then((token) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            return axiosInstance(originalRequest);
+          })
+          .catch((err) => Promise.reject(err));
       }
 
       originalRequest._retry = true;
@@ -53,36 +52,38 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Request untuk mendapatkan refresh token
-        const token = sessionStorage.getItem("token"); 
-        const refresh_token = sessionStorage.getItem("refresh_token"); 
+        const token = sessionStorage.getItem('token');
+        const refresh_token = sessionStorage.getItem('refresh_token');
         if (!refresh_token) {
-          throw new Error("Sesi anda telah berakhir, Silahkan login");
+          throw new Error('Sesi anda telah berakhir, Silahkan login');
         }
 
-        const { data } = await axiosInstance.post("/api/refresh_token", {
-          refreshToken : refresh_token,
-        }, 
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const { data } = await axiosInstance.post(
+          '/api/refresh_token',
+          {
+            refreshToken: refresh_token,
           },
-        }
-      );
-      const newToken = data.new_access_token;
-      const newRefreshToken = data.new_refresh_token;
-      
-      sessionStorage.setItem("token", newToken);
-      sessionStorage.setItem("refresh_token", newRefreshToken);
-      
-      axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
-      processQueue(null, newToken);
-      return axiosInstance(originalRequest);
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const newToken = data.new_access_token;
+        const newRefreshToken = data.new_refresh_token;
+
+        sessionStorage.setItem('token', newToken);
+        sessionStorage.setItem('refresh_token', newRefreshToken);
+
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        processQueue(null, newToken);
+        return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        alert(err)
-        sessionStorage.removeItem("token");
-        sessionStorage.removeItem("refresh_token");
-        window.location.href = "/sign-in"; // Redirect ke halaman login
+        alert(err);
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('refresh_token');
+        window.location.href = '/sign-in'; // Redirect ke halaman login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -93,101 +94,101 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-
 export default axiosInstance;
-
 
 // ----------------------------------------------------------------------
 
 export const fetcher = async (args) => {
-    const [url, config] = Array.isArray(args) ? args : [args];
-  
-    const res = await axiosInstance.get(url, { ...config });
-  
-    return res.data;
-  };
-  
-  // ----------------------------------------------------------------------
-  
+  const [url, config] = Array.isArray(args) ? args : [args];
 
-  export const endpoints = {
-    auth: {
-      me: '/api/me',
-      login: '/api/login',
-      logout: '/api/logout',
-      register: '/api/register',
-      refresh_token: '/api/refresh_token',
+  const res = await axiosInstance.get(url, { ...config });
+
+  return res.data;
+};
+
+// ----------------------------------------------------------------------
+
+export const endpoints = {
+  auth: {
+    me: '/api/me',
+    login: '/api/login',
+    logout: '/api/logout',
+    register: '/api/register',
+    refresh_token: '/api/refresh_token',
+  },
+  user: {
+    list: '/api/admin/users/list',
+    detail: '/api/admin/users/detail', //need id here
+    create: '/api/admin/users/create',
+    update: '/api/admin/users/update',
+    update: '/api/admin/users/update_user_password', // need id here
+    booking: {
+      property: '/api/user/booking/property/reserve',
     },
-    user : {
-      list : '/api/admin/users/list',
-      detail : '/api/admin/users/detail', //need id here
-      create : '/api/admin/users/create',
-      update : '/api/admin/users/update',
-      update : '/api/admin/users/update_user_password', // need id here
+  },
+  facilities: {
+    list: '/api/admin/facility/list',
+    // detail : '/api/admin/users/detail', //need id here
+    create: '/api/admin/facility/create',
+    delete: '/api/admin/facility/delete',
+    update: '/api/admin/facility/update', // need id here
+  },
+  banner: {
+    list: '/api/admin/banner/list',
+    detail: '/api/admin/banner/detail', //need id here
+    create: '/api/admin/banner/create',
+    update: '/api/admin/banner/update', //need id here
+    delete: '/api/admin/banner/delete', //need id here
+    public: {
+      list: '/api/public/banner/all',
+      detail: '/api/public/banner/detail',
     },
-    facilities : {
-      list : '/api/admin/facility/list',
-      // detail : '/api/admin/users/detail', //need id here
-      create : '/api/admin/facility/create',
-      delete : '/api/admin/facility/delete',
-      update : '/api/admin/facility/update', // need id here
+  },
+  property: {
+    list: '/api/admin/property/list',
+    detail: '/api/admin/property/detail/id', //need id here
+    detail: '/api/admin/property/detail/slug', //need slug here
+    create: '/api/admin/property/create',
+    update: '/api/admin/property/update', //need id here
+    delete: '/api/admin/property/delete', //need id here
+    public: {
+      list: '/api/public/property/all',
+      detail: '/api/public/property/detail/slug',
     },
-    banner : {
-      list : '/api/admin/banner/list',
-      detail : '/api/admin/banner/detail', //need id here
-      create : '/api/admin/banner/create',
-      update : '/api/admin/banner/update', //need id here
-      delete : '/api/admin/banner/delete', //need id here
-      public : {
-        list : '/api/public/banner/all',
-        detail : '/api/public/banner/detail'
-      }
+  },
+  state: {
+    list: '/api/admin/state/list',
+  },
+  city: {
+    list: '/api/admin/city/list',
+    detail: '/api/admin/state/detail',
+  },
+  sector: {
+    list: '/api/admin/city/list',
+    detail: '/api/admin/city/detail',
+  },
+  promo: {
+    list: '/api/admin/promo/list',
+    create: '/api/admin/promo/create',
+    public: {
+      list: '/api/public/promo/all',
     },
-    property : {
-      list : '/api/admin/property/list',
-      detail : '/api/admin/property/detail/id', //need id here
-      detail : '/api/admin/property/detail/slug', //need slug here
-      create : '/api/admin/property/create',
-      update : '/api/admin/property/update', //need id here
-      delete: '/api/admin/property/delete', //need id here
-      public : {
-        list : '/api/public/property/all',
-        detail : '/api/public/property/detail/slug'
-      }
+  },
+  property_room : {
+    detail : '/api/admin/property/detail/id'
+  },
+  apartement: {
+    create: '/api/admin/apartment/create',
+    list: '/api/admin/property/list',
+    delete: '/api/admin/property/delete',
+    public: {
+      list: '/api/public/property/all',
     },
-    state : {
-      list : '/api/admin/state/list',
-    },
-    city : {
-      list : '/api/admin/city/list',
-      detail : '/api/admin/state/detail'
-    },
-    sector : {
-      list : '/api/admin/city/list',
-      detail : '/api/admin/city/detail'
-    },
-    promo : {
-      list : "/api/admin/promo/list",
-      create : "/api/admin/promo/create",
-      public : {
-        list : "/api/public/promo/all"
-      }
-    },
-    apartement : {
-      create : "/api/admin/apartment/create",
-      list : '/api/admin/property/list',
-      delete : '/api/admin/property/delete',
-      public : {
-        list : "/api/public/property/all"
-      }
-    },
-    property_type : {
-      list : '/api/admin/property/type/list',
-      create : '/api/admin/property/type/create',
-      update : '/api/admin/property/type/update',
-      delete : '/api/admin/property/type/delete',
-    },
-    property_room : {
-      detail : '/api/admin/property/detail/id'
-    }
-  };
+  },
+  property_type: {
+    list: '/api/admin/property/type/list',
+    create: '/api/admin/property/type/create',
+    update: '/api/admin/property/type/update',
+    delete: '/api/admin/property/type/delete',
+  },
+};

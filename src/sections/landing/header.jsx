@@ -24,12 +24,20 @@ import { Link } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
 import { usePathname } from 'src/routes/hooks';
+import { AccountPopover } from 'src/layouts/components/account-popover';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
   const pathname = usePathname();
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token'); // Ambil token dari sessionStorage
+    setIsLoggedIn(!!token); // Jika ada token, berarti user sudah login
+  }, []);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
@@ -103,19 +111,41 @@ export default function Header() {
         {/* Login Button */}
         {!isSmallScreen && (
           <Box sx={{ ml: 'auto' }}>
-            <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
-              <Button
-                color="inherit"
-                sx={{
-                  textTransform: 'none',
-                  color: 'black', // Mengubah warna teks menjadi hitam
-                  transition: '0.3s',
-                  '&:hover': { color: '#FFD700' }, // Warna emas saat hover
-                }}
-              >
-                Masuk / Daftar
-              </Button>
-            </Link>
+            {isLoggedIn ? (
+              <AccountPopover
+                data={[
+                  {
+                    label: 'Home',
+                    href: '/',
+                    icon: <HomeIcon />,
+                  },
+                  {
+                    label: 'Profile',
+                    href: '/profile',
+                    icon: <BusinessIcon />,
+                  },
+                  {
+                    label: 'Settings',
+                    href: '/settings',
+                    icon: <InfoIcon />,
+                  },
+                ]}
+              />
+            ) : (
+              <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Button
+                  color="inherit"
+                  sx={{
+                    textTransform: 'none',
+                    color: 'black',
+                    transition: '0.3s',
+                    '&:hover': { color: '#FFD700' },
+                  }}
+                >
+                  Masuk / Daftar
+                </Button>
+              </Link>
+            )}
           </Box>
         )}
 
