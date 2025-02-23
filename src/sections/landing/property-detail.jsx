@@ -334,8 +334,9 @@ export default function PropertyDetail() {
               </CardContent>
             </Card>
           )}
-          <hr />
-          {data.facilities && (
+          {data.facilities.length > 0 && (
+            <>
+            <hr />
             <Box sx={{ mx: 2, my: 3 }}>
               <Typography variant="subtitle1">Fasilitas Bersama</Typography>
               <Box
@@ -369,8 +370,9 @@ export default function PropertyDetail() {
               </Typography>
               {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
             </Box>
+            <hr />
+            </>
           )}
-          <hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
             <Card sx={{ mt: 5 }}>
