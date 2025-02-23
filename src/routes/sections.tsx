@@ -19,6 +19,7 @@ import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
 import PropertyEdit from 'src/sections/property/property-edit';
 import PropertyDetail from 'src/sections/landing/property-detail';
 import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
+import { PropertyRoomCreate } from 'src/sections/property_room/crud/property-room-create';
 
 // ----------------------------------------------------------------------
 
@@ -31,6 +32,7 @@ export const Page404 = lazy(() => import('src/pages/page-not-found'));
 export const Landing = lazy(() => import('src/pages/landing'));
 export const PromoPage = lazy(() => import('src/pages/promo'));
 export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
+export const PropertyRoomPage = lazy(() => import('src/pages/property_room'));
 export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 
 // ----------------------------------------------------------------------
@@ -86,6 +88,14 @@ export function Router() {
             {
               path: 'create',
               element: <CreateApartement/>,
+            },
+            {
+              path: 'create-property-room',
+              element: <PropertyRoomCreate/>,
+            },
+            {
+              path: 'property-room/:id',
+              element: <PropertyRoomPage/>,
             },
           ]
         },

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -11,100 +11,59 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
-import { FasilitasTableRow } from '../fasilitas-table-row';
-import { FasilitasTableHead } from '../fasilitas-table-head';
+import { PropertyRoomTableRow } from '../property-room-table-row';
+import { PropertyRoomTableHead } from '../property-room-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { FasilitasTableToolbar } from '../fasilitas-table-toolbar';
+import { PropertyRoomTableToolbar } from '../property-room-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
-import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { DialogCreate } from 'src/component/DialogCreate';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useFetchAllPropertyRoom } from 'src/hooks/property_room';
+import { TableCell, TableRow } from '@mui/material';
 
-export function FasilitasView() {
+export function PropertyRoomView() {
   const table = useTable();
-const { data = [], isLoading, isFetching } = useFetchFacilities();
-const [filterName, setFilterName] = useState('');
-const [opened, setOpened] = useState(false);
-const queryClient = useQueryClient();
-const { enqueueSnackbar } = useSnackbar();
-const { register, handleSubmit: handleSubmitForm, reset } = useForm();
+  const {id} = useParams()
+  const { data : room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
+  const data = room.rooms
+  const [filterName, setFilterName] = useState('');
 
-// Menghindari re-render berulang saat data berubah
-const dataFiltered = useMemo(() => 
-  applyFilter({
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
+
+  const dataFiltered = applyFilter({
     inputData: data,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
-  }), 
-  [data, table.order, table.orderBy, filterName]
-);
+  });
 
-const notFound = !dataFiltered.length && !!filterName;
+  const notFound = !dataFiltered.length && !!filterName;
 
-// Menggunakan useCallback untuk menghindari re-render
-const handleClickOpened = useCallback(() => setOpened(true), []);
-const handleClose = useCallback(() => setOpened(false), []);
-
-const { mutate, isPending: isPendingMutate } = useMutationCreateFacilities({
-  onSuccess: () => {
-    queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
-    setOpened(false);
-    enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
-    reset();
-  },
-  onError: () => {
-    enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
-  },
-});
-
-// Fungsi submit juga menggunakan useCallback agar tidak dibuat ulang setiap render
-const handleCreate = useCallback(
-  (data: any) => {
-    mutate(data);
-    handleClose();
-  },
-  [mutate, handleClose]
-);
-
-if (isLoading || isFetching) {
-  return <Loading />;
-}
-
-const FieldRHF = (
-  <TextField
-    {...register('name')}
-    autoFocus
-    required
-    margin="dense"
-    id="nama"
-    label="Nama Fasilitas"
-    type="text"
-    fullWidth
-    variant="outlined"
-  />
-);
   return (
-    <>
     <DashboardContent>
-      <Box display="flex" alignItems="center" mb={5}>
+      <Box display="flex" alignItems="center" mb={3}>
         <Typography variant="h4" flexGrow={1}>
-          Management Fasilitas
+         Tambah Property Room di {room.name}
         </Typography>
-        {/* <Link to={router.fasilitas.create}> */}
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleClickOpened}>
-            Tambah Fasilitas
+        <Link to={router.property_room.create}>
+          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+            Tambah Property Room
           </Button>
-        {/* </Link> */}
+        </Link>
       </Box>
-
+      <CustomBreadcrumbs 
+                  links={[{ name: 'Property', href: '/property' }, { name: 'Property Room'}, ]} 
+                  sx={{ mb: { xs: 2, md: 3 } }} 
+                  action={null} 
+                  heading="" 
+                  moreLink={[]} 
+                  activeLast={true} 
+                  />
       <Card>
-        <FasilitasTableToolbar
+        <PropertyRoomTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
           onFilterName={(event) => {
@@ -116,26 +75,41 @@ const FieldRHF = (
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <FasilitasTableHead
+              <PropertyRoomTableHead
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={data.length}
                 numSelected={table.selected.length}
                 onSort={table.onSort}
-                onSelectAllRows={(checked : any) =>
+                onSelectAllRows={(checked) =>
                   table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                  { id: 'nama', label: 'Nama' },
-                  { id: 'action', label: 'Action',  },
+                  { id: 'image_property_room', label: 'Gambar Property Room' },
+                  { id: 'title_property_room', label: 'Judul Property Room' },
+                  // { id: 'url_reference', label: 'URL Reference' },
+                  { id: 'action', label: 'Action' },
                 ]}
               />
+              {
+              data.length === 0 ? 
+              <TableBody>
+               <TableRow>
+               <TableCell align="center" colSpan={7}>
+              <Box sx={{ py: 3, textAlign: 'center' }}>
+                <Typography  variant="subtitle1" sx={{ mb: 1 }}>
+                Belum Ada Ruangan untuk property ini
+                </Typography>
+                </Box>
+                </TableCell>
+               </TableRow>
+              </TableBody> :
               <TableBody>
                 {dataFiltered.slice(
                   table.page * table.rowsPerPage,
                   table.page * table.rowsPerPage + table.rowsPerPage
                 ).map((row : any) => (
-                  <FasilitasTableRow
+                  <PropertyRoomTableRow
                     key={row.id}
                     row={row}
                     selected={table.selected.includes(row.id)}
@@ -146,6 +120,7 @@ const FieldRHF = (
                 <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
+              }
             </Table>
           </TableContainer>
         </Scrollbar>
@@ -161,17 +136,6 @@ const FieldRHF = (
         />
       </Card>
     </DashboardContent>
-     <DialogCreate 
-          pending={isPendingMutate}
-          SubmitFormValue={handleCreate}
-          open={opened}
-          title="Create Nama Fasilitas"
-          subTitle="Fasilitas untuk coliving maupun apartemen"
-          setOpen={setOpened}
-          field={FieldRHF}
-          SubmitForm={handleSubmitForm}
-          />
-    </>
   );
 }
 

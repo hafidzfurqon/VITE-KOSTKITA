@@ -75,8 +75,8 @@ export function ApartementView() {
                   table.onSelectAllRows(checked, data.map((item : any) => item.id))
                 }
                 headLabel={[
-                  { id: 'image_banner', label: 'Gambar Property' },
-                  { id: 'title_banner', label: 'Judul Property' },
+                  { id: 'image_property', label: 'Gambar Property' },
+                  { id: 'title_property', label: 'Judul Property' },
                   // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}

@@ -31,7 +31,7 @@ export type ApartmentProps = {
 },
   start_price : string;
   address : string;
-  "files": [
+  "room_files": [
   {
   file_url : string
   }
@@ -45,14 +45,16 @@ type ApartmentTableRowProps = {
   onSelectRow: () => void;
 };
 
-export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTableRowProps) {
+export function PropertyRoomTableRow({ row, selected, onSelectRow }: ApartmentTableRowProps) {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
    const handleClickOpen = () => {
     setOpen(true)
    }
-   
+   console.log(row)
+   const IsNull = row === null
+   console.log(IsNull)
   //  console.log(row.files[0]?.file_url)
   const { mutate: DeleteApartement, isPending } = useMutationDeleteApartement({
     onSuccess: () => {
@@ -73,7 +75,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
     <Box
       component="img"
       alt={row.name}
-      src={row.files[0]?.file_url}
+      src={row.room_files[0]?.file_url}
       sx={{
         top: 0,
         width: 100,
@@ -91,7 +93,6 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-
         <TableCell align='center' component="th" scope="row">
           {/* <Box gap={2} display="flex" alignItems="center"> */}
             
@@ -103,8 +104,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
 
 
 <TableCell align="center">
-  <Box>
-        <Button onClick={() => alert('sdjshad')}>
+<Button onClick={() => alert('sdjshad')}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
@@ -113,21 +113,12 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </Button>
-  </Box>
-  <Box>
     <Link to={`${router.property.list}/${row.slug}`} target='_blank'>
           <Button sx={{ color: 'secondary.main' }}>
             <Iconify icon="solar:eye-bold" />
             Lihat
           </Button>
     </Link>
-    <Link to={`property-room/${row.id}`}>
-    <Button sx={{ color: 'secondary.main' }}>
-            <Iconify icon="mingcute:add-line" />
-            Add Room
-          </Button>
-    </Link>
-  </Box>
         </TableCell>
       </TableRow>
       

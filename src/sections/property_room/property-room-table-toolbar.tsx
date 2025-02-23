@@ -15,7 +15,7 @@ type UserTableToolbarProps = {
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export function PropertyTableToolbar({ numSelected, filterName, onFilterName }: UserTableToolbarProps) {
+export function PropertyRoomTableToolbar({ numSelected, filterName, onFilterName }: UserTableToolbarProps) {
   return (
     <Toolbar
       sx={{
@@ -38,7 +38,7 @@ export function PropertyTableToolbar({ numSelected, filterName, onFilterName }: 
           fullWidth
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search property Type..."
+          placeholder="Search Property..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />

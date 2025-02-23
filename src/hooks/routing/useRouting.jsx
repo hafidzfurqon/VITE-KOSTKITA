@@ -14,6 +14,10 @@ export const router = {
     list: '/property',
     create: '/property/create',
   },
+  property_room: {
+    list: '/property',
+    create: '/property/create-property-room',
+  },
   fasilitas: {
     list: '/fasilitas',
     create: '/fasilitas/create',
