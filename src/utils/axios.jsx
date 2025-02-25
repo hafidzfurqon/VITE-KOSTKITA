@@ -125,6 +125,10 @@ export const endpoints = {
     booking: {
       property: '/api/user/booking/property/reserve',
     },
+    profile: {
+      update: '/api/user/profile/update',
+      updatePassword: '/api/user/profile/update_password',
+    },
   },
   facilities: {
     list: '/api/admin/facility/list',
@@ -174,8 +178,8 @@ export const endpoints = {
       list: '/api/public/promo/all',
     },
   },
-  property_room : {
-    detail : '/api/admin/property/detail/id'
+  property_room: {
+    detail: '/api/admin/property/detail/id',
   },
   apartement: {
     create: '/api/admin/apartment/create',
