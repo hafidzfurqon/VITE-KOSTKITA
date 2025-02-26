@@ -14,9 +14,11 @@ import { fData } from 'src/utils/format-number';
 import { CircularProgress, Container } from '@mui/material';
 import { useAppContext } from 'src/context/user-context';
 import { useUpdateProfile } from 'src/hooks/users/profile/useUpdateProfile';
+import { useQueryClient } from '@tanstack/react-query';
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const userId = user?.id;
@@ -24,7 +26,14 @@ export default function AccountGeneral() {
 
   const UpdateUserSchema = Yup.object().shape({
     phone_number: Yup.string().nullable(),
-    photo_profile: Yup.string().nullable(),
+    photo_profile: Yup.mixed()
+      .nullable()
+      .test(
+        'fileType',
+        'Format file tidak valid (hanya jpg, jpeg, png)',
+        (value) =>
+          !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
+      ),
   });
 
   const methods = useForm({
@@ -50,7 +59,7 @@ export default function AccountGeneral() {
         name: user.name || '',
         email: user.email || '',
         phone_number: user.phone_number || '',
-        photo_profile: user.photo_profile || '',
+        photo_profile: user.photo_profile_url || '',
       });
     }
     setLoading(false);
@@ -59,19 +68,36 @@ export default function AccountGeneral() {
   const { mutateAsync: editUser } = useUpdateProfile();
 
   const onSubmit = async (data) => {
+    // Buat objek formData hanya jika ada perubahan
     const formData = new FormData();
-    formData.append('name', data.name);
-    formData.append('email', data.email);
-    formData.append('phone_number', data.phone_number);
-    formData.append('_method', 'PUT');
 
-    if (data.photo_profile) {
+    // Cek apakah ada perubahan data
+    const hasChanges =
+      data.name !== user.name ||
+      data.email !== user.email ||
+      data.phone_number !== user.phone_number ||
+      data.photo_profile !== user.photo_profile;
+
+    if (!hasChanges) {
+      enqueueSnackbar('Tidak ada perubahan data', { variant: 'info' });
+      return;
+    }
+
+    if (data.name !== user.name) formData.append('name', data.name);
+    if (data.email !== user.email) formData.append('email', data.email);
+    if (data.phone_number !== user.phone_number) formData.append('phone_number', data.phone_number);
+    if (data.photo_profile && data.photo_profile !== user.photo_profile) {
       formData.append('photo_profile', data.photo_profile);
     }
+
+    formData.append('_method', 'PUT');
 
     try {
       const updatedUser = await editUser({ userId, data: formData });
       enqueueSnackbar('Profil berhasil diperbarui', { variant: 'success' });
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
+
+      // Perbarui state dengan data terbaru
       reset({
         name: updatedUser.name || '',
         email: updatedUser.email || '',
@@ -99,12 +125,7 @@ export default function AccountGeneral() {
           return;
         }
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setValue('photo_profile', reader.result, { shouldValidate: true });
-        };
-        reader.readAsDataURL(file);
-
+        // Jangan pakai FileReader, langsung simpan file
         setValue('photo_profile', file, { shouldValidate: true });
       }
     },

@@ -109,29 +109,18 @@ export default function Header() {
           )}
         </Box>
         {/* Login Button */}
-        {!isSmallScreen && (
-          <Box sx={{ ml: 'auto' }}>
-            {isLoggedIn ? (
-              <AccountPopover
-                data={[
-                  {
-                    label: 'Home',
-                    href: '/',
-                    icon: <HomeIcon />,
-                  },
-                  {
-                    label: 'Profile',
-                    href: '/profile',
-                    icon: <BusinessIcon />,
-                  },
-                  {
-                    label: 'Settings',
-                    href: '/settings',
-                    icon: <InfoIcon />,
-                  },
-                ]}
-              />
-            ) : (
+        <Box sx={{ ml: 'auto' }}>
+          {isLoggedIn ? (
+            <AccountPopover
+              data={[
+                { label: 'Home', href: '/', icon: <HomeIcon /> },
+                { label: 'Profile', href: '/profile', icon: <BusinessIcon /> },
+                { label: 'Settings', href: '/settings', icon: <InfoIcon /> },
+              ]}
+            />
+          ) : (
+            // Hanya tampilkan tombol "Masuk / Daftar" jika bukan ukuran kecil
+            !isSmallScreen && (
               <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Button
                   color="inherit"
@@ -145,9 +134,9 @@ export default function Header() {
                   Masuk / Daftar
                 </Button>
               </Link>
-            )}
-          </Box>
-        )}
+            )
+          )}
+        </Box>
 
         {/* Hamburger Menu (Hanya tampil di layar kecil) */}
         {isSmallScreen && (

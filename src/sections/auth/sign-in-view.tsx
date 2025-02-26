@@ -12,12 +12,11 @@ import { useRouter } from 'src/routes/hooks';
 import { Iconify } from 'src/components/iconify';
 import { ListItemButton, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import { useMutationLogin } from 'src/hooks/auth/useMutationLogin'; 
+import { useMutationLogin } from 'src/hooks/auth/useMutationLogin';
 
-import logo from '../../../public/assets/images/logo.png'
+import logo from '../../../public/assets/images/logo.png';
 import { useSnackbar } from 'src/components/snackbar';
 import { useQueryClient } from '@tanstack/react-query';
-
 
 // ----------------------------------------------------------------------
 type Login = {
@@ -27,9 +26,9 @@ type Login = {
 };
 
 export type err = {
-  message : string
-  errors : string
-}
+  message: string;
+  errors: string;
+};
 
 export function SignInView() {
   const { enqueueSnackbar } = useSnackbar();
@@ -39,17 +38,18 @@ export function SignInView() {
   const { mutate, isPending } = useMutationLogin({
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
-  
+
       // Ambil peran pertama dari array roles
       const role = data.user?.roles?.[0]?.name || 'user';
-  
+      console.log(role);
+
       // Redirect sesuai role
-      if (role === 'admin' || "owner_property") {
+      if (role === 'admin' || role === 'owner_property') {
         router.push('/dashboard');
       } else {
         router.push('/');
       }
-  
+
       enqueueSnackbar('Login berhasil', { variant: 'success' });
     },
     onError: (err: any) => {
@@ -61,17 +61,15 @@ export function SignInView() {
       } else {
         enqueueSnackbar(err.errors, { variant: 'error' });
       }
-    }
+    },
   });
-  
-    
-  
+
   const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit } = useForm<Login>();
-  
-  const OnSubmit = (data : any) => {
+
+  const OnSubmit = (data: any) => {
     mutate(data);
-  }
+  };
 
   const renderForm = (
     <Stack spacing={3}>
@@ -124,9 +122,11 @@ export function SignInView() {
   return (
     <>
       <Box gap={1.5} display="flex" flexDirection="column" alignItems="center" sx={{ mb: 5 }}>
-        <Typography variant="h5">Sign in to <Box component="span">KostKita.ID</Box></Typography>
-      <img src={logo} alt="ashaj" />
-      </Box>  
+        <Typography variant="h5">
+          Sign in to <Box component="span">KostKita.ID</Box>
+        </Typography>
+        <img src={logo} alt="ashaj" />
+      </Box>
       {renderForm}
 
       <Box
@@ -138,10 +138,7 @@ export function SignInView() {
           alignItems: 'center',
         }}
       >
-        <Typography
-          variant="overline"
-          sx={{ color: 'text.secondary', mb: 1 }}
-        >
+        <Typography variant="overline" sx={{ color: 'text.secondary', mb: 1 }}>
           Belum Daftar ? Daftar dibawah ini.
         </Typography>
         <Box
@@ -170,7 +167,9 @@ export function SignInView() {
             }}
             href="/"
           >
-            <Box component="span" sx={{color : '#000000'}}>Kembali</Box>
+            <Box component="span" sx={{ color: '#000000' }}>
+              Kembali
+            </Box>
           </ListItemButton>
           <ListItemButton
             disableGutters
@@ -195,7 +194,9 @@ export function SignInView() {
             }}
             href="/sign-up"
           >
-            <Box component="span" sx={{color : '#000000'}}>Daftar disini</Box>
+            <Box component="span" sx={{ color: '#000000' }}>
+              Daftar disini
+            </Box>
           </ListItemButton>
         </Box>
       </Box>
