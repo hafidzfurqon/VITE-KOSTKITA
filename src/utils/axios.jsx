@@ -205,5 +205,8 @@ export const endpoints = {
     create: '/api/admin/property/type/create',
     update: '/api/admin/property/type/update',
     delete: '/api/admin/property/type/delete',
+    owner_property : {
+      
+    }
   },
 };
