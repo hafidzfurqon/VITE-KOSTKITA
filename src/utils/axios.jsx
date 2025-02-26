@@ -136,6 +136,10 @@ export const endpoints = {
     create: '/api/admin/facility/create',
     delete: '/api/admin/facility/delete',
     update: '/api/admin/facility/update', // need id here
+    owner : {
+      list : '/api/owner_property/facility/all',
+      create : "/api/owner_property/property/create"
+    }
   },
   banner: {
     list: '/api/admin/banner/list',
@@ -155,6 +159,9 @@ export const endpoints = {
     create: '/api/admin/property/create',
     update: '/api/admin/property/update', //need id here
     delete: '/api/admin/property/delete', //need id here
+    owner : {
+      list : '/api/owner_property/property/all'
+    },
     public: {
       list: '/api/public/property/all',
       detail: '/api/public/property/detail/slug',
@@ -178,8 +185,10 @@ export const endpoints = {
       list: '/api/public/promo/all',
     },
   },
-  property_room: {
-    detail: '/api/admin/property/detail/id',
+  property_room : {
+    detail : '/api/admin/property/detail/id',
+    add : '/api/admin/property/property_room/add',
+    delete : '/api/admin/property/property_room/delete',
   },
   apartement: {
     create: '/api/admin/apartment/create',

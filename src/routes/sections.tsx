@@ -93,8 +93,8 @@ export function Router() {
             },
             // ],
             {
-              path: 'create-property-room',
-              element: <PropertyRoomCreate />,
+              path: 'create-property-room/:id',
+              element: <PropertyRoomCreate/>,
             },
             {
               path: 'property-room/:id',

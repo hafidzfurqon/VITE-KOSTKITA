@@ -12,8 +12,9 @@ import { useSnackbar } from 'notistack';
 
 import { Button } from '@mui/material';
 import { useMutationDeleteApartement } from 'src/hooks/apartement';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
+import { useMutationDeletePropertyRoom } from 'src/hooks/property_room';
 
 // ----------------------------------------------------------------------
 
@@ -40,12 +41,15 @@ export type ApartmentProps = {
 };
 
 type ApartmentTableRowProps = {
+  slug : string
   row: ApartmentProps;
   selected: boolean;
   onSelectRow: () => void;
 };
 
-export function PropertyRoomTableRow({ row, selected, onSelectRow }: ApartmentTableRowProps) {
+export function PropertyRoomTableRow({ slug, row, selected, onSelectRow }: ApartmentTableRowProps) {
+  const {id} = useParams()
+  // console.log()
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
@@ -56,16 +60,16 @@ export function PropertyRoomTableRow({ row, selected, onSelectRow }: ApartmentTa
    const IsNull = row === null
    console.log(IsNull)
   //  console.log(row.files[0]?.file_url)
-  const { mutate: DeleteApartement, isPending } = useMutationDeleteApartement({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
-      setOpen(false);
-      enqueueSnackbar('Apartement berhasil dihapus', { variant: 'success' });
-    },
-    onError: () => {
-      enqueueSnackbar('gagal menghapus apartement', { variant: 'error' });
-    },
-  });
+  const { mutate: DeleteApartement, isPending } = useMutationDeletePropertyRoom({
+     onSuccess : () => {
+        queryClient.invalidateQueries({ queryKey: ['fetch.property-room', id] });
+        setOpen(false)
+        enqueueSnackbar('Property Room berhasil dihapus', { variant: 'success' });
+      },
+      onError: () => {
+        enqueueSnackbar('Property Room gagal dihapus', { variant: 'error' });
+      },
+  }, id);
 
   
   const handleSubmit = () => {
@@ -113,7 +117,7 @@ export function PropertyRoomTableRow({ row, selected, onSelectRow }: ApartmentTa
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
           </Button>
-    <Link to={`${router.property.list}/${row.slug}`} target='_blank'>
+    <Link to={`${router.property.list}/${slug}#SectionRoom`} target='_blank'>
           <Button sx={{ color: 'secondary.main' }}>
             <Iconify icon="solar:eye-bold" />
             Lihat
@@ -124,7 +128,7 @@ export function PropertyRoomTableRow({ row, selected, onSelectRow }: ApartmentTa
       
 
       <DialogDelete 
-      title="yakin untuk menghapus Property ?"
+      title="yakin untuk menghapus Property Room ini ?"
        description="data yang telah di hapus tidak akan kembali"
        setOpen={setOpen}
        open={open}

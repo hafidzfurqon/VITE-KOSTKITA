@@ -17,18 +17,23 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { FasilitasTableToolbar } from '../fasilitas-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-import { Link } from 'react-router-dom';
-import { router } from 'src/hooks/routing/useRouting';
+
 import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { DialogCreate } from 'src/component/DialogCreate';
+import { useAppContext } from 'src/context/user-context';
+import { useFetchFacilityPropertyOwner, useMutationCreateFacilitiesOwner } from 'src/hooks/owner_property/fasilitas';
 
 export function FasilitasView() {
   const table = useTable();
-const { data = [], isLoading, isFetching } = useFetchFacilities();
+  const { UserContextValue: authUser }: any = useAppContext();
+    const { user } = authUser;
+    // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
+    const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_property");
+const { data = [], isLoading, isFetching } = isOwnerProperty ? useFetchFacilityPropertyOwner() : useFetchFacilities();
 const [filterName, setFilterName] = useState('');
 const [opened, setOpened] = useState(false);
 const queryClient = useQueryClient();
@@ -51,7 +56,17 @@ const notFound = !dataFiltered.length && !!filterName;
 const handleClickOpened = useCallback(() => setOpened(true), []);
 const handleClose = useCallback(() => setOpened(false), []);
 
-const { mutate, isPending: isPendingMutate } = useMutationCreateFacilities({
+const { mutate, isPending: isPendingMutate } = isOwnerProperty ? useMutationCreateFacilitiesOwner({
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['fetch.all.property.owner'] });
+    setOpened(false);
+    enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
+    reset();
+  },
+  onError: () => {
+    enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
+  },
+}) : useMutationCreateFacilities({
   onSuccess: () => {
     queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
     setOpened(false);

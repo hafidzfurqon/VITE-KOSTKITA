@@ -1,6 +1,5 @@
   import { Button, Box, Container, Stack, Typography, TextField, FormLabel, Autocomplete } from "@mui/material";
   import { Controller, useForm } from "react-hook-form";
-  import ReactQuill from "react-quill";
   import { useEffect, useState } from "react";
   import "react-quill/dist/quill.snow.css";
   import { MenuItem } from "@mui/material";
@@ -9,22 +8,22 @@
   import { useQueryClient } from "@tanstack/react-query";
   import { useSnackbar } from "notistack";
   import { useRouter } from "src/routes/hooks";
-  import { Link } from "react-router-dom";
+  import { Link, useParams } from "react-router-dom";
   import { router } from "src/hooks/routing/useRouting";
   import { InputAdornment } from "@mui/material";
   import { NumericFormat } from "react-number-format";
-  import { useGetState, useGetCity } from "src/hooks/property";
   import { useDropzone } from "react-dropzone";
-import { useMutationCreateApartement } from "src/hooks/apartement";
 import { useFetchFacilities } from "src/hooks/facilities";
 import Loading from "src/components/loading/loading";
 import { Checkbox } from "@mui/material";
 import { FormGroup } from "@mui/material";
 import { useFetchAllPropertyType } from "src/hooks/property_type";
-import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
+import CustomBreadcrumbs from "src/components/custom-breadcrumbs";
+import { useMutationCreatePropertyRoom } from "src/hooks/property_room";
 
 
   export const PropertyRoomCreate = () => {
+    const {id} = useParams();
     const {data : facilities, isLoading, isFetching} = useFetchFacilities();
     const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = useFetchAllPropertyType();
     
@@ -71,11 +70,6 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
       setIsActive(event.target.checked);
       setValue('status', status); // Simpan status ke react-hook-form
     };
-    // Menyimpan value ke state & React Hook Form
-    const handleQuillChange = (value) => {
-      setDescription(value);
-      setValue('description', value); // Update value untuk react-hook-form
-    };
 
 
     const {
@@ -92,36 +86,43 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
       },
     });
 
-    const {mutate, isPending} = useMutationCreateApartement({
+    const {mutate, isPending} = useMutationCreatePropertyRoom({
       onSuccess : () => {
-        queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
-        routers.push('/property');
-        enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
+        queryClient.invalidateQueries({ queryKey: ['fetch.property-room', id] });
+        routers.push(`/property/property-room/${id}`);
+        enqueueSnackbar('Property Room berhasil dibuat', { variant: 'success' });
       },
       onError: () => {
-        enqueueSnackbar('Apartement gagal dibuat', { variant: 'error' });
+        enqueueSnackbar('Property Room gagal dibuat', { variant: 'error' });
       },
     })
     const Submitted = (data) => {
+      // console.log("Data sebelum dikirim:", data);
+    
       const formData = new FormData();
+      
+      // Pastikan `property_id` ada
+      if (id) {
+        formData.append("property_id", id);
+      }
     
       Object.entries(data).forEach(([key, value]) => {
-        if (key !== "price") { // Hindari duplikasi harga
-          if (Array.isArray(value)) {
-            value.forEach(item => formData.append(`${key}[]`, item));
-          } else {
-            formData.append(key, value);
-          }
+        if (Array.isArray(value)) {
+          value.forEach(item => formData.append(`${key}[]`, item));
+        } else if (key === "price") {
+          formData.append(key, cleanPrice(value));
+        } else {
+          formData.append(key, value);
         }
       });
     
-      formData.append("price", cleanPrice(data.price)); // Tambahkan hanya satu price
+      // console.log("FormData yang dikirim:", Object.fromEntries(formData.entries()));
     
       mutate(formData);
     };
+    
 
-    const selectedType = watch("property_type_id");
-    console.log(selectedType)
+    
     const cleanPrice = (price) => {
       return parseInt(price.replace(/[^\d]/g, ''), 10);
     };
@@ -131,8 +132,16 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
     return (
       <Container>
         <Typography variant="h3" sx={{ mb: 5 }}>
-          Tambah Property
+          Tambah Property Room
         </Typography>
+        <CustomBreadcrumbs 
+                          links={[{ name: 'Property', href: '/property' }, { name: 'Property Room',href: `/property/property-room/${id}`}, { name: 'Create Property Room',}]} 
+                          sx={{ mb: { xs: 2, md: 3 } }} 
+                          action={null} 
+                          heading="" 
+                          moreLink={[]} 
+                          activeLast={true} 
+                          />
         <Box component="form" onSubmit={handleSubmit(Submitted)}>
           <Stack spacing={3}>
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -140,7 +149,7 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
                 {...register('name', { required: 'Nama Wajib Diisi' })}
                 margin="dense"
                 id="name"
-                label="Nama Property"
+                label="Nama Property Room"
                 type="text"
                 fullWidth
                 variant="outlined"
@@ -168,9 +177,12 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
                 )}
               />
             </Stack>
-            {selectedType === 3 && (
-              <>
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Typography>Status : </Typography>
+            <FormControlLabel
+              control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
+              label={isActive ? 'Available' : 'Non-Available'}
+            />
+           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
           {...register("land_area", { required: "Luas tanah Wajib Diisi" })}
           margin="dense"
@@ -203,32 +215,12 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
           }}
         />
             </Stack>
-          </>
-            )}
-            <Typography>Status : </Typography>
-            <FormControlLabel
-              control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
-              label={isActive ? 'Available' : 'Non-Available'}
-            />
-            <TextField
-              {...register('link_googlemaps', { required: 'Link gmaps wajib diisi' })}
-              margin="dense"
-              id="link_googlemaps"
-              label="Link Gmaps"
-              multiline
-              rows={4}
-              fullWidth
-              variant="outlined"
-              error={!!errors.link_googlemaps}
-              helperText={errors.link_googlemaps?.message}
-            />
-          
           <TextField
-            {...register('address')}
+            {...register('capacity')}
             margin="dense"
-            label="Alamat"
+            label="Kapasitas Orang"
             multiline
-            rows={4}
+            // rows={4}
             fullWidth
             variant="outlined"
           />
@@ -262,8 +254,6 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
               />
             ))}
           </Stack>
-            <Typography>Deskripsi : </Typography>
-            <ReactQuill theme="snow" value={description} onChange={handleQuillChange} />
           <TextField
               select
               {...register('payment_type', { required: true })}
