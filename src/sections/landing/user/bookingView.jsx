@@ -1,4 +1,4 @@
-import { TextField, Button, Grid, CircularProgress, Box, Container } from '@mui/material';
+import { TextField, Button, Grid, CircularProgress, Box, Container, Card, CardContent, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
@@ -12,11 +12,11 @@ export default function BookingView() {
   const { slug } = useParams();
   const { data: defaultValues, isLoading, isFetching, error } = useFetchPropertySlug(slug);
   const { enqueueSnackbar } = useSnackbar();
-  console.log(defaultValues);
   const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({ defaultValues });
 
@@ -24,16 +24,13 @@ export default function BookingView() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['list.property'] });
       enqueueSnackbar('Properti berhasil dibooking', { variant: 'success' });
+      reset();
     },
     onError: (error) => {
-      // Cek apakah error dari API mengandung pesan tertentu
-      if (error?.response?.data?.message) {
-        const errorMessage = error.response.data.message;
-
-        if (errorMessage.includes('sudah dibooking')) {
-          enqueueSnackbar('Properti ini sudah dibooking. Silakan pilih properti lain.', {
-            variant: 'warning',
-          });
+      const errorMessage = error?.response?.data?.errors;
+      if (errorMessage) {
+        if (errorMessage.includes('You already have booking for this property')) {
+          enqueueSnackbar('Anda sudah membooking properti ini', { variant: 'warning' });
         } else {
           enqueueSnackbar(errorMessage, { variant: 'error' });
         }
@@ -44,17 +41,14 @@ export default function BookingView() {
   });
 
   const onSubmit = (data) => {
-    // Menyiapkan payload dengan field wajib dan nullable
     const payload = {
       ...data,
-      property_id: defaultValues?.id, // Wajib
-      room_id: defaultValues.room_id ?? null, // Nullable
-      property_discount_id: defaultValues.property_discount_id ?? null, // Nullable
-      property_room_discount_id: defaultValues.property_room_discount_id ?? null, // Nullable
-      promo_id: defaultValues.promo_id ?? null, // Nullable
+      property_id: defaultValues?.id,
+      room_id: defaultValues.room_id ?? null,
+      property_discount_id: defaultValues.property_discount_id ?? null,
+      property_room_discount_id: defaultValues.property_room_discount_id ?? null,
+      promo_id: defaultValues.promo_id ?? null,
     };
-
-    console.log('Payload yang dikirim:', payload); // Debugging
     mutate(payload);
   };
 
@@ -83,66 +77,73 @@ export default function BookingView() {
   }
 
   return (
-    <Container>
-      <Box sx={{ display: 'grid', width: '100%' }}>
-        <CustomBreadcrumbs
-          links={[
-            {
-              name: <span dangerouslySetInnerHTML={{ __html: defaultValues?.slug }} />,
-              href: `/property/${slug}`,
-            },
-            { name: 'Booking', href: '' },
-          ]}
-          sx={{ mb: { xs: 3, md: 5 } }}
-        />
-      </Box>
+    <Container maxWidth="sm">
+      <CustomBreadcrumbs
+        links={[
+          {
+            name: <span dangerouslySetInnerHTML={{ __html: defaultValues?.slug }} />,
+            href: `/property/${slug}`,
+          },
+          { name: 'Booking', href: '' },
+        ]}
+        sx={{ mb: 3 }}
+      />
+      <Card sx={{ boxShadow: 3 }}>
+        <CardContent>
+          <Typography variant="h5" gutterBottom>
+            Booking Properti {defaultValues.name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+            Silakan isi data berikut untuk melanjutkan pemesanan properti ini.
+          </Typography>
 
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Jumlah Tamu"
+                  {...register('number_of_guests', { required: 'Jumlah tamu wajib diisi', min: 1 })}
+                  error={!!errors.number_of_guests}
+                  helperText={errors.number_of_guests?.message}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Check-in"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  {...register('check_in', { required: 'Tanggal check-in wajib diisi' })}
+                  error={!!errors.check_in}
+                  helperText={errors.check_in?.message}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  label="Check-out"
+                  type="date"
+                  InputLabelProps={{ shrink: true }}
+                  {...register('check_out', { required: 'Tanggal check-out wajib diisi' })}
+                  error={!!errors.check_out}
+                  helperText={errors.check_out?.message}
+                />
+              </Grid>
+            </Grid>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
               fullWidth
-              label="Jumlah Tamu"
-              type="number"
-              {...register('number_of_guests', { required: 'Jumlah tamu wajib diisi', min: 1 })}
-              error={!!errors.number_of_guests}
-              helperText={errors.number_of_guests?.message}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Check-in"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              {...register('check_in', { required: 'Tanggal check-in wajib diisi' })}
-              error={!!errors.check_in}
-              helperText={errors.check_in?.message}
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Check-out"
-              type="date"
-              InputLabelProps={{ shrink: true }}
-              {...register('check_out', { required: 'Tanggal check-out wajib diisi' })}
-              error={!!errors.check_out}
-              helperText={errors.check_out?.message}
-            />
-          </Grid>
-        </Grid>
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          disabled={isPending}
-          sx={{ mt: 3 }}
-        >
-          {isPending ? <CircularProgress size={24} /> : 'Booking Sekarang'}
-        </Button>
-      </form>
+              disabled={isPending}
+              sx={{ mt: 3 }}
+            >
+              {isPending ? <CircularProgress size={24} /> : 'Booking Sekarang'}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </Container>
   );
 }

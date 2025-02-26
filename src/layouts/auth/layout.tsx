@@ -7,11 +7,12 @@ import { RouterLink } from 'src/routes/components';
 
 import { stylesMode } from 'src/theme/styles';
 
-import { Logo } from 'src/components/logo';
+// import { Logo } from 'src/components/logo';
 
 import { Main } from './main';
 import { HeaderSection } from '../core/header-section';
 import { LayoutSection } from '../core/layout-section';
+import Logo from '../../../public/assets/images/logo.png';
 
 // ----------------------------------------------------------------------
 
@@ -49,17 +50,21 @@ export function AuthLayout({ sx, children, header }: AuthLayoutProps) {
                 This is an info Alert.
               </Alert>
             ),
-            leftArea: <Logo />,
-            rightArea: (
-              <Link
-                component={RouterLink}
-                href="#"
-                color="inherit"
-                sx={{ typography: 'subtitle2' }}
-              >
-                Need help?
+            leftArea: (
+              <Link component={RouterLink} href="/">
+                <img src={Logo} width={150} />
               </Link>
             ),
+            // rightArea: (
+            //   <Link
+            //     component={RouterLink}
+            //     href="#"
+            //     color="inherit"
+            //     sx={{ typography: 'subtitle2' }}
+            //   >
+            //     Need help?
+            //   </Link>
+            // ),
           }}
         />
       }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {  useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -280,7 +280,13 @@ export default function PropertyDetail() {
                 )}
 
                 <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                  <Button variant="outlined" color="primary" sx={{ mb: 2, height: 48 }} fullWidth>
+                  <Button
+                    href="#room"
+                    variant="outlined"
+                    color="primary"
+                    sx={{ mb: 2, height: 48 }}
+                    fullWidth
+                  >
                     Lihat Kamar
                   </Button>
 
@@ -399,7 +405,9 @@ export default function PropertyDetail() {
           )}
         </Box>
         <Divider />
-        <PropertyRoom rooms={data.rooms} />
+        <Box id="room">
+          <PropertyRoom rooms={data.rooms} />
+        </Box>
       </Container>
     </>
   );

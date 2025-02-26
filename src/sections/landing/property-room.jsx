@@ -26,17 +26,6 @@ const ImageContainer = styled(Box)({
   height: '100%',
 });
 
-const OverlayButton = styled(Button)(({ theme }) => ({
-  position: 'absolute',
-  top: theme.spacing(2),
-  left: theme.spacing(2),
-  backgroundColor: 'white',
-  color: theme.palette.text.primary,
-  '&:hover': {
-    backgroundColor: 'white',
-  },
-}));
-
 const AvailabilityChip = styled(Chip)(({ theme }) => ({
   position: 'absolute',
   bottom: theme.spacing(2),
@@ -60,6 +49,8 @@ const PropertyRoom = ({ rooms = [] }) => {
   // Set default value to empty array
   // Check if rooms is valid array
   const validRooms = Array.isArray(rooms) ? rooms : [];
+  const Id = rooms.id;
+  console.log(Id);
   console.log(rooms);
 
   // Helper function to format price
@@ -78,19 +69,19 @@ const PropertyRoom = ({ rooms = [] }) => {
     return (
       <Container maxWidth="lg">
         <Typography variant="body1" textAlign="center" py={4}>
-          Tidak ada kamar 
+          Tidak ada kamar
         </Typography>
       </Container>
     );
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 5 }} id='SectionRoom'>
-      <Typography variant="h6" sx={{ mb: 5 }} >
+    <Container maxWidth="lg" sx={{ mt: 5 }} id={Id}>
+      <Typography variant="h6" sx={{ mb: 5 }}>
         Kamar
       </Typography>
       {validRooms.map((room) => (
-        <StyledCard key={room.id} >
+        <StyledCard key={room.id}>
           <Grid container>
             {/* Left side - Image */}
             <Grid item xs={12} md={4}>
@@ -108,9 +99,11 @@ const PropertyRoom = ({ rooms = [] }) => {
                     <Typography variant="h6" gutterBottom>
                       {room.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {room.capacity} Orang • {room.area_size}m²
-                    </Typography>
+                    <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                      <Chip label={`${room.capacity} Orang`} />
+                      <Chip label={room?.room_type} />
+                      <Chip label={`${room.area_size}m²`} />
+                    </Box>
                   </Box>
                   {/* <Button color="primary">Lihat Detail</Button> */}
                 </Box>
@@ -122,12 +115,12 @@ const PropertyRoom = ({ rooms = [] }) => {
                       <Grid item xs={3} md={2} key={index}>
                         <Box key={index} display="flex" alignItems="center" gap={1}>
                           <Typography variant="body2" color="text.secondary">
-                          {/* <Stack direction={{ xs: 'column', sm: 'row' }} > */}
+                            {/* <Stack direction={{ xs: 'column', sm: 'row' }} > */}
                             {facility.name}
-                        {/* </Stack> */}
+                            {/* </Stack> */}
                           </Typography>
                         </Box>
-                     </Grid>  
+                      </Grid>
                     );
                   })}
                 </Grid>
@@ -288,7 +281,7 @@ function ImageSlider({ images }) {
         <Box
           sx={{
             position: 'absolute',
-            top:'110%',
+            top: '110%',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
