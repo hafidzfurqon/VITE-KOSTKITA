@@ -21,6 +21,7 @@ import PropertyDetail from 'src/sections/landing/property-detail';
 import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
 import { PropertyRoomCreate } from 'src/sections/property_room/crud/property-room-create';
 import { AccountView } from 'src/layouts/account/view';
+import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
 
 // ----------------------------------------------------------------------
 
@@ -90,6 +91,10 @@ export function Router() {
             {
               path: 'create',
               element: <CreateApartement />,
+            },
+            {
+              path: 'edit/:id',
+              element: <EditApartement />,
             },
             // ],
             {

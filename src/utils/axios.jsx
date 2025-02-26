@@ -193,7 +193,9 @@ export const endpoints = {
   apartement: {
     create: '/api/admin/apartment/create',
     list: '/api/admin/property/list',
+    update : '/api/admin/property/update',
     delete: '/api/admin/property/delete',
+    detail : '/api/admin/property/detail/id',
     public: {
       list: '/api/public/property/all',
     },

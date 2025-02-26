@@ -10,7 +10,7 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { useMutationDeleteApartement } from 'src/hooks/apartement';
 import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
@@ -37,6 +37,7 @@ export type ApartmentProps = {
   }
   ],
   url_reference: string;
+  status : string
 };
 
 type ApartmentTableRowProps = {
@@ -53,7 +54,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
     setOpen(true)
    }
    
-  //  console.log(row.files[0]?.file_url)
+   console.log(row)
   const { mutate: DeleteApartement, isPending } = useMutationDeleteApartement({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
@@ -100,14 +101,34 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
         </TableCell>
 
         <TableCell align='center'>{row.name}</TableCell>
+        <TableCell align="center">
+          {row.status === 'available' ? (
+            <>
+            <Box sx={{display : 'flex', gap :1}}>
+            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
+            <span>Available</span>
+            </Box>
+            </>
+          ) : (
+            <>
+          <Box sx={{display : 'flex', gap :1}}>
+            <Iconify width={22} icon="solar:close-circle-bold" sx={{ color: 'error.main' }} />
+            <span>Unavailable</span>
+            </Box>
+            </>
+          )}
+        </TableCell>
 
 
 <TableCell align="center">
   <Box>
-        <Button onClick={() => alert('sdjshad')}>
+    <Link to={`edit/${row.id}`}>
+    <Button>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
+    </Link>
+        
 
           <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
