@@ -44,7 +44,7 @@ export function SignInView() {
       const role = data.user?.roles?.[0]?.name || 'user';
   
       // Redirect sesuai role
-      if (role === 'admin') {
+      if (role === 'admin' || "owner_property") {
         router.push('/dashboard');
       } else {
         router.push('/');

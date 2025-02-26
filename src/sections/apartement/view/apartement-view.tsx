@@ -21,10 +21,16 @@ import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
 import { useGetBanner } from 'src/hooks/banner';
 import { useFetchAllApartement } from 'src/hooks/apartement';
+import { useAppContext } from 'src/context/user-context';
+import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
 
 export function ApartementView() {
   const table = useTable();
-  const { data = [], isLoading, isFetching } = useFetchAllApartement();
+  const { UserContextValue: authUser }: any = useAppContext();
+  const { user } = authUser;
+  // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
+  const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_property");
+  const { data = [], isLoading, isFetching } = isOwnerProperty ? useFetchAllPropertyOwner() : useFetchAllApartement();
   const [filterName, setFilterName] = useState('');
 
   if (isLoading || isFetching) {

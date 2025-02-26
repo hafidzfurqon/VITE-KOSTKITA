@@ -135,7 +135,7 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
     return (
       <Container>
         <Typography variant="h3" sx={{ mb: 5 }}>
-          Tambah Property
+          Tambah Property  
         </Typography>
         <Box component="form" onSubmit={handleSubmit(Submitted)}>
           <Stack spacing={3}>

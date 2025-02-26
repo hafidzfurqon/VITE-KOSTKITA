@@ -85,12 +85,12 @@ const PropertyRoom = ({ rooms = [] }) => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 5 }}>
-      <Typography variant="h6" sx={{ mb: 5 }}>
+    <Container maxWidth="lg" sx={{ mt: 5 }} id='SectionRoom'>
+      <Typography variant="h6" sx={{ mb: 5 }} >
         Kamar
       </Typography>
       {validRooms.map((room) => (
-        <StyledCard key={room.id}>
+        <StyledCard key={room.id} >
           <Grid container>
             {/* Left side - Image */}
             <Grid item xs={12} md={4}>

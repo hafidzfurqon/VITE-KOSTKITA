@@ -21,6 +21,7 @@ import { WorkspacesPopover } from '../components/workspaces-popover';
 import imageLogo from '../../../public/assets/images/logo.png'
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
+import { useAppContext } from 'src/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -117,6 +118,19 @@ export function NavMobile({
 
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
   const pathname = usePathname();
+  const { UserContextValue: authUser }: any = useAppContext();
+const { user } = authUser;
+
+// Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
+const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_property");
+
+const filteredNavData = isOwnerProperty
+  ? data.filter((item) =>
+      ['Dashboard', 'Property Tipe', 'Property', 'Fasilitas'].includes(item.title)
+    )
+  : data;
+
+  // console.log(filteredNavData)
   return (  
     <>
       {/* <Logo /> */}
@@ -141,7 +155,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
       <Scrollbar fillContent>
         <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
           <Box component="ul" gap={0.5} display="flex" flexDirection="column">
-            {data.map((item) => {
+            {filteredNavData.map((item) => {
               const isActived = pathname.startsWith(item.path);
               // console.log(isActived)
               return (

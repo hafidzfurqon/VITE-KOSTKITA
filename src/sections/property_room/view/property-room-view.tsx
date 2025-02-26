@@ -29,7 +29,7 @@ export function PropertyRoomView() {
   const { data : room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
   const data = room.rooms
   const [filterName, setFilterName] = useState('');
-
+ 
   if (isLoading || isFetching) {
     return <Loading />;
   }
@@ -48,7 +48,7 @@ export function PropertyRoomView() {
         <Typography variant="h4" flexGrow={1}>
          Tambah Property Room di {room.name}
         </Typography>
-        <Link to={router.property_room.create}>
+        <Link to={`${router.property_room.create}/${id}`}>
           <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
             Tambah Property Room
           </Button>
@@ -112,6 +112,7 @@ export function PropertyRoomView() {
                   <PropertyRoomTableRow
                     key={row.id}
                     row={row}
+                    slug={room.slug}
                     selected={table.selected.includes(row.id)}
                     onSelectRow={() => table.onSelectRow(row.id)}
                   />
