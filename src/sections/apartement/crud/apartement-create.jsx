@@ -67,7 +67,7 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
       setValue("files", imageFiles);
     };
     const handleToggle = (event) => {
-      const status = event.target.checked ? 'available' : 'non-available';
+      const status = event.target.checked ? 'available' : 'unavailable';
       setIsActive(event.target.checked);
       setValue('status', status); // Simpan status ke react-hook-form
     };

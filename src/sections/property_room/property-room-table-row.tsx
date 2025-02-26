@@ -108,7 +108,7 @@ export function PropertyRoomTableRow({ slug, row, selected, onSelectRow }: Apart
 
 
 <TableCell align="center">
-<Button onClick={() => alert('sdjshad')}>
+<Button onClick={() => alert('fitur sedang kami kembangkan')}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>

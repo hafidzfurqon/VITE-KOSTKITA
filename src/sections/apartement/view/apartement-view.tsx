@@ -83,6 +83,7 @@ export function ApartementView() {
                 headLabel={[
                   { id: 'image_property', label: 'Gambar Property' },
                   { id: 'title_property', label: 'Judul Property' },
+                  { id: 'status', label: 'Status' },
                   // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}

@@ -23,6 +23,7 @@ import { PropertyRoomCreate } from 'src/sections/property_room/crud/property-roo
 import { AccountView } from 'src/layouts/account/view';
 import BookingView from 'src/sections/landing/user/bookingView';
 import HistoryBooking from 'src/sections/landing/user/historyBooking';
+import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
 
 // ----------------------------------------------------------------------
 
@@ -92,6 +93,10 @@ export function Router() {
             {
               path: 'create',
               element: <CreateApartement />,
+            },
+            {
+              path: 'edit/:id',
+              element: <EditApartement />,
             },
             // ],
             {
