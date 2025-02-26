@@ -16,16 +16,16 @@ import { Iconify } from 'src/components/iconify';
 import { useContext } from 'react';
 import { SettingsContext } from 'src/components/settings/context/settings-context';
 import { useUpdatePassword } from 'src/hooks/users/profile/useUpdatePassword';
-
+import { useAppContext } from 'src/context/user-context';
 
 // ----------------------------------------------------------------------
 
 export default function AccountChangePassword() {
   const { enqueueSnackbar } = useSnackbar();
-  const { user } = useContext(SettingsContext);
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
   const userId = user?.id;
-  console.log(userId);
-
+console.log(userId)
   const password = useBoolean();
 
   const ChangePassWordSchema = Yup.object().shape({
@@ -53,16 +53,16 @@ export default function AccountChangePassword() {
     formState: { isSubmitting },
   } = methods;
 
-  // const { mutateAsync: updatePassword } = useUpdatePassword({
-  //   onSuccess: () => {
-  //     enqueueSnackbar('Password berhasil diperbarui!', { variant: 'success' });
-  //     reset();
-  //   },
-  //   onError: (error) => {
-  //     console.error(error);
-  //     enqueueSnackbar('Gagal memperbarui password', { variant: 'error' });
-  //   },
-  // });
+  const { mutateAsync: updatePassword } = useUpdatePassword({
+    onSuccess: () => {
+      enqueueSnackbar('Password berhasil diperbarui!', { variant: 'success' });
+      reset();
+    },
+    onError: (error) => {
+      console.error(error);
+      enqueueSnackbar('Gagal memperbarui password', { variant: 'error' });
+    },
+  });
 
   const onSubmit = async (data) => {
     console.log('Form Data:', data); // Debugging log

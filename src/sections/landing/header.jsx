@@ -20,6 +20,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import BusinessIcon from '@mui/icons-material/Business';
 import InfoIcon from '@mui/icons-material/Info';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import HistoryIcon from '@mui/icons-material/History';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
@@ -109,29 +111,18 @@ export default function Header() {
           )}
         </Box>
         {/* Login Button */}
-        {!isSmallScreen && (
-          <Box sx={{ ml: 'auto' }}>
-            {isLoggedIn ? (
-              <AccountPopover
-                data={[
-                  {
-                    label: 'Home',
-                    href: '/',
-                    icon: <HomeIcon />,
-                  },
-                  {
-                    label: 'Profile',
-                    href: '/profile',
-                    icon: <BusinessIcon />,
-                  },
-                  {
-                    label: 'Settings',
-                    href: '/settings',
-                    icon: <InfoIcon />,
-                  },
-                ]}
-              />
-            ) : (
+        <Box sx={{ ml: 'auto' }}>
+          {isLoggedIn ? (
+            <AccountPopover
+              data={[
+                { label: 'Home', href: '/', icon: <HomeIcon /> },
+                { label: 'Profile', href: '/profile', icon: <AccountCircleIcon /> },
+                { label: 'Riwayat Booking', href: '/history/booking', icon: <HistoryIcon /> },
+              ]}
+            />
+          ) : (
+            // Hanya tampilkan tombol "Masuk / Daftar" jika bukan ukuran kecil
+            !isSmallScreen && (
               <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
                 <Button
                   color="inherit"
@@ -145,9 +136,9 @@ export default function Header() {
                   Masuk / Daftar
                 </Button>
               </Link>
-            )}
-          </Box>
-        )}
+            )
+          )}
+        </Box>
 
         {/* Hamburger Menu (Hanya tampil di layar kecil) */}
         {isSmallScreen && (

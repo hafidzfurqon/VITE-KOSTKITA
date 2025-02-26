@@ -21,6 +21,8 @@ import PropertyDetail from 'src/sections/landing/property-detail';
 import { CreateApartement } from 'src/sections/apartement/crud/apartement-create';
 import { PropertyRoomCreate } from 'src/sections/property_room/crud/property-room-create';
 import { AccountView } from 'src/layouts/account/view';
+import BookingView from 'src/sections/landing/user/bookingView';
+import HistoryBooking from 'src/sections/landing/user/historyBooking';
 import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
 
 // ----------------------------------------------------------------------
@@ -99,7 +101,7 @@ export function Router() {
             // ],
             {
               path: 'create-property-room/:id',
-              element: <PropertyRoomCreate/>,
+              element: <PropertyRoomCreate />,
             },
             {
               path: 'property-room/:id',
@@ -185,6 +187,14 @@ export function Router() {
         {
           path: 'profile',
           element: <AccountView />,
+        },
+        {
+          path: 'booking/:slug',
+          element: <BookingView />,
+        },
+        {
+          path: 'history/booking',
+          element: <HistoryBooking />,
         },
         {
           path: '/promo',
