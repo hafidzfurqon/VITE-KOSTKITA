@@ -20,6 +20,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import BusinessIcon from '@mui/icons-material/Business';
 import InfoIcon from '@mui/icons-material/Info';
 import HandshakeIcon from '@mui/icons-material/Handshake';
+import HistoryIcon from '@mui/icons-material/History';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
@@ -114,8 +116,8 @@ export default function Header() {
             <AccountPopover
               data={[
                 { label: 'Home', href: '/', icon: <HomeIcon /> },
-                { label: 'Profile', href: '/profile', icon: <BusinessIcon /> },
-                { label: 'Settings', href: '/settings', icon: <InfoIcon /> },
+                { label: 'Profile', href: '/profile', icon: <AccountCircleIcon /> },
+                { label: 'Riwayat Booking', href: '/history/booking', icon: <HistoryIcon /> },
               ]}
             />
           ) : (

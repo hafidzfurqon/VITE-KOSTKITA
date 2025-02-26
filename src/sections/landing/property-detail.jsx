@@ -1,22 +1,18 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
 import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
-import { Dialog, DialogTitle, DialogContent } from '@mui/material';
 // icons
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import CloseIcon from '@mui/icons-material/Close';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
@@ -30,14 +26,12 @@ import { WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
-import BookingView from './user/bookingView';
 import PropertyRoom from './property-room';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-  const [open, setOpen] = useState(false);
-  console.log(data);
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
@@ -306,14 +300,15 @@ export default function PropertyDetail() {
                     WhatsApp
                   </Button>
                 </Box>
+
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
-                  sx={{ mb: 2, height: 48 }}
                   fullWidth
-                  onClick={() => setOpen(true)}
+                  sx={{ mt: 2 }}
+                  onClick={() => navigate(`/booking/${data.slug}`)}
                 >
-                  Booking
+                  Booking Sekarang
                 </Button>
               </Card>
             </Grid>
@@ -336,41 +331,41 @@ export default function PropertyDetail() {
           )}
           {data.facilities.length > 0 && (
             <>
-            <hr />
-            <Box sx={{ mx: 2, my: 3 }}>
-              <Typography variant="subtitle1">Fasilitas Bersama</Typography>
-              <Box
-                sx={{
-                  display: 'flex',
-                  overflowX: 'auto',
-                  whiteSpace: 'nowrap',
-                  mt: 4,
-                  gap: 2,
-                  pb: 1, // Agar scrollbar tidak menutupi konten
-                  '&::-webkit-scrollbar': {
-                    display: 'none', // Sembunyikan scrollbar
-                  },
-                }}
-                direction="row"
-                spacing={1}
-                mb={3}
-              >
-                {data.facilities?.slice(0, 5).map((fasilitas, idx) => (
-                  <>
-                    {/* <Iconify icon="material-symbols:check" /> */}
-                    <Iconify icon="mingcute:check-line" />
-                    <Typography color="text.secondary" key={idx}>
-                      {fasilitas.name}
-                    </Typography>
-                  </>
-                ))}
+              <hr />
+              <Box sx={{ mx: 2, my: 3 }}>
+                <Typography variant="subtitle1">Fasilitas Bersama</Typography>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    overflowX: 'auto',
+                    whiteSpace: 'nowrap',
+                    mt: 4,
+                    gap: 2,
+                    pb: 1, // Agar scrollbar tidak menutupi konten
+                    '&::-webkit-scrollbar': {
+                      display: 'none', // Sembunyikan scrollbar
+                    },
+                  }}
+                  direction="row"
+                  spacing={1}
+                  mb={3}
+                >
+                  {data.facilities?.slice(0, 5).map((fasilitas, idx) => (
+                    <>
+                      {/* <Iconify icon="material-symbols:check" /> */}
+                      <Iconify icon="mingcute:check-line" />
+                      <Typography color="text.secondary" key={idx}>
+                        {fasilitas.name}
+                      </Typography>
+                    </>
+                  ))}
+                </Box>
+                <Typography variant="subtitle1" sx={{ textDecoration: 'underline' }}>
+                  Lihat Selengkapnya
+                </Typography>
+                {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
               </Box>
-              <Typography variant="subtitle1" sx={{ textDecoration: 'underline' }}>
-                Lihat Selengkapnya
-              </Typography>
-              {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
-            </Box>
-            <hr />
+              <hr />
             </>
           )}
           {/* Google Maps */}
@@ -406,22 +401,6 @@ export default function PropertyDetail() {
         <Divider />
         <PropertyRoom rooms={data.rooms} />
       </Container>
-
-      <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="sm">
-        <DialogTitle>
-          Form Booking
-          <IconButton
-            aria-label="close"
-            onClick={() => setOpen(false)}
-            sx={{ position: 'absolute', right: 8, top: 8 }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent dividers>
-          <BookingView defaultValues={data} />
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

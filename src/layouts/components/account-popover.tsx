@@ -41,7 +41,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   const pathname = usePathname();
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  console.log(user);
+  // console.log(user);
   // State Management
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
