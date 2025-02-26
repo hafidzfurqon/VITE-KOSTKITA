@@ -27,6 +27,8 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
 import { usePathname } from 'src/routes/hooks';
 import { AccountPopover } from 'src/layouts/components/account-popover';
+import { Avatar } from '@mui/material';
+import { useAppContext } from 'src/context/user-context';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -34,6 +36,8 @@ export default function Header() {
   const [navBg, setNavBg] = useState('transparent');
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
 
   useEffect(() => {
     const token = sessionStorage.getItem('token'); // Ambil token dari sessionStorage
@@ -60,6 +64,15 @@ export default function Header() {
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
+    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
+    { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
+    { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
+  ];
+
+  const navMobile = [
+    { label: 'Sewa', icon: <HomeIcon />, path: '/' },
+    { label: 'Profile', path: '/profile', icon: <AccountCircleIcon /> },
+    { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
@@ -112,31 +125,44 @@ export default function Header() {
         </Box>
         {/* Login Button */}
         <Box sx={{ ml: 'auto' }}>
-          {isLoggedIn ? (
-            <AccountPopover
-              data={[
-                { label: 'Home', href: '/', icon: <HomeIcon /> },
-                { label: 'Profile', href: '/profile', icon: <AccountCircleIcon /> },
-                { label: 'Riwayat Booking', href: '/history/booking', icon: <HistoryIcon /> },
-              ]}
-            />
-          ) : (
-            // Hanya tampilkan tombol "Masuk / Daftar" jika bukan ukuran kecil
-            !isSmallScreen && (
-              <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <Button
-                  color="inherit"
-                  sx={{
-                    textTransform: 'none',
-                    color: 'black',
-                    transition: '0.3s',
-                    '&:hover': { color: '#FFD700' },
-                  }}
-                >
-                  Masuk / Daftar
-                </Button>
-              </Link>
-            )
+          {!isSmallScreen && (
+            <Box sx={{ ml: 'auto' }}>
+              {isLoggedIn ? (
+                <AccountPopover
+                  data={[
+                    {
+                      label: 'Home',
+                      href: '/',
+                      icon: <HomeIcon />,
+                    },
+                    {
+                      label: 'Profile',
+                      href: '/profile',
+                      icon: <BusinessIcon />,
+                    },
+                    {
+                      label: 'Settings',
+                      href: '/settings',
+                      icon: <InfoIcon />,
+                    },
+                  ]}
+                />
+              ) : (
+                <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <Button
+                    color="inherit"
+                    sx={{
+                      textTransform: 'none',
+                      color: 'black',
+                      transition: '0.3s',
+                      '&:hover': { color: '#FFD700' },
+                    }}
+                  >
+                    Masuk / Daftar
+                  </Button>
+                </Link>
+              )}
+            </Box>
           )}
         </Box>
 
@@ -150,9 +176,24 @@ export default function Header() {
 
       {/* Drawer untuk menu di layar kecil */}
       <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
-        <Box sx={{ width: 250, p: 2 }}>
+        <Box sx={{ p: 2, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Avatar src={user?.photo_profile_url} alt={user?.name} sx={{ width: 64, height: 64 }} />
+            <Box sx={{ ml: 2 }}>
+              <Typography variant="subtitle1" fontWeight="bold">
+                {user?.name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {user?.email}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {user?.phone_number}
+              </Typography>
+            </Box>
+          </Box>
+          <Divider />
           <List>
-            {navItems.map((item, index) => {
+            {navMobile.map((item, index) => {
               const isActived = item.path === pathname;
               return (
                 <ListItem
@@ -173,10 +214,12 @@ export default function Header() {
               );
             })}
             <Divider sx={{ my: 1 }} />
-            <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
-              <LoginIcon />
-              <ListItemText primary="Masuk / Daftar" sx={{ ml: 1 }} />
-            </ListItem>
+            {!isLoggedIn && (
+              <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
+                <LoginIcon />
+                <ListItemText primary="Masuk / Daftar" sx={{ ml: 1 }} />
+              </ListItem>
+            )}
           </List>
         </Box>
       </Drawer>
