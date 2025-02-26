@@ -25,24 +25,48 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
-import { usePathname } from 'src/routes/hooks';
+import { usePathname, useRouter } from 'src/routes/hooks';
 import { AccountPopover } from 'src/layouts/components/account-popover';
 import { Avatar } from '@mui/material';
 import { useAppContext } from 'src/context/user-context';
+import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
+import DialogDelete from 'src/component/DialogDelete';
+import { useSnackbar } from 'notistack';
+import { useQueryClient } from '@tanstack/react-query';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
 export default function Header() {
+  const { enqueueSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+  const Router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
   const { UserContextValue: authUser } = useAppContext();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
 
+  const { mutate: handleLogout, isPending } = useMutationLogout({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
+      Router.push('/'); // Kembali ke landing page
+      enqueueSnackbar('Logout berhasil', { variant: 'success' });
+      sessionStorage.removeItem('token'); // Hapus token saat logout
+      setTimeout(() => {
+        window.location.reload(); // Refresh halaman agar reset state
+      }, 500);
+    },
+    onError: (error) => {
+      enqueueSnackbar(error.message, { variant: 'error' });
+    },
+  });
+
   useEffect(() => {
-    const token = sessionStorage.getItem('token'); // Ambil token dari sessionStorage
-    setIsLoggedIn(!!token); // Jika ada token, berarti user sudah login
-  }, []);
+    const token = sessionStorage.getItem('token');
+    setIsLoggedIn(!!token && user); // Harus ada token dan user untuk dianggap login
+  }, [user]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -71,7 +95,6 @@ export default function Header() {
 
   const navMobile = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    { label: 'Profile', path: '/profile', icon: <AccountCircleIcon /> },
     { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
@@ -174,55 +197,101 @@ export default function Header() {
         )}
       </Toolbar>
 
-      {/* Drawer untuk menu di layar kecil */}
       <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
-        <Box sx={{ p: 2, textAlign: 'center' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Avatar src={user?.photo_profile_url} alt={user?.name} sx={{ width: 64, height: 64 }} />
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle1" fontWeight="bold">
-                {user?.name}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {user?.email}
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                {user?.phone_number}
-              </Typography>
-            </Box>
-          </Box>
-          <Divider />
+        <Box sx={{ p: 2 }}>
+          {/* Hanya tampil jika sudah login */}
+          {isLoggedIn && user && (
+            <>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Avatar
+                  src={user?.photo_profile_url}
+                  alt={user?.name}
+                  sx={{ width: 64, height: 64 }}
+                />
+                <Box sx={{ ml: 1 }}>
+                  <Typography variant="subtitle1" fontWeight="bold">
+                    {user?.name}
+                  </Typography>
+                  <Typography
+                    variant="caption"
+                    color="black"
+                    sx={{ textDecoration: 'underline', cursor: 'pointer', textTransform: 'none' }}
+                    component={Link}
+                    to="/profile"
+                  >
+                    Edit Profile &gt;
+                  </Typography>
+                </Box>
+              </Box>
+              <Divider />
+            </>
+          )}
+
           <List>
-            {navMobile.map((item, index) => {
-              const isActived = item.path === pathname;
-              return (
-                <ListItem
-                  button
-                  component={Link}
-                  to={item.path}
-                  key={index}
-                  onClick={toggleDrawer}
-                  sx={{
-                    backgroundColor: isActived && '#FFD700',
-                    borderRadius: '10px',
-                    color: isActived && 'white',
-                  }}
-                >
-                  {item.icon} {/* Ikon hanya tampil di layar kecil */}
-                  <ListItemText primary={item.label} sx={{ ml: 1 }} />
-                </ListItem>
-              );
-            })}
+            {navMobile
+              .filter(
+                (item) =>
+                  isLoggedIn ||
+                  (!isLoggedIn && item.path !== '/history/booking' && item.path !== '/profile')
+              ) // Sembunyikan history booking & profile jika belum login
+              .map((item, index) => {
+                const isActived = item.path === pathname;
+                return (
+                  <ListItem
+                    button
+                    component={Link}
+                    to={item.path}
+                    key={index}
+                    onClick={toggleDrawer}
+                    sx={{
+                      backgroundColor: isActived ? '#FFD700' : 'transparent',
+                      borderRadius: '10px',
+                      color: isActived ? 'white' : 'black',
+                    }}
+                  >
+                    {item.icon}
+                    <ListItemText primary={item.label} sx={{ ml: 1 }} />
+                  </ListItem>
+                );
+              })}
             <Divider sx={{ my: 1 }} />
+
+            {/* Hanya tampil jika belum login */}
             {!isLoggedIn && (
               <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
                 <LoginIcon />
                 <ListItemText primary="Masuk / Daftar" sx={{ ml: 1 }} />
               </ListItem>
             )}
+
+            {/* Tombol Logout, hanya muncul jika login */}
+            {isLoggedIn && (
+              <ListItem
+                button
+                onClick={() => setOpenDeleteDialog(true)}
+                sx={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  borderRadius: '10px',
+                  '&:hover': { backgroundColor: 'darkred' },
+                }}
+              >
+                <ListItemText primary="Logout" sx={{ textAlign: 'center' }} />
+              </ListItem>
+            )}
           </List>
         </Box>
       </Drawer>
+      <DialogDelete
+        open={openDeleteDialog}
+        setOpen={() => setOpenDeleteDialog(false)}
+        Submit={handleLogout}
+        title="Konfirmasi Logout"
+        description="Apakah Anda yakin ingin logout?"
+        confirmText="Logout"
+        confirmColor="error"
+        isLoading={isPending}
+      />
     </AppBar>
   );
 }
