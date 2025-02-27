@@ -120,7 +120,7 @@ export const endpoints = {
     list: '/api/admin/users/list',
     detail: '/api/admin/users/detail', //need id here
     create: '/api/admin/users/create',
-    update: '/api/admin/users/update',
+    update_data_user: '/api/admin/users/update',
     update: '/api/admin/users/update_user_password', // need id here
     booking: {
       property: '/api/user/booking/property/reserve',
