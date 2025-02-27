@@ -125,6 +125,7 @@ export const endpoints = {
     booking: {
       property: '/api/user/booking/property/reserve',
       getBookingproperty: '/api/user/booking/property/all',
+      getBookingDetail: '/api/user/booking/property/detail',
     },
     profile: {
       update: '/api/user/profile/update',
@@ -134,7 +135,6 @@ export const endpoints = {
   facilities: {
     list: '/api/admin/facility/list',
     // detail : '/api/admin/users/detail', //need id here
-    create: '/api/admin/facility/create',
     delete: '/api/admin/facility/delete',
     update: '/api/admin/facility/update', // need id here
     owner : {

@@ -122,9 +122,10 @@ export default function HistoryBooking() {
                     </Box>
 
                     <Box sx={{ mt: 2 }}>
+                      
                       <Button
                         component={Link}
-                        to={`/booking/${booking.id}`}
+                        to={`/history/booking/detail/${booking?.booking_code}`}
                         variant="outlined"
                         size="small"
                         sx={{ textTransform: 'none' }}

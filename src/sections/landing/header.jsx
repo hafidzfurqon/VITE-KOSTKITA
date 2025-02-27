@@ -164,9 +164,9 @@ export default function Header() {
                       icon: <BusinessIcon />,
                     },
                     {
-                      label: 'Settings',
-                      href: '/settings',
-                      icon: <InfoIcon />,
+                      label: 'Riwayat Booking',
+                      href: '/history/booking',
+                      icon: <HistoryIcon />,
                     },
                   ]}
                 />

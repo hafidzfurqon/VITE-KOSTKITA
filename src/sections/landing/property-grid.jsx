@@ -10,16 +10,16 @@ import Loading from 'src/components/loading/loading';
 import { fPercent } from 'src/utils/format-number';
 import { Button } from '@mui/material';
 
-export default function PropertyGrid() {
-  const { data, isLoading, isFetching } = useListProperty();
+export default function PropertyGrid({ data, isLoading, isFetching }) {
+  // const { data, isLoading, isFetching } = useListProperty();
   const [sliderRef, instanceRef] = useKeenSlider({
     slides: { perView: 4, spacing: 0 }, // Desktop full 4 tanpa spacing
     breakpoints: {
-      "(max-width: 1200px)": { slides: { perView: 3, spacing: 10 } },
-      "(max-width: 900px)": { slides: { perView: 2, spacing: 10 } },
-      "(max-width: 600px)": { slides: { perView: 1, spacing: 0 } }, // Mobile 1 properti per slide tanpa spacing
+      '(max-width: 1200px)': { slides: { perView: 3, spacing: 10 } },
+      '(max-width: 900px)': { slides: { perView: 2, spacing: 10 } },
+      '(max-width: 600px)': { slides: { perView: 1, spacing: 0 } }, // Mobile 1 properti per slide tanpa spacing
     },
-  });  
+  });
   // const router = useRouter();
 
   const formatCurrency = (price) =>
@@ -35,12 +35,16 @@ export default function PropertyGrid() {
     return <Loading />;
   }
 
-  const filteredDataToColiving = data.filter(item => item.type.name.toLowerCase() === 'coliving' || 'kost');
+  const filteredDataToColiving = data.filter(
+    (item) => item.type.name.toLowerCase() === 'coliving' || 'kost'
+  );
 
-
-  if (!filteredDataToColiving || (Array.isArray(filteredDataToColiving) && filteredDataToColiving.length === 0)) {
+  if (
+    !filteredDataToColiving ||
+    (Array.isArray(filteredDataToColiving) && filteredDataToColiving.length === 0)
+  ) {
     return (
-      <Container sx={{ textAlign: 'center', mt: 6 , }}>
+      <Container sx={{ textAlign: 'center', mt: 6 }}>
         <Box
           sx={{
             display: 'flex',
@@ -67,134 +71,145 @@ export default function PropertyGrid() {
 
   return (
     <Container maxWidth="100%" sx={{ px: 0 }}>
-       <Box position="relative">
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: {
-            xs: '1fr',
-            sm: 'repeat(2, 1fr)',
-            md: 'repeat(3, 1fr)',
-            lg: 'repeat(4, 1fr)',
-          },
-          gap: 1,
-          mt: 4,
-          mb: 4,
-        }}
-        ref={sliderRef}
-        className="keen-slider"
-      >
-        {filteredDataToColiving?.map((property) => {
-          const hasDiscount = property.discounts.length > 0;
-          return (
-            <Box
-              key={property.id}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: 2,
-                overflow: 'hidden',
-                boxShadow: 1,
-                '&:hover': { boxShadow: 3 },
-                m: 1, // Tambahkan margin agar tidak menempel
-              }}
-              className="keen-slider__slide"
-            >
-               <Link
-                to={`/property/${property.slug}`}
-                style={{ textDecoration: 'none', display: 'block' }}
+      <Box position="relative">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(3, 1fr)',
+              lg: 'repeat(4, 1fr)',
+            },
+            gap: 1,
+            mt: 4,
+            mb: 4,
+          }}
+          ref={sliderRef}
+          className="keen-slider"
+        >
+          {filteredDataToColiving?.map((property) => {
+            const hasDiscount = property.discounts.length > 0;
+            return (
+              <Box
+                key={property.id}
+                sx={{
+                  backgroundColor: 'white',
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  boxShadow: 1,
+                  '&:hover': { boxShadow: 3 },
+                  m: 1, // Tambahkan margin agar tidak menempel
+                }}
+                className="keen-slider__slide"
               >
-          <Box sx={{ borderRadius: 1, overflow: "hidden", boxShadow: 1, '&:hover': { boxShadow: 3 } }}>
-              <img
-                src={property.files[0].file_url}
-                alt={`Property Image`}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
-            </Box>
-          {/* ))} */}
-             
-                <Box sx={{ p: 2 }}>
-                  <Chip
-                    icon={getPropertyIcon(property.type.name)}
-                    label={property.type.name}
-                    sx={{ mb: 1, fontWeight: 600 }}
-                  />
-                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-                    {property.name}
-                  </Typography>
-                  <Box sx={{ color: 'gray' }}>
-                    <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
-                      {property.address}, {property.city.name}
-                    </Typography>
+                <Link
+                  to={`/property/${property.slug}`}
+                  style={{ textDecoration: 'none', display: 'block' }}
+                >
+                  <Box
+                    sx={{
+                      borderRadius: 1,
+                      overflow: 'hidden',
+                      boxShadow: 1,
+                      '&:hover': { boxShadow: 3 },
+                    }}
+                  >
+                    <img
+                      src={property.files[0].file_url}
+                      alt={`Property Image`}
+                      style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                    />
                   </Box>
-                  {property.discount_profile_price ? (
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: 'gray', textDecoration: 'line-through' }}
-                      >
-                        {formatCurrency(property.start_price)}
-                      </Typography>
-                      <Chip label="-12%" color="error" size="small" />
-                    </Stack>
-                  ) : null}
-                  {/* {property.} */}
+                  {/* ))} */}
 
-                  {hasDiscount ? (
-                    <>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                  <Box sx={{ p: 2 }}>
+                    <Chip
+                      icon={getPropertyIcon(property.type.name)}
+                      label={property.type.name}
+                      sx={{ mb: 1, fontWeight: 600 }}
+                    />
+                    <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
+                      {property.name}
+                    </Typography>
+                    <Box sx={{ color: 'gray' }}>
+                      <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
+                        {property.address}, {property.city.name}
+                      </Typography>
+                    </Box>
+                    {property.discount_profile_price ? (
+                      <Stack direction="row" alignItems="center" spacing={1}>
                         <Typography
-                          variant="subtitle1"
-                          sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                          variant="body2"
+                          sx={{ color: 'gray', textDecoration: 'line-through' }}
                         >
                           {formatCurrency(property.start_price)}
                         </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Box
-                          sx={{
-                            backgroundColor: 'red',
-                            color: 'white',
-                            fontSize: '11px',
-                            borderRadius: '10px',
-                            px: '5px',
-                          }}
-                        >
-                          -Rp {fPercent(property.discounts[0]?.discount_value)}
+                        <Chip label="-12%" color="error" size="small" />
+                      </Stack>
+                    ) : null}
+                    {/* {property.} */}
+
+                    {hasDiscount ? (
+                      <>
+                        <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                          <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                          <Typography
+                            variant="subtitle1"
+                            sx={{
+                              textDecoration: 'line-through',
+                              fontWeight: 700,
+                              fontSize: '12px',
+                            }}
+                          >
+                            {formatCurrency(property.start_price)}
+                          </Typography>
                         </Box>
-                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                          {formatCurrency(
-                            property.discounts.map((discount) => discount.price_after_discount)
-                          )}
-                        </Typography>
-                      </Box>
-                    </>
-                  ) : (
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                    >
-                      {formatCurrency(property.start_price)} / bulan
-                    </Typography>
-                  )}
-                </Box>
-              </Link>
-            </Box>
-          );
-        })}
-      </Box>
-      <Button
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                          <Box
+                            sx={{
+                              backgroundColor: 'red',
+                              color: 'white',
+                              fontSize: '11px',
+                              borderRadius: '10px',
+                              px: '5px',
+                            }}
+                          >
+                            -Rp {fPercent(property.discounts[0]?.discount_value)}
+                          </Box>
+                          <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                            {formatCurrency(
+                              property.discounts.map((discount) => discount.price_after_discount)
+                            )}
+                          </Typography>
+                        </Box>
+                      </>
+                    ) : (
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                      >
+                        {formatCurrency(property.start_price)} / bulan
+                      </Typography>
+                    )}
+                  </Box>
+                </Link>
+              </Box>
+            );
+          })}
+        </Box>
+        <Button
           onClick={() => instanceRef.current?.prev()}
           sx={{
-            position: "absolute",
-            top: "50%",
+            position: 'absolute',
+            top: '50%',
             left: 0,
-            transform: "translateY(-50%)",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            color: "white",
-            borderRadius: "50%",
-            minWidth: "40px",
-            height: "40px",
+            transform: 'translateY(-50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            borderRadius: '50%',
+            minWidth: '40px',
+            height: '40px',
           }}
         >
           {'<'}
@@ -202,20 +217,20 @@ export default function PropertyGrid() {
         <Button
           onClick={() => instanceRef.current?.next()}
           sx={{
-            position: "absolute",
-            top: "50%",
+            position: 'absolute',
+            top: '50%',
             right: 0,
-            transform: "translateY(-50%)",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            color: "white",
-            borderRadius: "50%",
-            minWidth: "40px",
-            height: "40px",
+            transform: 'translateY(-50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            color: 'white',
+            borderRadius: '50%',
+            minWidth: '40px',
+            height: '40px',
           }}
         >
-           {'>'}
+          {'>'}
         </Button>
-       </Box>
+      </Box>
     </Container>
   );
 }

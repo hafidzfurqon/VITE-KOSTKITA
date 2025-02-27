@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
+import { useNavigate } from 'react-router-dom';
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -45,10 +46,11 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
 //   'Water Heater': WaterDropIcon,
 // };
 
-const PropertyRoom = ({ rooms = [] }) => {
+const PropertyRoom = ({ rooms = [], data }) => {
   // Set default value to empty array
   // Check if rooms is valid array
   const validRooms = Array.isArray(rooms) ? rooms : [];
+  const navigate = useNavigate();
   const Id = rooms.id;
   console.log(Id);
   console.log(rooms);
@@ -144,28 +146,35 @@ const PropertyRoom = ({ rooms = [] }) => {
 
                   <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Box>
-                      <Typography
+                      {/* <Typography
                         variant="body2"
                         color="text.secondary"
                         sx={{ textDecoration: 'line-through' }}
                       >
                         {formatPrice(room.price * 1.1)}
-                      </Typography>
+                      </Typography> */}
                       <Typography variant="h6" sx={{ display: 'flex', gap: 1 }}>
-                        {formatPrice(room.price)}/
-                        {room.room_discounts?.map((discount) => {
-                          return (
-                            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {formatPrice(room.price)}
+                        {room.room_discounts?.length > 0 &&
+                          room.room_discounts.map((discount, index) => (
+                            <Typography
+                              key={index}
+                              variant="body2"
+                              color="text.secondary"
+                              sx={{ mt: 0.5 }}
+                            >
                               {discount.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                             </Typography>
-                          );
-                        })}
+                          ))}
                       </Typography>
                     </Box>
                     <Stack direction="row" spacing={2}>
                       <Button
                         variant="contained"
-                        sx={{ backgroundColor: 'black', '&:hover': { backgroundColor: '#333' } }}
+                        color="primary"
+                        fullWidth
+                        sx={{ mt: 2 }}
+                        onClick={() => navigate(`/booking/${data.slug}`)}
                       >
                         Pilih
                       </Button>

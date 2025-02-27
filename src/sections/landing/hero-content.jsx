@@ -1,18 +1,53 @@
-import { Box, Typography, InputBase, Select, MenuItem, Button } from '@mui/material';
+import { useState } from 'react';
+import {
+  Box,
+  Typography,
+  InputBase,
+  Select,
+  MenuItem,
+  Button,
+  FormControl,
+  InputLabel,
+  CircularProgress,
+} from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import HomeIcon from '@mui/icons-material/Home';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import CustomDatePicker from 'src/components/calender/custom-datepicker';
+import { useResponsive } from 'src/hooks/use-responsive';
 
-export default function HeroContent() {
+export default function HeroContent({ setSearchParams }) {
+  const [searchValues, setSearchValues] = useState({
+    query: '',
+    date: '',
+    type: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const isMobile = useResponsive('down', 'sm');
+
+  const handleChange = (field, value) => {
+    setSearchValues((prev) => ({ ...prev, [field]: value }));
+
+    if (Object.values({ ...searchValues, [field]: value }).every((val) => val === '')) {
+      setSearchParams({});
+    }
+  };
+
+  const handleSearch = () => {
+    setLoading(true);
+    setTimeout(() => {
+      const hasFilter = Object.values(searchValues).some((val) => val !== '');
+      setSearchParams(hasFilter ? searchValues : {});
+      setLoading(false);
+    }, 1000);
+  };
+
   return (
     <Box sx={{ position: 'relative', pt: 8, px: 4, color: 'white' }}>
-      {/* Bagian Teks dengan Margin Responsif */}
-      <Box sx={{ mt: { xs: 10, md: 30 }, mb: { xs: 2, md: 4 }, mx: { xs: 2, md: 5 } }}>
-        <Typography variant="h2" component="h1" sx={{ mb: 2, color: '#FFD700' }}>
+      <Box sx={{ mt: { xs: 10, md: 20 }, mb: { xs: 2, md: 4 } }}>
+        <Typography variant="h3" sx={{ mb: 2, color: '#FFD700', fontWeight: 'bold' }}>
           Kost, Coliving, Apartemen
         </Typography>
-        <Typography variant="h4" sx={{ mb: 4 }}>
+        <Typography variant="h6" sx={{ mb: 4 }}>
           Sewa hunian impian untuk setiap fase kehidupan
         </Typography>
       </Box>
@@ -23,73 +58,87 @@ export default function HeroContent() {
           maxWidth: '1000px',
           mx: 'auto',
           backgroundColor: 'white',
-          borderRadius: 1,
-          display: 'flex',
-          flexWrap: 'wrap',
-          p: 1,
-          gap: 1,
+          borderRadius: 2,
+          boxShadow: 3,
+          display: 'grid',
+          // gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr auto' },
+          gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr auto' },
+          gap: 2,
+          p: 2,
         }}
       >
-        {/* Input Lokasi */}
+        {/* Pencarian Lokasi atau Nama Properti */}
         <Box
           sx={{
-            flex: 1,
             display: 'flex',
             alignItems: 'center',
             px: 2,
-            borderRight: { xs: 'none', md: 1 },
-            borderColor: 'grey.300',
-            width: { xs: '100%', md: 'auto' },
+            minWidth: '200px',
           }}
         >
           <LocationOnIcon sx={{ color: '#FFD700', mr: 1 }} />
-          <InputBase placeholder="Cari lokasi, nama gedung atau landmark..." fullWidth />
+          <InputBase
+            placeholder="Cari lokasi atau nama properti..."
+            fullWidth
+            value={searchValues.query}
+            onChange={(e) => handleChange('query', e.target.value)}
+            sx={{ borderBottom: '1px solid #ddd' }}
+          />
         </Box>
 
-        {/* Input Tanggal */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 2,
-            borderRight: { xs: 'none', md: 1 },
-            borderColor: 'grey.300',
-            width: { xs: '100%', md: 'auto' },
-          }}
-        >
-          <CalendarTodayIcon sx={{ color: '#FFD700', mr: 1 }} />
-          <InputBase placeholder="Pilih tanggal" sx={{ flex: 1 }} />
+        {/* Tanggal */}
+        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
+          <CustomDatePicker
+            selectedDate={searchValues.date}
+            onDateChange={(newDate) => handleChange('date', newDate)}
+          />
         </Box>
 
-        {/* Pilihan Tipe Hunian */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 2,
-            borderRight: { xs: 'none', md: 1 },
-            borderColor: 'grey.300',
-            width: { xs: '100%', md: 'auto' },
-          }}
-        >
-          <HomeIcon sx={{ color: '#FFD700', mr: 1 }} />
-          <Select value="" displayEmpty variant="standard" sx={{ flex: 1 }}>
-            <MenuItem value="">Semua tipe</MenuItem>
-          </Select>
+        {/* Tipe Properti */}
+        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
+          <FormControl fullWidth>
+            <InputLabel shrink>Tipe Properti</InputLabel>
+            <Select
+              value={searchValues.type}
+              onChange={(e) => handleChange('type', e.target.value)}
+              displayEmpty
+              fullWidth
+            >
+              <MenuItem value="">Semua Tipe</MenuItem>
+              <MenuItem value="Apartment">Apartment</MenuItem>
+              <MenuItem value="Coliving">Coliving</MenuItem>
+            </Select>
+          </FormControl>
         </Box>
 
         {/* Tombol Cari */}
         <Button
+          onClick={handleSearch}
           variant="contained"
-          startIcon={<SearchIcon />}
           sx={{
-            backgroundColor: '#FFD700',
+            bgcolor: '#FFD700',
             color: 'black',
-            width: { xs: '100%', md: 'auto' },
-            '&:hover': { backgroundColor: '#FFC700' },
+            p: 2,
+            width: { xs: '100%', sm: 'auto', md: '180px' },
+            minWidth: '150px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            flexGrow: 0,
+            alignSelf: 'center',
+            '&:hover': { bgcolor: '#FFC107' },
           }}
+          disabled={loading}
         >
-          Cari Hunian
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: 'black' }} />
+          ) : (
+            <>
+              <SearchIcon />
+              {!isMobile && 'Cari hunian'}
+            </>
+          )}
         </Button>
       </Box>
     </Box>

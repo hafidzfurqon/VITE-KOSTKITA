@@ -247,78 +247,122 @@ export default function PropertyDetail() {
               <Card sx={{ p: 2, boxShadow: 3 }}>
                 {hasDiscount ? (
                   <>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        color: 'gray',
+                        textAlign: { xs: 'center', sm: 'left' },
+                      }}
+                    >
+                      <Typography sx={{ fontSize: { xs: '12px', sm: '14px' }, mr: 1 }}>
+                        mulai dari
+                      </Typography>
                       <Typography
                         variant="subtitle1"
-                        sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                        sx={{
+                          textDecoration: 'line-through',
+                          fontWeight: 700,
+                          fontSize: { xs: '10px', sm: '12px' },
+                        }}
                       >
                         {formatCurrency(data.start_price)}/
                         {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '10px',
+                        justifyContent: { xs: 'center', sm: 'flex-start' },
+                      }}
+                    >
                       <Box
                         sx={{
                           backgroundColor: 'red',
                           color: 'white',
-                          fontSize: '11px',
+                          fontSize: { xs: '10px', sm: '11px' },
                           borderRadius: '10px',
                           px: '5px',
                         }}
                       >
                         -Rp {fPercent(data.discounts[0].discount_value)}
                       </Box>
-                      <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                      <Typography
+                        variant="subtitle1"
+                        sx={{ color: 'black', fontSize: { xs: '12px', sm: '14px' } }}
+                      >
                         {formatCurrency(data.discounts[0].price_after_discount)}/
                         {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                       </Typography>
                     </Box>
                   </>
                 ) : (
-                  <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      color: 'black',
+                      fontSize: { xs: '12px', sm: '14px' },
+                      textAlign: { xs: 'center', sm: 'left' },
+                    }}
+                  >
                     {formatCurrency(data.start_price)}/
                     {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                   </Typography>
                 )}
 
-                <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 2,
+                    mt: 3,
+                    justifyContent: { xs: 'center', sm: 'space-between' },
+                    flexDirection: { xs: 'column', sm: 'row' },
+                  }}
+                >
                   <Button
                     href="#room"
                     variant="outlined"
                     color="primary"
-                    sx={{ mb: 2, height: 48 }}
-                    fullWidth
+                    sx={{
+                      height: 48,
+                      minWidth: '150px',
+                      flexGrow: { xs: 1, sm: 0 },
+                    }}
                   >
                     Lihat Kamar
                   </Button>
 
-                  {/* Tombol WhatsApp */}
                   <Button
                     variant="outlined"
                     color="primary"
                     startIcon={<WhatsApp />}
                     href={`https://wa.me/${data.phone}`}
                     target="_blank"
-                    fullWidth
                     sx={{
-                      color: '#25D366 ',
+                      color: '#25D366',
                       height: 48,
+                      minWidth: '150px',
+                      flexGrow: { xs: 1, sm: 0 },
                     }}
                   >
                     WhatsApp
                   </Button>
                 </Box>
 
-                <Button
-                  variant="contained"
-                  color="primary"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  onClick={() => navigate(`/booking/${data.slug}`)}
-                >
-                  Booking Sekarang
-                </Button>
+                {data.rooms.length === 0 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ mt: 2 }}
+                    onClick={() => navigate(`/booking/${data.slug}`)}
+                  >
+                    Booking Sekarang
+                  </Button>
+                )}
               </Card>
             </Grid>
           </Grid>
@@ -408,7 +452,7 @@ export default function PropertyDetail() {
         </Box>
         <Divider />
         <Box id="room">
-          <PropertyRoom rooms={data.rooms} />
+          <PropertyRoom rooms={data.rooms} data={data} />
         </Box>
       </Container>
     </>

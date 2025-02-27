@@ -1,4 +1,14 @@
-import { TextField, Button, Grid, CircularProgress, Box, Container, Card, CardContent, Typography } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Grid,
+  CircularProgress,
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+} from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
@@ -11,6 +21,7 @@ import { Alert } from '@mui/material';
 export default function BookingView() {
   const { slug } = useParams();
   const { data: defaultValues, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  console.log(defaultValues);
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const {
@@ -44,11 +55,27 @@ export default function BookingView() {
     const payload = {
       ...data,
       property_id: defaultValues?.id,
-      room_id: defaultValues.room_id ?? null,
-      property_discount_id: defaultValues.property_discount_id ?? null,
-      property_room_discount_id: defaultValues.property_room_discount_id ?? null,
-      promo_id: defaultValues.promo_id ?? null,
+      room_id: defaultValues.rooms?.length ? defaultValues.rooms[0].id : null,
+      property_discount_id: defaultValues.rooms?.length
+        ? undefined
+        : defaultValues.property_discount_id,
+      property_room_discount_id: defaultValues.rooms?.length
+        ? defaultValues.property_room_discount_id
+        : null,
+      promo_id: defaultValues.promo_id !== null ? defaultValues.promo_id : undefined,
     };
+
+    // Hapus jika ada rooms, agar tidak mengirim property_discount_id
+    if (defaultValues.rooms?.length) {
+      delete payload.property_discount_id;
+    }
+
+    // Hapus promo_id jika tidak ada
+    if (defaultValues.promo_id === null) {
+      delete payload.promo_id;
+    }
+
+    console.log('Payload sebelum submit:', payload); // Debugging
     mutate(payload);
   };
 

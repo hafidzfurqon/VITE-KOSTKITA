@@ -27,6 +27,7 @@ import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
 import { UpdatePropertyRoomCreate } from 'src/sections/property_room/crud/update-property-room';
 import ColivingPage from 'src/sections/landing/coliving/coliving-page';
 import PropertyLocationDetail from 'src/sections/landing/property-location/property-location-detail';
+import HistoryBookingDetail from 'src/sections/landing/user/historyBookingDetail';
 
 // ----------------------------------------------------------------------
 
@@ -211,6 +212,10 @@ export function Router() {
         {
           path: 'history/booking',
           element: <HistoryBooking />,
+        },
+        {
+          path: 'history/booking/detail/:bookingCode',
+          element: <HistoryBookingDetail />,
         },
         {
           path: '/promo',

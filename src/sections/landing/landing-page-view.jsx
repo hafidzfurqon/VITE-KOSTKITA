@@ -19,10 +19,48 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropertyBaseLocation from './property-location/propety-base-location';
-
+import { useListProperty } from 'src/hooks/property/public/useListProperty';
+import { useState } from 'react';
 
 export function LandingPage() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const { data, isLoading, isFetching } = useListProperty();
+  console.log(data);
+  const [searchParams, setSearchParams] = useState({
+    query: '', // Gabungan pencarian nama & lokasi
+    date: '',
+    type: '',
+  });
+
+  const filteredData = Object.values(searchParams).some((val) => val.trim() !== '') // Cek jika ada filter aktif
+    ? data?.filter((property) => {
+        const query = searchParams.query.trim().toLowerCase();
+        const dateQuery = searchParams.date.trim();
+        const typeQuery = searchParams.type.trim().toLowerCase();
+
+        const matchesQuery = query
+          ? [
+              property.name,
+              property.state?.name,
+              property.city?.name,
+              property.sector?.name,
+              property.address,
+            ]
+              .filter(Boolean) // Hilangkan nilai undefined/null
+              .map((item) => item.toLowerCase())
+              .some((item) => item.includes(query))
+          : true;
+
+        const matchesDate = dateQuery ? property.created_at === dateQuery : true;
+
+        const matchesType = typeQuery
+          ? property.type?.name?.toLowerCase().includes(typeQuery)
+          : true;
+
+        return matchesQuery && matchesDate && matchesType;
+      })
+    : data; // Jika semua input kosong, tampilkan seluruh data tanpa filter
+
   const WhatsAppButton = (
     <Box
       sx={{
@@ -80,7 +118,7 @@ export function LandingPage() {
         <Box sx={{ flexShrink: 0 }}>
           <HeroSection>
             <Header />
-            <HeroContent />
+            <HeroContent setSearchParams={setSearchParams} />
           </HeroSection>
         </Box>
 
@@ -90,64 +128,71 @@ export function LandingPage() {
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
             <CategorySection />
             {/* <TourListView /> */}
-            <Box sx={{ 
-          bgcolor: '#FAF9F6', 
-          pb: 8, 
-          borderRadius: '16px', 
-          mt: 5, 
-          border: {md : "solid black 1px"}
-        }}>
-    <PropertyGrid />
+            <Box
+              sx={{
+                bgcolor: '#FAF9F6',
+                pb: 8,
+                borderRadius: '16px',
+                mt: 5,
+                border: { md: 'solid black 1px' },
+              }}
+            >
+              <PropertyGrid data={filteredData} isLoading={isLoading} isFetching={isFetching} />
 
-    {/* Container untuk pusatkan button */}
-    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-        <Button variant='outlined' 
-          sx={{ 
-            width : {xs : '100%', md : 'auto'},
-            p: 2, 
-            color: 'black', 
-            bgcolor: 'white', 
-            mx: 3, 
-            display: 'flex', 
-            alignItems: 'center'
-          }}
-          onClick={() => navigate('/coliving')}
-          >
-            Lihat Semua
-        </Button>
-    </Box>
-</Box>
+              {/* Container untuk pusatkan button */}
+              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                <Button
+                  variant="outlined"
+                  sx={{
+                    width: { xs: '100%', md: 'auto' },
+                    p: 2,
+                    color: 'black',
+                    bgcolor: 'white',
+                    mx: 3,
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                  onClick={() => navigate('/coliving')}
+                >
+                  Lihat Semua
+                </Button>
+              </Box>
+            </Box>
 
             <PromoPage />
-            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between', mb : 3}}>
+            <Container
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
+            >
               <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
                 Cari hunian sesuai lokasi
               </Typography>
               <hr />
             </Container>
-              <PropertyBaseLocation/>
-            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between'}}>
+            <PropertyBaseLocation />
+            <Container
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
               <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
                 Cari Apartement
               </Typography>
               <Link to="/promo">
-            <Button
-              sx={{
-                color: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontWeight: '500',
-              }}
-              endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
-            >
-              <Typography
-                sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
-              >
-                Lihat Semua
-              </Typography>
-            </Button>
-          </Link>
+                <Button
+                  sx={{
+                    color: 'black',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                    fontWeight: '500',
+                  }}
+                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
+                >
+                  <Typography
+                    sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
+                  >
+                    Lihat Semua
+                  </Typography>
+                </Button>
+              </Link>
             </Container>
             <ApartementGrid />
             <PropertyBudget />
