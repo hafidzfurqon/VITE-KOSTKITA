@@ -39,7 +39,7 @@ const ColivingPage = () => {
     }
   
    const filteredDataToColiving: Property[] = data.filter(
-  (item: Property) => item.type.name.toLowerCase() === 'coliving'
+  (item: Property) => ['coliving', 'kost'].includes(item.type.name.toLowerCase())
     );
 
   

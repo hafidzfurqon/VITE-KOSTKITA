@@ -103,7 +103,7 @@ export default function PropertyDetail() {
           <CustomBreadcrumbs
             links={[
               { name: 'Home', href: '/' },
-              tipeProperty === 'apartment' ?  { name: 'Apartment', href: '/apartment' } :  { name: 'Coliving', href: '/coliving' }
+              tipeProperty === 'apartment' ?  { name: 'Apartment', href: '/apartment' } :  { name: 'Kost & Coliving', href: '/coliving' }
              ,
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
