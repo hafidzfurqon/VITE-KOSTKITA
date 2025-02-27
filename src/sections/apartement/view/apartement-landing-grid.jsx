@@ -26,9 +26,11 @@ export default function ApartementGrid() {
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
 
-  
+   
+    
+    const filteredDataToApartement = data.filter(item => item.type.name.toLowerCase() === 'apartment');
 
-  if (!data || (Array.isArray(data) && data.length === 0)) {
+  if (!filteredDataToApartement || (Array.isArray(filteredDataToApartement) && filteredDataToApartement.length === 0)) {
     return (
       <Container sx={{ textAlign: 'center', mt: 6 }}>
         <Box
@@ -45,7 +47,7 @@ export default function ApartementGrid() {
             style={{ width: 250, marginBottom: 16 }}
           /> */}
           <Typography variant="h6" color="textSecondary">
-            Tidak ada data properti yang tersedia.
+            Belum ada Apartement yang tersedia.
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
             Coba lagi nanti atau cari kategori lainnya.
@@ -71,7 +73,7 @@ export default function ApartementGrid() {
           mb: 4,
         }}
       >
-        {data?.map((apartement) => {
+        {filteredDataToApartement?.map((apartement) => {
           const hasDiscount = apartement.discounts.length > 0;
           console.log(apartement.type.name)
           return (
@@ -91,11 +93,11 @@ export default function ApartementGrid() {
                 style={{ textDecoration: 'none', display: 'block' }}
               >
                 <Box sx={{ p: 2 }}>
-                  {/* <Chip
-                    icon={getApartementIcon(apartement.type.name)}
-                    label={apartement.type}
+                  <Chip
+                    icon={getApartementIcon(apartement?.type?.name)}
+                    label={apartement.type.name}
                     sx={{ mb: 1, fontWeight: 600 }}
-                  /> */}
+                  />
                   <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
                     {apartement.name}
                   </Typography>

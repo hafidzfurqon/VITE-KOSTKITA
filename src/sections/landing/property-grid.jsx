@@ -3,34 +3,44 @@ import { Box, Typography, Chip, Stack, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { useRouter } from 'src/routes/hooks';
-import { paths } from 'src/routes/paths';
 import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
 import { fPercent } from 'src/utils/format-number';
+import { Button } from '@mui/material';
 
 export default function PropertyGrid() {
   const { data, isLoading, isFetching } = useListProperty();
-
-  const router = useRouter();
+  const [sliderRef, instanceRef] = useKeenSlider({
+    slides: { perView: 4, spacing: 0 }, // Desktop full 4 tanpa spacing
+    breakpoints: {
+      "(max-width: 1200px)": { slides: { perView: 3, spacing: 10 } },
+      "(max-width: 900px)": { slides: { perView: 2, spacing: 10 } },
+      "(max-width: 600px)": { slides: { perView: 1, spacing: 0 } }, // Mobile 1 properti per slide tanpa spacing
+    },
+  });  
+  // const router = useRouter();
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
-  // const getPropertyIcon = (type) => {
-  //   if (type.toLowerCase().includes('apartment'))
-  //     return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
-  //   return <Home fontSize="small" sx={{ mr: 0.5 }} />;
-  // };
+  const getPropertyIcon = (type) => {
+    if (type.toLowerCase().includes('apartment'))
+      return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
+    return <Home fontSize="small" sx={{ mr: 0.5 }} />;
+  };
 
   if (isLoading || isFetching) {
     return <Loading />;
   }
 
-  if (!data || (Array.isArray(data) && data.length === 0)) {
+  const filteredDataToColiving = data.filter(item => item.type.name.toLowerCase() === 'coliving' || 'kost');
+
+
+  if (!filteredDataToColiving || (Array.isArray(filteredDataToColiving) && filteredDataToColiving.length === 0)) {
     return (
-      <Container sx={{ textAlign: 'center', mt: 6 }}>
+      <Container sx={{ textAlign: 'center', mt: 6 , }}>
         <Box
           sx={{
             display: 'flex',
@@ -56,7 +66,8 @@ export default function PropertyGrid() {
   }
 
   return (
-    <Container>
+    <Container maxWidth="100%" sx={{ px: 0 }}>
+       <Box position="relative">
       <Box
         sx={{
           display: 'grid',
@@ -66,12 +77,14 @@ export default function PropertyGrid() {
             md: 'repeat(3, 1fr)',
             lg: 'repeat(4, 1fr)',
           },
-          gap: 3,
+          gap: 1,
           mt: 4,
           mb: 4,
         }}
+        ref={sliderRef}
+        className="keen-slider"
       >
-        {data?.map((property) => {
+        {filteredDataToColiving?.map((property) => {
           const hasDiscount = property.discounts.length > 0;
           return (
             <Box
@@ -82,19 +95,29 @@ export default function PropertyGrid() {
                 overflow: 'hidden',
                 boxShadow: 1,
                 '&:hover': { boxShadow: 3 },
+                m: 1, // Tambahkan margin agar tidak menempel
               }}
+              className="keen-slider__slide"
             >
-              <ImageSlider images={property.files} />
-              <Link
+               <Link
                 to={`/property/${property.slug}`}
                 style={{ textDecoration: 'none', display: 'block' }}
               >
+          <Box sx={{ borderRadius: 1, overflow: "hidden", boxShadow: 1, '&:hover': { boxShadow: 3 } }}>
+              <img
+                src={property.files[0].file_url}
+                alt={`Property Image`}
+                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+              />
+            </Box>
+          {/* ))} */}
+             
                 <Box sx={{ p: 2 }}>
-                  {/* <Chip
-                    icon={getPropertyIcon(property.type)}
-                    label={property.type}
+                  <Chip
+                    icon={getPropertyIcon(property.type.name)}
+                    label={property.type.name}
                     sx={{ mb: 1, fontWeight: 600 }}
-                  /> */}
+                  />
                   <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
                     {property.name}
                   </Typography>
@@ -103,7 +126,7 @@ export default function PropertyGrid() {
                       {property.address}, {property.city.name}
                     </Typography>
                   </Box>
-                  {property.discount_prifile_urlce ? (
+                  {property.discount_profile_price ? (
                     <Stack direction="row" alignItems="center" spacing={1}>
                       <Typography
                         variant="body2"
@@ -160,6 +183,39 @@ export default function PropertyGrid() {
           );
         })}
       </Box>
+      <Button
+          onClick={() => instanceRef.current?.prev()}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: 0,
+            transform: "translateY(-50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            borderRadius: "50%",
+            minWidth: "40px",
+            height: "40px",
+          }}
+        >
+          {'<'}
+        </Button>
+        <Button
+          onClick={() => instanceRef.current?.next()}
+          sx={{
+            position: "absolute",
+            top: "50%",
+            right: 0,
+            transform: "translateY(-50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            color: "white",
+            borderRadius: "50%",
+            minWidth: "40px",
+            height: "40px",
+          }}
+        >
+           {'>'}
+        </Button>
+       </Box>
     </Container>
   );
 }
@@ -184,14 +240,14 @@ function ImageSlider({ images }) {
       sx={{
         position: 'relative',
         height: 200,
-        backgroundColor: 'grey.300',
+        backgroundColor: 'grey.500',
         '&:hover .slider-arrow': { opacity: 1 },
       }}
     >
       <Box ref={sliderRef} className="keen-slider">
         {images.length > 0 ? (
           images.map((image, index) => (
-            <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
+            <Box sx={{ borderRadius: 1 }} key={index} className="keen-slider__slide">
               <img
                 src={image.file_url}
                 alt={`Property Image ${index}`}
@@ -230,7 +286,7 @@ function ImageSlider({ images }) {
               backgroundColor: 'white',
               color: 'black',
               p: 1,
-              borderRadius: '50%',
+              borderRadius: '20%',
               opacity: 0,
               transition: 'opacity 0.3s',
             }}
@@ -249,7 +305,7 @@ function ImageSlider({ images }) {
               backgroundColor: 'white',
               color: 'black',
               p: 1,
-              borderRadius: '50%',
+              borderRadius: '20%',
               opacity: 0,
               transition: 'opacity 0.3s',
             }}

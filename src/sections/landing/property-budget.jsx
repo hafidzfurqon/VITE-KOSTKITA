@@ -12,7 +12,7 @@ export default function PropertyBudgety() {
   const { data, isLoading, isFetching } = useListProperty();
   const router = useRouter();
   const [selectedRange, setSelectedRange] = useState(null);
-
+  console.log(selectedRange)
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -42,15 +42,7 @@ export default function PropertyBudgety() {
 
   // Buat rentang harga secara dinamis berdasarkan harga tertinggi & terendah
   const step = Math.floor((maxPrice - minPrice) / 4); // Bagi jadi 4 range
-  const priceRanges = Array.from({ length: 4 }, (_, i) => {
-    const min = minPrice + step * i;
-    const max = i === 3 ? maxPrice : min + step;
-    return {
-      label: `${formatCurrency(max)} - ${formatCurrency(min)}`,
-      min,
-      max,
-    };
-  }).reverse(); // Urutkan dari harga tertinggi ke terendah
+
 
   // Filter properti berdasarkan rentang harga yang dipilih
   const filteredProperties = selectedRange
@@ -70,41 +62,80 @@ export default function PropertyBudgety() {
   //   }
   //   return price.toString();
   // };
-
+  const formatShortCurrency = (price) => {
+    if (price >= 1_000_000_000) {
+      return `${(price / 1_000_000_000).toFixed(0)} M`;
+    } else if (price >= 1_000_000) {
+      return `${(price / 1_000_000).toFixed(0)} Jt`;
+    } else if (price >= 1_000) {
+      return `${(price / 1_000).toFixed(0)} Rb`;
+    }
+    return price.toString();
+  };
+  const priceRanges = Array.from({ length: 4 }, (_, i) => {
+    const min = minPrice + step * i;
+    const max = i === 3 ? maxPrice : min + step;
+    return {
+      label: `${formatShortCurrency(max)} - ${formatShortCurrency(min)}`,
+      min,
+      max,
+    };
+  }).reverse(); // Urutkan dari harga tertinggi ke terendah
+    
   return (
     <Container>
       <Box sx={{ mt: 10 }}>
-        <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 3 }}>
+        <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 3 }}>
           Cari hunian sesuai budgetmu
         </Typography>
 
         {/* Filter berdasarkan range harga */}
         <Stack
-          sx={{
-            display: 'flex',
-            overflowX: 'auto',
-            // overflow: 'hidden',
-            whiteSpace: 'nowrap',
-            gap: 2,
-            pb: 1, // Agar scrollbar tidak menutupi konten
-            '&::-webkit-scrollbar': {
-              display: 'none', // Sembunyikan scrollbar
-            },
-          }}
-          direction="row"
-          spacing={1}
-          mb={3}
-        >
-          {priceRanges.map((range) => (
-            <Chip
-              key={range.label}
-              label={range.label}
-              variant={selectedRange === range ? 'filled' : 'outlined'}
-              color={selectedRange === range ? 'primary' : 'default'}
-              onClick={() => setSelectedRange(selectedRange === range ? null : range)}
-            />
-          ))}
-        </Stack>
+  sx={{
+    display: 'flex',
+    overflowX: 'auto',
+    whiteSpace: 'nowrap',
+    gap: 2,
+    pb: 1, // Agar scrollbar tidak menutupi konten
+    '&::-webkit-scrollbar': {
+      display: 'none', // Sembunyikan scrollbar
+    },
+  }}
+  direction="row"
+  spacing={1}
+  mb={3}
+>
+  {priceRanges.map((range) => (
+    <Chip
+      key={range.label}
+      label={range.label}
+      variant="filled"
+      sx={{
+        backgroundColor: selectedRange?.label === range.label ? '#009688' : 'white',
+        color: selectedRange?.label === range.label ? 'white' : 'black',
+        border: '2px solid #009688',
+        borderRadius: '8px',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        transition: 'all 0.3s ease-in-out',
+        '&:hover': {
+          backgroundColor: '#00796B',
+          color: 'white',
+        },
+      }}
+      
+      onClick={() => setSelectedRange(selectedRange === range ? null : range)}
+    />
+  ))}
+</Stack>
+
+{/* Tampilkan pesan jika tidak ada properti yang sesuai */}
+{filteredProperties.length === 0 && (
+  <Typography variant="body1" color="textSecondary" textAlign="center">
+    Tidak ada properti dengan rentang harga tersebut. {selectedRange.label}
+  </Typography>
+)}
+
       </Box>
 
       {/* List Properti */}
@@ -225,7 +256,7 @@ export default function PropertyBudgety() {
                 backgroundColor: 'white',
                 color: 'black',
                 p: 1,
-                borderRadius: '50%',
+                borderRadius: '20%',
                 opacity: 0,
                 transition: 'opacity 0.3s',
               }}
@@ -244,7 +275,7 @@ export default function PropertyBudgety() {
                 backgroundColor: 'white',
                 color: 'black',
                 p: 1,
-                borderRadius: '50%',
+                borderRadius: '20%',
                 opacity: 0,
                 transition: 'opacity 0.3s',
               }}

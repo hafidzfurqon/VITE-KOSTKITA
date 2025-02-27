@@ -20,11 +20,12 @@ import { FormGroup } from "@mui/material";
 import { useFetchAllPropertyType } from "src/hooks/property_type";
 import CustomBreadcrumbs from "src/components/custom-breadcrumbs";
 import { useMutationCreatePropertyRoom } from "src/hooks/property_room";
+import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
 
 
   export const PropertyRoomCreate = () => {
     const {id} = useParams();
-    const {data : facilities, isLoading, isFetching} = useFetchFacilities();
+    const {data : facilities, isLoading, isFetching} = useFetchAllRoomFacilities();
     const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = useFetchAllPropertyType();
     
     const {

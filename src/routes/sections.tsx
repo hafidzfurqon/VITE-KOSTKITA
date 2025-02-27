@@ -24,6 +24,9 @@ import { AccountView } from 'src/layouts/account/view';
 import BookingView from 'src/sections/landing/user/bookingView';
 import HistoryBooking from 'src/sections/landing/user/historyBooking';
 import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
+import { UpdatePropertyRoomCreate } from 'src/sections/property_room/crud/update-property-room';
+import ColivingPage from 'src/sections/landing/coliving/coliving-page';
+import PropertyLocationDetail from 'src/sections/landing/property-location/property-location-detail';
 
 // ----------------------------------------------------------------------
 
@@ -38,6 +41,7 @@ export const PromoPage = lazy(() => import('src/pages/promo'));
 export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
 export const PropertyRoomPage = lazy(() => import('src/pages/property_room'));
 export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
+export const RoomFasilitasPage = lazy(() => import('src/pages/room-fasilitas'));
 
 // ----------------------------------------------------------------------
 
@@ -97,6 +101,10 @@ export function Router() {
             {
               path: 'edit/:id',
               element: <EditApartement />,
+            },
+            {
+              path: 'edit-property-room/:id',
+              element: <UpdatePropertyRoomCreate />,
             },
             // ],
             {
@@ -161,6 +169,10 @@ export function Router() {
             },
           ],
         },
+        {
+          path: 'room-facility',
+          element: <RoomFasilitasPage />,
+        },
       ],
     },
     {
@@ -193,12 +205,20 @@ export function Router() {
           element: <BookingView />,
         },
         {
+          path: 'sewa/kost/kota/:slug',
+          element: <PropertyLocationDetail />,
+        },
+        {
           path: 'history/booking',
           element: <HistoryBooking />,
         },
         {
           path: '/promo',
           element: <PromoPage />,
+        },
+        {
+          path: '/coliving',
+          element: <ColivingPage />,
         },
         {
           path: '/about-us',

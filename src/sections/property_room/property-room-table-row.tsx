@@ -56,7 +56,7 @@ export function PropertyRoomTableRow({ slug, row, selected, onSelectRow }: Apart
    const handleClickOpen = () => {
     setOpen(true)
    }
-   console.log(row)
+  //  console.log(row.id)
    const IsNull = row === null
    console.log(IsNull)
   //  console.log(row.files[0]?.file_url)
@@ -108,10 +108,12 @@ export function PropertyRoomTableRow({ slug, row, selected, onSelectRow }: Apart
 
 
 <TableCell align="center">
-<Button onClick={() => alert('fitur sedang kami kembangkan')}>
+<Link to={`/property/edit-property-room/${row.id}`}>
+      <Button>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
+  </Link>
 
           <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />

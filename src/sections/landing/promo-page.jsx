@@ -103,6 +103,7 @@ export default function PromoPage() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
+            mb : 2
           }}
         >
           {/* <img

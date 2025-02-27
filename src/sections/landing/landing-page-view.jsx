@@ -15,8 +15,14 @@ import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
 import ApartementGrid from '../apartement/view/apartement-landing-grid';
 import { Container } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button } from '@mui/material';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import PropertyBaseLocation from './property-location/propety-base-location';
+
 
 export function LandingPage() {
+  const navigate = useNavigate()
   const WhatsAppButton = (
     <Box
       sx={{
@@ -84,12 +90,64 @@ export function LandingPage() {
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
             <CategorySection />
             {/* <TourListView /> */}
-            <PropertyGrid />
+            <Box sx={{ 
+          bgcolor: '#FAF9F6', 
+          pb: 8, 
+          borderRadius: '16px', 
+          mt: 5, 
+          border: {md : "solid black 1px"}
+        }}>
+    <PropertyGrid />
+
+    {/* Container untuk pusatkan button */}
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+        <Button variant='outlined' 
+          sx={{ 
+            width : {xs : '100%', md : 'auto'},
+            p: 2, 
+            color: 'black', 
+            bgcolor: 'white', 
+            mx: 3, 
+            display: 'flex', 
+            alignItems: 'center'
+          }}
+          onClick={() => navigate('/coliving')}
+          >
+            Lihat Semua
+        </Button>
+    </Box>
+</Box>
+
             <PromoPage />
-            <Container>
+            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between', mb : 3}}>
+              <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
+                Cari hunian sesuai lokasi
+              </Typography>
+              <hr />
+            </Container>
+              <PropertyBaseLocation/>
+            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between'}}>
               <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
                 Cari Apartement
               </Typography>
+              <Link to="/promo">
+            <Button
+              sx={{
+                color: 'black',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                fontWeight: '500',
+              }}
+              endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
+            >
+              <Typography
+                sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
+              >
+                Lihat Semua
+              </Typography>
+            </Button>
+          </Link>
             </Container>
             <ApartementGrid />
             <PropertyBudget />

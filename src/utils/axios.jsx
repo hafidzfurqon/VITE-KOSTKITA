@@ -141,6 +141,12 @@ export const endpoints = {
       create : "/api/owner_property/property/create"
     }
   },
+  facilities_room : {
+    list : '/api/admin/facility/room/list',
+    create : '/api/admin/facility/room/create',
+    update : '/api/admin/facility/room/update',
+    delete : '/api/admin/facility/room/delete'
+  },
   banner: {
     list: '/api/admin/banner/list',
     detail: '/api/admin/banner/detail', //need id here
@@ -206,7 +212,7 @@ export const endpoints = {
     update: '/api/admin/property/type/update',
     delete: '/api/admin/property/type/delete',
     owner_property : {
-      
+
     }
   },
 };

@@ -89,7 +89,7 @@ export default function PropertyDetail() {
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
-        {/* <meta property="og:image" content={`${data?.files[0].file_url}`} /> */}
+        <meta property="og:image" content={`${data?.files[0].file_url}`} />
       </Helmet>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Breadcrumbs */}
@@ -97,6 +97,7 @@ export default function PropertyDetail() {
           <CustomBreadcrumbs
             links={[
               { name: 'Home', href: '/' },
+              { name: 'Coliving', href: '/coliving' },
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
             sx={{ mb: { xs: 3, md: 5 } }}

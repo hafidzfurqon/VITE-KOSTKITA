@@ -1,20 +1,20 @@
 import { Helmet } from 'react-helmet-async';
 import { CONFIG } from 'src/config-global';
-import { FasilitasView } from 'src/sections/fasilitas/view';
+import { RoomFasilitasView } from 'src/sections/room-fasilitas/view';
 
-export default function FasilitasPage() {
+export default function RoomFasilitasPage() {
   return (
     <>
       <Helmet>
-        <title> {`Fasilitas - ${CONFIG.appName}`}</title>
+        <title> {`Room Fasilitas - ${CONFIG.appName}`}</title>
         <meta
           name="description"
-          content="Fasilitas"
+          content="Room Fasilitas"
         />
         <meta name="keywords" content="Koskita.id" />
       </Helmet>
 
-      <FasilitasView/>
+      <RoomFasilitasView/>
     </>
   );
 }
