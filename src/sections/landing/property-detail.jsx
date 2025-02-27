@@ -27,6 +27,7 @@ import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
 import PropertyRoom from './property-room';
+import FacilityModal from './modal-facility';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -34,6 +35,7 @@ export default function PropertyDetail() {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
@@ -281,7 +283,13 @@ export default function PropertyDetail() {
                 )}
 
                 <Box sx={{ display: 'flex', gap: 2, mt: 3 }}>
-                  <Button variant="outlined" color="primary" sx={{ mb: 2, height: 48 }} fullWidth>
+                  <Button
+                    href="#room"
+                    variant="outlined"
+                    color="primary"
+                    sx={{ mb: 2, height: 48 }}
+                    fullWidth
+                  >
                     Lihat Kamar
                   </Button>
 
@@ -337,35 +345,34 @@ export default function PropertyDetail() {
                 <Typography variant="subtitle1">Fasilitas Bersama</Typography>
                 <Box
                   sx={{
-                    display: 'flex',
-                    overflowX: 'auto',
-                    whiteSpace: 'nowrap',
-                    mt: 4,
+                    display: 'grid',
+                    gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' }, // 1 kolom di HP, 2 kolom di layar lebih besar
                     gap: 2,
-                    pb: 1, // Agar scrollbar tidak menutupi konten
-                    '&::-webkit-scrollbar': {
-                      display: 'none', // Sembunyikan scrollbar
-                    },
+                    mt: 4,
                   }}
-                  direction="row"
-                  spacing={1}
-                  mb={3}
                 >
-                  {data.facilities?.slice(0, 5).map((fasilitas, idx) => (
-                    <>
-                      {/* <Iconify icon="material-symbols:check" /> */}
+                  {data.facilities?.slice(0, 4).map((fasilitas, idx) => (
+                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Iconify icon="mingcute:check-line" />
-                      <Typography color="text.secondary" key={idx}>
-                        {fasilitas.name}
-                      </Typography>
-                    </>
+                      <Typography color="text.secondary">{fasilitas.name}</Typography>
+                    </Box>
                   ))}
                 </Box>
-                <Typography variant="subtitle1" sx={{ textDecoration: 'underline' }}>
+                <Typography
+                  variant="subtitle1"
+                  sx={{ textDecoration: 'underline', cursor: 'pointer', mt: 2 }}
+                  onClick={() => setOpen(true)}
+                >
                   Lihat Selengkapnya
                 </Typography>
-                {/* Kalau fasilitas lebih dari 5 ke selengkapnya aja fi */}
+                <FacilityModal
+                  isOpen={open}
+                  title="Fasilitas Bersama"
+                  onClose={() => setOpen(false)}
+                  facilities={data.facilities}
+                />
               </Box>
+
               <hr />
             </>
           )}
@@ -400,7 +407,9 @@ export default function PropertyDetail() {
           )}
         </Box>
         <Divider />
-        <PropertyRoom rooms={data.rooms} />
+        <Box id="room">
+          <PropertyRoom rooms={data.rooms} />
+        </Box>
       </Container>
     </>
   );

@@ -124,6 +124,7 @@ export const endpoints = {
     update: '/api/admin/users/update_user_password', // need id here
     booking: {
       property: '/api/user/booking/property/reserve',
+      getBookingproperty: '/api/user/booking/property/all',
     },
     profile: {
       update: '/api/user/profile/update',
