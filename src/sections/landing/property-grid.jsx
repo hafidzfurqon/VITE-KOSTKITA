@@ -12,6 +12,7 @@ import { Button } from '@mui/material';
 
 export default function PropertyGrid() {
   const { data, isLoading, isFetching } = useListProperty();
+  console.log(data)
   const [sliderRef, instanceRef] = useKeenSlider({
     slides: { perView: 4, spacing: 0 }, // Desktop full 4 tanpa spacing
     breakpoints: {
@@ -35,9 +36,12 @@ export default function PropertyGrid() {
     return <Loading />;
   }
 
-  const filteredDataToColiving = data.filter(item => item.type.name.toLowerCase() === 'coliving' || 'kost');
+  const filteredDataToColiving = data.filter(item =>
+    ['coliving', 'kost'].includes(item.type.name.toLowerCase())
+  );
+  
 
-
+  // console.log(data.map(item => item.type.name.toLowerCase()))
   if (!filteredDataToColiving || (Array.isArray(filteredDataToColiving) && filteredDataToColiving.length === 0)) {
     return (
       <Container sx={{ textAlign: 'center', mt: 6 , }}>

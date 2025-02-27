@@ -69,7 +69,7 @@ const PropertyRoom = ({ rooms = [] }) => {
     return (
       <Container maxWidth="lg">
         <Typography variant="body1" textAlign="center" py={4}>
-          Tidak ada kamar
+          Belum ada kamar
         </Typography>
       </Container>
     );

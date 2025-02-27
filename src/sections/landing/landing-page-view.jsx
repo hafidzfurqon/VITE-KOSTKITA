@@ -126,11 +126,11 @@ export function LandingPage() {
               <hr />
             </Container>
               <PropertyBaseLocation/>
-            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between'}}>
-              <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
+            <Container sx={{ display : 'flex', alignItems : 'center', justifyContent : 'space-between', mb :3}}>
+              <Typography sx={{ fontSize: { xs: '18px', md: '30px', fontWeight: 'bold' } }}>
                 Cari Apartement
               </Typography>
-              <Link to="/promo">
+              <Link to="/apartment">
             <Button
               sx={{
                 color: 'black',

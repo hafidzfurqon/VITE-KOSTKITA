@@ -84,6 +84,9 @@ export default function PropertyDetail() {
       </Container>
     );
   }
+
+  const tipeProperty = data.type.name.toLowerCase()
+  // console.log(tipeProperty)
   return (
     <>
       <Helmet>
@@ -99,7 +102,8 @@ export default function PropertyDetail() {
           <CustomBreadcrumbs
             links={[
               { name: 'Home', href: '/' },
-              { name: 'Coliving', href: '/coliving' },
+              tipeProperty === 'apartment' ?  { name: 'Apartment', href: '/apartment' } :  { name: 'Coliving', href: '/coliving' }
+             ,
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
             sx={{ mb: { xs: 3, md: 5 } }}
