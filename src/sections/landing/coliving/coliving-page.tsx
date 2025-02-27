@@ -75,7 +75,7 @@ const ColivingPage = () => {
   return (
     <>
     <CustomBreadcrumbs 
-                                  links={[{ name: 'Home', href: '/' }, { name: 'Coliving',}]} 
+                                  links={[{ name: 'Home', href: '/' }, { name: 'Kost & Coliving',}]} 
                                   sx={{ mb: { xs: 2, md: 3 } }} 
                                   action={null} 
                                   heading="" 
