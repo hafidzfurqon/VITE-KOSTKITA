@@ -89,6 +89,7 @@ export default function PropertyDetail() {
   // console.log(tipeProperty)
   return (
     <>
+    
       <Helmet>
         <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
         <meta property="og:type" content={`website`} />
@@ -336,9 +337,9 @@ export default function PropertyDetail() {
                   color="text.secondary"
                   dangerouslySetInnerHTML={{ __html: data.description }}
                 />
-                <Typography color="text.secondary">
+                {/* <Typography color="text.secondary">
                   <span dangerouslySetInnerHTML={{ __html: data.description }} />
-                </Typography>
+                </Typography> */}
               </CardContent>
             </Card>
           )}
