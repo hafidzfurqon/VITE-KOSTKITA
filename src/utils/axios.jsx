@@ -161,7 +161,7 @@ export const endpoints = {
   },
   property: {
     list: '/api/admin/property/list',
-    detail: '/api/admin/property/detail/id', //need id here
+    detail_dengan_id: '/api/admin/property/detail/id', //need id here
     detail: '/api/admin/property/detail/slug', //need slug here
     create: '/api/admin/property/create',
     update: '/api/admin/property/update', //need id here
