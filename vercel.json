@@ -1,5 +1,5 @@
 {
-  "routes": [
-    { "src": "/(.*)", "middlewarePath": "api/middleware.js" }
-  ]
+    "rewrites": [
+      { "source": "/property/:slug", "destination": "/index.html" }
+    ]
 }
