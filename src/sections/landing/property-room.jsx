@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
+import { WhatsApp } from '@mui/icons-material';
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -45,13 +46,13 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
 //   'Water Heater': WaterDropIcon,
 // };
 
-const PropertyRoom = ({ rooms = [] }) => {
+const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
   // Set default value to empty array
   // Check if rooms is valid array
   const validRooms = Array.isArray(rooms) ? rooms : [];
   const Id = rooms.id;
   console.log(Id);
-  console.log(rooms);
+  console.log(namaProperty);
 
   // Helper function to format price
   const formatPrice = (price) => {
@@ -76,7 +77,7 @@ const PropertyRoom = ({ rooms = [] }) => {
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 5 }} id={Id}>
+    <Container maxWidth="lg" sx={{ mt: 5,  }} id={Id}>
       <Typography variant="h6" sx={{ mb: 5 }}>
         Kamar
       </Typography>
@@ -93,8 +94,9 @@ const PropertyRoom = ({ rooms = [] }) => {
 
             {/* Right side - Content */}
             <Grid item xs={12} md={8}>
-              <CardContent>
-                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
+              <CardContent >
+              
+                <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2} >
                   <Box>
                     <Typography variant="h6" gutterBottom>
                       {room.name}
@@ -109,24 +111,20 @@ const PropertyRoom = ({ rooms = [] }) => {
                 </Box>
 
                 {/* Facilities */}
-                <Grid container spacing={2} mb={3}>
-                  {room.room_facilities?.map((facility, index) => {
-                    return (
-                      <Grid item xs={3} md={2} key={index}>
-                        <Box key={index} display="flex" alignItems="center" gap={1}>
-                          <Typography variant="body2" color="text.secondary">
-                            {/* <Stack direction={{ xs: 'column', sm: 'row' }} > */}
-                            {facility.name}
-                            {/* </Stack> */}
-                          </Typography>
-                        </Box>
-                      </Grid>
-                    );
-                  })}
-                </Grid>
+                <Grid container spacing={1} mb={2} sx={{ flexWrap: 'wrap', maxWidth: '100%' }}>
+  {room.room_facilities?.map((facility, index) => (
+    <Grid item xs={6} sm={4} md={3} key={index}>
+      <Box display="flex" alignItems="center" gap={1} sx={{ overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {facility.name}
+        </Typography>
+      </Box>
+    </Grid>
+  ))}
+</Grid>
 
                 {/* Price section */}
-                <Box mt={3}>
+                <Box >
                   {/* <Grid container spacing={2} mb={2}>
                     {['1-2 bulan', '3-5 bulan', '6-11 bulan', '>12 bulan'].map(
                       (duration, index) => (
@@ -142,8 +140,8 @@ const PropertyRoom = ({ rooms = [] }) => {
                     )}
                   </Grid> */}
 
-                  <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Box>
+                  <Box display="flex" flexDirection='column' sx={{width : '100%'}}>
+                    <Box >
                       <Typography
                         variant="body2"
                         color="text.secondary"
@@ -151,18 +149,28 @@ const PropertyRoom = ({ rooms = [] }) => {
                       >
                         {formatPrice(room.price * 1.1)}
                       </Typography>
-                      <Typography variant="h6" sx={{ display: 'flex', gap: 1 }}>
+                      <Typography variant="h6" sx={{ display: 'flex', gap: 1, alignItems : 'center' }}>
                         {formatPrice(room.price)}/
-                        {room.room_discounts?.map((discount) => {
+                        {room.room_discounts.length > 0 ? room.room_discounts?.map((discount) => {
                           return (
                             <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
                               {discount.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
                             </Typography>
                           );
-                        })}
+                        }) :  <Typography variant="subtitle1" color="text.secondary" sx={{ mt: 0.5 }}>
+                        {payment === 'monthly' ? 'bulan' : 'Tahun'}
+                      </Typography>}
                       </Typography>
                     </Box>
-                    <Stack direction="row" spacing={2}>
+                    <Stack direction="row" spacing={2} sx={{mt :2}}>
+                      <Button
+                        variant="outlined"
+                        startIcon={<WhatsApp />}
+                        href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu?\n\nTerima kasih`)}`}
+                        sx={{ border : 'green solid 1px', color : 'green'}}
+                      >
+                        Chat KostKita
+                      </Button>
                       <Button
                         variant="contained"
                         sx={{ backgroundColor: 'black', '&:hover': { backgroundColor: '#333' } }}

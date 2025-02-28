@@ -19,6 +19,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropertyBaseLocation from './property-location/propety-base-location';
+import { Helmet } from 'react-helmet-async';
 
 
 export function LandingPage() {
@@ -68,6 +69,14 @@ export function LandingPage() {
 
   return (
     <>
+    <Helmet>
+            <meta property="og:url" content={`http://kostkita-id.vercel.app/`} />
+            <meta property="og:type" content={`website`} />
+            <meta property="og:title" content={`KostKita Property & Kost`} />
+            <meta name="description" content="Temukan kost terbaik dengan harga terjangkau dan lokasi strategis. Cek sekarang!"/>
+            <meta name="robots" content="index, follow"/>
+            <meta property="og:image" content={`public/asset/images/Kost.pdf (2).png`} />
+        </Helmet>
       <Box
         sx={{
           display: 'flex',

@@ -89,13 +89,21 @@ export default function PropertyDetail() {
   // console.log(tipeProperty)
   return (
     <>
-    
-      <Helmet>
+        <Helmet>
+        <title>{data.name} - KostKita</title>
+        <meta name="title" content={data.name} />
+        <meta name="description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta property="og:image" content={data?.files[0].file_url} />
+        <meta name="keywords" content={data.name} />
+        <meta property="og:type" content="article" />
         <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
-        <meta property="og:type" content={`website`} />
-        <meta property="og:title" content={`KostKita Property ${data.name}`} />
-        <meta property="og:description" content={`${data.description}`} />
-        <meta property="og:image" content={`${data?.files[0].file_url}`} />
+        <meta property="og:title" content={data.name} />
+        <meta property="og:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={data.name} />
+        <meta property="twitter:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta name="twitter:image" content={data?.files[0].file_url} />
+        <meta property="twitter:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
       </Helmet>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Breadcrumbs */}
@@ -303,7 +311,7 @@ export default function PropertyDetail() {
                     variant="outlined"
                     color="primary"
                     startIcon={<WhatsApp />}
-                    href={`https://wa.me/${data.phone}`}
+                    href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     fullWidth
                     sx={{
@@ -413,7 +421,8 @@ export default function PropertyDetail() {
         </Box>
         <Divider />
         <Box id="room">
-          <PropertyRoom rooms={data.rooms} />
+          
+          <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
         </Box>
       </Container>
     </>
