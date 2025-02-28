@@ -1,11 +1,11 @@
 {
   "routes": [
-    { "src": "/(.*)", "middlewarePath": "middleware.js" }
+    { "src": "/(.*)", "middlewarePath": "api/middleware.js" }
   ],
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": "/"
+      "destination": "/index.html"
     }
   ]
 }
