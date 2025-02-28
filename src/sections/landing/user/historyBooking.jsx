@@ -12,18 +12,18 @@ import {
   CardMedia,
   Chip,
   CircularProgress,
+  Alert,
 } from '@mui/material';
 import { useState } from 'react';
 import CloudIcon from '@mui/icons-material/WbCloudy';
 import { Link } from 'react-router-dom';
 import { useGetBookingUser } from 'src/hooks/users/useGetBookingUser';
 import { format } from 'date-fns';
-import { Alert } from '@mui/material';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 export default function HistoryBooking() {
   const [tabIndex, setTabIndex] = useState(0);
   const { data, isLoading, isFetching, error } = useGetBookingUser();
-
   const bookings = data?.data || [];
 
   if (isLoading || isFetching) {
@@ -36,16 +36,8 @@ export default function HistoryBooking() {
 
   if (error) {
     return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="error">Error loading property details. Please try again later.</Alert>
-      </Container>
-    );
-  }
-
-  if (!data) {
-    return (
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        <Alert severity="info">No property details found.</Alert>
+      <Container maxWidth="md" sx={{ py: 4, textAlign: 'center' }}>
+        <Alert severity="error">Terjadi kesalahan saat memuat data. Silakan coba lagi nanti.</Alert>
       </Container>
     );
   }
@@ -54,23 +46,39 @@ export default function HistoryBooking() {
     <Container maxWidth="md">
       <Box sx={{ py: 4 }}>
         <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Daftar Riwayat Booking
+          Riwayat Booking
         </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Home', href: '/' },
+            { name: 'Daftar Riwayat booking', href: '' },
+          ]}
+          sx={{ mb: 3 }}
+        />
 
         <Grid container spacing={3}>
           {/* Sidebar Tabs */}
           <Grid item xs={12} md={3}>
-            <Paper sx={{ display: 'inline-block', width: '100%' }}>
+            <Paper elevation={3} sx={{ width: '100%', borderRadius: 2 }}>
               <Tabs
                 value={tabIndex}
                 onChange={(event, newValue) => setTabIndex(newValue)}
                 indicatorColor="primary"
                 textColor="primary"
                 orientation="vertical"
-                sx={{ width: '100%' }}
+                sx={{
+                  '& .MuiTabs-flexContainer': {
+                    alignItems: 'center',
+                  },
+                  '& .MuiTab-root': {
+                    fontSize: '1rem',
+                    textTransform: 'none',
+                    py: 1.5,
+                  },
+                }}
               >
-                <Tab label="Akan Datang" />
                 <Tab label="Riwayat" />
+                <Tab label="Akan Datang" />
               </Tabs>
             </Paper>
           </Grid>
@@ -81,19 +89,32 @@ export default function HistoryBooking() {
               bookings.map((booking) => (
                 <Card
                   key={booking.id}
-                  sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, mb: 3 }}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: { xs: 'column', md: 'row' },
+                    alignItems: 'center',
+                    gap: 2,
+                    mb: 3,
+                    p: 2,
+                    borderRadius: 3,
+                    boxShadow: 3,
+                  }}
                 >
                   <CardMedia
                     component="img"
-                    sx={{ width: { xs: '100%', md: 120 }, height: 120, borderRadius: 2 }}
-                    image={booking.user.photo_profile}
-                    alt="User profile"
+                    sx={{ width: { xs: '100%', md: 140 }, height: 140, borderRadius: 2 }}
+                    image={
+                      booking.property_room?.room_files?.[0]?.file_url ||
+                      'https://via.placeholder.com/140'
+                    }
+                    alt="Room image"
                   />
+
                   <CardContent sx={{ flex: 1 }}>
                     <Typography variant="h6" fontWeight="bold">
                       {booking.property.name}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
                       {booking.property.address}, {booking.property.city.name},{' '}
                       {booking.property.state.name}
                     </Typography>
@@ -115,18 +136,16 @@ export default function HistoryBooking() {
                         mt: 2,
                       }}
                     >
-                      <Typography variant="body1" color="primary" fontWeight="bold">
+                      <Typography variant="h6" color="primary" fontWeight="bold">
                         Rp {booking.total_price.toLocaleString('id-ID')}
                       </Typography>
-                      <Chip label="Selesai" color="success" size="small" />
                     </Box>
 
                     <Box sx={{ mt: 2 }}>
-                      
                       <Button
                         component={Link}
                         to={`/history/booking/detail/${booking?.booking_code}`}
-                        variant="outlined"
+                        variant="contained"
                         size="small"
                         sx={{ textTransform: 'none' }}
                       >
@@ -137,7 +156,7 @@ export default function HistoryBooking() {
                 </Card>
               ))
             ) : (
-              <Box sx={{ textAlign: 'center', mt: 5 }}>
+              <Box sx={{ textAlign: 'center', mt: 5, py: 3, borderRadius: 2, boxShadow: 2 }}>
                 <CloudIcon sx={{ fontSize: 60, color: '#ccc' }} />
                 <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
                   Kamu belum memiliki riwayat booking

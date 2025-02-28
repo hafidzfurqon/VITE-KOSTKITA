@@ -28,7 +28,7 @@ export default function ApartementGrid() {
 
    
     
-    const filteredDataToApartement = data.filter(item => item.type.name.toLowerCase() === 'apartment');
+    const filteredDataToApartement = data?.filter(item => item.type.name.toLowerCase() === 'apartment');
 
   if (!filteredDataToApartement || (Array.isArray(filteredDataToApartement) && filteredDataToApartement.length === 0)) {
     return (

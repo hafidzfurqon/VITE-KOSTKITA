@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Divider,
   Card,
@@ -12,10 +13,14 @@ import { useParams } from 'react-router-dom';
 import { useGetBookingDetail } from 'src/hooks/users/useGetBookingDetail';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import FacilityModal from '../modal-facility';
+// import FacilityModal from 'src/components/FacilityModal';
 
 export default function HistoryBookingDetail() {
   const { bookingCode } = useParams();
   const { data: booking, isLoading, isFetching, error } = useGetBookingDetail(bookingCode);
+  const [open, setOpen] = useState(false);
 
   if (isLoading || isFetching) {
     return (
@@ -38,49 +43,46 @@ export default function HistoryBookingDetail() {
   return (
     <Box sx={{ backgroundColor: 'grey.100', minHeight: '100vh', py: 3 }}>
       <Container maxWidth="lg" sx={{ p: 0 }}>
-        {/* Data Penghuni */}
+        <Typography variant="h5" fontWeight="bold" gutterBottom>
+          Detail Booking
+        </Typography>
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Riwayat Booking', href: `/history/booking` },
+            { name: 'Booking Detail', href: '' },
+          ]}
+          sx={{ mb: 3 }}
+        />
+
         <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
             Data Penghuni
           </Typography>
-          <Typography sx={{ fontWeight: 'medium' }}>{booking.user.name}</Typography>
-          <Typography sx={{ color: 'grey.800' }}>{booking.user.phone_number}</Typography>
-          <Typography sx={{ color: 'grey.800', mb: 2 }}>{booking.user.email}</Typography>
-          <Divider sx={{ my: 2 }} />
-          <Typography sx={{ color: 'grey.600', fontSize: '0.875rem' }}>
-            Kartu identitas asli (KTP/KITAS) dan Surat Nikah (untuk pasangan) dibutuhkan saat
-            check-in
-          </Typography>
-        </Box>
-
-        {/* Add-on */}
-        <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Add-on</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Typography>Tambah Add-on</Typography>
-            <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
-          </Box>
-        </Box>
-
-        {/* Pesanan */}
-        <Box sx={{ backgroundColor: 'white', p: 3, borderRadius: 2 }}>
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Pesanan</Typography>
-
-          <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
-            <CalendarTodayIcon sx={{ mt: 0.5, mr: 1, color: 'grey.500', fontSize: 18 }} />
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Avatar
+              src={booking.user.photo_profile}
+              alt={booking.user.name}
+              sx={{ width: 56, height: 56, mr: 2 }}
+            />
             <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ fontSize: '0.875rem', mr: 1 }}>
-                  28 Februari - 23 Februari 2026
-                </Typography>
-                <Typography sx={{ fontSize: '0.875rem', color: 'primary.main' }}>Ubah</Typography>
-              </Box>
+              <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user.name}</Typography>
+              <Typography sx={{ color: 'grey.800' }}>Nomor Telepon: {booking.user.phone_number}</Typography>
+              <Typography sx={{ color: 'grey.800' }}>Email: {booking.user.email}</Typography>
             </Box>
           </Box>
+          <Divider sx={{ my: 2 }} />
 
-          <Typography sx={{ fontWeight: 'medium' }}>Pocket Single A - F</Typography>
+          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Pesanan</Typography>
+          <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
+            <CalendarTodayIcon sx={{ mt: 0.5, mr: 1, color: 'grey.500', fontSize: 18 }} />
+            <Typography sx={{ fontSize: '0.875rem' }}>
+              {booking.check_in} - {booking.check_out}
+            </Typography>
+          </Box>
+
+          <Typography sx={{ fontWeight: 'medium' }}>{booking.property_room.name}</Typography>
           <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
-            1 Orang • Wanita • 6.5m²
+            {booking.number_of_guests} Orang • {booking.property_room.area_size}m²
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -90,57 +92,33 @@ export default function HistoryBookingDetail() {
                 color: 'primary.main',
                 display: 'flex',
                 alignItems: 'center',
+                cursor: 'pointer',
               }}
+              onClick={() => setOpen(true)}
             >
               Fasilitas unit <ChevronRightIcon sx={{ ml: 0.5, fontSize: 16 }} />
             </Typography>
           </Box>
 
+          {/* Modal Fasilitas */}
+          <FacilityModal
+            isOpen={open}
+            title="Fasilitas Bersama"
+            onClose={() => setOpen(false)}
+            facilities={booking.property_room.room_facilities || []}
+          />
+
           <Box
             sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
           >
-            <Typography>Rukita Toska Binus Kemanggisan</Typography>
+            <Typography>{booking.property.name}</Typography>
             <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
           </Box>
 
           <Divider sx={{ my: 2 }} />
-
-          <Typography sx={{ color: 'grey.500', textDecoration: 'line-through' }}>
-            Rp2.600.000
+          <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+            Rp{booking.total_price.toLocaleString()} /bulan
           </Typography>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-            <Box
-              sx={{
-                backgroundColor: 'error.main',
-                color: 'white',
-                fontSize: '0.75rem',
-                px: 1,
-                borderRadius: 1,
-                mr: 1,
-              }}
-            >
-              12%
-            </Box>
-            <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-              Rp2.275.000 /bulan
-            </Typography>
-          </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: 'success.main',
-                mr: 1,
-              }}
-            />
-            <Typography sx={{ color: 'success.main', fontSize: '0.875rem' }}>
-              Hemat Rp325k/bln untuk 12 bulan pertama
-            </Typography>
-          </Box>
         </Box>
       </Container>
     </Box>

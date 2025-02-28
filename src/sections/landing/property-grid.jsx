@@ -116,7 +116,7 @@ export default function PropertyGrid({ data, isLoading, isFetching }) {
                     }}
                   >
                     <img
-                      src={property.files[0].file_url}
+                      src={property?.files[0]?.file_url}
                       alt={`Property Image`}
                       style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                     />

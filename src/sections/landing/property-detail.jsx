@@ -91,7 +91,7 @@ export default function PropertyDetail() {
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
-        <meta property="og:image" content={`${data?.files[0].file_url}`} />
+        <meta property="og:image" content={`${data?.files[0]?.file_url}`} />
       </Helmet>
       <Container maxWidth="lg" sx={{ py: 4 }}>
         {/* Breadcrumbs */}
@@ -322,18 +322,20 @@ export default function PropertyDetail() {
                     flexDirection: { xs: 'column', sm: 'row' },
                   }}
                 >
-                  <Button
-                    href="#room"
-                    variant="outlined"
-                    color="primary"
-                    sx={{
-                      height: 48,
-                      minWidth: '150px',
-                      flexGrow: { xs: 1, sm: 0 },
-                    }}
-                  >
-                    Lihat Kamar
-                  </Button>
+                  {data.rooms.length > 0 && (
+                    <Button
+                      href="#room"
+                      variant="outlined"
+                      color="primary"
+                      sx={{
+                        height: 48,
+                        minWidth: '150px',
+                        flexGrow: { xs: 1, sm: 0 },
+                      }}
+                    >
+                      Lihat Kamar
+                    </Button>
+                  )}
 
                   <Button
                     variant="outlined"

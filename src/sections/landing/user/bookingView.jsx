@@ -17,11 +17,14 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useParams } from 'react-router-dom';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import { Alert } from '@mui/material';
+import ModalBookingSuccess from 'src/components/booking/ModalBookingSuccess';
+import { useState } from 'react';
 
 export default function BookingView() {
   const { slug } = useParams();
+  const [openSuccessModal, setOpenSuccessModal] = useState(false);
+  const [bookingCode, setBookingCode] = useState(null);
   const { data: defaultValues, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-  console.log(defaultValues);
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const {
@@ -32,10 +35,13 @@ export default function BookingView() {
   } = useForm({ defaultValues });
 
   const { mutate, isPending } = userBooking({
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['list.property'] });
       enqueueSnackbar('Properti berhasil dibooking', { variant: 'success' });
       reset();
+      setOpenSuccessModal(true); // Tampilkan modal sukses
+      // Simpan booking_code dari response
+      setBookingCode(response?.data?.booking_code ?? 'Kode booking tidak ditemukan');
     },
     onError: (error) => {
       const errorMessage = error?.response?.data?.errors;
@@ -75,7 +81,7 @@ export default function BookingView() {
       delete payload.promo_id;
     }
 
-    console.log('Payload sebelum submit:', payload); // Debugging
+    // console.log('Payload sebelum submit:', payload); // Debugging
     mutate(payload);
   };
 
@@ -158,6 +164,7 @@ export default function BookingView() {
                 />
               </Grid>
             </Grid>
+
             <Button
               type="submit"
               variant="contained"
@@ -170,7 +177,98 @@ export default function BookingView() {
             </Button>
           </form>
         </CardContent>
+        <ModalBookingSuccess
+          open={openSuccessModal}
+          bookingCode={bookingCode}
+          onReset={() => setOpenSuccessModal(false)} // Tutup modal saat klik tombol
+          onDownloadPDF={() => console.log('Download PDF')} // Tambahkan logika download PDF jika diperlukan
+        />
       </Card>
     </Container>
   );
 }
+
+// export default function CheckoutSummary({
+//   total,
+//   discount,
+//   subTotal,
+//   shipping,
+//   //
+//   onEdit,
+//   onApplyDiscount,
+// }) {
+//   const displayShipping = shipping !== null ? 'Free' : '-';
+
+//   return (
+//     <Card sx={{ mb: 3 }}>
+//       <CardHeader
+//         title="Order Summary"
+//         action={
+//           onEdit && (
+//             <Button size="small" onClick={onEdit} startIcon={<Iconify icon="solar:pen-bold" />}>
+//               Edit
+//             </Button>
+//           )
+//         }
+//       />
+
+//       <CardContent>
+//         <Stack spacing={2}>
+//           <Stack direction="row" justifyContent="space-between">
+//             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+//               Sub Total
+//             </Typography>
+//             <Typography variant="subtitle2">{fCurrency(subTotal)}</Typography>
+//           </Stack>
+
+//           <Stack direction="row" justifyContent="space-between">
+//             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+//               Discount
+//             </Typography>
+//             <Typography variant="subtitle2">{discount ? fCurrency(-discount) : '-'}</Typography>
+//           </Stack>
+
+//           <Stack direction="row" justifyContent="space-between">
+//             <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+//               Shipping
+//             </Typography>
+//             <Typography variant="subtitle2">
+//               {shipping ? fCurrency(shipping) : displayShipping}
+//             </Typography>
+//           </Stack>
+
+//           <Divider sx={{ borderStyle: 'dashed' }} />
+
+//           <Stack direction="row" justifyContent="space-between">
+//             <Typography variant="subtitle1">Total</Typography>
+//             <Box sx={{ textAlign: 'right' }}>
+//               <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+//                 {fCurrency(total)}
+//               </Typography>
+//               <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+//                 (VAT included if applicable)
+//               </Typography>
+//             </Box>
+//           </Stack>
+
+//           {onApplyDiscount && (
+//             <TextField
+//               fullWidth
+//               placeholder="Discount codes / Gifts"
+//               value="DISCOUNT5"
+//               InputProps={{
+//                 endAdornment: (
+//                   <InputAdornment position="end">
+//                     <Button color="primary" onClick={() => onApplyDiscount(5)} sx={{ mr: -0.5 }}>
+//                       Apply
+//                     </Button>
+//                   </InputAdornment>
+//                 ),
+//               }}
+//             />
+//           )}
+//         </Stack>
+//       </CardContent>
+//     </Card>
+//   );
+// }
