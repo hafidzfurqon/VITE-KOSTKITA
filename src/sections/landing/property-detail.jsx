@@ -84,10 +84,26 @@ export default function PropertyDetail() {
       </Container>
     );
   }
+
+  const tipeProperty = data.type.name.toLowerCase()
+  // console.log(tipeProperty)
   return (
     <>
-      <Helmet>
+        <Helmet>
+        <title>{data.name} - KostKita</title>
+        <meta name="title" content={data.name} />
+        <meta name="description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta property="og:image" content={data?.files[0]?.file_url} />
+        <meta name="keywords" content={data.name} />
+        <meta property="og:type" content="article" />
         <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
+        <meta property="og:title" content={data.name} />
+        <meta property="og:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={data.name} />
+        <meta property="twitter:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
+        <meta name="twitter:image" content={data?.files[0]?.file_url} />
+        <meta property="twitter:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
@@ -99,7 +115,8 @@ export default function PropertyDetail() {
           <CustomBreadcrumbs
             links={[
               { name: 'Home', href: '/' },
-              { name: 'Coliving', href: '/coliving' },
+              tipeProperty === 'apartment' ?  { name: 'Apartment', href: '/apartment' } :  { name: 'Kost & Coliving', href: '/coliving' }
+             ,
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
             sx={{ mb: { xs: 3, md: 5 } }}
@@ -341,7 +358,7 @@ export default function PropertyDetail() {
                     variant="outlined"
                     color="primary"
                     startIcon={<WhatsApp />}
-                    href={`https://wa.me/${data.phone}`}
+                    href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     sx={{
                       color: '#25D366',
@@ -378,9 +395,9 @@ export default function PropertyDetail() {
                   color="text.secondary"
                   dangerouslySetInnerHTML={{ __html: data.description }}
                 />
-                <Typography color="text.secondary">
+                {/* <Typography color="text.secondary">
                   <span dangerouslySetInnerHTML={{ __html: data.description }} />
-                </Typography>
+                </Typography> */}
               </CardContent>
             </Card>
           )}
@@ -454,6 +471,8 @@ export default function PropertyDetail() {
         </Box>
         <Divider />
         <Box id="room">
+          
+          <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
           <PropertyRoom rooms={data.rooms} data={data} />
         </Box>
       </Container>

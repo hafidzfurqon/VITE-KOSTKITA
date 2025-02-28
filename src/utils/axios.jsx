@@ -120,7 +120,7 @@ export const endpoints = {
     list: '/api/admin/users/list',
     detail: '/api/admin/users/detail', //need id here
     create: '/api/admin/users/create',
-    update: '/api/admin/users/update',
+    update_data_user: '/api/admin/users/update',
     update: '/api/admin/users/update_user_password', // need id here
     booking: {
       property: '/api/user/booking/property/reserve',
@@ -161,7 +161,7 @@ export const endpoints = {
   },
   property: {
     list: '/api/admin/property/list',
-    detail: '/api/admin/property/detail/id', //need id here
+    detail_dengan_id: '/api/admin/property/detail/id', //need id here
     detail: '/api/admin/property/detail/slug', //need slug here
     create: '/api/admin/property/create',
     update: '/api/admin/property/update', //need id here

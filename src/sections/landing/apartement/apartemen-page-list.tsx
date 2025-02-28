@@ -22,7 +22,7 @@ interface Property {
     { type: { name: 'coliving' } }
   ];
 
-const ColivingPage = () => {
+const ApartmentList = () => {
     const { data, isLoading, isFetching } = useListProperty();
 
   const getPropertyIcon = (type : string) => {
@@ -38,13 +38,13 @@ const ColivingPage = () => {
       return <Loading />;
     }
   
-   const filteredDataToColiving: Property[] = data.filter(
-  (item: Property) => ['coliving', 'kost'].includes(item.type.name.toLowerCase())
+   const filteredDataToApartment: Property[] = data.filter(
+  (item: Property) => item.type.name.toLowerCase() === 'apartment'
     );
 
   
   
-    if (!filteredDataToColiving || (Array.isArray(filteredDataToColiving) && filteredDataToColiving.length === 0)) {
+    if (!filteredDataToApartment || (Array.isArray(filteredDataToApartment) && filteredDataToApartment.length === 0)) {
       return (
         <Container sx={{ textAlign: 'center', mt: 6 , }}>
           <Box
@@ -75,7 +75,7 @@ const ColivingPage = () => {
   return (
     <>
     <CustomBreadcrumbs 
-                                  links={[{ name: 'Home', href: '/' }, { name: 'Kost & Coliving',}]} 
+                                  links={[{ name: 'Home', href: '/' }, { name: 'Apartment',}]} 
                                   sx={{ mb: { xs: 2, md: 3 } }} 
                                   action={null} 
                                   heading="" 
@@ -83,16 +83,16 @@ const ColivingPage = () => {
                                   activeLast={true} 
                                   />
       <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 16 }} sx={{ placeItems: 'center', mt : 3 }}>
-        {filteredDataToColiving.map((coliving: any, index: number) => {
-            const hasDiscount = coliving.discounts.length > 0;
+        {filteredDataToApartment.map((apartment: any, index: number) => {
+            const hasDiscount = apartment.discounts.length > 0;
             return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                     <Link
-                to={`/property/${coliving.slug}`}
+                to={`/property/${apartment.slug}`}
                 style={{ textDecoration: 'none', display: 'block' }}
               >
                 <Box
-                   key={coliving.id}
+                   key={apartment.id}
                 sx={{
                     width: '95%',
                     height: 190,
@@ -103,8 +103,8 @@ const ColivingPage = () => {
                 >
                    
                 <img
-                    src={coliving.files[0]?.file_url}
-                    alt={coliving.name}
+                    src={apartment.files[0]?.file_url}
+                    alt={apartment.name}
                     style={{
                     width: '100%',
                     height: '100%',
@@ -113,23 +113,23 @@ const ColivingPage = () => {
                 />
                 </Box>
                 <Chip
-                icon={getPropertyIcon(coliving.type.name)}
-                label={coliving.type.name}
+                icon={getPropertyIcon(apartment.type.name)}
+                label={apartment.type.name}
                 sx={{ mb: 1, fontWeight: 600 }}
                 />
-                <Typography variant='subtitle1' sx={{ color : 'black'}}>{coliving.name}</Typography>
+                <Typography variant='subtitle1' sx={{ color : 'black'}}>{apartment.name}</Typography>
                 <Box sx={{ color: 'gray' }}>
                             <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
-                                {coliving.address}, {coliving.city.name}
+                                {apartment.address}, {apartment.city.name}
                             </Typography>
                             </Box>
-                            {coliving.discount_prifile_urlce ? (
+                            {apartment.discount_prifile_urlce ? (
                             <Stack direction="row" alignItems="center" spacing={1}>
                                 <Typography
                                 variant="body2"
                                 sx={{ color: 'gray', textDecoration: 'line-through' }}
                                 >
-                                {formatCurrency(coliving.start_price)}
+                                {formatCurrency(apartment.start_price)}
                                 </Typography>
                                 <Chip label="-12%" color="error" size="small" />
                             </Stack>
@@ -142,7 +142,7 @@ const ColivingPage = () => {
                                                     variant="subtitle1"
                                                     sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
                                                     >
-                                                    {formatCurrency(coliving.start_price)}
+                                                    {formatCurrency(apartment.start_price)}
                                                     </Typography>
                                                 </Box>
                                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -156,11 +156,11 @@ const ColivingPage = () => {
                                                         px: '5px',
                                                     }}
                                                     >
-                                                    -Rp {fPercent(coliving.discounts[0]?.discount_value)}
+                                                    -Rp {fPercent(apartment.discounts[0]?.discount_value)}
                                                     </Box>
                                                     <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
                                                     {formatCurrency(
-                                                        coliving.discounts.map((discount : any) => discount.price_after_discount)
+                                                        apartment.discounts.map((discount : any) => discount.price_after_discount)
                                                     )}
                                                     </Typography>
                                                 </Box>
@@ -170,7 +170,7 @@ const ColivingPage = () => {
                                                 variant="subtitle1"
                                                 sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                                                 >
-                                                {formatCurrency(coliving.start_price)} / bulan
+                                                {formatCurrency(apartment.start_price)} / bulan
                                                 </Typography>
                                             )}
             </Link>
@@ -182,4 +182,4 @@ const ColivingPage = () => {
   )
 }
 
-export default ColivingPage
+export default ApartmentList

@@ -27,6 +27,7 @@ import { EditApartement } from 'src/sections/apartement/crud/apartement-edit';
 import { UpdatePropertyRoomCreate } from 'src/sections/property_room/crud/update-property-room';
 import ColivingPage from 'src/sections/landing/coliving/coliving-page';
 import PropertyLocationDetail from 'src/sections/landing/property-location/property-location-detail';
+import ApartmentList from 'src/sections/landing/apartement/apartemen-page-list';
 import HistoryBookingDetail from 'src/sections/landing/user/historyBookingDetail';
 
 // ----------------------------------------------------------------------
@@ -198,6 +199,10 @@ export function Router() {
           element: <PropertyDetailPage />,
         },
         {
+          path: 'apartement/:slug',
+          element: <PropertyDetailPage />,
+        },
+        {
           path: 'profile',
           element: <AccountView />,
         },
@@ -224,6 +229,10 @@ export function Router() {
         {
           path: '/coliving',
           element: <ColivingPage />,
+        },
+        {
+          path: '/apartment',
+          element: <ApartmentList />,
         },
         {
           path: '/about-us',

@@ -1,4 +1,4 @@
-import { Box, Fab, Typography } from '@mui/material';
+import { Box, Fab, Typography, Container, Button } from '@mui/material';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { Iconify } from 'src/components/iconify';
@@ -11,28 +11,25 @@ import Footer from './footer';
 import PromoPage from './promo-page';
 import PropertyBudget from './property-budget';
 import 'keen-slider/keen-slider.min.css';
-import { useKeenSlider } from 'keen-slider/react';
-import Loading from 'src/components/loading/loading';
 import ApartementGrid from '../apartement/view/apartement-landing-grid';
-import { Container } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropertyBaseLocation from './property-location/propety-base-location';
+import { Helmet } from 'react-helmet-async';
+
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { useState } from 'react';
 
 export function LandingPage() {
   const navigate = useNavigate();
   const { data, isLoading, isFetching } = useListProperty();
-  console.log(data);
   const [searchParams, setSearchParams] = useState({
-    query: '', // Gabungan pencarian nama & lokasi
+    query: '',
     date: '',
     type: '',
   });
 
-  const filteredData = Object.values(searchParams).some((val) => val.trim() !== '') // Cek jika ada filter aktif
+  const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
     ? data?.filter((property) => {
         const query = searchParams.query.trim().toLowerCase();
         const dateQuery = searchParams.date.trim();
@@ -46,7 +43,7 @@ export function LandingPage() {
               property.sector?.name,
               property.address,
             ]
-              .filter(Boolean) // Hilangkan nilai undefined/null
+              .filter(Boolean)
               .map((item) => item.toLowerCase())
               .some((item) => item.includes(query))
           : true;
@@ -59,7 +56,7 @@ export function LandingPage() {
 
         return matchesQuery && matchesDate && matchesType;
       })
-    : data; // Jika semua input kosong, tampilkan seluruh data tanpa filter
+    : data;
 
   const WhatsAppButton = (
     <Box
@@ -80,7 +77,7 @@ export function LandingPage() {
           px: 1.5,
           py: 0.5,
           borderRadius: 1,
-          mr: 1, // Jarak ke Fab
+          mr: 1,
           boxShadow: 2,
         }}
       >
@@ -90,11 +87,11 @@ export function LandingPage() {
       <Fab
         size="medium"
         aria-label="WhatsApp"
-        href="https://wa.me/628123456789" // Ganti dengan nomor WhatsApp Anda
+        href="https://wa.me/628123456789"
         sx={{
           width: 44,
           height: 44,
-          bgcolor: '#25D366', // Warna khas WhatsApp
+          bgcolor: '#25D366',
           color: 'common.white',
           '&:hover': { bgcolor: '#1EBE5D' },
         }}
@@ -106,15 +103,26 @@ export function LandingPage() {
 
   return (
     <>
+      <Helmet>
+        <meta property="og:url" content="http://kostkita-id.vercel.app/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content="KostKita Property & Kost" />
+        <meta
+          name="description"
+          content="Temukan kost terbaik dengan harga terjangkau dan lokasi strategis. Cek sekarang!"
+        />
+        <meta name="robots" content="index, follow" />
+        <meta property="og:image" content="public/asset/images/Kost.pdf (2).png" />
+      </Helmet>
+
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          overflow: 'hidden', // Mencegah scroll ganda
+          overflow: 'hidden',
           bgcolor: '#f5f5f5',
         }}
       >
-        {/* Hero Section (tetap di atas, tidak scroll) */}
         <Box sx={{ flexShrink: 0 }}>
           <HeroSection>
             <Header />
@@ -122,12 +130,10 @@ export function LandingPage() {
           </HeroSection>
         </Box>
 
-        {/* Konten Scrollable */}
-        {/* <Box sx={{ flex: 1, overflow: 'hidden' }}> */}
         <SimpleBar style={{ maxHeight: '100%', width: '100%' }}>
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
             <CategorySection />
-            {/* <TourListView /> */}
+
             <Box
               sx={{
                 bgcolor: '#FAF9F6',
@@ -139,7 +145,6 @@ export function LandingPage() {
             >
               <PropertyGrid data={filteredData} isLoading={isLoading} isFetching={isFetching} />
 
-              {/* Container untuk pusatkan button */}
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <Button
                   variant="outlined"
@@ -160,22 +165,24 @@ export function LandingPage() {
             </Box>
 
             <PromoPage />
+
             <Container
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
             >
-              <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
+              <Typography sx={{ fontSize: { xs: '20px', md: '30px' }, fontWeight: 'bold' }}>
                 Cari hunian sesuai lokasi
               </Typography>
-              <hr />
             </Container>
+
             <PropertyBaseLocation />
+
             <Container
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
             >
-              <Typography sx={{ fontSize: { xs: '20px', md: '30px', fontWeight: 'bold' } }}>
+              <Typography sx={{ fontSize: { xs: '20px', md: '30px' }, fontWeight: 'bold' }}>
                 Cari Apartement
               </Typography>
-              <Link to="/promo">
+              <Link to="/apartment">
                 <Button
                   sx={{
                     color: 'black',
@@ -194,12 +201,15 @@ export function LandingPage() {
                 </Button>
               </Link>
             </Container>
+
             <ApartementGrid />
             <PropertyBudget />
           </Box>
         </SimpleBar>
+
         <Footer />
       </Box>
+
       {WhatsAppButton}
     </>
   );

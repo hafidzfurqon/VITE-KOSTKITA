@@ -185,32 +185,32 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
             />
            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-          {...register("land_area", { required: "Luas tanah Wajib Diisi" })}
+          {...register("area_size", { required: "Luas tanah Wajib Diisi" })}
           margin="dense"
-          id="land_area"
+          id="area_size"
           label="Luas tanah" // harus ada 3 min
           type="text"
           inputMode="numeric"
           fullWidth
           variant="outlined"
-          error={!!errors.land_area}
-          helperText={errors.land_area?.message}
+          error={!!errors.area_size}
+          helperText={errors.area_size?.message}
           InputProps={{
             endAdornment: <InputAdornment position="end">m²</InputAdornment>,
           }}
         />
            
             <TextField
-          {...register("total_floors", { required: "Total Lantai Wajib Diisi" })}
+          {...register("floor", { required: "Total Lantai Wajib Diisi" })}
           margin="dense"
-          id="total_floors"
+          id="floor"
           label="Total Lantai"
           type="text"
           inputMode="numeric"
           fullWidth
           variant="outlined"
-          error={!!errors.total_floors}
-          helperText={errors.total_floors?.message}
+          error={!!errors.floor}
+          helperText={errors.floor?.message}
           InputProps={{
             endAdornment: <InputAdornment position="end">Lt</InputAdornment>,
           }}
@@ -226,7 +226,17 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
             variant="outlined"
           />
           {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}> */}
-         
+          <TextField
+              select
+              {...register('room_type', { required: true })}
+              label="Khusus Untuk"
+              fullWidth
+              required
+            >
+              <MenuItem value="male">Pria</MenuItem>
+              <MenuItem value="female">Wanita</MenuItem>
+              <MenuItem value="Umum">Umum</MenuItem>
+            </TextField>
      <FormLabel>Upload Images (Max 5)</FormLabel>
 <Box
   {...getRootProps()}
@@ -255,16 +265,7 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
               />
             ))}
           </Stack>
-          <TextField
-              select
-              {...register('payment_type', { required: true })}
-              label="Tipe Pembayaran"
-              fullWidth
-              required
-            >
-              <MenuItem value="monthly">Monthly</MenuItem>
-              <MenuItem value="yearly">Yearly</MenuItem>
-            </TextField>
+          
             <Typography sx={{ mb : 2}}>Fasilitas Property : </Typography>
             <FormGroup>
   {facilities?.map((facility) => (

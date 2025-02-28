@@ -112,7 +112,7 @@ export default function PromoPage() {
             style={{ width: 250, marginBottom: 16 }}
           /> */}
           <Typography variant="h6" color="textSecondary">
-            Tidak ada promo yang tersedia.
+            Belum ada promo yang tersedia.
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
             Coba lagi nanti.
