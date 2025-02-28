@@ -1,26 +1,34 @@
-export default async function handler(req, res) {
-  const userAgent = req.headers["user-agent"] || "";
+export default async function middleware(req) {
+  const url = req.nextUrl.pathname;
+  const userAgent = req.headers.get("user-agent") || "";
+  
   const botUserAgents = [
-      "googlebot", "bingbot", "facebookexternalhit",
-      "twitterbot", "linkedinbot", "slackbot",
-      "telegrambot", "whatsapp", "discordbot"
+      "googlebot",
+      "bingbot",
+      "facebookexternalhit",
+      "twitterbot",
+      "linkedinbot",
+      "slackbot",
+      "telegrambot",
+      "whatsapp",
+      "discordbot"
   ];
 
   const isBot = botUserAgents.some(bot => userAgent.toLowerCase().includes(bot));
 
   if (isBot) {
       const prerenderToken = "rAOWKB0nsSTranJ7stuh"; // Ganti dengan token asli kamu
-      const prerenderUrl = `https://service.prerender.io${req.url}`;
+      const prerenderUrl = `https://service.prerender.io/${url}`;
 
       const response = await fetch(prerenderUrl, {
           headers: { "X-Prerender-Token": prerenderToken }
       });
 
-      const html = await response.text();
-      res.setHeader("Content-Type", "text/html");
-      res.status(response.status).send(html);
-      return;
+      return new Response(await response.text(), {
+          status: response.status,
+          headers: { "Content-Type": "text/html" }
+      });
   }
 
-  res.status(404).send("Not Found");
+  return new Response(null, { status: 200 });
 }
