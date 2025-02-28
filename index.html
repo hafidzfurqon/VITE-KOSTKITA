@@ -39,4 +39,31 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
+  <script>
+    (function () {
+      // Daftar user-agent yang dianggap sebagai bot
+      const botUserAgents = [
+        "googlebot",
+        "bingbot",
+        "facebookexternalhit",
+        "twitterbot",
+        "linkedinbot",
+        "slackbot",
+        "telegrambot",
+        "whatsapp",
+        "discordbot"
+      ];
+  
+      let userAgent = navigator.userAgent.toLowerCase();
+      let isBot = botUserAgents.some(bot => userAgent.includes(bot));
+  
+      if (isBot) {
+        let backendUrl = "https://backend-koskita.hafidzfrqn.serv00.net"; // Ubah sesuai backend-mu
+        let path = window.location.pathname + window.location.search;
+  
+        // Alihkan bot ke backend agar mendapatkan halaman yang sudah dirender
+        window.location.href = backendUrl + path;
+      }
+    })();
+  </script>
 </html>
