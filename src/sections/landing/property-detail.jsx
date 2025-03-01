@@ -22,13 +22,14 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
-import { WhatsApp } from '@mui/icons-material';
+import { BookmarkBorder, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
 import PropertyRoom from './property-room';
 import FacilityModal from './modal-facility';
 import { useAppContext } from 'src/context/user-context';
+import { Bookmark } from '@mui/icons-material';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -87,11 +88,11 @@ export default function PropertyDetail() {
     );
   }
 
-  const tipeProperty = data.type.name.toLowerCase()
+  const tipeProperty = data.type.name.toLowerCase();
   // console.log(tipeProperty)
   return (
     <>
-        <Helmet>
+      <Helmet>
         <title>{data.name} - KostKita</title>
         <meta name="title" content={data.name} />
         <meta name="description" content={data.description.replace(/<[^>]*>?/gm, '')} />
@@ -105,7 +106,10 @@ export default function PropertyDetail() {
         <meta name="twitter:title" content={data.name} />
         <meta property="twitter:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
         <meta name="twitter:image" content={data?.files[0]?.file_url} />
-        <meta property="twitter:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
+        <meta
+          property="twitter:url"
+          content={`http://kostkita-id.vercel.app/property/${data.slug}`}
+        />
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
         <meta property="og:description" content={`${data.description}`} />
@@ -117,8 +121,9 @@ export default function PropertyDetail() {
           <CustomBreadcrumbs
             links={[
               { name: 'Home', href: '/' },
-              tipeProperty === 'apartment' ?  { name: 'Apartment', href: '/apartment' } :  { name: 'Kost & Coliving', href: '/coliving' }
-             ,
+              tipeProperty === 'apartment'
+                ? { name: 'Apartment', href: '/apartment' }
+                : { name: 'Kost & Coliving', href: '/coliving' },
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
             sx={{ mb: { xs: 3, md: 5 } }}
@@ -238,9 +243,10 @@ export default function PropertyDetail() {
                 {data.name}
               </Typography>
               <Box sx={{ display: 'flex' }}>
-                <IconButton onClick={() => setIsFavorite(!isFavorite)} color="error">
-                  {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                <IconButton onClick={() => setIsFavorite(!isFavorite)} color="primary">
+                  {isFavorite ? <Bookmark color="primary" /> : <BookmarkBorder />}
                 </IconButton>
+
                 <IconButton>
                   <ShareIcon />
                 </IconButton>
@@ -472,7 +478,6 @@ export default function PropertyDetail() {
         </Box>
         <Divider />
         <Box id="room">
-          
           <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
           <PropertyRoom rooms={data.rooms} data={data} />
         </Box>

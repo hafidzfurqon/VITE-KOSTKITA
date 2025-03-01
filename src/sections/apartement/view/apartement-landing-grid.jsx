@@ -8,6 +8,7 @@ import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
 import { useFetchAllPublicApartement } from 'src/hooks/apartement/public';
+import { fPercent } from 'src/utils/format-number';
 
 export default function ApartementGrid() {
   const { data, isLoading, isFetching } = useFetchAllPublicApartement();
@@ -128,15 +129,39 @@ export default function ApartementGrid() {
                     {apartement.address}, {apartement.city.name}
                   </Typography>
                   {hasDiscount ? (
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: 'gray', textDecoration: 'line-through' }}
-                      >
-                        {formatCurrency(apartement.start_price)}
-                      </Typography>
-                      <Chip label="-12%" color="error" size="small" />
-                    </Stack>
+                    <>
+                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                        <Typography
+                          variant="subtitle1"
+                          sx={{
+                            textDecoration: 'line-through',
+                            fontWeight: 700,
+                            fontSize: '12px',
+                          }}
+                        >
+                          {formatCurrency(apartement.start_price)}
+                        </Typography>
+                      </Box>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Box
+                          sx={{
+                            // backgroundColor: 'red',
+                            color: 'white',
+                            fontSize: '11px',
+                            borderRadius: '10px',
+                            px: '5px',
+                          }}
+                        >
+                          <Chip label="-12%" color="error" size="small" />
+                        </Box>
+                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                          {formatCurrency(
+                            apartement.discounts.map((discount) => discount.price_after_discount)
+                          )}
+                        </Typography>
+                      </Box>
+                    </>
                   ) : (
                     <Typography
                       variant="subtitle1"
