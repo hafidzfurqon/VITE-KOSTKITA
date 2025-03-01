@@ -14,8 +14,6 @@ import Alert from '@mui/material/Alert';
 // icons
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
@@ -30,9 +28,11 @@ import PropertyRoom from './property-room';
 import FacilityModal from './modal-facility';
 import { useAppContext } from 'src/context/user-context';
 import { Bookmark } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -371,7 +371,7 @@ export default function PropertyDetail() {
                     target="_blank"
                     sx={{
                       color: '#25D366',
-                      
+
                       height: 48,
                       minWidth: '150px',
                       flexGrow: { xs: 1, sm: 0 },
@@ -381,13 +381,22 @@ export default function PropertyDetail() {
                   </Button>
                 </Box>
 
-                {data.rooms.length === 0 && (
+                {data.rooms.length === 0 && !['admin', 'owner_property'].includes(user.roles) && (
                   <Button
                     variant="contained"
                     color="primary"
                     fullWidth
                     sx={{ mt: 2 }}
-                    onClick={() => user.length === 0 ? navigate(`/sign-in`) : navigate(`/booking/${data.slug}`)}
+                    onClick={() => {
+                      if (user.length === 0) {
+                        enqueueSnackbar('Anda harus login terlebih dahulu!', {
+                          variant: 'error',
+                        });
+                        navigate(`/sign-in`);
+                      } else {
+                        navigate(`/booking/${data.slug}`);
+                      }
+                    }}
                   >
                     Booking Sekarang
                   </Button>
@@ -400,13 +409,13 @@ export default function PropertyDetail() {
           {data.description && (
             // <Card sx={{ mb: 4 }}>
             //   <CardContent>
-                <>
-                <Typography variant="subtitle1">Description :</Typography>
-                <Typography
-                  color="text.secondary"
-                  dangerouslySetInnerHTML={{ __html: data.description }}
-                />
-                </>
+            <>
+              <Typography variant="subtitle1">Description :</Typography>
+              <Typography
+                color="text.secondary"
+                dangerouslySetInnerHTML={{ __html: data.description }}
+              />
+            </>
           )}
           {data.facilities.length > 0 && (
             <>
@@ -479,7 +488,7 @@ export default function PropertyDetail() {
         <Divider />
         <Box id="room">
           <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
-          <PropertyRoom rooms={data.rooms} data={data} />
+          {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
       </Container>
     </>
