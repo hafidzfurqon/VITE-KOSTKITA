@@ -29,6 +29,7 @@ import ColivingPage from 'src/sections/landing/coliving/coliving-page';
 import PropertyLocationDetail from 'src/sections/landing/property-location/property-location-detail';
 import ApartmentList from 'src/sections/landing/apartement/apartemen-page-list';
 import HistoryBookingDetail from 'src/sections/landing/user/historyBookingDetail';
+import WishlistPageView from 'src/sections/landing/wishlist-page-view';
 
 // ----------------------------------------------------------------------
 
@@ -209,6 +210,10 @@ export function Router() {
         {
           path: 'booking/:slug',
           element: <BookingView />,
+        },
+        {
+          path: 'wishlist',
+          element: <WishlistPageView />,
         },
         {
           path: 'sewa/kost/kota/:slug',

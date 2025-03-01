@@ -91,6 +91,7 @@ export default function Header() {
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
+    { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
   ];
 
   const navMobile = [
