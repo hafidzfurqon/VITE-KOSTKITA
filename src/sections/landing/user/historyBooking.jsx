@@ -105,7 +105,7 @@ export default function HistoryBooking() {
                     sx={{ width: { xs: '100%', md: 140 }, height: 140, borderRadius: 2 }}
                     image={
                       booking.property_room?.room_files?.[0]?.file_url ||
-                      'https://via.placeholder.com/140'
+                      'https://backend-koskita.hafidzfrqn.serv00.net//storage/users_photo_profile/jL4rtaLwCZdU9s4qtRYKARQOxTrlyh9qTIvFjTfS.jpg'
                     }
                     alt="Room image"
                   />

@@ -53,14 +53,13 @@ export function SignInView() {
       enqueueSnackbar('Login berhasil', { variant: 'success' });
     },
     onError: (err: any) => {
-      if (err.errors.password) {
-        enqueueSnackbar(err.errors.password[0], { variant: 'error' });
+      if (err.response?.status === 404) {
+        enqueueSnackbar('Email Atau Password Salah tidak ditemukan', { variant: 'error' });
       }
-      if (err.errors.login) {
-        enqueueSnackbar(err.errors.login[0], { variant: 'error' });
-      } else {
-        enqueueSnackbar(err.errors, { variant: 'error' });
-      }
+      if (err.response?.status === 422) {
+        console.log(err)
+        enqueueSnackbar('Email Atau Password Wajib diisi', { variant: 'error' });
+      } 
     },
   });
 

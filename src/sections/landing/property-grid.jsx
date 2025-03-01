@@ -1,27 +1,20 @@
-import { useState } from 'react';
 import { Box, Typography, Chip, Stack, Container } from '@mui/material';
 import { Link } from 'react-router-dom';
-import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import { useRouter } from 'src/routes/hooks';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
-import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
 import { fPercent } from 'src/utils/format-number';
-import { Button } from '@mui/material';
 
-export default function PropertyGrid({ data, isLoading, isFetching }) {
+
+export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
-  const [sliderRef, instanceRef] = useKeenSlider({
-    slides: { perView: 4, spacing: 0 }, // Desktop full 4 tanpa spacing
-    breakpoints: {
-      '(max-width: 1200px)': { slides: { perView: 3, spacing: 10 } },
-      '(max-width: 900px)': { slides: { perView: 2, spacing: 10 } },
-      '(max-width: 600px)': { slides: { perView: 1, spacing: 0 } }, // Mobile 1 properti per slide tanpa spacing
-    },
-  });
-  // const router = useRouter();
+  // const numberSortsortCardBy[0] === 'apartment' ?
 
+
+  // const router = useRouter();
+ 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
@@ -34,10 +27,33 @@ export default function PropertyGrid({ data, isLoading, isFetching }) {
   if (isLoading || isFetching) {
     return <Loading />;
   }
-
-  const filteredDataToColiving = data.filter(
-    (item) => item.type.name.toLowerCase() === 'coliving' || 'kost'
+  
+  const filteredDataToColiving = data.filter((item) => 
+    sortCardBy.includes(item.type.name.toLowerCase())
   );
+  console.log(sortCardBy)
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 3000, min: 1024 },
+      items: 4,
+      partialVisibilityGutter: 40,
+    },
+    desktop: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 3,
+      partialVisibilityGutter: 30,
+    },
+    tablet: {
+      breakpoint: { max: 768, min: 464 },
+      items: 2,
+      partialVisibilityGutter: 20,
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1,
+      partialVisibilityGutter: 10,
+    },
+  };
 
   if (
     !filteredDataToColiving ||
@@ -71,23 +87,21 @@ export default function PropertyGrid({ data, isLoading, isFetching }) {
 
   return (
     <Container maxWidth="100%" sx={{ px: 0 }}>
-      <Box position="relative">
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-              lg: 'repeat(4, 1fr)',
-            },
-            gap: 1,
-            mt: 4,
-            mb: 4,
-          }}
-          ref={sliderRef}
-          className="keen-slider"
-        >
+      {/* <Box position="relative"> */}
+        {/* <Box */}
+          {/* displayedData */}
+            <Carousel
+                  responsive={responsive}
+                  swipeable={true}
+                  draggable={true}
+                  infinite={true}
+                  autoPlay={true}
+                  autoPlaySpeed={4500}
+                  keyBoardControl={true}
+                  transitionDuration={500}
+                  containerClass="carousel-container"
+                  itemClass="carousel-item-padding"
+                >
           {filteredDataToColiving?.map((property) => {
             const hasDiscount = property.discounts.length > 0;
             return (
@@ -101,7 +115,7 @@ export default function PropertyGrid({ data, isLoading, isFetching }) {
                   '&:hover': { boxShadow: 3 },
                   m: 1, // Tambahkan margin agar tidak menempel
                 }}
-                className="keen-slider__slide"
+               
               >
                 <Link
                   to={`/property/${property.slug}`}
@@ -197,165 +211,7 @@ export default function PropertyGrid({ data, isLoading, isFetching }) {
               </Box>
             );
           })}
-        </Box>
-        <Button
-          onClick={() => instanceRef.current?.prev()}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: 0,
-            transform: 'translateY(-50%)',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
-            borderRadius: '50%',
-            minWidth: '40px',
-            height: '40px',
-          }}
-        >
-          {'<'}
-        </Button>
-        <Button
-          onClick={() => instanceRef.current?.next()}
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            right: 0,
-            transform: 'translateY(-50%)',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            color: 'white',
-            borderRadius: '50%',
-            minWidth: '40px',
-            height: '40px',
-          }}
-        >
-          {'>'}
-        </Button>
-      </Box>
+          </Carousel>
     </Container>
-  );
-}
-
-function ImageSlider({ images }) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
-    slides: { perView: 1 },
-    mode: 'free-snap',
-    slideChanged(s) {
-      setCurrentSlide(s.track.details.rel);
-    },
-  });
-
-  const prevSlide = () => instanceRef.current?.prev();
-  const nextSlide = () => instanceRef.current?.next();
-
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        height: 200,
-        backgroundColor: 'grey.500',
-        '&:hover .slider-arrow': { opacity: 1 },
-      }}
-    >
-      <Box ref={sliderRef} className="keen-slider">
-        {images.length > 0 ? (
-          images.map((image, index) => (
-            <Box sx={{ borderRadius: 1 }} key={index} className="keen-slider__slide">
-              <img
-                src={image.file_url}
-                alt={`Property Image ${index}`}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
-            </Box>
-          ))
-        ) : (
-          <Box
-            className="keen-slider__slide"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              backgroundColor: 'gray',
-            }}
-          >
-            <Typography variant="caption" color="white">
-              No Image Available
-            </Typography>
-          </Box>
-        )}
-      </Box>
-
-      {images.length > 1 && (
-        <>
-          <Box
-            className="slider-arrow"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: 10,
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'black',
-              p: 1,
-              borderRadius: '20%',
-              opacity: 0,
-              transition: 'opacity 0.3s',
-            }}
-            onClick={prevSlide}
-          >
-            {'<'}
-          </Box>
-          <Box
-            className="slider-arrow"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              right: 10,
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'black',
-              p: 1,
-              borderRadius: '20%',
-              opacity: 0,
-              transition: 'opacity 0.3s',
-            }}
-            onClick={nextSlide}
-          >
-            {'>'}
-          </Box>
-        </>
-      )}
-
-      {images.length > 1 && (
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 10,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 1,
-          }}
-        >
-          {images.map((_, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: index === currentSlide ? 'black' : 'white',
-                opacity: index === currentSlide ? 1 : 0.5,
-              }}
-            />
-          ))}
-        </Box>
-      )}
-    </Box>
   );
 }

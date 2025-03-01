@@ -14,14 +14,17 @@ import { useGetBookingDetail } from 'src/hooks/users/useGetBookingDetail';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import FacilityModal from '../modal-facility';
+// import FacilityModal from '../modal-facility';
+import { useFetchBookingDetailProperty } from 'src/hooks/booking_admin';
 import { fDate } from 'src/utils/format-time';
+import FacilityModal from '../../modal-facility';
 import { Stack } from '@mui/material';
-// import FacilityModal from 'src/components/FacilityModal';
 
-export default function HistoryBookingDetail() {
+
+export default function HistoryBookingDetailAdmin() {
   const { bookingCode } = useParams();
-  const { data: booking, isLoading, isFetching, error } = useGetBookingDetail(bookingCode);
+  const { data: booking, isLoading, isFetching, error } = useFetchBookingDetailProperty(bookingCode);
+  // clg
   const [open, setOpen] = useState(false);
 console.log(booking)
   if (isLoading || isFetching) {
@@ -50,7 +53,7 @@ console.log(booking)
         </Typography>
         <CustomBreadcrumbs
           links={[
-            { name: 'Riwayat Booking', href: `/history/booking` },
+            { name: 'Management Booking', href: `/booked-property` },
             { name: 'Booking Detail', href: '' },
           ]}
           sx={{ mb: 3 }}
@@ -62,14 +65,14 @@ console.log(booking)
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Avatar
-              src={booking.user.photo_profile}
-              alt={booking.user.name}
+              src={booking.user_booking.user.photo_profile}
+              alt={booking.user_booking.user.name}
               sx={{ width: 56, height: 56, mr: 2 }}
             />
             <Box>
-              <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user.name}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Nomor Telepon: {booking.user.phone_number}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Email: {booking.user.email}</Typography>
+              <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user_booking.user.name}</Typography>
+              <Typography sx={{ color: 'grey.800' }}>Nomor Telepon: {booking.user_booking.user.phone_number}</Typography>
+              <Typography sx={{ color: 'grey.800' }}>Email: {booking.user_booking.user.email}</Typography>
             </Box>
           </Box>
           <Divider sx={{ my: 2 }} />
@@ -78,13 +81,13 @@ console.log(booking)
           <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
             <CalendarTodayIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
             <Typography sx={{ fontSize: '0.875rem' }}>
-              {fDate(booking.check_in)} - {fDate(booking.check_out)}
+              {fDate(booking.user_booking.check_in)} - {fDate(booking.user_booking.check_out)}
             </Typography>
           </Box>
 
-          <Typography sx={{ fontWeight: 'medium' }}>{booking.property_room.name}</Typography>
+          <Typography sx={{ fontWeight: 'medium' }}>{booking.user_booking.property_room.name}</Typography>
           <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
-            {booking.number_of_guests} Orang 
+            {booking?.user_booking?.number_of_guests} Orang 
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -107,14 +110,14 @@ console.log(booking)
             isOpen={open}
             title="Fasilitas Bersama"
             onClose={() => setOpen(false)}
-            facilities={booking.property.facilities || []}
+            facilities={booking.user_booking.property.facilities || []}
           />
 
               <Link 
-               to={`/property/${booking.property.slug}`}
+               to={`/property/${booking.user_booking.property.slug}`}
               style={{ textDecoration: 'none', display: 'block' }}>
-                <Stack direction="row" spacing={2}>
-            {booking.property.files.slice(0,3).map((file, index) => (
+                 <Stack direction="row" spacing={2}>
+            {booking.user_booking.property.files.map((file, index) => (
               <img
                 key={index}
                 src={file.file_url}
@@ -128,15 +131,15 @@ console.log(booking)
           <Box
             sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
           >
-            
-            <Typography variant='subtitle1' sx={{color : 'black'}}>{booking.property.name}</Typography>
+           
+            <Typography variant='subtitle1' sx={{color : 'black'}}>{booking.user_booking.property.name}</Typography>
             <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
           </Box>
           </Link>
-          <Typography>{booking.property.address}</Typography>
+          <Typography>{booking.user_booking.property.address}</Typography>
           <Divider sx={{ my: 2 }} />
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-            Rp{booking.total_price.toLocaleString()} /bulan
+            Rp{booking.user_booking.total_price.toLocaleString()} /bulan
           </Typography>
         </Box>
       </Container>

@@ -63,4 +63,9 @@ export const navData = [
     path: '/room-facility',
     icon: Anothericon('ic-glass-users'),
   },
+  {
+    title: 'Property TerBooking',
+    path: '/booked-property',
+    icon: Anothericon('ic-glass-users'),
+  },
 ];

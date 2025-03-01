@@ -49,8 +49,10 @@ const Image = forwardRef(
       },
     };
 
+    // console.log(src)
     const content = (
       <Box
+      // component='image'
         alt={alt}
         src={src}
         sx={{

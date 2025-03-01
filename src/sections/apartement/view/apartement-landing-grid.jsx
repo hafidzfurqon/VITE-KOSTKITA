@@ -82,113 +82,6 @@ export default function ApartementGrid() {
   }
 
   return (
-    // <Container>
-    //   <Box
-    //     sx={{
-    //       display: 'grid',
-    //       gridTemplateColumns: {
-    //         xs: '1fr',
-    //         sm: 'repeat(2, 1fr)',
-    //         md: 'repeat(3, 1fr)',
-    //         lg: 'repeat(4, 1fr)',
-    //       },
-    //       gap: 3,
-    //       mt: 4,
-    //       mb: 4,
-    //     }}
-    //   >
-    //   <Carousel responsive={responsive} swipeable={true} draggable={true} infinite={true} autoPlay={true} autoPlaySpeed={4500} transitionDuration={500}>
-    //     {filteredDataToApartement?.map((apartement) => {
-    //       const hasDiscount = apartement.discounts.length > 0;
-    //       return (
-    //         <Box
-    //           key={apartement.id}
-    //           sx={{
-    //             backgroundColor: 'white',
-    //             borderRadius: 2,
-    //             overflow: 'hidden',
-    //             boxShadow: 1,
-    //             '&:hover': { boxShadow: 3 },
-    //           }}
-    //         >
-    //           <ImageSlider images={apartement.files} />
-    //           <Link
-    //             to={`/apartement/${apartement.slug}`}
-    //             style={{ textDecoration: 'none', display: 'block' }}
-    //           >
-    //             <Box sx={{ p: 2 }}>
-    //               <Chip
-    //                 icon={getApartementIcon(apartement?.type?.name)}
-    //                 label={apartement.type.name}
-    //                 sx={{ mb: 1, fontWeight: 600 }}
-    //               />
-    //               <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-    //                 {apartement.name}
-    //               </Typography>
-    //               <Box sx={{ color: 'gray' }}>
-    //                 <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
-    //                   {apartement.address}, {apartement.city.name}
-    //                 </Typography>
-    //               </Box>
-    //               {apartement.discount_prifile_urlce ? (
-    //                 <Stack direction="row" alignItems="center" spacing={1}>
-    //                   <Typography
-    //                     variant="body2"
-    //                     sx={{ color: 'gray', textDecoration: 'line-through' }}
-    //                   >
-    //                     {formatCurrency(apartement.start_price)}
-    //                   </Typography>
-    //                   <Chip label="-12%" color="error" size="small" />
-    //                 </Stack>
-    //               ) : null}
-    //               {/* {apartement.} */}
-
-    //               {hasDiscount ? (
-    //                 <>
-    //                   <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-    //                     <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
-    //                     <Typography
-    //                       variant="subtitle1"
-    //                       sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
-    //                     >
-    //                       {formatCurrency(apartement.start_price)}
-    //                     </Typography>
-    //                   </Box>
-    //                   <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-    //                     <Box
-    //                       sx={{
-    //                         backgroundColor: 'red',
-    //                         color: 'white',
-    //                         fontSize: '12px',
-    //                         borderRadius: '10px',
-    //                         px: '5px',
-    //                       }}
-    //                     >
-    //                       -{apartement.discounts.map((discount) => discount.discount_value)}%
-    //                     </Box>
-    //                     <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-    //                       {formatCurrency(
-    //                         apartement.discounts.map((discount) => discount.price_after_discount)
-    //                       )}
-    //                     </Typography>
-    //                   </Box>
-    //                 </>
-    //               ) : (
-    //                 <Typography
-    //                   variant="subtitle1"
-    //                   sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-    //                 >
-    //                   {formatCurrency(apartement.start_price)} / bulan
-    //                 </Typography>
-    //               )}
-    //             </Box>
-    //           </Link>
-    //         </Box>
-    //       );
-    //     })}
-    //     </Carousel>
-    //   </Box>
-    // </Container>
     <Container maxWidth="100%" sx={{ px: 0 }}>
       <Carousel
         responsive={responsive}
@@ -211,8 +104,6 @@ export default function ApartementGrid() {
                 backgroundColor: 'white',
                 borderRadius: 2,
                 overflow: 'hidden',
-                boxShadow: 1,
-                width: '250px', // Pastikan lebar tetap konsisten
                 flex: '0 0 auto',
                 '&:hover': { boxShadow: 3 },
                 mx: 1, // Menjaga jarak antar kartu

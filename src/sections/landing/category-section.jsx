@@ -1,49 +1,36 @@
+// { value: 'kost&colving', label: 'Kost Coliving' },
+// { value: 'apartment', label: 'Apartement' },
+
 import { useCallback, useState } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { PostSort } from '../blog/post-sort';
 
 export default function CategorySection() {
-  // State untuk menyimpan kategori yang dipilih
   const [selectedCategory, setSelectedCategory] = useState('kost');
-  const [sortBy, setSortBy] = useState('latest');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('Populer'); // Default ke "Populer"
+  const [sortBy, setSortBy] = useState('coliving');
 
   const handleSort = useCallback((newSort) => {
     setSortBy(newSort);
   }, []);
 
-  // Data kategori berdasarkan pilihan
   const categories = {
     kost: [
-      'Populer',
-      'Terbaru',
-      'Bandung',
-      'Surabaya',
-      'Dekat MRT',
-      'Dekat KRL',
-      'Dekat LRT',
-      'Jakarta Selatan',
-      'Jakarta Barat',
-      'Jakarta Utara',
-      'Depok',
-      'Bekasi',
-      'Tangsel',
-      'Cikarang',
+      { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
+      { name: 'Terbaru', icon: <AutoAwesomeIcon sx={{ color: 'black' }} /> },
+      { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
     ],
     apartemen: [
-      'Jakarta Selatan',
-      'Jakarta Barat',
-      'Jakarta Utara',
-      'Depok',
-      'Bekasi',
-      'Tangsel',
-      'Cikarang',
+      { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
     ],
   };
 
   return (
     <>
-      {/* Pilihan Kost Coliving dan Apartemen */}
       <Box
         sx={{
           display: 'flex',
@@ -62,24 +49,20 @@ export default function CategorySection() {
           sortBy={sortBy}
           onSort={handleSort}
           options={[
-            { value: 'latest', label: 'Kost Coliving' },
-            { value: 'oldest', label: 'Apartement' },
+            { value: 'coliving', label: 'Kost Coliving' },
+            { value: 'apartment', label: 'Apartement' },
           ]}
         />
       </Box>
 
-      {/* Container kategori dengan scroll horizontal */}
       <Box
         sx={{
           display: 'flex',
           overflowX: 'auto',
-          // overflow: 'hidden',
           whiteSpace: 'nowrap',
           gap: 7,
-          pb: 1, // Agar scrollbar tidak menutupi konten
-          '&::-webkit-scrollbar': {
-            display: 'none', // Sembunyikan scrollbar
-          },
+          pb: 1,
+          '&::-webkit-scrollbar': { display: 'none' },
         }}
         onWheel={(e) => {
           const container = e.currentTarget;
@@ -87,7 +70,11 @@ export default function CategorySection() {
         }}
       >
         {categories[selectedCategory].map((category) => (
-          <Box key={category} sx={{ textAlign: 'center', flex: '0 0 auto' }}>
+          <Box
+            key={category.name}
+            sx={{ textAlign: 'center', flex: '0 0 auto', cursor: 'pointer', }}
+            onClick={() => setSelectedSubCategory(category.name)}
+          >
             <IconButton
               sx={{
                 backgroundColor: '#FFD700',
@@ -97,10 +84,20 @@ export default function CategorySection() {
                 '&:hover': { backgroundColor: '#FFC700' },
               }}
             >
-              <HomeIcon sx={{ color: 'black' }} />
+              {category.icon} 
             </IconButton>
-            <Typography variant="caption" display="block" sx={{ color: 'black' }}>
-              {category}
+            <Typography
+              variant="caption"
+              display="block"
+              sx={{
+                color: 'black',
+                fontWeight: selectedSubCategory === category.name ? 'bold' : 'normal',
+                borderBottom: selectedSubCategory === category.name ? '3px solid black' : 'none',
+                // display: 'inline-block',
+                paddingBottom: 1,
+              }}
+            >
+              {category.name}
             </Typography>
           </Box>
         ))}
@@ -108,3 +105,4 @@ export default function CategorySection() {
     </>
   );
 }
+

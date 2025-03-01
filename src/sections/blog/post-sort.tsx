@@ -14,10 +14,11 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 type PostSortProps = ButtonProps & {
-  sortBy: string;
-  onSort: (newSort: string) => void;
-  options: { value: string; label: string }[];
+  sortBy: string; // ❌ Harusnya bisa menerima array juga
+  onSort: (newSort: string) => void; // ❌ Ini juga harus bisa menerima array
+  options: { value: string; label: string }[]; // ❌ Ini juga harus bisa array
 };
+
 
 export function PostSort({ options, sortBy, onSort, sx, ...other }: PostSortProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
@@ -50,7 +51,7 @@ export function PostSort({ options, sortBy, onSort, sx, ...other }: PostSortProp
         }}
         {...other}
       >
-        {options.find((option) => option.value === sortBy)?.label}
+      {options.find((option) => JSON.stringify(option.value) === JSON.stringify(sortBy))?.label}
       </Button>
 
       <Popover

@@ -1,11 +1,10 @@
-import { Box, Fab, Typography, Container, Button } from '@mui/material';
+import { Box, Fab, Typography, Container, Button, IconButton } from '@mui/material';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { Iconify } from 'src/components/iconify';
 import Header from './header';
 import HeroContent from './hero-content';
 import HeroSection from './hero-section';
-import CategorySection from './category-section';
 import PropertyGrid from './property-grid';
 import Footer from './footer';
 import PromoPage from './promo-page';
@@ -16,12 +15,19 @@ import { Link, useNavigate } from 'react-router-dom';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import PropertyBaseLocation from './property-location/propety-base-location';
 import { Helmet } from 'react-helmet-async';
-
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
+import { PostSort } from '../blog/post-sort';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { fDate } from 'src/utils/format-time';
 
 export function LandingPage() {
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState('kost');
+  const [selectedSubCategory, setSelectedSubCategory] = useState('Populer'); // Default ke "Populer"
+  const [sortBy, setSortBy] = useState(['coliving', 'kost']);
   const { data, isLoading, isFetching } = useListProperty();
   const [searchParams, setSearchParams] = useState({
     query: '',
@@ -58,6 +64,19 @@ export function LandingPage() {
       })
     : data;
 
+      const handleSort = useCallback((newSort) => {
+        setSortBy(newSort);
+      }, []);
+      const categories = {
+        kost: [
+          { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
+          { name: 'Terbaru', icon: <AutoAwesomeIcon sx={{ color: 'black' }} /> },
+          { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
+        ],
+        apartemen: [
+          { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
+        ],
+      };
   const WhatsAppButton = (
     <Box
       sx={{
@@ -132,8 +151,78 @@ export function LandingPage() {
 
         <SimpleBar style={{ maxHeight: '100%', width: '100%' }}>
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
-            <CategorySection />
+          <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', md: 'row' },
+          justifyContent: 'space-between',
+          mb: { xs: 5, md: 10 },
+          flexWrap: 'wrap',
+          alignItems: { xs: 'left', md: 'center' },
+          gap: 3,
+        }}
+      >
+        <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+          Property terbaru dari kami
+        </Typography>
+        <PostSort
+  sortBy={sortBy}
+  onSort={handleSort}
+  options={[
+    { value: ['coliving', 'kost'], label: 'Kost Coliving' }, // ✅ Array untuk multiple filter
+    { value: ['apartment'], label: 'Apartement' },
+  ]}
+/>
 
+      </Box>
+
+      <Box
+        sx={{
+          display: 'flex',
+          overflowX: 'auto',
+          whiteSpace: 'nowrap',
+          gap: 7,
+          pb: 1,
+          '&::-webkit-scrollbar': { display: 'none' },
+        }}
+        onWheel={(e) => {
+          const container = e.currentTarget;
+          container.scrollLeft += e.deltaY;
+        }}
+      >
+        {categories[selectedCategory].map((category) => (
+          <Box
+            key={category.name}
+            sx={{ textAlign: 'center', flex: '0 0 auto', cursor: 'pointer', }}
+            onClick={() => setSelectedSubCategory(category.name)}
+          >
+            <IconButton
+              sx={{
+                backgroundColor: '#FFD700',
+                width: 48,
+                height: 48,
+                mb: 1,
+                '&:hover': { backgroundColor: '#FFC700' },
+              }}
+            >
+              {category.icon} 
+            </IconButton>
+            <Typography
+              variant="caption"
+              display="block"
+              sx={{
+                color: 'black',
+                fontWeight: selectedSubCategory === category.name ? 'bold' : 'normal',
+                borderBottom: selectedSubCategory === category.name ? '3px solid black' : 'none',
+                // display: 'inline-block',
+                paddingBottom: 1,
+              }}
+            >
+              {category.name}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
             <Box
               sx={{
                 bgcolor: '#FAF9F6',
@@ -143,7 +232,7 @@ export function LandingPage() {
                 border: { md: 'solid black 1px' },
               }}
             >
-              <PropertyGrid data={filteredData} isLoading={isLoading} isFetching={isFetching} />
+              <PropertyGrid data={filteredData} isLoading={isLoading} isFetching={isFetching} sortCardBy={sortBy} />
 
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <Button
@@ -157,7 +246,7 @@ export function LandingPage() {
                     display: 'flex',
                     alignItems: 'center',
                   }}
-                  onClick={() => navigate('/coliving')}
+                  onClick={() => sortBy[0] === 'apartment' ?  navigate('/apartment') : navigate('/coliving')}
                 >
                   Lihat Semua
                 </Button>

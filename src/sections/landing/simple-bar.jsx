@@ -21,16 +21,7 @@ export default function SimpleBar() {
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(11, 1fr)', gap: 2 }}>
           {[
             'Populer',
-            'Terbaru',
-            'Bandung',
-            'Surabaya',
-            'Dekat MRT',
-            'Dekat KRL',
-            'Dekat LRT',
-            'Tomang',
-            'BSD City',
-            'UPH Karawaci',
-            'Mewah',
+            // 'Terbaru',
           ].map((category) => (
             <Box key={category} sx={{ textAlign: 'center' }}>
               <IconButton

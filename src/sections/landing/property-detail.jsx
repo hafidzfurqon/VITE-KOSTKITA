@@ -28,6 +28,7 @@ import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
 import PropertyRoom from './property-room';
 import FacilityModal from './modal-facility';
+import { useAppContext } from 'src/context/user-context';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -36,7 +37,8 @@ export default function PropertyDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
 
@@ -357,11 +359,13 @@ export default function PropertyDetail() {
                   <Button
                     variant="outlined"
                     color="primary"
+                    fullWidth={data.rooms.length === 0}
                     startIcon={<WhatsApp />}
                     href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     sx={{
                       color: '#25D366',
+                      
                       height: 48,
                       minWidth: '150px',
                       flexGrow: { xs: 1, sm: 0 },
@@ -377,7 +381,7 @@ export default function PropertyDetail() {
                     color="primary"
                     fullWidth
                     sx={{ mt: 2 }}
-                    onClick={() => navigate(`/booking/${data.slug}`)}
+                    onClick={() => user.length === 0 ? navigate(`/sign-in`) : navigate(`/booking/${data.slug}`)}
                   >
                     Booking Sekarang
                   </Button>
@@ -388,18 +392,15 @@ export default function PropertyDetail() {
 
           {/* Description */}
           {data.description && (
-            <Card sx={{ mb: 4 }}>
-              <CardContent>
-                <Typography variant="subtitle1">Description</Typography>
+            // <Card sx={{ mb: 4 }}>
+            //   <CardContent>
+                <>
+                <Typography variant="subtitle1">Description :</Typography>
                 <Typography
                   color="text.secondary"
                   dangerouslySetInnerHTML={{ __html: data.description }}
                 />
-                {/* <Typography color="text.secondary">
-                  <span dangerouslySetInnerHTML={{ __html: data.description }} />
-                </Typography> */}
-              </CardContent>
-            </Card>
+                </>
           )}
           {data.facilities.length > 0 && (
             <>

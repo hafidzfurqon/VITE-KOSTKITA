@@ -11,15 +11,27 @@ import { AnalyticsCurrentVisits } from '../analytics-current-visits';
 import { AnalyticsOrderTimeline } from '../analytics-order-timeline';
 import { AnalyticsWebsiteVisits } from '../analytics-website-visits';
 import { AnalyticsWidgetSummary } from '../analytics-widget-summary';
-import { AnalyticsTrafficBySite } from '../analytics-traffic-by-site';
-import { AnalyticsCurrentSubject } from '../analytics-current-subject';
-import { AnalyticsConversionRates } from '../analytics-conversion-rates';
+import { useFetchAllApartement } from 'src/hooks/apartement';
+import Loading from 'src/components/loading/loading';
+import { useFetchAllUser } from 'src/hooks/users/useFetchAllUser';
+import { useFetchAllBooking } from 'src/hooks/booking_admin';
+import { useFetchPromo } from 'src/hooks/promo';
 
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const {user} = authUser;
+  const {data, isLoading, isFetching} = useFetchAllApartement();
+  const {data : DataUser, isLoading : LoadingUser, isFetching : FecthingUser} = useFetchAllUser();
+  const {data : DataBooking, isLoading : LoadingBooking, isFetching : FecthingBooking} = useFetchAllBooking();
+  const {data : DataPromo, isLoading : LoadingPromo, isFetching : FecthingPromo} = useFetchPromo();
+
+  if (
+    isLoading || isFetching || LoadingUser || FecthingUser || LoadingBooking || FecthingBooking || LoadingPromo || FecthingPromo
+  ) {
+    return <Loading />;
+  }
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -30,8 +42,8 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Property"
-            percent={2.6}
-            total={2}
+            // percent={2.6}
+            total={data?.length}
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-bag.svg" />}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
@@ -43,8 +55,8 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Pengguna"
-            percent={-0.1}
-            total={1352831}
+            // percent={-0.1}
+            total={DataUser?.data?.length}
             color="secondary"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
             chart={{
@@ -57,8 +69,8 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
-            percent={2.8}
-            total={1723315}
+            // percent={2.8}
+            total={DataBooking?.length}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{
@@ -71,8 +83,8 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Promo"
-            percent={3.6}
-            total={234}
+            // percent={3.6}
+            total={DataPromo?.length}
             color="error"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
             chart={{

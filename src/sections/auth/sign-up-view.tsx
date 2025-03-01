@@ -28,15 +28,19 @@ export function SignUpView() {
       router.push('/sign-in')
       enqueueSnackbar('Pendaftaran Berhasil', { variant: 'success' });
     },
-     onError : (err : any) => {
-      if(err.errors.phone_number) {
-        enqueueSnackbar(err.errors.phone_number[0], { variant: 'error' });
+    onError: (err: any) => {
+      
+    
+      const errors = err.response?.data?.errors; // Ambil bagian errors dari response
+    
+      if (errors?.phone_number) {
+        enqueueSnackbar('No Telepon Wajib Diisi', { variant: 'error' });
       }
-      if(err.errors.email) {
-        enqueueSnackbar(err.errors.email[0], { variant: 'error' });
+      if (errors?.email) {
+        enqueueSnackbar('Email Wajib Diisi', { variant: 'error' });
       }
-      if(err.errors.password) {
-        enqueueSnackbar(err.errors.password[0], { variant: 'error' });
+      if (errors?.password) {
+        enqueueSnackbar(errors.password[0], { variant: 'error' });
       }
     }})
     const Onsubmit = (data : any) => {

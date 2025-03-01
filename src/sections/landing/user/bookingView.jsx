@@ -173,6 +173,7 @@ export default function BookingView() {
               disabled={isPending}
               sx={{ mt: 3 }}
             >
+
               {isPending ? <CircularProgress size={24} /> : 'Booking Sekarang'}
             </Button>
           </form>

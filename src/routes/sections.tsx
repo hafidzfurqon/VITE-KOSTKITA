@@ -29,6 +29,7 @@ import ColivingPage from 'src/sections/landing/coliving/coliving-page';
 import PropertyLocationDetail from 'src/sections/landing/property-location/property-location-detail';
 import ApartmentList from 'src/sections/landing/apartement/apartemen-page-list';
 import HistoryBookingDetail from 'src/sections/landing/user/historyBookingDetail';
+import HistoryBookingDetailAdmin from 'src/sections/landing/user/admin/historyBookingDetailAdmin';
 
 // ----------------------------------------------------------------------
 
@@ -44,6 +45,7 @@ export const ApartmenetPage = lazy(() => import('src/pages/apartement'));
 export const PropertyRoomPage = lazy(() => import('src/pages/property_room'));
 export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 export const RoomFasilitasPage = lazy(() => import('src/pages/room-fasilitas'));
+export const BookedPropertyPage = lazy(() => import('src/pages/booked-property'));
 
 // ----------------------------------------------------------------------
 
@@ -74,6 +76,10 @@ export function Router() {
         {
           path: 'dashboard',
           element: <HomePage />,
+        },
+        {
+          path: 'booked-property/booking/detail/admin/:bookingCode',
+          element: <HistoryBookingDetailAdmin />,
         },
         {
           path: 'user',
@@ -158,6 +164,19 @@ export function Router() {
             },
             {
               path: 'edit/:id',
+              element: <PropertyEdit />,
+            },
+          ],
+        },
+        {
+          path: 'booked-property',
+          children: [
+            {
+              path: '',
+              element: <BookedPropertyPage />,
+            },
+            {
+              path: 'detail/:id',
               element: <PropertyEdit />,
             },
           ],

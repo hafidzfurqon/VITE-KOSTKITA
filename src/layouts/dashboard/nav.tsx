@@ -126,7 +126,7 @@ const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_pr
 
 const filteredNavData = isOwnerProperty
   ? data.filter((item) =>
-      ['Dashboard', 'Property Tipe', 'Property', 'Fasilitas'].includes(item.title)
+      ['Dashboard', 'Property', 'Fasilitas'].includes(item.title)
     )
   : data;
 
