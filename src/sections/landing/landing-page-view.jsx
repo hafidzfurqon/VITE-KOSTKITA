@@ -63,16 +63,17 @@ export function LandingPage() {
       })
     : data;
 
-      const handleSort = useCallback((newSort) => {
-        setSortBy(newSort);
-      }, []);
-      const categories = {
-        kost: [
-          { name: 'Terbaru', icon: <AutoAwesomeIcon sx={{ color: 'black' }} /> },
-          { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
-          { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
-        ],
-      };
+  const handleSort = useCallback((newSort) => {
+    setSortBy(newSort);
+  }, []);
+  const categories = {
+    kost: [
+      { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
+      { name: 'Terbaru', icon: <AutoAwesomeIcon sx={{ color: 'black' }} /> },
+      { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
+    ],
+    apartemen: [{ name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> }],
+  };
   const WhatsAppButton = (
     <Box
       sx={{
@@ -147,88 +148,95 @@ export function LandingPage() {
 
         <SimpleBar style={{ maxHeight: '100%', width: '100%' }}>
           <Box sx={{ maxWidth: '1200px', mx: 'auto', mt: 4, px: 4, pb: 4 }}>
-          <Box
-        sx={{
-          display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          justifyContent: 'space-between',
-          mb: { xs: 5, md: 10 },
-          flexWrap: 'wrap',
-          alignItems: { xs: 'left', md: 'center' },
-          gap: 3,
-        }}
-      >
-        <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
-          Property terbaru dari kami
-        </Typography>
-        <PostSort
-  sortBy={sortBy}
-  onSort={handleSort}
-  options={[
-    { value: ['coliving', 'kost'], label: 'Kost Coliving' }, // ✅ Array untuk multiple filter
-    { value: ['apartment'], label: 'Apartement' },
-  ]}
-/>
-
-      </Box>
-
-      <Box
-        sx={{
-          display: 'flex',
-          overflowX: 'auto',
-          whiteSpace: 'nowrap',
-          gap: 7,
-          pb: 1,
-          '&::-webkit-scrollbar': { display: 'none' },
-        }}
-        onWheel={(e) => {
-          const container = e.currentTarget;
-          container.scrollLeft += e.deltaY;
-        }}
-      >
-        {categories[selectedCategory].map((category) => (
-          <Box
-            key={category.name}
-            sx={{ textAlign: 'center', flex: '0 0 auto', cursor: 'pointer', }}
-            onClick={() => setSelectedSubCategory(category.name)}
-          >
-            <IconButton
-              sx={{
-                backgroundColor: '#FFD700',
-                width: 48,
-                height: 48,
-                mb: 1,
-                '&:hover': { backgroundColor: '#FFC700' },
-              }}
-            >
-              {category.icon} 
-            </IconButton>
-            <Typography
-              variant="caption"
-              display="block"
-              sx={{
-                color: 'black',
-                fontWeight: selectedSubCategory === category.name ? 'bold' : 'normal',
-                borderBottom: selectedSubCategory === category.name ? '3px solid black' : 'none',
-                // display: 'inline-block',
-                paddingBottom: 1,
-              }}
-            >
-              {category.name}
-            </Typography>
-          </Box>
-        ))}
-      </Box>
             <Box
               sx={{
-                bgcolor: '#FAF9F6',
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                justifyContent: 'space-between',
+                mb: { xs: 5, md: 10 },
+                flexWrap: 'wrap',
+                alignItems: { xs: 'left', md: 'center' },
+                gap: 3,
+              }}
+            >
+              <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
+                Property terbaru dari kami
+              </Typography>
+              <PostSort
+                sortBy={sortBy}
+                onSort={handleSort}
+                options={[
+                  { value: ['coliving', 'kost'], label: 'Kost Coliving' }, // ✅ Array untuk multiple filter
+                  { value: ['apartment'], label: 'Apartement' },
+                ]}
+              />
+            </Box>
+
+            <Box
+              sx={{
+                display: 'flex',
+                overflowX: 'auto',
+                whiteSpace: 'nowrap',
+                gap: 7,
+                pb: 1,
+                '&::-webkit-scrollbar': { display: 'none' },
+              }}
+              onWheel={(e) => {
+                const container = e.currentTarget;
+                container.scrollLeft += e.deltaY;
+              }}
+            >
+              {categories[selectedCategory].map((category) => (
+                <Box
+                  key={category.name}
+                  sx={{ textAlign: 'center', flex: '0 0 auto', cursor: 'pointer' }}
+                  onClick={() => setSelectedSubCategory(category.name)}
+                >
+                  <IconButton
+                    sx={{
+                      backgroundColor: '#FFD700',
+                      width: 48,
+                      height: 48,
+                      mb: 1,
+                      '&:hover': { backgroundColor: '#FFC700' },
+                    }}
+                  >
+                    {category.icon}
+                  </IconButton>
+                  <Typography
+                    variant="caption"
+                    display="block"
+                    sx={{
+                      color: 'black',
+                      fontWeight: selectedSubCategory === category.name ? 'bold' : 'normal',
+                      borderBottom:
+                        selectedSubCategory === category.name ? '3px solid black' : 'none',
+                      // display: 'inline-block',
+                      paddingBottom: 1,
+                    }}
+                  >
+                    {category.name}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+            <Box
+              sx={{
+                bgcolor: '#F0EFEA',
                 pb: 8,
                 borderRadius: '16px',
                 mt: 5,
-                border: { md: 'solid black 1px' },
+                // border: { md: 'solid rgba(255, 255, 255, 0.6) 1px' },
+                border: { md: 'solid white 1px ' },
+                boxShadow: { md: '0 0 5px rgba(255, 255, 255, 0.5)' },
               }}
             >
-              <PropertyGrid data={filteredData} isLoading={isLoading} isFetching={isFetching} sortCardBy={sortBy} />
+              <PropertyGrid
+                data={filteredData}
+                isLoading={isLoading}
+                isFetching={isFetching}
+                sortCardBy={sortBy}
+              />
 
               <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
                 <Button
@@ -242,7 +250,9 @@ export function LandingPage() {
                     display: 'flex',
                     alignItems: 'center',
                   }}
-                  onClick={() => sortBy[0] === 'apartment' ?  navigate('/apartment') : navigate('/coliving')}
+                  onClick={() =>
+                    sortBy[0] === 'apartment' ? navigate('/apartment') : navigate('/coliving')
+                  }
                 >
                   Lihat Semua
                 </Button>
