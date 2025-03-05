@@ -34,12 +34,14 @@ import { Bookmark } from '@mui/icons-material';
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  // console.log(data)
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [open, setOpen] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
+  const isOwnerId = user?.id
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
 
@@ -377,7 +379,7 @@ export default function PropertyDetail() {
                       flexGrow: { xs: 1, sm: 0 },
                     }}
                   >
-                    WhatsApp
+                    Chat KostKita
                   </Button>
                 </Box>
 
@@ -387,9 +389,10 @@ export default function PropertyDetail() {
                     color="primary"
                     fullWidth
                     sx={{ mt: 2 }}
+                    disabled={isOwnerId === data.created_by.id}
                     onClick={() => user.length === 0 ? navigate(`/sign-in`) : navigate(`/booking/${data.slug}`)}
                   >
-                    Booking Sekarang
+                    {isOwnerId === data.created_by.id ? 'Property ini milik Anda' : 'Booking Sekarang'}
                   </Button>
                 )}
               </Card>
@@ -479,7 +482,7 @@ export default function PropertyDetail() {
         <Divider />
         <Box id="room">
           <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
-          <PropertyRoom rooms={data.rooms} data={data} />
+          {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
       </Container>
     </>

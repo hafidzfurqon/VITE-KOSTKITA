@@ -6,6 +6,7 @@ import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
 import { fPercent } from 'src/utils/format-number';
+import { fDate } from 'src/utils/format-time';
 
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
@@ -13,7 +14,6 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   // const numberSortsortCardBy[0] === 'apartment' ?
 
 
-  // const router = useRouter();
  
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
@@ -86,7 +86,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   }
 
   return (
-    <Container maxWidth="100%" sx={{ px: 0 }}>
+    <Container maxWidth="100%" sx={{ px: 0, mt: 3 }}>
       {/* <Box position="relative"> */}
         {/* <Box */}
           {/* displayedData */}
@@ -148,7 +148,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                     </Typography>
                     <Box sx={{ color: 'gray' }}>
                       <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
-                        {property.address}, {property.city.name}
+                         {property.city.name}, {property.sector.name}
                       </Typography>
                     </Box>
                     {property.discount_profile_price ? (

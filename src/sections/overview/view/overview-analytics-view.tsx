@@ -16,19 +16,31 @@ import Loading from 'src/components/loading/loading';
 import { useFetchAllUser } from 'src/hooks/users/useFetchAllUser';
 import { useFetchAllBooking } from 'src/hooks/booking_admin';
 import { useFetchPromo } from 'src/hooks/promo';
+import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
+import { useFetchAllBookingOwner } from 'src/hooks/owner/property/statistic/useFetchStatisticPropertyOwner';
+import { useQuery } from '@tanstack/react-query';
+import axiosInstance from 'src/utils/axios';
 
 // ----------------------------------------------------------------------
 
 export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const {user} = authUser;
-  const {data, isLoading, isFetching} = useFetchAllApartement();
-  const {data : DataUser, isLoading : LoadingUser, isFetching : FecthingUser} = useFetchAllUser();
-  const {data : DataBooking, isLoading : LoadingBooking, isFetching : FecthingBooking} = useFetchAllBooking();
-  const {data : DataPromo, isLoading : LoadingPromo, isFetching : FecthingPromo} = useFetchPromo();
-
+  const isAdmin = user?.roles?.some((role : {name : string}) => role.name === "admin");
+  const {data : total_booking, isLoading : isload, isFetching : isFetch} = useQuery({
+    queryKey : ['get.all_booking'],
+    queryFn : async () => {
+      const res = await axiosInstance.get('/api/admin/statistic/property/bookings')
+      return res.data.total_bookings
+    }
+  })
+  const {data, isLoading, isFetching} = isAdmin ? useFetchAllApartement() : useFetchAllPropertyOwner()
+  const {data : DataUser, isLoading : LoadingUser, isFetching : FecthingUser} = isAdmin ? useFetchAllUser() : { data: null, isLoading: false, isFetching: false }
+  const {data : DataBooking, isLoading : LoadingBooking, isFetching : FecthingBooking} = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner()
+  const { data: DataPromo, isLoading: LoadingPromo, isFetching: FecthingPromo } = 
+    isAdmin ? useFetchPromo() : { data: null, isLoading: false, isFetching: false };
   if (
-    isLoading || isFetching || LoadingUser || FecthingUser || LoadingBooking || FecthingBooking || LoadingPromo || FecthingPromo
+    isLoading || isload|| isFetch || isFetching || LoadingUser || FecthingUser || LoadingBooking || FecthingBooking || LoadingPromo || FecthingPromo
   ) {
     return <Loading />;
   }
@@ -52,7 +64,7 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
+       { isAdmin && <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Pengguna"
             // percent={-0.1}
@@ -64,13 +76,13 @@ export function OverviewAnalyticsView() {
               series: [56, 47, 40, 62, 73, 30, 23, 54],
             }}
           />
-        </Grid>
+        </Grid>}
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
             // percent={2.8}
-            total={DataBooking?.length}
+            total={isAdmin ? total_booking : DataBooking?.map((total : any) => total.total_booking)}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{

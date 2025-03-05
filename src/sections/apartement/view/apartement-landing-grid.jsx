@@ -126,7 +126,7 @@ export default function ApartementGrid() {
                     {apartement.name}
                   </Typography>
                   <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
-                    {apartement.address}, {apartement.city.name}
+                    {apartement.city.name}, {apartement.sector.name}
                   </Typography>
                   {hasDiscount ? (
                     <>

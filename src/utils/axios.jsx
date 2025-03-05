@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { secondsToHours } from 'date-fns/esm/fp';
 
 const HOST_API = import.meta.env.VITE_HOST_API;
 const axiosInstance = axios.create({ baseURL: HOST_API });
@@ -216,9 +217,27 @@ export const endpoints = {
     create: '/api/admin/property/type/create',
     update: '/api/admin/property/type/update',
     delete: '/api/admin/property/type/delete',
-    owner_property : {
-
+    owner : {
+      list : '/api/owner_property/property/type/all'
     }
   },
-  
+  owner : {
+    property : {
+      create : '/api/owner_property/property/create',
+      statistic : {
+        booking : '/api/owner_property/statistic/property/all_with_bookings'
+      }
+    },
+    state: {
+      list: '/api/owner_property/state/list',
+    },
+    city: {
+      list: '/api/owner_property/city/list',
+      detail: '/api/owner_property/state/detail',
+    },
+    sector: {
+      list: '/api/owner_property/city/list',
+      detail: '/api/owner_property/city/detail',
+    },
+  }
 };

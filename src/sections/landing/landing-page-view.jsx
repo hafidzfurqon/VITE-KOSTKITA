@@ -21,12 +21,11 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { PostSort } from '../blog/post-sort';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { useState, useCallback } from 'react';
-import { fDate } from 'src/utils/format-time';
 
 export function LandingPage() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('kost');
-  const [selectedSubCategory, setSelectedSubCategory] = useState('Populer'); // Default ke "Populer"
+  const [selectedSubCategory, setSelectedSubCategory] = useState('Terbaru'); // Default ke "Populer"
   const [sortBy, setSortBy] = useState(['coliving', 'kost']);
   const { data, isLoading, isFetching } = useListProperty();
   const [searchParams, setSearchParams] = useState({
@@ -34,7 +33,7 @@ export function LandingPage() {
     date: '',
     type: '',
   });
-
+  
   const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
     ? data?.filter((property) => {
         const query = searchParams.query.trim().toLowerCase();
@@ -69,11 +68,8 @@ export function LandingPage() {
       }, []);
       const categories = {
         kost: [
-          { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
           { name: 'Terbaru', icon: <AutoAwesomeIcon sx={{ color: 'black' }} /> },
-          { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
-        ],
-        apartemen: [
+          { name: 'Populer', icon: <ThumbUpIcon sx={{ color: 'black' }} /> },
           { name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> },
         ],
       };

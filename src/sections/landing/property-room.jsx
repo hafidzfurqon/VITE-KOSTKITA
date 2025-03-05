@@ -16,6 +16,7 @@ import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import { WhatsApp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import { Iconify } from 'src/components/iconify';
 
 // Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
@@ -48,10 +49,11 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
 // };
 
 const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
-  const PropertyRoom = ({ rooms = [], data }) => {
+  // const PropertyRoom = ({ rooms = [], data }) => {
     // Set default value to empty array
     // Check if rooms is valid array
     const validRooms = Array.isArray(rooms) ? rooms : [];
+    console.log(validRooms)
     const navigate = useNavigate();
     const Id = rooms.id;
     console.log(Id);
@@ -80,7 +82,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
     }
 
     return (
-      <Container maxWidth="lg" sx={{ mt: 5 }} id={Id}>
+       <Box maxWidth="lg" sx={{ mt: 5 }} id={Id}>
         <Typography variant="h6" sx={{ mb: 5 }}>
           Kamar
         </Typography>
@@ -100,7 +102,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
                 <CardContent>
                   <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                     <Box>
-                      <Typography variant="h6" gutterBottom>
+                      <Typography variant="h6" gutterBottom mt={3}>
                         {room.name}
                       </Typography>
                       <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
@@ -122,6 +124,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
                           gap={1}
                           sx={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
                         >
+                          <Iconify icon="mingcute:check-line" />
                           <Typography variant="body2" color="text.secondary" noWrap>
                             {facility.name}
                           </Typography>
@@ -176,25 +179,34 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
                           )}
                         </Typography>
                       </Box>
-                      <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                        <Button
-                          variant="outlined"
-                          startIcon={<WhatsApp />}
-                          href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu?\n\nTerima kasih`)}`}
-                          sx={{ border: 'green solid 1px', color: 'green' }}
-                        >
-                          Chat KostKita
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          fullWidth
-                          sx={{ mt: 2 }}
-                          onClick={() => navigate(`/booking/${data.slug}`)}
-                        >
-                          Pilih
-                        </Button>
-                      </Stack>
+                      <Box 
+                     
+                    display="flex" 
+                    alignItems="center" 
+                    gap={2} 
+                    sx={{ mt: 2 }}
+                  >
+                    <Button
+                      variant="outlined"
+                      fullWidth
+                      startIcon={<WhatsApp />}
+                      href={`https://wa.me/6285183311656?text=${encodeURIComponent(
+                        `Halo KostKita,\n\nSaya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu?\n\nTerima kasih`
+                      )}`}
+                      sx={{ border: '1px solid green', color: 'green', width : {xs : '60%'} }}
+                    >
+                      Chat KostKita
+                    </Button>
+                    
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => navigate(`/booking/${data.slug}`)}
+                      sx={{width : {xs : '40%', md : '50%'}}}
+                    >
+                      Pilih
+                    </Button>
+                  </Box>
                     </Box>
                   </Box>
                 </CardContent>
@@ -202,8 +214,9 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
             </Grid>
           </StyledCard>
         ))}
-      </Container>
-    );
+      </Box>
+
+  );
   };
 
   function ImageSlider({ images }) {
@@ -330,6 +343,6 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
       </Box>
     );
   }
-};
+// };
 
 export default PropertyRoom;
