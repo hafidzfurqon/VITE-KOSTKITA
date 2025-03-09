@@ -6,12 +6,16 @@ import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
 import { fPercent } from 'src/utils/format-number';
+import { useListProperty } from 'src/hooks/property/public/useListProperty';
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
   // const numberSortsortCardBy[0] === 'apartment' ?
 
   // const router = useRouter();
+
+  // const [sortBy, setSortBy] = useState(['coliving', 'kost']);
+  
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);

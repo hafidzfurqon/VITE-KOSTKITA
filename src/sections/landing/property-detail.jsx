@@ -29,6 +29,7 @@ import FacilityModal from './modal-facility';
 import { useAppContext } from 'src/context/user-context';
 import { Bookmark } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
+import ModalVisit from './visit/modal-visit';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -38,6 +39,7 @@ export default function PropertyDetail() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
   const [open, setOpen] = useState(false);
+  const [visitModal, setVisitModal] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const allFiles = data?.files?.map((file) => file) || [];
@@ -55,14 +57,6 @@ export default function PropertyDetail() {
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
   const hasDiscount = data?.discounts && data?.discounts?.length > 0;
-
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
 
   if (isLoading || isFetching) {
     return (
@@ -407,8 +401,6 @@ export default function PropertyDetail() {
 
           {/* Description */}
           {data.description && (
-            // <Card sx={{ mb: 4 }}>
-            //   <CardContent>
             <>
               <Typography variant="subtitle1">Description :</Typography>
               <Typography
@@ -417,6 +409,7 @@ export default function PropertyDetail() {
               />
             </>
           )}
+
           {data.facilities.length > 0 && (
             <>
               <hr />
@@ -486,8 +479,28 @@ export default function PropertyDetail() {
           )}
         </Box>
         <Divider />
+        <Box sx={{ my: 5 }}>
+          <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
+            Visit Hunian
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Jika kamu ingin melihat hunian secara langsung, kamu bisa menjadwakan visit ke hunian
+            ini
+          </Typography>
+          <Button onClick={() => setVisitModal(true)} variant="outlined">
+            Jadwalkan Visit
+          </Button>
+        </Box>
+        {/* Modal visit */}
+        <ModalVisit isOpen={visitModal} onClose={() => setVisitModal(false)} data={data} />
+        <Divider />
         <Box id="room">
-          <PropertyRoom rooms={data.rooms} payment={data.payment_type} namaProperty={data.name} />
+          <PropertyRoom
+            rooms={data?.rooms}
+            payment={data?.payment_type}
+            namaProperty={data?.name}
+            slug={data?.slug}
+          />
           {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
       </Container>

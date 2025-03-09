@@ -47,7 +47,7 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role) => role.name === "admin");
+  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
@@ -97,6 +97,7 @@ export default function Header() {
   const navMobile = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
     { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
+    { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
@@ -167,6 +168,11 @@ export default function Header() {
                     !isAdmin && {
                       label: 'Riwayat Booking',
                       href: '/history/booking',
+                      icon: <HistoryIcon />,
+                    },
+                    !isAdmin && {
+                      label: 'Riwayat Visit',
+                      href: '/history/visit',
                       icon: <HistoryIcon />,
                     },
                   ]}

@@ -26,7 +26,7 @@ export default function ApartementGrid() {
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
 
-  const filteredDataToApartement = data.filter(
+  const filteredDataToApartement = data?.filter(
     (item) => item.type.name.toLowerCase() === 'apartment'
   );
 
