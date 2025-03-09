@@ -28,7 +28,6 @@ export function LandingPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState('Terbaru'); // Default ke "Populer"
   const [sortBy, setSortBy] = useState(['coliving', 'kost']);
   const { data, isLoading, isFetching } = useListProperty();
-<<<<<<< HEAD
   // const [searchParams, setSearchParams] = useState({
   //   query: '',
   //   date: '',
@@ -40,19 +39,17 @@ export function LandingPage() {
   //       const query = searchParams.query.trim().toLowerCase();
   //       const dateQuery = searchParams.date.trim();
   //       const typeQuery = searchParams.type.trim().toLowerCase();
-=======
-  const [searchParams, setSearchParams] = useState({
-    query: '',
-    date: '',
-    type: '',
-  });
+  // const [searchParams, setSearchParams] = useState({
+  //   query: '',
+  //   date: '',
+  //   type: '',
+  // });
   
-  const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
-    ? data?.filter((property) => {
-        const query = searchParams.query.trim().toLowerCase();
-        const dateQuery = searchParams.date.trim();
-        const typeQuery = searchParams.type.trim().toLowerCase();
->>>>>>> 96bd4139962c1bf0f4875779e7de4a182772f9b1
+  // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
+  //   ? data?.filter((property) => {
+  //       const query = searchParams.query.trim().toLowerCase();
+  //       const dateQuery = searchParams.date.trim();
+  //       const typeQuery = searchParams.type.trim().toLowerCase();
 
   //       const matchesQuery = query
   //         ? [
