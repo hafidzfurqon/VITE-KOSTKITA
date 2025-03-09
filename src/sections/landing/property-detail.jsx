@@ -41,7 +41,7 @@ export default function PropertyDetail() {
   const [open, setOpen] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  const isOwnerId = user?.id
+  const isOwnerId = user?.id;
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
 
@@ -101,7 +101,7 @@ export default function PropertyDetail() {
         <meta property="og:image" content={data?.files[0]?.file_url} />
         <meta name="keywords" content={data.name} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
+        <meta property="og:url" content={`http://kostkita-ids.vercel.app/property/${data.slug}`} />
         <meta property="og:title" content={data.name} />
         <meta property="og:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -110,7 +110,7 @@ export default function PropertyDetail() {
         <meta name="twitter:image" content={data?.files[0]?.file_url} />
         <meta
           property="twitter:url"
-          content={`http://kostkita-id.vercel.app/property/${data.slug}`}
+          content={`http://kostkita-ids.vercel.app/property/${data.slug}`}
         />
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
@@ -401,7 +401,9 @@ export default function PropertyDetail() {
                       }
                     }}
                   >
-                    {isOwnerId === data.created_by.id ? 'Property ini milik Anda' : 'Booking Sekarang'}
+                    {isOwnerId === data.created_by.id
+                      ? 'Property ini milik Anda'
+                      : 'Booking Sekarang'}
                   </Button>
                 )}
               </Card>

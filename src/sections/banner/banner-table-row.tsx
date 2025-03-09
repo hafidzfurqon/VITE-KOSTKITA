@@ -1,4 +1,4 @@
-import { useState, useCallback, HTMLInputTypeAttribute } from 'react';
+import { useState, useEffect } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
@@ -13,30 +13,41 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import DialogDelete from 'src/component/DialogDelete';
-import { useDeleteBanner,useUpdateBanner } from 'src/hooks/banner';
+import { useDeleteBanner, useUpdateBanner } from 'src/hooks/banner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 
-import { Button } from '@mui/material';
+import { Autocomplete, AutocompleteChangeDetails, Button, Typography } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { TextField } from '@mui/material';
 import { FormLabel } from '@mui/material';
 import { DialogUpdate } from 'src/component/DialogUpdate';
+import { FormControlLabel } from '@mui/material';
+import { Switch } from '@mui/material';
+import { useListProperty } from 'src/hooks/property/public/useListProperty';
+import { useFetchPromo } from 'src/hooks/promo';
+import { OnValueChange } from 'react-number-format';
 
 // ----------------------------------------------------------------------
 
 export type UserProps = {
   id?: undefined | any | number;
   title: string;
+  property: any;
+  promo: any;
   // name : string;
-  image_path : string;
-  image_url : string;
+  type: string;
+  status: string;
+  property_id?: number;
+  promo_id?: number;
+  image_path: string;
+  image_url: string;
   url_reference: string;
 };
 
 type UserTableRowProps = {
   row: UserProps;
-  selected: boolean;
+  selected: any;
   onSelectRow: () => void;
 };
 
@@ -45,86 +56,140 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
   const { enqueueSnackbar } = useSnackbar();
   const [open, setOpen] = useState(false);
   const [opened, setOpened] = useState(false);
-   const handleClickOpen = () => {
-    setOpen(true)
-   }
-   
- 
+  const [selectedState, setSelectedState] = useState(null);
+  const { data, isLoading: isLoadingProperty } = useListProperty();
+  const { data: dataPromo, isLoading: isLoadingPromo } = useFetchPromo();
   const defaultValues = {
-  title : row?.title || '',
-  image_path  : row.image_path || '',
-  image_url  : row.image_url || '',
-  url_reference : row.url_reference || ''
+    title: row?.title || '',
+    type: row?.promo?.id ? 'reference_to_promo' : 'reference_to_property',
+    status:
+      row?.promo?.status === 'active' || row?.property?.status === 'active' ? 'active' : 'inactive',
+    promo_id: row?.promo?.id || '',
+    property_id: row?.property?.id || '',
   };
-  const [preview, setPreview] = useState<string>(defaultValues.image_url)
+  const handleClickOpen = () => {
+    reset(defaultValues);
+    setOpen(true);
+  };
+  const [isActive, setIsActive] = useState<any>(defaultValues.status === 'active' || 'available');
+  const [selectedType, setSelectedType] = useState(defaultValues.type);
   const handleClickOpened = () => {
-    setPreview(defaultValues.image_url)
     setOpened(true);
   };
-  const handleImageChange = (e : any) => {
-    const file = e.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl); // Mengupdate preview dengan gambar baru
+
+  const {
+    register,
+    handleSubmit: handleSubmitForm,
+    reset,
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      title: '',
+      type: '',
+      status: '',
+      property_id: '',
+      promo_id: '',
+    },
+  });
+
+  useEffect(() => {
+    if (row) {
+      const updatedValues = {
+        title: row?.title || '',
+        type: row?.promo?.id ? 'reference_to_promo' : 'reference_to_property',
+        status:
+          row?.promo?.status === 'active' || row?.property?.status === 'active'
+            ? 'active'
+            : 'inactive',
+        promo_id: row?.promo?.id || '',
+        property_id: row?.property?.id || '',
+      };
+
+      reset(updatedValues);
+
+      // Set nilai state agar sesuai dengan default
+      setIsActive(updatedValues.status === 'active' || 'available');
+      setSelectedType(updatedValues.type);
     }
+  }, [row, reset]);
+
+  useEffect(() => {
+    setIsActive(watch('status') === 'active' || 'available');
+  }, [watch('status')]);
+
+  const handleToggle = (event: any | HTMLInputElement) => {
+    const status = event.target.checked ? 'active' : 'non-active';
+    setIsActive(event.target.checked);
+    setValue('status', status); // Simpan status ke react-hook-form
   };
-  const { register, handleSubmit : handleSubmitForm} = useForm({
-      defaultValues
-    });
-    const FieldRHF = (
-      <>
-             <TextField
-               {...register('title')}
-                 autoFocus
-                required
-                margin="dense"
-               id="nama"
-               label="Nama Fasilitas"
-               type="text"
-               fullWidth
-               variant="outlined"
-            />
-             <TextField
-              {...register('url_reference')}
-              autoFocus
-              required
-              margin="dense"
-              id="nama"
-              label="url Banner"
-              type="text"
-              fullWidth
-              variant="outlined"
-            />
-            <FormLabel>
-                Image
-                <TextField
-                  {...register('image_path')}
-                  margin="dense"
-                  id="image"
-                  type="file"
-                  fullWidth
-                  variant="outlined"
-                  onChange={handleImageChange}
-                />
-              </FormLabel>
-              {preview && (
-        <Box mt={2} textAlign="center">
-          <img
-            src={preview}
-            alt="Preview"
-            style={{
-              width: "100%",
-              maxWidth: "300px",
-              borderRadius: "8px",
-              border: "1px solid #ddd",
-              padding: "5px",
+  const FieldRHF = (
+    <>
+      <TextField
+        {...register('title')}
+        autoFocus
+        required
+        margin="dense"
+        id="nama"
+        label="Nama Fasilitas"
+        type="text"
+        fullWidth
+        variant="outlined"
+      />
+      <TextField
+        select
+        {...register('type', { required: true })}
+        label="Banner diambil dari"
+        fullWidth
+        required
+        value={watch('type')} // Pastikan menggunakan watch agar sesuai dengan reset
+        onChange={(e) => {
+          setSelectedType(e.target.value);
+          setValue('type', e.target.value);
+        }}
+      >
+        <MenuItem value="reference_to_property">Property</MenuItem>
+        <MenuItem value="reference_to_promo">Promo</MenuItem>
+      </TextField>
+
+      <Typography>Status : </Typography>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={isActive}
+            onChange={(e: any) => {
+              const newStatus = e.target.checked ? 'active' : 'inactive';
+              setIsActive(e.target.checked);
+              setValue('status', newStatus);
             }}
+            size="medium"
           />
-        </Box>
-      )}
-      </>
-    )
-    const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner({
+        }
+        label={isActive ? 'Active' : 'Inactive'}
+      />
+
+      <Autocomplete
+        options={selectedType === 'reference_to_promo' ? dataPromo || [] : data || []}
+        getOptionLabel={(option) => option?.name ?? ''}
+        isOptionEqualToValue={(option, value) => option?.id === value?.id}
+        value={
+          selectedType === 'reference_to_promo'
+            ? dataPromo?.find((p: any) => p.id === row?.promo?.id) || null
+            : data?.find((p: any) => p.id === row?.property?.id) || null
+        }
+        onChange={(_, value) => {
+          setSelectedState(value ? value.id : null);
+          setValue(
+            selectedType === 'reference_to_promo' ? 'promo_id' : 'property_id',
+            value ? value.id : ''
+          );
+        }}
+        renderInput={(params) => <TextField {...params} label="Nama Promo atau Property" />}
+      />
+    </>
+  );
+  const { mutate: UpdateBanner, isPending: isLoading } = useUpdateBanner(
+    {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['list.banner'] });
         setOpen(false);
@@ -134,26 +199,29 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
         enqueueSnackbar('gagal mengupdate banner', { variant: 'error' });
       },
     },
-  row.id);
-  
-    const handleClose = () => {
-      setOpened(false);
-    };
+    row.id
+  );
 
-    const handleCreate = (data : any) => {
-      const { image_path: gambar, ...rest } = data;
-      const formData  : any = new FormData();
-      Object.entries(rest).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-      formData.append('image', gambar[0]);
-      formData.append('_method', 'PUT');
-      UpdateBanner(formData)
-      handleClose();
-    }
+  // const handleClose = () => {
+  //   setOpened(false);
+  // };
+
+  const handleCreate = (data: any) => {
+    const { ...rest } = data;
+    const formData: any = new FormData();
+    Object.entries(rest).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+    // formData.append('image', gambar[0]);
+    formData.append('_method', 'PUT');
+    UpdateBanner(formData);
+    reset(data);
+    // handleClose();
+  };
   const { mutate: DeleteBanner, isPending } = useDeleteBanner({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['list.banner'] });
+      // reset(data)
       setOpen(false);
       enqueueSnackbar('Banner berhasil dihapus', { variant: 'success' });
     },
@@ -162,21 +230,21 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
     },
   });
 
-  
   const handleSubmit = () => {
-    DeleteBanner(row.id)
-  }
+    DeleteBanner(row.id);
+  };
+  console.log(row);
   const renderCover = (
     <Box
       component="img"
       alt={row.title}
-      src={row.image_url}
+      src={row.promo?.promo_image_url || row.property?.files?.[0]?.file_url}
       sx={{
         top: 0,
         width: 100,
         height: 1,
         objectFit: 'cover',
-        borderRadius : '10px'
+        borderRadius: '10px',
         // position: 'absolute',
       }}
     />
@@ -189,18 +257,17 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
 
-        <TableCell align='center' component="th" scope="row">
+        <TableCell align="center" component="th" scope="row">
           {/* <Box gap={2} display="flex" alignItems="center"> */}
-            
+
           {renderCover}
           {/* </Box> */}
         </TableCell>
 
-        <TableCell align='center'>{row.title}</TableCell>
+        <TableCell align="center">{row.title}</TableCell>
 
-
-<TableCell align="center">
-        <Button onClick={handleClickOpened}>
+        <TableCell align="center">
+          <Button onClick={handleClickOpened}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
@@ -211,27 +278,26 @@ export function BannerTableRow({ row, selected, onSelectRow }: UserTableRowProps
           </Button>
         </TableCell>
       </TableRow>
-      
 
-      <DialogDelete 
-      title="yakin untuk menghapus banner ?"
-       description="data yang telah di hapus tidak akan kembali"
-       setOpen={setOpen}
-       open={open}
-       Submit={handleSubmit}
-       pending={isPending}
+      <DialogDelete
+        title="yakin untuk menghapus banner ?"
+        description="data yang telah di hapus tidak akan kembali"
+        setOpen={setOpen}
+        open={open}
+        Submit={handleSubmit}
+        pending={isPending}
       />
 
-       <DialogUpdate 
-            pending={isLoading}
-            SubmitFormValue={handleCreate}
-            open={opened}
-            title="Update Banner"
-            subTitle="Banner untuk landing page"
-            setOpen={setOpened}
-            field={FieldRHF}
-            SubmitForm={handleSubmitForm}
-            />
+      <DialogUpdate
+        pending={isLoading}
+        SubmitFormValue={handleCreate}
+        open={opened}
+        title="Update Banner"
+        subTitle="Update Banner yang berada di Halaman Home Page"
+        setOpen={setOpened}
+        field={FieldRHF}
+        SubmitForm={handleSubmitForm}
+      />
     </>
   );
 }

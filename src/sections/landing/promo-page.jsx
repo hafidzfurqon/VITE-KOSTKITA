@@ -176,7 +176,7 @@ export default function PromoPage() {
               >
                 <Box sx={{ position: 'relative' }}>
                   <img
-                    src={promo.discount_image_url}
+                    src={promo.promo_image_url}
                     alt="Promo"
                     style={{ width: '100%', height: '220px', objectFit: 'cover' }}
                   />

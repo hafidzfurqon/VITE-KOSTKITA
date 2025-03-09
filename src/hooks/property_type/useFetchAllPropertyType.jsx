@@ -7,7 +7,7 @@ export const useFetchAllPropertyType = () => {
         queryFn : async () => {
             const response = await axiosInstance.get(endpoints.property_type.list)
             console.log(response.data.data)
-            return response.data.data
+            return response?.data?.data?.data
         }
     })
 }

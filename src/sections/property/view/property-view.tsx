@@ -26,17 +26,17 @@ import { DialogCreate } from 'src/component/DialogCreate';
 
 export function PropertyView() {
   const table = useTable();
-  const { data = [], isLoading, isFetching } = useFetchAllPropertyType();
+  const { data = [], isLoading, isFetching, isPending } = useFetchAllPropertyType();
   const [filterName, setFilterName] = useState('');
   const [opened, setOpened] = useState(false);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const { register, handleSubmit: handleSubmitForm, reset } = useForm();
-
+  // console.log(first)
 
   const dataFiltered = applyFilter({
     inputData: data,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getComparator('desc', 'created_at'),
     filterName,
   });
 
@@ -63,7 +63,7 @@ export function PropertyView() {
     [mutate, handleClose]
   );
 
-  if (isLoading || isFetching) {
+  if (isLoading || isFetching || isPending) {
     return <Loading />;
   }
   const FieldRHF = (
@@ -81,92 +81,103 @@ export function PropertyView() {
   );
   return (
     <>
-    <DashboardContent>
-      <Box display="flex" alignItems="center" mb={5}>
-        <Typography variant="h4" flexGrow={1}>
-          Management Tipe Property
-        </Typography>
-        <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />} onClick={handleClickOpened}>
+      <DashboardContent>
+        <Box display="flex" alignItems="center" mb={5}>
+          <Typography variant="h4" flexGrow={1}>
+            Management Tipe Property
+          </Typography>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+            onClick={handleClickOpened}
+          >
             Tambah Tipe Property
           </Button>
-      </Box>
+        </Box>
 
-      <Card>
-        <PropertyTableToolbar
-          numSelected={table.selected.length}
-          filterName={filterName}
-          onFilterName={(event) => {
-            setFilterName(event.target.value);
-            table.onResetPage();
-          }}
-        />
+        <Card>
+          <PropertyTableToolbar
+            numSelected={table.selected.length}
+            filterName={filterName}
+            onFilterName={(event) => {
+              setFilterName(event.target.value);
+              table.onResetPage();
+            }}
+          />
 
-        <Scrollbar>
-          <TableContainer sx={{ overflow: 'unset' }}>
-            <Table sx={{ minWidth: 800 }}>
-              <PropertyTableHead
-                order={table.order}
-                orderBy={table.orderBy}
-                rowCount={data.length}
-                numSelected={table.selected.length}
-                onSort={table.onSort}
-                onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(checked, data.map((item : any) => item.id))
-                }
-                headLabel={[
+          <Scrollbar>
+            <TableContainer sx={{ overflow: 'unset' }}>
+              <Table sx={{ minWidth: 800 }}>
+                <PropertyTableHead
+                  order={table.order}
+                  orderBy={table.orderBy}
+                  rowCount={data.length}
+                  numSelected={table.selected.length}
+                  onSort={table.onSort}
+                  onSelectAllRows={(checked) =>
+                    table.onSelectAllRows(
+                      checked,
+                      data.map((item: any) => item.id)
+                    )
+                  }
+                  headLabel={[
                     // { id: 'image', label: 'Image' },
                     { id: 'name', label: 'Tipe Properti' },
                     // { id: 'type', label: 'Tipe' },
-                    { id: 'action', label: 'Action' }
+                    { id: 'action', label: 'Action' },
                   ]}
-                  
-              />
-              <TableBody>
-                {dataFiltered.slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
-                ).map((row : any) => (
-                  // <></>
-                  <PropertyTableRow
-                    key={row.id}
-                    row={row}
-                    selected={table.selected.includes(row.id)}
-                    onSelectRow={() => table.onSelectRow(row.id)}
+                />
+                <TableBody>
+                  {dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row: any) => (
+                      // <></>
+                      <PropertyTableRow
+                        key={row.id}
+                        row={row}
+                        selected={table.selected.includes(row.id)}
+                        onSelectRow={() => table.onSelectRow(row.id)}
+                      />
+                    ))}
+
+                  <TableEmptyRows
+                    height={68}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
                   />
-                ))}
+                  {notFound && <TableNoData searchQuery={filterName} />}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Scrollbar>
 
-                <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
-                {notFound && <TableNoData searchQuery={filterName} />}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Scrollbar>
-
-        <TablePagination
-          component="div"
-          page={table.page}
-          count={data.length}
-          rowsPerPage={table.rowsPerPage}
-          onPageChange={table.onChangePage}
-          rowsPerPageOptions={[5, 10, 25]}
-          onRowsPerPageChange={table.onChangeRowsPerPage}
-        />
-      </Card>
-    </DashboardContent>
-    <DialogCreate 
-              pending={isPendingMutate}
-              SubmitFormValue={handleCreate}
-              open={opened}
-              title="Create Nama Tipe Property"
-              subTitle="Property untuk coliving maupun apartemen"
-              setOpen={setOpened}
-              field={FieldRHF}
-              SubmitForm={handleSubmitForm}
-              />
+          <TablePagination
+            component="div"
+            page={table.page}
+            count={data.length}
+            rowsPerPage={table.rowsPerPage}
+            onPageChange={table.onChangePage}
+            rowsPerPageOptions={[5, 10, 25]}
+            onRowsPerPageChange={table.onChangeRowsPerPage}
+          />
+        </Card>
+      </DashboardContent>
+      <DialogCreate
+        pending={isPendingMutate}
+        SubmitFormValue={handleCreate}
+        open={opened}
+        title="Create Nama Tipe Property"
+        subTitle="Property untuk coliving maupun apartemen"
+        setOpen={setOpened}
+        field={FieldRHF}
+        SubmitForm={handleSubmitForm}
+      />
     </>
   );
 }
-
 
 export function useTable() {
   const [page, setPage] = useState(0);

@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
@@ -7,41 +8,38 @@ import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
+
 import { DashboardContent } from 'src/layouts/dashboard';
+
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+
 import { TableNoData } from '../table-no-data';
-import { ApartementTableRow } from '../apartement-table-row';
-import { ApartementTableHead } from '../apartement-table-head';
+import { LayananTableRow } from '../layanan-table-row';
+import { LayananTableHead } from '../layanan-table-head';
 import { TableEmptyRows } from '../table-empty-rows';
-import { ApartementTableToolbar } from '../apartement-table-toolbar';
+import { LayananTableToolbar } from '../layanan-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
+
+import type { LayananProps } from '../layanan-table-row';
+import { useFetchAllUser } from 'src/hooks/users/useFetchAllUser';
 import Loading from 'src/components/loading/loading';
 import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
-import { useGetBanner } from 'src/hooks/banner';
-import { useFetchAllApartement } from 'src/hooks/apartement';
-import { useAppContext } from 'src/context/user-context';
-import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
+import { useFetchAllServices } from 'src/hooks/services';
 
-export function ApartementView() {
+// ----------------------------------------------------------------------
+
+export function LayananView() {
   const table = useTable();
-  const { UserContextValue: authUser }: any = useAppContext();
-  const { user } = authUser;
-  // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-  const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-  } = isOwnerProperty ? useFetchAllPropertyOwner() : useFetchAllApartement();
-  const [filterName, setFilterName] = useState('');
 
+  const [filterName, setFilterName] = useState('');
+  const { data, isLoading, isFetching } = useFetchAllServices();
+  console.log(data);
   if (isLoading || isFetching) {
     return <Loading />;
   }
-
-  const dataFiltered = applyFilter({
+  const dataFiltered: LayananProps[] = applyFilter({
     inputData: data,
     comparator: getComparator('desc', 'created_at'),
     filterName,
@@ -53,24 +51,24 @@ export function ApartementView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Management Property
+          Management Layanan Tambahan
         </Typography>
-        <Link to={router.property.create}>
+        <Link to={`/services/create`}>
           <Button
             variant="contained"
             color="inherit"
             startIcon={<Iconify icon="mingcute:add-line" />}
           >
-            Tambah Property
+            Tambah Layanan
           </Button>
         </Link>
       </Box>
 
       <Card>
-        <ApartementTableToolbar
+        <LayananTableToolbar
           numSelected={table.selected.length}
           filterName={filterName}
-          onFilterName={(event) => {
+          onFilterName={(event: React.ChangeEvent<HTMLInputElement>) => {
             setFilterName(event.target.value);
             table.onResetPage();
           }}
@@ -79,7 +77,7 @@ export function ApartementView() {
         <Scrollbar>
           <TableContainer sx={{ overflow: 'unset' }}>
             <Table sx={{ minWidth: 800 }}>
-              <ApartementTableHead
+              <LayananTableHead
                 order={table.order}
                 orderBy={table.orderBy}
                 rowCount={data.length}
@@ -88,14 +86,14 @@ export function ApartementView() {
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    data.map((item: any) => item.id)
+                    data.map((user: LayananProps) => user.id)
                   )
                 }
                 headLabel={[
-                  { id: 'image_property', label: 'Gambar Property' },
-                  { id: 'title_property', label: 'Judul Property' },
+                  { id: 'name', label: 'Name' },
+                  { id: 'tipe_bayar', label: 'Tipe bayar' },
+                  { id: 'harga', label: 'Harga' },
                   { id: 'status', label: 'Status' },
-                  // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}
               />
@@ -105,8 +103,8 @@ export function ApartementView() {
                     table.page * table.rowsPerPage,
                     table.page * table.rowsPerPage + table.rowsPerPage
                   )
-                  .map((row: any) => (
-                    <ApartementTableRow
+                  .map((row) => (
+                    <LayananTableRow
                       key={row.id}
                       row={row}
                       selected={table.selected.includes(row.id)}
@@ -118,6 +116,7 @@ export function ApartementView() {
                   height={68}
                   emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
                 />
+
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
@@ -137,6 +136,8 @@ export function ApartementView() {
     </DashboardContent>
   );
 }
+
+// ----------------------------------------------------------------------
 
 export function useTable() {
   const [page, setPage] = useState(0);

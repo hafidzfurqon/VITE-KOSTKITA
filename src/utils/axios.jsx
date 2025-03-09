@@ -127,10 +127,10 @@ export const endpoints = {
       property: '/api/user/booking/property/reserve',
       getBookingproperty: '/api/user/booking/property/all',
       getBookingDetail: '/api/user/booking/property/detail',
-      admin : {
-        list : '/api/admin/statistic/property/all_with_bookings',
-        detail : '/api/admin/statistic/property/booking_information'
-      }
+      admin: {
+        list: '/api/admin/statistic/property/all_with_bookings',
+        detail: '/api/admin/statistic/property/booking_information',
+      },
     },
     profile: {
       update: '/api/user/profile/update',
@@ -142,16 +142,23 @@ export const endpoints = {
     // detail : '/api/admin/users/detail', //need id here
     delete: '/api/admin/facility/delete',
     update: '/api/admin/facility/update', // need id here
-    owner : {
-      list : '/api/owner_property/facility/all',
-      create : "/api/owner_property/property/create"
-    }
+    owner: {
+      list: '/api/owner_property/facility/all',
+      create: '/api/owner_property/property/create',
+    },
   },
-  facilities_room : {
-    list : '/api/admin/facility/room/list',
-    create : '/api/admin/facility/room/create',
-    update : '/api/admin/facility/room/update',
-    delete : '/api/admin/facility/room/delete'
+  facilities_room: {
+    list: '/api/admin/facility/room/list',
+    create: '/api/admin/facility/room/create',
+    update: '/api/admin/facility/room/update',
+    delete: '/api/admin/facility/room/delete',
+  },
+  service: {
+    list: '/api/admin/additional_service/list',
+    detail: '/api/admin/additional_service/detail',
+    create: '/api/admin/additional_service/create',
+    update: '/api/admin/additional_service/update',
+    delete: '/api/admin/additional_service/delete',
   },
   banner: {
     list: '/api/admin/banner/list',
@@ -171,8 +178,8 @@ export const endpoints = {
     create: '/api/admin/property/create',
     update: '/api/admin/property/update', //need id here
     delete: '/api/admin/property/delete', //need id here
-    owner : {
-      list : '/api/owner_property/property/all'
+    owner: {
+      list: '/api/owner_property/property/all',
     },
     public: {
       list: '/api/public/property/all',
@@ -193,21 +200,22 @@ export const endpoints = {
   promo: {
     list: '/api/admin/promo/list',
     create: '/api/admin/promo/create',
+    delete: '/api/admin/promo/delete',
     public: {
       list: '/api/public/promo/all',
     },
   },
-  property_room : {
-    detail : '/api/admin/property/detail/id',
-    add : '/api/admin/property/property_room/add',
-    delete : '/api/admin/property/property_room/delete',
+  property_room: {
+    detail: '/api/admin/property/detail/id',
+    add: '/api/admin/property/property_room/add',
+    delete: '/api/admin/property/property_room/delete',
   },
   apartement: {
     create: '/api/admin/apartment/create',
     list: '/api/admin/property/list',
-    update : '/api/admin/property/update',
+    update: '/api/admin/property/update',
     delete: '/api/admin/property/delete',
-    detail : '/api/admin/property/detail/id',
+    detail: '/api/admin/property/detail/id',
     public: {
       list: '/api/public/property/all',
     },
@@ -217,16 +225,16 @@ export const endpoints = {
     create: '/api/admin/property/type/create',
     update: '/api/admin/property/type/update',
     delete: '/api/admin/property/type/delete',
-    owner : {
-      list : '/api/owner_property/property/type/all'
-    }
+    owner: {
+      list: '/api/owner_property/property/type/all',
+    },
   },
-  owner : {
-    property : {
-      create : '/api/owner_property/property/create',
-      statistic : {
-        booking : '/api/owner_property/statistic/property/all_with_bookings'
-      }
+  owner: {
+    property: {
+      create: '/api/owner_property/property/create',
+      statistic: {
+        booking: '/api/owner_property/statistic/property/all_with_bookings',
+      },
     },
     state: {
       list: '/api/owner_property/state/list',
@@ -239,5 +247,5 @@ export const endpoints = {
       list: '/api/owner_property/city/list',
       detail: '/api/owner_property/city/detail',
     },
-  }
+  },
 };
