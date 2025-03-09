@@ -123,14 +123,18 @@ export const endpoints = {
     create: '/api/admin/users/create',
     update_data_user: '/api/admin/users/update',
     update: '/api/admin/users/update_user_password', // need id here
-  },
-  booking: {
-    property: '/api/user/booking/property/reserve',
-    getBookingproperty: '/api/user/booking/property/all',
-    getBookingDetail: '/api/user/booking/property/detail', // need id here
-    admin: {
-      list: '/api/admin/statistic/property/all_with_bookings',
-      detail: '/api/admin/statistic/property/booking_information',
+    booking: {
+      property: '/api/user/booking/property/reserve',
+      getBookingproperty: '/api/user/booking/property/all',
+      getBookingDetail: '/api/user/booking/property/detail',
+      admin: {
+        list: '/api/admin/statistic/property/all_with_bookings',
+        detail: '/api/admin/statistic/property/booking_information',
+      },
+    },
+    profile: {
+      update: '/api/user/profile/update',
+      updatePassword: '/api/user/profile/update_password',
     },
   },
   visit: {

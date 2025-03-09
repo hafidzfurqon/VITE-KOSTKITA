@@ -29,7 +29,8 @@ export default function ApartementGrid() {
   const filteredDataToApartement = data?.filter(
     (item) => item.type.name.toLowerCase() === 'apartment'
   );
-
+  console.log(data)
+  console.log(filteredDataToApartement)
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 3000, min: 1024 },
