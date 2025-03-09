@@ -48,12 +48,8 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
-<<<<<<< HEAD
-  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
-=======
   const isAdmin = user?.roles?.some((role) => role.name === "admin");
   const isOwner = user?.roles?.some((role) => role.name === "owner_property");
->>>>>>> 96bd4139962c1bf0f4875779e7de4a182772f9b1
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
