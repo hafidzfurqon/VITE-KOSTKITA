@@ -185,10 +185,10 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
             />
            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-          {...register("area_size", { required: "Luas tanah Wajib Diisi" })}
+          {...register("area_size", { required: "Luas Kamar Wajib Diisi" })}
           margin="dense"
           id="area_size"
-          label="Luas tanah" // harus ada 3 min
+          label="Luas Kamar" // harus ada 3 min
           type="text"
           inputMode="numeric"
           fullWidth

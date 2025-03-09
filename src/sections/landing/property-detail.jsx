@@ -35,6 +35,7 @@ export default function PropertyDetail() {
   const { slug } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  // console.log(data)
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -42,6 +43,7 @@ export default function PropertyDetail() {
   const [visitModal, setVisitModal] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
+  const isOwnerId = user?.id
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
 
@@ -371,7 +373,7 @@ export default function PropertyDetail() {
                       flexGrow: { xs: 1, sm: 0 },
                     }}
                   >
-                    WhatsApp
+                    Chat KostKita
                   </Button>
                 </Box>
 
@@ -380,6 +382,7 @@ export default function PropertyDetail() {
                     variant="contained"
                     color="primary"
                     fullWidth
+                    disabled={isOwnerId === data.created_by.id}
                     sx={{ mt: 2 }}
                     onClick={() => {
                       if (user.length === 0) {
@@ -392,7 +395,7 @@ export default function PropertyDetail() {
                       }
                     }}
                   >
-                    Booking Sekarang
+                    {isOwnerId === data.created_by.id ? 'Property ini milik Anda' : 'Booking Sekarang'}
                   </Button>
                 )}
               </Card>

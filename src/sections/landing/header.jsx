@@ -22,7 +22,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import HistoryIcon from '@mui/icons-material/History';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
 import { usePathname, useRouter } from 'src/routes/hooks';
@@ -34,11 +34,12 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import { Person } from '@mui/icons-material';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
-  const Router = useRouter();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
@@ -47,11 +48,16 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
+<<<<<<< HEAD
   const isAdmin = user?.roles?.some((role) => role.name === 'admin');
+=======
+  const isAdmin = user?.roles?.some((role) => role.name === "admin");
+  const isOwner = user?.roles?.some((role) => role.name === "owner_property");
+>>>>>>> 96bd4139962c1bf0f4875779e7de4a182772f9b1
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
-      Router.push('/'); // Kembali ke landing page
+      navigate('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
       sessionStorage.removeItem('token'); // Hapus token saat logout
       setTimeout(() => {
@@ -163,9 +169,9 @@ export default function Header() {
                     {
                       label: isAdmin ? 'Dashboard' : 'Profile',
                       href: isAdmin ? '/dashboard' : '/profile',
-                      icon: <BusinessIcon />,
+                      icon: <Person />,
                     },
-                    !isAdmin && {
+                    !isAdmin && !isOwner && {
                       label: 'Riwayat Booking',
                       href: '/history/booking',
                       icon: <HistoryIcon />,

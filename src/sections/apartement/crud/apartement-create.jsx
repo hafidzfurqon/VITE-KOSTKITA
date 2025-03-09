@@ -22,11 +22,21 @@ import { Checkbox } from "@mui/material";
 import { FormGroup } from "@mui/material";
 import { useFetchAllPropertyType } from "src/hooks/property_type";
 import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
+import { useAppContext } from "src/context/user-context";
+import { useFetchAllStateOwner } from "src/hooks/owner/useFetchAllStateOwner";
+import { useGetCityOwner } from "src/hooks/owner/useGetCityOwner";
+import { useFetchFacilityPropertyOwner } from "src/hooks/owner_property/fasilitas";
+import { useFetchAllPropertyTypeOwner } from "src/hooks/owner/useFetchAllTypePropertyOwner";
+import { useGetSectorOwner } from "src/hooks/owner/useGetSectorOwner";
+import { useMutationCreatePropertyOwner } from "src/hooks/owner/property/useMutationCreateProperty";
 
 
   export const CreateApartement = () => {
-    const {data : facilities, isLoading, isFetching} = useFetchFacilities();
-    const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = useFetchAllPropertyType();
+     const { UserContextValue: authUser } = useAppContext();
+    const {user} = authUser;
+    const isAdmin = user?.roles?.some((role) => role.name === "admin");
+    const {data : facilities, isLoading, isFetching} = isAdmin ? useFetchFacilities() : useFetchFacilityPropertyOwner()
+    const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = isAdmin ? useFetchAllPropertyType() : useFetchAllPropertyTypeOwner();
     
     const {
       control,
@@ -78,9 +88,9 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
     };
     const [selectedState, setSelectedState] = useState(null);
     const [selectedCity, setSelectedCity] = useState(null);
-    const { data: states = [], isLoading: isLoadingStates } = useGetState();
-    const { data: cities = [], isLoading: loadingCities } = useGetCity(selectedState);
-    const { data: sector = [], isLoading: LoadingSector } = useGetSector(selectedCity);
+    const { data: states = [], isLoading: isLoadingStates } = isAdmin ? useGetState() : useFetchAllStateOwner();
+    const { data: cities = [], isLoading: loadingCities } = isAdmin ? useGetCity(selectedState) : useGetCityOwner(selectedState);
+    const { data: sector = [], isLoading: LoadingSector } = isAdmin ? useGetSector(selectedCity) : useGetSectorOwner(selectedCity)
 
     const {
       getRootProps,
@@ -89,16 +99,25 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
     } = useDropzone({
       accept: "image/*",
       multiple: true,
-      maxFiles: 5,
+      maxFiles: 10,
       onDrop: (acceptedFiles) => {
         setSelectedImages(acceptedFiles);
         setValue("files", acceptedFiles);
       },
     });
 
-    const {mutate, isPending} = useMutationCreateApartement({
+    const {mutate, isPending} = isAdmin ? useMutationCreateApartement({
       onSuccess : () => {
         queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
+        routers.push('/property');
+        enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
+      },
+      onError: () => {
+        enqueueSnackbar('Apartement gagal dibuat', { variant: 'error' });
+      },
+    }) :  useMutationCreatePropertyOwner({
+      onSuccess : () => {
+        queryClient.invalidateQueries({ queryKey: ['fetch.property.owner'] });
         routers.push('/property');
         enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
       },
@@ -286,7 +305,7 @@ import { useGetSector } from "src/hooks/apartement/sector/useFetchAllSector";
         renderInput={(params) => <TextField {...params} label="Kecamatan" fullWidth variant="outlined" />}
       />
           
-     <FormLabel>Upload Images (Max 5)</FormLabel>
+     <FormLabel>Upload Images (Max 10)</FormLabel>
 <Box
   {...getRootProps()}
   sx={{
