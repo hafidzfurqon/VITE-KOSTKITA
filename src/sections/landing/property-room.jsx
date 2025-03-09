@@ -46,7 +46,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-
+  console.log(rooms)
   // Helper function to format price
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -110,7 +110,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
                 <Typography variant="h6" fontWeight="bold">
                   {formatPrice(room.price)} / {payment === 'monthly' ? 'bulan' : 'tahun'}
                 </Typography>
-                <Stack direction="row" spacing={2} mt={2}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
                     variant="outlined"
                     startIcon={<WhatsApp />}

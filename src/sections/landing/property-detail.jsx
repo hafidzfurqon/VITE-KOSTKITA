@@ -20,7 +20,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
-import { BookmarkBorder, WhatsApp } from '@mui/icons-material';
+import { BookmarkBorder, DateRange, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
@@ -492,8 +492,15 @@ export default function PropertyDetail() {
             Jika kamu ingin melihat hunian secara langsung, kamu bisa menjadwakan visit ke hunian
             ini
           </Typography>
-          <Button onClick={() => setVisitModal(true)} variant="outlined">
-            Jadwalkan Visit
+          <Button
+            onClick={() => setVisitModal(true)}
+            variant="outlined"
+            sx={{p : 2}}
+            display={'flex'}
+            alignItems={'center'}
+          >
+            <DateRange />
+            <Typography variant="subtitle1" ml={1}>Jadwalkan Visit</Typography>
           </Button>
         </Box>
         {/* Modal visit */}

@@ -7,7 +7,7 @@ export default function PropertyPage() {
   return (
     <>
       <Helmet>
-        <title> {`Banner - ${CONFIG.appName}`}</title>
+        <title> {`Property Tipe - ${CONFIG.appName}`}</title>
         <meta
           name="description"
           content="Banner"

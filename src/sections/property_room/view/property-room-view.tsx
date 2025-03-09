@@ -28,6 +28,7 @@ export function PropertyRoomView() {
   const { id } = useParams();
   const { data: room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
   const data = room.rooms;
+  console.log(data)
   const [filterName, setFilterName] = useState('');
 
   if (isLoading || isFetching) {

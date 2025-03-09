@@ -3,13 +3,8 @@ import { Box } from '@mui/material';
 import 'keen-slider/keen-slider.min.css';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
-
-const carouselImages = [
-  'https://images.rukita.co/web/static/img/landing-page/about-us/hero.png?tr=c-at_max%2Cw-1040',
-  'https://images.rukita.co/web/static/img/landing-page/about-us/rukita_apartment.png?tr=c-at_max%2Cw-1040',
-  'https://images.rukita.co/buildings/building/f297bfe6-649.jpg?tr=c-at_max%2Cw-1040',
-  'https://images.rukita.co/buildings/building/ac52429c-2fe.jpg?tr=c-at_max%2Cw-1040',
-];
+import { useFetchBannerPublic } from 'src/hooks/banner';
+import Loading from 'src/components/loading/loading';
 
 interface HeroSectionProps {
   children?: ReactNode;
@@ -22,6 +17,29 @@ export default function HeroSection({ children }: HeroSectionProps) {
     tablet: { breakpoint: { max: 1024, min: 464 }, items: 1 },
     mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
+
+  const { data, isLoading, isFetching } = useFetchBannerPublic();
+
+  if (isLoading || isFetching) {
+    return <Loading />;
+  }
+
+  // Pastikan data ada sebelum mapping
+  const banners = Array.isArray(data) ? data : [];
+
+  // Mengumpulkan semua gambar dari promo dan property
+  const carouselImages = banners.flatMap((banner) => {
+    const images = [];
+    if (banner.promo?.promo_image_url) {
+      images.push(banner.promo.promo_image_url);
+    }
+    if (banner.property?.files) {
+      images.push(banner.property.files[0].file_url);
+    }
+    return images;
+  });
+
+  console.log("Banner Images:", carouselImages);
 
   return (
     <Box

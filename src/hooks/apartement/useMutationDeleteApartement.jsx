@@ -6,7 +6,7 @@ export const useMutationDeleteApartement = ({ onError, onSuccess }) => {
     mutationKey: ['delete.banner'],
     mutationFn: async (id) => {
       const response = await axiosInstance.delete(
-        `${endpoints.apartement.delete}/${id}`
+        `${endpoints.apartment.delete}/${id}`
       );
       return response;
     },

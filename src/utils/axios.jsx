@@ -132,6 +132,13 @@ export const endpoints = {
         detail: '/api/admin/statistic/property/booking_information',
       },
     },
+    visit: {
+      createVisit: '/api/user/visit/create',
+      cancelVisit: '/api/user/visit/cancel',
+      listVisit: '/api/user/visit/list',
+      detailIdVisit: '/api/user/visit/detail', // need id here
+      detailCodeVisit: '/api/user/visit/detail', // need id here
+    },
     profile: {
       update: '/api/user/profile/update',
       updatePassword: '/api/user/profile/update_password',
@@ -151,6 +158,7 @@ export const endpoints = {
   facilities: {
     list: '/api/admin/facility/list',
     delete: '/api/admin/facility/delete',
+    create: '/api/admin/facility/create',
     update: '/api/admin/facility/update', // need id here
     owner: {
       list: '/api/owner_property/facility/all',
@@ -201,11 +209,12 @@ export const endpoints = {
   },
   city: {
     list: '/api/admin/city/list',
-    detail: '/api/admin/city/detail',
+    // detail: '/api/admin/city/detail',
+    detail: '/api/admin/state/detail',
   },
   sector: {
-    list: '/api/admin/sector/list',
-    detail: '/api/admin/sector/detail',
+    list: '/api/admin/city/list',
+    detail: '/api/admin/city/detail',
   },
   promo: {
     list: '/api/admin/promo/list',
@@ -216,8 +225,8 @@ export const endpoints = {
     },
   },
   property_room: {
-    detail: '/api/admin/property_room/detail/id', // need id here
-    add: '/api/admin/property_room/add',
+    detail: '/api/admin/property/detail/id', // need id here
+    add: '/api/admin/property/property_room/add',
     delete: '/api/admin/property_room/delete',
   },
   apartment: {
