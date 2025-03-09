@@ -31,6 +31,9 @@ import ApartmentList from 'src/sections/landing/apartement/apartemen-page-list';
 import HistoryBookingDetail from 'src/sections/landing/user/historyBookingDetail';
 import WishlistPageView from 'src/sections/landing/wishlist-page-view';
 import HistoryBookingDetailAdmin from 'src/sections/landing/user/admin/historyBookingDetailAdmin';
+import HistoryVisit from 'src/sections/landing/visit/history-visit';
+import VisitDetail from 'src/sections/landing/visit/visit-detail';
+import About from 'src/sections/landing/about';
 import { CreateUser } from 'src/sections/user/crud/create-user';
 import { LayananCreate } from 'src/sections/services/crud/layanan-create';
 
@@ -246,6 +249,10 @@ export function Router() {
       ),
       children: [
         {
+          path: 'about-us',
+          element: <About />,
+        },
+        {
           path: 'property/:slug',
           element: <PropertyDetailPage />,
         },
@@ -268,6 +275,14 @@ export function Router() {
         {
           path: 'sewa/kost/kota/:slug',
           element: <PropertyLocationDetail />,
+        },
+        {
+          path: 'history/visit',
+          element: <HistoryVisit />,
+        },
+        {
+          path: 'history/visit/detail/:visitCode',
+          element: <VisitDetail />,
         },
         {
           path: 'history/booking',

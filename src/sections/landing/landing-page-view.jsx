@@ -28,40 +28,51 @@ export function LandingPage() {
   const [selectedSubCategory, setSelectedSubCategory] = useState('Terbaru'); // Default ke "Populer"
   const [sortBy, setSortBy] = useState(['coliving', 'kost']);
   const { data, isLoading, isFetching } = useListProperty();
-  const [searchParams, setSearchParams] = useState({
-    query: '',
-    date: '',
-    type: '',
-  });
+  // const [searchParams, setSearchParams] = useState({
+  //   query: '',
+  //   date: '',
+  //   type: '',
+  // });
 
-  const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
-    ? data?.filter((property) => {
-        const query = searchParams.query.trim().toLowerCase();
-        const dateQuery = searchParams.date.trim();
-        const typeQuery = searchParams.type.trim().toLowerCase();
+  // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
+  //   ? data?.filter((property) => {
+  //       const query = searchParams.query.trim().toLowerCase();
+  //       const dateQuery = searchParams.date.trim();
+  //       const typeQuery = searchParams.type.trim().toLowerCase();
+  // const [searchParams, setSearchParams] = useState({
+  //   query: '',
+  //   date: '',
+  //   type: '',
+  // });
+  
+  // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
+  //   ? data?.filter((property) => {
+  //       const query = searchParams.query.trim().toLowerCase();
+  //       const dateQuery = searchParams.date.trim();
+  //       const typeQuery = searchParams.type.trim().toLowerCase();
 
-        const matchesQuery = query
-          ? [
-              property.name,
-              property.state?.name,
-              property.city?.name,
-              property.sector?.name,
-              property.address,
-            ]
-              .filter(Boolean)
-              .map((item) => item.toLowerCase())
-              .some((item) => item.includes(query))
-          : true;
+  //       const matchesQuery = query
+  //         ? [
+  //             property.name,
+  //             property.state?.name,
+  //             property.city?.name,
+  //             property.sector?.name,
+  //             property.address,
+  //           ]
+  //             .filter(Boolean)
+  //             .map((item) => item.toLowerCase())
+  //             .some((item) => item.includes(query))
+  //         : true;
 
-        const matchesDate = dateQuery ? property.created_at === dateQuery : true;
+  //       const matchesDate = dateQuery ? property.created_at === dateQuery : true;
 
-        const matchesType = typeQuery
-          ? property.type?.name?.toLowerCase().includes(typeQuery)
-          : true;
+  //       const matchesType = typeQuery
+  //         ? property.type?.name?.toLowerCase().includes(typeQuery)
+  //         : true;
 
-        return matchesQuery && matchesDate && matchesType;
-      })
-    : data;
+  //       return matchesQuery && matchesDate && matchesType;
+  //     })
+  //   : data;
 
   const handleSort = useCallback((newSort) => {
     setSortBy(newSort);
@@ -142,7 +153,7 @@ export function LandingPage() {
         <Box sx={{ flexShrink: 0 }}>
           <HeroSection>
             <Header />
-            <HeroContent setSearchParams={setSearchParams} />
+            <HeroContent data={data} />
           </HeroSection>
         </Box>
 
@@ -232,7 +243,7 @@ export function LandingPage() {
               }}
             >
               <PropertyGrid
-                data={filteredData}
+                data={data}
                 isLoading={isLoading}
                 isFetching={isFetching}
                 sortCardBy={sortBy}

@@ -119,27 +119,33 @@ export const endpoints = {
   },
   user: {
     list: '/api/admin/users/list',
-    detail: '/api/admin/users/detail', //need id here
+    detail: '/api/admin/users/detail', // need id here
     create: '/api/admin/users/create',
     update_data_user: '/api/admin/users/update',
     update: '/api/admin/users/update_user_password', // need id here
-    booking: {
-      property: '/api/user/booking/property/reserve',
-      getBookingproperty: '/api/user/booking/property/all',
-      getBookingDetail: '/api/user/booking/property/detail',
-      admin: {
-        list: '/api/admin/statistic/property/all_with_bookings',
-        detail: '/api/admin/statistic/property/booking_information',
-      },
+  },
+  booking: {
+    property: '/api/user/booking/property/reserve',
+    getBookingproperty: '/api/user/booking/property/all',
+    getBookingDetail: '/api/user/booking/property/detail', // need id here
+    admin: {
+      list: '/api/admin/statistic/property/all_with_bookings',
+      detail: '/api/admin/statistic/property/booking_information',
     },
-    profile: {
-      update: '/api/user/profile/update',
-      updatePassword: '/api/user/profile/update_password',
-    },
+  },
+  visit: {
+    createVisit: '/api/user/visit/create',
+    cancelVisit: '/api/user/visit/cancel',
+    listVisit: '/api/user/visit/list',
+    detailIdVisit: '/api/user/visit/detail', // need id here
+    detailCodeVisit: '/api/user/visit/detail', // need id here
+  },
+  profile: {
+    update: '/api/user/profile/update',
+    updatePassword: '/api/user/profile/update_password',
   },
   facilities: {
     list: '/api/admin/facility/list',
-    // detail : '/api/admin/users/detail', //need id here
     delete: '/api/admin/facility/delete',
     update: '/api/admin/facility/update', // need id here
     owner: {
@@ -162,10 +168,10 @@ export const endpoints = {
   },
   banner: {
     list: '/api/admin/banner/list',
-    detail: '/api/admin/banner/detail', //need id here
+    detail: '/api/admin/banner/detail', // need id here
     create: '/api/admin/banner/create',
-    update: '/api/admin/banner/update', //need id here
-    delete: '/api/admin/banner/delete', //need id here
+    update: '/api/admin/banner/update', // need id here
+    delete: '/api/admin/banner/delete', // need id here
     public: {
       list: '/api/public/banner/all',
       detail: '/api/public/banner/detail',
@@ -173,11 +179,11 @@ export const endpoints = {
   },
   property: {
     list: '/api/admin/property/list',
-    detail_dengan_id: '/api/admin/property/detail/id', //need id here
-    detail: '/api/admin/property/detail/slug', //need slug here
+    detail_by_id: '/api/admin/property/detail/id', // need id here
+    detail_by_slug: '/api/admin/property/detail/slug', // need slug here
     create: '/api/admin/property/create',
-    update: '/api/admin/property/update', //need id here
-    delete: '/api/admin/property/delete', //need id here
+    update: '/api/admin/property/update', // need id here
+    delete: '/api/admin/property/delete', // need id here
     owner: {
       list: '/api/owner_property/property/all',
     },
@@ -191,11 +197,11 @@ export const endpoints = {
   },
   city: {
     list: '/api/admin/city/list',
-    detail: '/api/admin/state/detail',
+    detail: '/api/admin/city/detail',
   },
   sector: {
-    list: '/api/admin/city/list',
-    detail: '/api/admin/city/detail',
+    list: '/api/admin/sector/list',
+    detail: '/api/admin/sector/detail',
   },
   promo: {
     list: '/api/admin/promo/list',
@@ -206,18 +212,18 @@ export const endpoints = {
     },
   },
   property_room: {
-    detail: '/api/admin/property/detail/id',
-    add: '/api/admin/property/property_room/add',
-    delete: '/api/admin/property/property_room/delete',
+    detail: '/api/admin/property_room/detail/id', // need id here
+    add: '/api/admin/property_room/add',
+    delete: '/api/admin/property_room/delete',
   },
-  apartement: {
+  apartment: {
     create: '/api/admin/apartment/create',
     list: '/api/admin/property/list',
     update: '/api/admin/property/update',
     delete: '/api/admin/property/delete',
     detail: '/api/admin/property/detail/id',
     public: {
-      list: '/api/public/property/all',
+      list: '/api/public/apartment/all',
     },
   },
   property_type: {
@@ -241,11 +247,11 @@ export const endpoints = {
     },
     city: {
       list: '/api/owner_property/city/list',
-      detail: '/api/owner_property/state/detail',
+      detail: '/api/owner_property/city/detail',
     },
     sector: {
-      list: '/api/owner_property/city/list',
-      detail: '/api/owner_property/city/detail',
+      list: '/api/owner_property/sector/list',
+      detail: '/api/owner_property/sector/detail',
     },
   },
 };

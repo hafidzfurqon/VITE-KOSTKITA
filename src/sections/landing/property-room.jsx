@@ -40,8 +40,9 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
   color: 'white',
 }));
 
-const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
+const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
   const navigate = useNavigate();
+  const [bookingData, setBookingData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
@@ -68,6 +69,13 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
     );
   }
 
+  const selectRoom = (roomId) => {
+    setBookingData((prev) => ({
+      ...prev,
+      room_id: prev.room_id === roomId ? null : roomId, // Toggle jika sudah dipilih
+    }));
+  };
+
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
@@ -89,7 +97,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
                 </Typography>
                 <Stack direction="row" spacing={1} my={1} flexWrap="wrap">
                   <Chip label={`${room.capacity} Orang`} />
-                  <Chip label={room.room_type} />
+                  <Chip label={room.room_type.name} />
                   <Chip label={`${room.area_size}m²`} />
                 </Stack>
                 <Typography
@@ -111,22 +119,30 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty }) => {
                   >
                     Chat KostKita
                   </Button>
-                  {!['admin', 'owner', 'owner_property'].includes(user.roles) && (
+                  {user ? (
+                    !['admin', 'owner', 'owner_property'].includes(user.roles) ? (
+                      <Button
+                        variant={bookingData?.room_id === room.id ? 'contained' : 'outlined'}
+                        onClick={() => {
+                          selectRoom(room.id);
+                          navigate(`/booking/${slug}?room_id=${room.id}`); // Tambahkan room_id ke URL
+                        }}
+                      >
+                        Pilih Kamar {room.name}
+                      </Button>
+                    ) : null
+                  ) : (
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={() => {
-                        if (!user) {
-                          enqueueSnackbar('Anda harus login terlebih dahulu!', {
-                            variant: 'error',
-                          });
-                          navigate('/sign-in');
-                        } else {
-                          navigate(`/booking/${room.slug}`);
-                        }
+                        enqueueSnackbar('Anda harus login terlebih dahulu!', {
+                          variant: 'error',
+                        });
+                        navigate('/sign-in');
                       }}
                     >
-                      Booking Sekarang
+                      Pilih Kamar
                     </Button>
                   )}
                 </Stack>
