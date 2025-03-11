@@ -35,7 +35,7 @@ export default function PropertyDetail() {
   const { slug } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-  // console.log(data)
+  
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -363,7 +363,7 @@ export default function PropertyDetail() {
                     color="primary"
                     fullWidth={data.rooms.length === 0}
                     startIcon={<WhatsApp />}
-                    href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
+                    href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     sx={{
                       color: '#25D366',
@@ -495,12 +495,14 @@ export default function PropertyDetail() {
           <Button
             onClick={() => setVisitModal(true)}
             variant="outlined"
-            sx={{p : 2}}
+            sx={{ p: 2 }}
             display={'flex'}
             alignItems={'center'}
           >
             <DateRange />
-            <Typography variant="subtitle1" ml={1}>Jadwalkan Visit</Typography>
+            <Typography variant="subtitle1" ml={1}>
+              Jadwalkan Visit
+            </Typography>
           </Button>
         </Box>
         {/* Modal visit */}

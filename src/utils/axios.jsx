@@ -128,7 +128,7 @@ export const endpoints = {
       getBookingproperty: '/api/user/booking/property/all',
       getBookingDetail: '/api/user/booking/property/detail',
       admin: {
-        list: '/api/admin/statistic/property/all_with_bookings',
+        list: '/api/admin/statistic/property/all',
         detail: '/api/admin/statistic/property/booking_information',
       },
     },

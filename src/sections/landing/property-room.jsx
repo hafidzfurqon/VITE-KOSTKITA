@@ -46,7 +46,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  console.log(rooms)
+  console.log(rooms);
   // Helper function to format price
   const formatPrice = (price) => {
     return new Intl.NumberFormat('id-ID', {
@@ -114,7 +114,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
                   <Button
                     variant="outlined"
                     startIcon={<WhatsApp />}
-                    href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita, Saya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu? Terima kasih`)}`}
+                    href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu?\n\nTerima kasih`)}`}
                     sx={{ border: '1px solid green', color: 'green' }}
                   >
                     Chat KostKita
