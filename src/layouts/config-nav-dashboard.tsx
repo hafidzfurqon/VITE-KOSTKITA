@@ -68,4 +68,9 @@ export const navData = [
     path: '/booked-property',
     icon: Anothericon('ic-glass-users'),
   },
+  {
+    title: 'Layanan Tambahan',
+    path: '/services',
+    icon: icon('ic-cart'),
+  },
 ];

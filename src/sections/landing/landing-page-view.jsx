@@ -131,7 +131,7 @@ export function LandingPage() {
   return (
     <>
       <Helmet>
-        <meta property="og:url" content="http://kostkita-id.vercel.app/" />
+        <meta property="og:url" content="http://kostkita-ids.vercel.app/" />
         <meta property="og:type" content="website" />
         <meta property="og:title" content="KostKita Property & Kost" />
         <meta

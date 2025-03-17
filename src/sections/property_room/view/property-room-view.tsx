@@ -25,18 +25,19 @@ import { TableCell, TableRow } from '@mui/material';
 
 export function PropertyRoomView() {
   const table = useTable();
-  const {id} = useParams()
-  const { data : room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
-  const data = room.rooms
+  const { id } = useParams();
+  const { data: room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
+  const data = room.rooms;
+  console.log(data)
   const [filterName, setFilterName] = useState('');
- 
+
   if (isLoading || isFetching) {
     return <Loading />;
   }
-  console.log(data)
+  console.log(data);
   const dataFiltered = applyFilter({
     inputData: data,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getComparator('desc', 'created_at'),
     filterName,
   });
 
@@ -46,22 +47,26 @@ export function PropertyRoomView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={3}>
         <Typography variant="h4" flexGrow={1}>
-         Tambah Property Room di {room.name}
+          Tambah Property Room di {room.name}
         </Typography>
         <Link to={`${router.property_room.create}/${id}`}>
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
             Tambah Property Room
           </Button>
         </Link>
       </Box>
-      <CustomBreadcrumbs 
-                  links={[{ name: 'Property', href: '/property' }, { name: 'Property Room'}, ]} 
-                  sx={{ mb: { xs: 2, md: 3 } }} 
-                  action={null} 
-                  heading="" 
-                  moreLink={[]} 
-                  activeLast={true} 
-                  />
+      <CustomBreadcrumbs
+        links={[{ name: 'Property', href: '/property' }, { name: 'Property Room' }]}
+        sx={{ mb: { xs: 2, md: 3 } }}
+        action={null}
+        heading=""
+        moreLink={[]}
+        activeLast={true}
+      />
       <Card>
         <PropertyRoomTableToolbar
           numSelected={table.selected.length}
@@ -82,7 +87,10 @@ export function PropertyRoomView() {
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(checked, data.map((item : any) => item.id))
+                  table.onSelectAllRows(
+                    checked,
+                    data.map((item: any) => item.id)
+                  )
                 }
                 headLabel={[
                   { id: 'image_property_room', label: 'Gambar Property Room' },
@@ -91,37 +99,42 @@ export function PropertyRoomView() {
                   { id: 'action', label: 'Action' },
                 ]}
               />
-              {
-              data.length === 0 ? 
-              <TableBody>
-               <TableRow>
-               <TableCell align="center" colSpan={7}>
-              <Box sx={{ py: 3, textAlign: 'center' }}>
-                <Typography  variant="subtitle1" sx={{ mb: 1 }}>
-                Belum Ada Ruangan untuk property ini
-                </Typography>
-                </Box>
-                </TableCell>
-               </TableRow>
-              </TableBody> :
-              <TableBody>
-                {dataFiltered.slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
-                ).map((row : any) => (
-                  <PropertyRoomTableRow
-                    key={row.id}
-                    row={row}
-                    slug={room.slug}
-                    selected={table.selected.includes(row.id)}
-                    onSelectRow={() => table.onSelectRow(row.id)}
-                  />
-                ))}
+              {data.length === 0 ? (
+                <TableBody>
+                  <TableRow>
+                    <TableCell align="center" colSpan={7}>
+                      <Box sx={{ py: 3, textAlign: 'center' }}>
+                        <Typography variant="subtitle1" sx={{ mb: 1 }}>
+                          Belum Ada Ruangan untuk property ini
+                        </Typography>
+                      </Box>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              ) : (
+                <TableBody>
+                  {dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row: any) => (
+                      <PropertyRoomTableRow
+                        key={row.id}
+                        row={row}
+                        slug={room.slug}
+                        selected={table.selected.includes(row.id)}
+                        onSelectRow={() => table.onSelectRow(row.id)}
+                      />
+                    ))}
 
-                <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
-                {notFound && <TableNoData searchQuery={filterName} />}
-              </TableBody>
-              }
+                  <TableEmptyRows
+                    height={68}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
+                  />
+                  {notFound && <TableNoData searchQuery={filterName} />}
+                </TableBody>
+              )}
             </Table>
           </TableContainer>
         </Scrollbar>
@@ -139,7 +152,6 @@ export function PropertyRoomView() {
     </DashboardContent>
   );
 }
-
 
 export function useTable() {
   const [page, setPage] = useState(0);

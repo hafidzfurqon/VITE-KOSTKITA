@@ -29,11 +29,14 @@ export function BookedPropertyTableRow({ booked, NamaProperty,row, selected, onS
   
   return (
     <>
+      {booked.length > 0 && (
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
+        {booked.length > 0 && (
         <TableCell align='center'>{NamaProperty}</TableCell>
+        )}
         {booked.length > 0 && (
           booked.map((b: any, index: number) => (
             <TableCell key={index} align='center'>{b?.user.name || 'No User'}</TableCell>
@@ -54,7 +57,7 @@ export function BookedPropertyTableRow({ booked, NamaProperty,row, selected, onS
           ))}
         </TableCell>
       </TableRow>
-    
+      )}
     </>
   );
 }

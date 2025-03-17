@@ -13,21 +13,26 @@ import { varAlpha } from 'src/theme/styles';
 
 import { Iconify } from 'src/components/iconify';
 import { SvgColor } from 'src/components/svg-color';
+import DialogDelete from 'src/component/DialogDelete';
+import { useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useMutationDeletePromo } from 'src/hooks/promo';
 
 // ----------------------------------------------------------------------
 
 export type PostItemProps = {
-  id: string;
+  id: any;
   title: string;
-  discount_image_url: string;
+  promo_image_url: string;
   coverUrl: string;
   totalViews: number;
   description: string;
   totalShares: number;
   totalComments: number;
   totalFavorites: number;
-  name :string;
-  created_at : string | any;
+  name: string;
+  created_at: string | any;
   postedAt: string | number | null;
   author: {
     name: string;
@@ -46,21 +51,26 @@ export function PostItem({
   latestPost: boolean;
   latestPostLarge: boolean;
 }) {
-  // const renderAvatar = (
-  //   <Avatar
-  //     alt={post.name}
-  //     src={post.author.avatarUrl}
-  //     sx={{
-  //       left: 24,
-  //       zIndex: 9,
-  //       bottom: -24,
-  //       position: 'absolute',
-  //       ...((latestPostLarge || latestPost) && {
-  //         top: 24,
-  //       }),
-  //     }}
-  //   />
-  // );
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const { mutate: DeletePromo, isPending } = useMutationDeletePromo({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch.promo'] });
+      setOpen(false);
+      enqueueSnackbar('Promo berhasil dihapus', { variant: 'success' });
+    },
+    onError: (err: any) => {
+      enqueueSnackbar('Promo gagal dihapus', { variant: 'error' });
+    },
+  });
+
+  const handleSubmit = () => {
+    DeletePromo(post.id);
+  };
   const renderTitle = (
     <Link
       color="inherit"
@@ -93,24 +103,20 @@ export function PostItem({
         color: 'text.disabled',
       }}
     >
-      {[
-        { color: 'orange', icon: 'solar:pen-bold' },
-        { color: 'common.white', icon: 'solar:eye-bold' },
-        { color: 'red', icon: 'solar:trash-bin-trash-bold' },
-      ].map((info, _index) => (
-        <Box
-          key={_index}
-          display="flex"
-          sx={{
-            ...((latestPostLarge || latestPost) && {
-              opacity: 0.64,
-              color: info.color,
-            }),
-          }}
-        >
-          <Iconify width={16} icon={info.icon} sx={{ mr: 0.5 }} />
-        </Box>
-      ))}
+      <Box
+        component="button"
+        onClick={handleClickOpen}
+        display="flex"
+        sx={{
+          ...((latestPostLarge || latestPost) && {
+            opacity: 0.64,
+            color: 'red',
+            cursor: 'pointer',
+          }),
+        }}
+      >
+        <Iconify width={16} icon={'solar:trash-bin-trash-bold'} sx={{ mr: 0.5 }} />
+      </Box>
     </Box>
   );
 
@@ -118,7 +124,7 @@ export function PostItem({
     <Box
       component="img"
       alt={post.title}
-      src={post.discount_image_url}
+      src={post.promo_image_url}
       sx={{
         top: 0,
         width: 1,
@@ -163,49 +169,59 @@ export function PostItem({
   );
 
   return (
-    <Card sx={sx} {...other}>
-      <Box
-        sx={(theme) => ({
-          position: 'relative',
-          pt: 'calc(100% * 3 / 4)',
-          ...((latestPostLarge || latestPost) && {
-            pt: 'calc(100% * 4 / 3)',
-            '&:after': {
-              top: 0,
-              content: "''",
-              width: '100%',
-              height: '100%',
-              position: 'absolute',
-              bgcolor: varAlpha(theme.palette.grey['900Channel'], 0.72),
-            },
-          }),
-          ...(latestPostLarge && {
-            pt: {
-              xs: 'calc(100% * 4 / 3)',
-              sm: 'calc(100% * 3 / 4.66)',
-            },
-          }),
-        })}
-      >
-        {/* {renderShape} */}
-        {/* {renderAvatar} */}
-        {renderCover}
-      </Box>
+    <>
+      <Card sx={sx} {...other}>
+        <Box
+          sx={(theme) => ({
+            position: 'relative',
+            pt: 'calc(100% * 3 / 4)',
+            ...((latestPostLarge || latestPost) && {
+              pt: 'calc(100% * 4 / 3)',
+              '&:after': {
+                top: 0,
+                content: "''",
+                width: '100%',
+                height: '100%',
+                position: 'absolute',
+                bgcolor: varAlpha(theme.palette.grey['900Channel'], 0.72),
+              },
+            }),
+            ...(latestPostLarge && {
+              pt: {
+                xs: 'calc(100% * 4 / 3)',
+                sm: 'calc(100% * 3 / 4.66)',
+              },
+            }),
+          })}
+        >
+          {/* {renderShape} */}
+          {/* {renderAvatar} */}
+          {renderCover}
+        </Box>
 
-      <Box
-        sx={(theme) => ({
-          p: theme.spacing(6, 3, 3, 3),
-          ...((latestPostLarge || latestPost) && {
-            width: 1,
-            bottom: 0,
-            position: 'absolute',
-          }),
-        })}
-      >
-        {renderDate}
-        {renderTitle}
-        {renderInfo}
-      </Box>
-    </Card>
+        <Box
+          sx={(theme) => ({
+            p: theme.spacing(6, 3, 3, 3),
+            ...((latestPostLarge || latestPost) && {
+              width: 1,
+              bottom: 0,
+              position: 'absolute',
+            }),
+          })}
+        >
+          {renderDate}
+          {renderTitle}
+          {renderInfo}
+        </Box>
+      </Card>
+      <DialogDelete
+        title="yakin untuk menghapus Promo ?"
+        description="data yang telah di hapus tidak akan kembali"
+        setOpen={setOpen}
+        open={open}
+        Submit={handleSubmit}
+        pending={isPending}
+      />
+    </>
   );
 }

@@ -20,7 +20,6 @@ import { TimePicker } from '@mui/x-date-pickers/TimePicker';
 import idLocale from 'date-fns/locale/id';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 
-
 // Animasi transisi modal
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} timeout={1000} {...props} />;
@@ -45,6 +44,10 @@ const ModalVisit = ({ isOpen, onClose, data }) => {
       onClose();
     },
     onError: (error) => {
+      const errors = error.response?.data?.errors;
+      if (errors?.visit_date[0]) {
+        enqueueSnackbar('Jam visit wajib diiisi', { variant: 'error' });
+      }
       enqueueSnackbar(error?.response?.data?.errors || 'Terjadi kesalahan', { variant: 'error' });
     },
   });

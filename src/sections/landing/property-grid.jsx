@@ -5,8 +5,9 @@ import 'react-multi-carousel/lib/styles.css';
 import 'keen-slider/keen-slider.min.css';
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
-import { fPercent } from 'src/utils/format-number';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
+import { fCurrency, fPercent } from 'src/utils/format-number';
+// import { fchmod } from 'fs';
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
@@ -158,7 +159,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                         variant="body2"
                         sx={{ color: 'gray', textDecoration: 'line-through' }}
                       >
-                        {formatCurrency(property.start_price)}
+                        {fCurrency(property.start_price)}
                       </Typography>
                       <Chip label="-12%" color="error" size="small" />
                     </Stack>
@@ -204,7 +205,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                       variant="subtitle1"
                       sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                     >
-                      {formatCurrency(property.start_price)} / bulan
+                      {fCurrency(property.start_price)} / bulan
                     </Typography>
                   )}
                 </Box>

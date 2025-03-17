@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 
-
 import { DashboardContent } from 'src/layouts/dashboard';
 
 import { Iconify } from 'src/components/iconify';
@@ -34,14 +33,14 @@ export function UserView() {
   const table = useTable();
 
   const [filterName, setFilterName] = useState('');
-  const {data, isLoading, isFetching} = useFetchAllUser()
+  const { data, isLoading, isFetching } = useFetchAllUser();
   console.log(data);
-  if(isLoading || isFetching) {
-    return <Loading/>
+  if (isLoading || isFetching) {
+    return <Loading />;
   }
   const dataFiltered: UserProps[] = applyFilter({
     inputData: data.data,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getComparator('desc', 'created_at'),
     filterName,
   });
 
@@ -54,13 +53,13 @@ export function UserView() {
           Users
         </Typography>
         <Link to={router.users.create}>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          New user
-        </Button>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
+            New user
+          </Button>
         </Link>
       </Box>
 
@@ -86,7 +85,7 @@ export function UserView() {
                 onSelectAllRows={(checked) =>
                   table.onSelectAllRows(
                     checked,
-                    data.map((user : UserProps) => user.id)
+                    data.map((user: UserProps) => user.id)
                   )
                 }
                 headLabel={[
@@ -94,7 +93,7 @@ export function UserView() {
                   { id: 'email', label: 'email' },
                   { id: 'phone_number', label: 'phone_number' },
                   { id: 'role', label: 'Role' },
-                  { id: '' },
+                  { id: 'action', label: 'Action' },
                 ]}
               />
               <TableBody>

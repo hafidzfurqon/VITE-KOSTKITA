@@ -32,7 +32,7 @@ export function BannerView() {
 
   const dataFiltered = applyFilter({
     inputData: data,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getComparator('desc', 'created_at'),
     filterName,
   });
 
@@ -45,7 +45,11 @@ export function BannerView() {
           Management Banner
         </Typography>
         <Link to={router.banner.create}>
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
             Tambah Banner
           </Button>
         </Link>
@@ -71,7 +75,10 @@ export function BannerView() {
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(checked, data.map((item : any) => item.id))
+                  table.onSelectAllRows(
+                    checked,
+                    data.map((item: any) => item.id)
+                  )
                 }
                 headLabel={[
                   { id: 'image_banner', label: 'Image Banner' },
@@ -81,19 +88,24 @@ export function BannerView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered.slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
-                ).map((row : any) => (
-                  <BannerTableRow
-                    key={row.id}
-                    row={row}
-                    selected={table.selected.includes(row.id)}
-                    onSelectRow={() => table.onSelectRow(row.id)}
-                  />
-                ))}
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row: any) => (
+                    <BannerTableRow
+                      key={row.id}
+                      row={row}
+                      selected={table.selected.includes(row.id)}
+                      onSelectRow={() => table.onSelectRow(row.id)}
+                    />
+                  ))}
 
-                <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
+                <TableEmptyRows
+                  height={68}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
+                />
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
@@ -113,7 +125,6 @@ export function BannerView() {
     </DashboardContent>
   );
 }
-
 
 export function useTable() {
   const [page, setPage] = useState(0);

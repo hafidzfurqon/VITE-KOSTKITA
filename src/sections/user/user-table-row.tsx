@@ -2,25 +2,25 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { Button } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useMutationDeleteUser } from 'src/hooks/users/mutation';
+import DialogDelete from 'src/component/DialogDelete';
 
 // ----------------------------------------------------------------------
 
 export type UserProps = {
-  id: string;
+  id: any;
   name: string;
   roles: { name: string }[];
   email: string;
-  phone_number : string;
+  phone_number: string;
   status: string;
   company: string;
   avatarUrl: string;
@@ -36,17 +36,30 @@ type UserTableRowProps = {
 };
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
-  const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
+  const [open, setOpen] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true)
+   }
+   const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const role_name = row.roles.map((role: any) => role.name);
 
-  const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
-    setOpenPopover(event.currentTarget);
-  }, []);
-
-  const handleClosePopover = useCallback(() => {
-    setOpenPopover(null);
-  }, []);
-    const role_name = row.roles.map((role : any) => role.name);
- 
+  const { mutate: DeleteUser, isPending } = useMutationDeleteUser({
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['all.users'] });
+        setOpen(false);
+        enqueueSnackbar('User berhasil dihapus', { variant: 'success' });
+      },
+      onError: (err : any) => {
+        enqueueSnackbar('User gagal dihapus', { variant: 'error' });
+      },
+    });
+  
+    const handleSubmit = () => {
+      DeleteUser(row.id)
+    }
+    
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
@@ -65,60 +78,28 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
         <TableCell>{row.phone_number}</TableCell>
 
-        <TableCell>
-        {role_name[0]}
-        </TableCell>
-    {/* {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )} */}
-        {/* <TableCell>
-        
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
-        </TableCell> */}
+        <TableCell>{role_name[0]}</TableCell>
 
-        <TableCell align="right">
-          <IconButton onClick={handleOpenPopover}>
-            <Iconify icon="eva:more-vertical-fill" />
-          </IconButton>
-        </TableCell>
-      </TableRow>
-
-      <Popover
-        open={!!openPopover}
-        anchorEl={openPopover}
-        onClose={handleClosePopover}
-        anchorOrigin={{ vertical: 'top', horizontal: 'left' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <MenuList
-          disablePadding
-          sx={{
-            p: 0.5,
-            gap: 0.5,
-            width: 140,
-            display: 'flex',
-            flexDirection: 'column',
-            [`& .${menuItemClasses.root}`]: {
-              px: 1,
-              gap: 2,
-              borderRadius: 0.75,
-              [`&.${menuItemClasses.selected}`]: { bgcolor: 'action.selected' },
-            },
-          }}
-        >
-          <MenuItem onClick={handleClosePopover}>
+        <TableCell align="center">
+          <Button>
             <Iconify icon="solar:pen-bold" />
             Edit
-          </MenuItem>
+          </Button>
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+          <Button sx={{ color: 'error.main' }} onClick={handleClickOpen}>
             <Iconify icon="solar:trash-bin-trash-bold" />
             Delete
-          </MenuItem>
-        </MenuList>
-      </Popover>
+          </Button>
+        </TableCell>
+      </TableRow>
+      <DialogDelete 
+            title="yakin untuk menghapus user ?"
+             description="data yang telah di hapus tidak akan kembali"
+             setOpen={setOpen}
+             open={open}
+             Submit={handleSubmit}
+             pending={isPending}
+            />
     </>
   );
 }

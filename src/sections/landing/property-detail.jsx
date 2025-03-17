@@ -20,7 +20,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
-import { BookmarkBorder, WhatsApp } from '@mui/icons-material';
+import { BookmarkBorder, DateRange, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
 import { fPercent } from 'src/utils/format-number';
@@ -37,7 +37,7 @@ export default function PropertyDetail() {
   const { slug } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-  // console.log(data)
+  
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -156,7 +156,7 @@ export default function PropertyDetail() {
         <meta property="og:image" content={data?.files[0]?.file_url} />
         <meta name="keywords" content={data.name} />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content={`http://kostkita-id.vercel.app/property/${data.slug}`} />
+        <meta property="og:url" content={`http://kostkita-ids.vercel.app/property/${data.slug}`} />
         <meta property="og:title" content={data.name} />
         <meta property="og:description" content={data.description.replace(/<[^>]*>?/gm, '')} />
         <meta name="twitter:card" content="summary_large_image" />
@@ -165,7 +165,7 @@ export default function PropertyDetail() {
         <meta name="twitter:image" content={data?.files[0]?.file_url} />
         <meta
           property="twitter:url"
-          content={`http://kostkita-id.vercel.app/property/${data.slug}`}
+          content={`http://kostkita-ids.vercel.app/property/${data.slug}`}
         />
         <meta property="og:type" content={`website`} />
         <meta property="og:title" content={`KostKita Property ${data.name}`} />
@@ -428,7 +428,7 @@ export default function PropertyDetail() {
                     color="primary"
                     fullWidth={data.rooms.length === 0}
                     startIcon={<WhatsApp />}
-                    href={`https://wa.me/6285183311656?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
+                    href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     sx={{
                       color: '#25D366',
@@ -557,8 +557,17 @@ export default function PropertyDetail() {
             Jika kamu ingin melihat hunian secara langsung, kamu bisa menjadwakan visit ke hunian
             ini
           </Typography>
-          <Button onClick={() => setVisitModal(true)} variant="outlined">
-            Jadwalkan Visit
+          <Button
+            onClick={() => setVisitModal(true)}
+            variant="outlined"
+            sx={{ p: 2 }}
+            display={'flex'}
+            alignItems={'center'}
+          >
+            <DateRange />
+            <Typography variant="subtitle1" ml={1}>
+              Jadwalkan Visit
+            </Typography>
           </Button>
         </Box>
         {/* Modal visit */}

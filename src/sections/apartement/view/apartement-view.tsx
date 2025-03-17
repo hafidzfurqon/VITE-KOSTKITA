@@ -29,8 +29,12 @@ export function ApartementView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-  const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_property");
-  const { data = [], isLoading, isFetching } = isOwnerProperty ? useFetchAllPropertyOwner() : useFetchAllApartement();
+  const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
+  const {
+    data = [],
+    isLoading,
+    isFetching,
+  } = isOwnerProperty ? useFetchAllPropertyOwner() : useFetchAllApartement();
   const [filterName, setFilterName] = useState('');
 
   if (isLoading || isFetching) {
@@ -39,7 +43,7 @@ export function ApartementView() {
 
   const dataFiltered = applyFilter({
     inputData: data,
-    comparator: getComparator(table.order, table.orderBy),
+    comparator: getComparator('desc', 'created_at'),
     filterName,
   });
 
@@ -52,7 +56,11 @@ export function ApartementView() {
           Management Property
         </Typography>
         <Link to={router.property.create}>
-          <Button variant="contained" color="inherit" startIcon={<Iconify icon="mingcute:add-line" />}>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
             Tambah Property
           </Button>
         </Link>
@@ -78,7 +86,10 @@ export function ApartementView() {
                 numSelected={table.selected.length}
                 onSort={table.onSort}
                 onSelectAllRows={(checked) =>
-                  table.onSelectAllRows(checked, data.map((item : any) => item.id))
+                  table.onSelectAllRows(
+                    checked,
+                    data.map((item: any) => item.id)
+                  )
                 }
                 headLabel={[
                   { id: 'image_property', label: 'Gambar Property' },
@@ -89,19 +100,24 @@ export function ApartementView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered.slice(
-                  table.page * table.rowsPerPage,
-                  table.page * table.rowsPerPage + table.rowsPerPage
-                ).map((row : any) => (
-                  <ApartementTableRow
-                    key={row.id}
-                    row={row}
-                    selected={table.selected.includes(row.id)}
-                    onSelectRow={() => table.onSelectRow(row.id)}
-                  />
-                ))}
+                {dataFiltered
+                  .slice(
+                    table.page * table.rowsPerPage,
+                    table.page * table.rowsPerPage + table.rowsPerPage
+                  )
+                  .map((row: any) => (
+                    <ApartementTableRow
+                      key={row.id}
+                      row={row}
+                      selected={table.selected.includes(row.id)}
+                      onSelectRow={() => table.onSelectRow(row.id)}
+                    />
+                  ))}
 
-                <TableEmptyRows height={68} emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)} />
+                <TableEmptyRows
+                  height={68}
+                  emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
+                />
                 {notFound && <TableNoData searchQuery={filterName} />}
               </TableBody>
             </Table>
@@ -121,7 +137,6 @@ export function ApartementView() {
     </DashboardContent>
   );
 }
-
 
 export function useTable() {
   const [page, setPage] = useState(0);

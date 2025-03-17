@@ -34,6 +34,8 @@ import HistoryBookingDetailAdmin from 'src/sections/landing/user/admin/historyBo
 import HistoryVisit from 'src/sections/landing/visit/history-visit';
 import VisitDetail from 'src/sections/landing/visit/visit-detail';
 import About from 'src/sections/landing/about';
+import { CreateUser } from 'src/sections/user/crud/create-user';
+import { LayananCreate } from 'src/sections/services/crud/layanan-create';
 
 // ----------------------------------------------------------------------
 
@@ -50,6 +52,7 @@ export const PropertyRoomPage = lazy(() => import('src/pages/property_room'));
 export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 export const RoomFasilitasPage = lazy(() => import('src/pages/room-fasilitas'));
 export const BookedPropertyPage = lazy(() => import('src/pages/booked-property'));
+export const LayananPage = lazy(() => import('src/pages/services'));
 
 // ----------------------------------------------------------------------
 
@@ -77,14 +80,17 @@ export function Router() {
         </DashboardLayout>
       ),
       children: [
+        // untuk routing dashboard
         {
           path: 'dashboard',
           element: <HomePage />,
         },
+        // untuk routing history booking
         {
           path: 'booked-property/booking/detail/admin/:bookingCode',
           element: <HistoryBookingDetailAdmin />,
         },
+        // untuk routing user
         {
           path: 'user',
           children: [
@@ -94,10 +100,11 @@ export function Router() {
             },
             {
               path: 'create',
-              element: <div>Helo world...</div>,
+              element: <CreateUser />,
             },
           ],
         },
+        // untuk routing property
         {
           path: 'property',
           children: [
@@ -129,6 +136,7 @@ export function Router() {
             },
           ],
         },
+        // untuk routing promo
         {
           path: 'management-promo',
           children: [
@@ -142,6 +150,7 @@ export function Router() {
             },
           ],
         },
+        // untuk routing banner
         {
           path: 'banner',
           children: [
@@ -155,6 +164,7 @@ export function Router() {
             },
           ],
         },
+        // untuk routing property tipe
         {
           path: 'management-property-type',
           children: [
@@ -172,6 +182,25 @@ export function Router() {
             },
           ],
         },
+        //  untuk routing layanan
+        {
+          path: 'services',
+          children: [
+            {
+              path: '',
+              element: <LayananPage />,
+            },
+            {
+              path: 'create',
+              element: <LayananCreate />,
+            },
+            {
+              path: 'edit/:id',
+              element: <PropertyEdit />,
+            },
+          ],
+        },
+        // untuk routing property ter booking user
         {
           path: 'booked-property',
           children: [
@@ -185,6 +214,7 @@ export function Router() {
             },
           ],
         },
+        // untuk routing fasilitas
         {
           path: 'fasilitas',
           children: [
@@ -194,6 +224,7 @@ export function Router() {
             },
           ],
         },
+        // untuk routing fasilitas kamar
         {
           path: 'room-facility',
           element: <RoomFasilitasPage />,

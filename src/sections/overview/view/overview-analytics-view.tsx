@@ -25,22 +25,43 @@ import axiosInstance from 'src/utils/axios';
 
 export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
-  const {user} = authUser;
-  const isAdmin = user?.roles?.some((role : {name : string}) => role.name === "admin");
-  const {data : total_booking, isLoading : isload, isFetching : isFetch} = useQuery({
-    queryKey : ['get.all_booking'],
-    queryFn : async () => {
-      const res = await axiosInstance.get('/api/admin/statistic/property/bookings')
-      return res.data.total_bookings
-    }
-  })
-  const {data, isLoading, isFetching} = isAdmin ? useFetchAllApartement() : useFetchAllPropertyOwner()
-  const {data : DataUser, isLoading : LoadingUser, isFetching : FecthingUser} = isAdmin ? useFetchAllUser() : { data: null, isLoading: false, isFetching: false }
-  const {data : DataBooking, isLoading : LoadingBooking, isFetching : FecthingBooking} = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner()
-  const { data: DataPromo, isLoading: LoadingPromo, isFetching: FecthingPromo } = 
-    isAdmin ? useFetchPromo() : { data: null, isLoading: false, isFetching: false };
+  const { user } = authUser;
+  const isAdmin = user?.roles?.some((role: { name: string }) => role.name === 'admin');
+  // const {data : total_booking, isLoading : isload, isFetching : isFetch} = useQuery({
+  //   queryKey : ['get.all_booking'],
+  //   queryFn : async () => {
+  //     const res = await axiosInstance.get('/api/admin/statistic/property/bookings')
+  //     return res.data.total_bookings
+  //   }
+  // })
+  const { data, isLoading, isFetching } = isAdmin
+    ? useFetchAllApartement()
+    : useFetchAllPropertyOwner();
+  const {
+    data: DataUser,
+    isLoading: LoadingUser,
+    isFetching: FecthingUser,
+  } = isAdmin ? useFetchAllUser() : { data: null, isLoading: false, isFetching: false };
+  // const {
+  //   data: DataBooking,
+  //   isLoading: LoadingBooking,
+  //   isFetching: FecthingBooking,
+  // } = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner();
+  const {
+    data: DataPromo,
+    isLoading: LoadingPromo,
+    isFetching: FecthingPromo,
+  } = isAdmin ? useFetchPromo() : { data: null, isLoading: false, isFetching: false };
   if (
-    isLoading || isload|| isFetch || isFetching || LoadingUser || FecthingUser || LoadingBooking || FecthingBooking || LoadingPromo || FecthingPromo
+    isLoading ||
+    isFetching ||
+    LoadingUser ||
+    FecthingUser ||
+    // LoadingBooking ||
+    // FecthingBooking ||
+    LoadingPromo ||
+    // || isload|| isFetch 
+    FecthingPromo
   ) {
     return <Loading />;
   }
@@ -64,25 +85,28 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-       { isAdmin && <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
-            title="Jumlah Pengguna"
-            // percent={-0.1}
-            total={DataUser?.data?.length}
-            color="secondary"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
-            chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 47, 40, 62, 73, 30, 23, 54],
-            }}
-          />
-        </Grid>}
+        {isAdmin && (
+          <Grid xs={12} sm={6} md={3}>
+            <AnalyticsWidgetSummary
+              title="Jumlah Pengguna"
+              // percent={-0.1}
+              total={DataUser?.data?.length}
+              color="secondary"
+              icon={<img alt="icon" src="/assets/icons/glass/ic-glass-users.svg" />}
+              chart={{
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                series: [56, 47, 40, 62, 73, 30, 23, 54],
+              }}
+            />
+          </Grid>
+        )}
 
         <Grid xs={12} sm={6} md={3}>
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
             // percent={2.8}
-            total={isAdmin ? total_booking : DataBooking?.map((total : any) => total.total_booking)}
+            // total={isAdmin ? total_booking : DataBooking?.map((total : any) => total.total_booking)}
+            total={5}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{
@@ -133,7 +157,6 @@ export function OverviewAnalyticsView() {
             }}
           />
         </Grid>
-
 
         {/* <Grid xs={12} md={6} lg={8}>
           <AnalyticsNews title="News" list={_posts.slice(0, 5)} />
