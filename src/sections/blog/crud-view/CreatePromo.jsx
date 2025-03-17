@@ -1,19 +1,18 @@
-import { Button, Box, Container, Stack, Typography, TextField, FormLabel } from "@mui/material";
-import { useForm } from "react-hook-form";
-import ReactQuill from "react-quill";
-import { useState } from "react";
-import "react-quill/dist/quill.snow.css";
-import { Grid } from "@mui/material";
-import { MenuItem } from "@mui/material";
-import { FormControlLabel } from "@mui/material";
-import { Switch } from "@mui/material";
-import { useMutationCreatePromo } from "src/hooks/promo";
-import { useQueryClient } from "@tanstack/react-query";
-import { useSnackbar } from "notistack";
-import { useRouter } from "src/routes/hooks";
-import { Link } from "react-router-dom";
-import { router } from "src/hooks/routing/useRouting";
-
+import { Button, Box, Container, Stack, Typography, TextField, FormLabel } from '@mui/material';
+import { useForm } from 'react-hook-form';
+import ReactQuill from 'react-quill';
+import { useState } from 'react';
+import 'react-quill/dist/quill.snow.css';
+import { Grid } from '@mui/material';
+import { MenuItem } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
+import { Switch } from '@mui/material';
+import { useMutationCreatePromo } from 'src/hooks/promo';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useRouter } from 'src/routes/hooks';
+import { Link } from 'react-router-dom';
+import { router } from 'src/hooks/routing/useRouting';
 
 export const CreatePromo = () => {
   const {
@@ -45,8 +44,8 @@ export const CreatePromo = () => {
     setValue('how_to_use', value); // Update value untuk react-hook-form
   };
 
-  const {mutate, isPending} = useMutationCreatePromo({
-    onSuccess : () => {
+  const { mutate, isPending } = useMutationCreatePromo({
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
       routers.push('/management-promo');
       enqueueSnackbar('Promo berhasil dibuat', { variant: 'success' });
@@ -54,7 +53,7 @@ export const CreatePromo = () => {
     onError: () => {
       enqueueSnackbar('Promo gagal dibuat', { variant: 'error' });
     },
-  })
+  });
   const Submitted = (data) => {
     const { image: gambar, ...rest } = data;
     const formData = new FormData();
@@ -179,24 +178,24 @@ export const CreatePromo = () => {
           <ReactQuill theme="snow" value={description} onChange={handleQuillChange} />
           <Typography>Cara Pakai : </Typography>
           <ReactQuill theme="snow" value={howToUse} onChange={handleQuillHowToUse} />
-         
+
           <TextField
-          {...register('disclaimer')}
-          margin="dense"
-          label="Disclaimer"
-          multiline
-          rows={4}
-          fullWidth
-          variant="outlined"
-        />
+            {...register('disclaimer')}
+            margin="dense"
+            label="Disclaimer"
+            multiline
+            rows={4}
+            fullWidth
+            variant="outlined"
+          />
         </Stack>
-        <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
+        <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb: 5, mr: 3 }}>
           Submit
         </Button>
         <Link to={router.promo.list}>
-        <Button type="button" variant="outlined" sx={{ mt: 3, mb:5 }}>
-          Kembali
-        </Button>
+          <Button type="button" variant="outlined" sx={{ mt: 3, mb: 5 }}>
+            Kembali
+          </Button>
         </Link>
       </Box>
     </Container>

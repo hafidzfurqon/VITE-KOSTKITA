@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -30,6 +30,8 @@ import { useAppContext } from 'src/context/user-context';
 import { Bookmark } from '@mui/icons-material';
 import { useSnackbar } from 'notistack';
 import ModalVisit from './visit/modal-visit';
+import { useMutationAddWishlist } from 'src/hooks/users/useMutationAddWishlist';
+import { useMutationRemoveWishlist } from 'src/hooks/users/useMutationRemoveWishlist';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -38,12 +40,12 @@ export default function PropertyDetail() {
   // console.log(data)
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [open, setOpen] = useState(false);
   const [visitModal, setVisitModal] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
+  const [isWishlist, setIsWishlist] = useState(data?.is_wishlist ?? false);
   const { user } = authUser;
-  const isOwnerId = user?.id
+  const isOwnerId = user?.id;
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
 
@@ -59,6 +61,65 @@ export default function PropertyDetail() {
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
   const hasDiscount = data?.discounts && data?.discounts?.length > 0;
+
+  const { mutateAsync: addWishlist, isLoading: isAdding } = useMutationAddWishlist({
+    onSuccess: () => {
+      setIsWishlist(true);
+      enqueueSnackbar('Ditambahkan ke wishlist', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('Gagal menambahkan ke wishlist', { variant: 'error' });
+    },
+  });
+
+  const { mutateAsync: removeWishlist, isLoading: isRemoving } = useMutationRemoveWishlist({
+    onSuccess: () => {
+      setIsWishlist(false);
+      enqueueSnackbar('Dihapus dari wishlist', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('Gagal menghapus dari wishlist', { variant: 'error' });
+    },
+  });
+
+  useEffect(() => {
+    setIsWishlist(data?.is_wishlist ?? false); // Pastikan selalu ada nilai
+  }, [data?.is_wishlist]);
+
+  const handleWishlistToggle = async () => {
+    if (!user) {
+      enqueueSnackbar('Anda harus login untuk menambahkan ke wishlist', { variant: 'warning' });
+      return;
+    }
+  
+    if (!data?.id) {
+      enqueueSnackbar('Data tidak valid', { variant: 'error' });
+      return;
+    }
+  
+    const propertyId = data.id;
+    const propertyRoomId = data.rooms?.length ? data.rooms[0].id : null;
+  
+    const wishlistData = {
+      property_id: propertyId,
+      ...(propertyRoomId && { property_room_id: propertyRoomId }),
+    };
+  
+    try {
+      if (isWishlist) {
+        await removeWishlist({ wishlist_ids: Array.isArray(data.id) ? data.id : [data.id] });
+        setIsWishlist(false);
+        enqueueSnackbar('Dihapus dari wishlist', { variant: 'success' });
+      } else {
+        await addWishlist(wishlistData);
+        setIsWishlist(true);
+        enqueueSnackbar('Ditambahkan ke wishlist', { variant: 'success' });
+      }
+    } catch (error) {
+      enqueueSnackbar('Terjadi kesalahan, coba lagi', { variant: 'error' });
+    }
+  };
+  
 
   if (isLoading || isFetching) {
     return (
@@ -239,8 +300,12 @@ export default function PropertyDetail() {
                 {data.name}
               </Typography>
               <Box sx={{ display: 'flex' }}>
-                <IconButton onClick={() => setIsFavorite(!isFavorite)} color="primary">
-                  {isFavorite ? <Bookmark color="primary" /> : <BookmarkBorder />}
+                <IconButton
+                  onClick={handleWishlistToggle}
+                  color="primary"
+                  disabled={isAdding || isRemoving}
+                >
+                  {isWishlist ? <Bookmark color="primary" /> : <BookmarkBorder />}
                 </IconButton>
 
                 <IconButton>
@@ -395,7 +460,9 @@ export default function PropertyDetail() {
                       }
                     }}
                   >
-                    {isOwnerId === data.created_by.id ? 'Property ini milik Anda' : 'Booking Sekarang'}
+                    {isOwnerId === data.created_by.id
+                      ? 'Property ini milik Anda'
+                      : 'Booking Sekarang'}
                   </Button>
                 )}
               </Card>

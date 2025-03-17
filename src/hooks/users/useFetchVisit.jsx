@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import axiosInstance, { endpoints } from "src/utils/axios";
 
-export const useGetBookingUser = () => useQuery({
-    queryKey : ['all.booking_user'],
+export const useFetchVisit = () => useQuery({
+    queryKey : ['all.visit'],
     queryFn : async () => {
-    const response = await axiosInstance.get(endpoints.booking.getBookingproperty);
+    const response = await axiosInstance.get(endpoints.visit.listVisit);
     return response.data
     }
 })

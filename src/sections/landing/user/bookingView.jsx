@@ -75,6 +75,7 @@ export default function BookingView() {
     },
     onError: (error) => {
       enqueueSnackbar(error?.response?.data?.errors || 'Terjadi kesalahan', { variant: 'error' });
+      console.log(error);
     },
   });
 

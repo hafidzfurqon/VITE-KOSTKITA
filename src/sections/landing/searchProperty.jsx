@@ -17,10 +17,11 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function SearchProperty({ query, results, onSearch, hrefItem, loading }) {
+  console.log(query)
   const router = useRouter();
 
-  const handleClick = (id) => {
-    router.push(hrefItem(id));
+  const handleClick = (slug) => {
+    router.push(hrefItem(slug));
   };
 
   const handleKeyUp = (event) => {
@@ -87,7 +88,7 @@ export default function SearchProperty({ query, results, onSearch, hrefItem, loa
         const imageUrl = property.files.length > 0 ? property.files[0].file_url : '';
 
         return (
-          <Box component="li" {...props} onClick={() => handleClick(property.id)} key={property.id}>
+          <Box component="li" {...props} onClick={() => handleClick(property.slug)} key={property.id}>
             <Avatar
               alt={property.name}
               src={imageUrl}

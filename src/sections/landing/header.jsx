@@ -48,8 +48,8 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role) => role.name === "admin");
-  const isOwner = user?.roles?.some((role) => role.name === "owner_property");
+  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
+  const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
@@ -167,11 +167,12 @@ export default function Header() {
                       href: isAdmin ? '/dashboard' : '/profile',
                       icon: <Person />,
                     },
-                    !isAdmin && !isOwner && {
-                      label: 'Riwayat Booking',
-                      href: '/history/booking',
-                      icon: <HistoryIcon />,
-                    },
+                    !isAdmin &&
+                      !isOwner && {
+                        label: 'Riwayat Booking',
+                        href: '/history/booking',
+                        icon: <HistoryIcon />,
+                      },
                     !isAdmin && {
                       label: 'Riwayat Visit',
                       href: '/history/visit',
