@@ -11,7 +11,6 @@ import {
   CircularProgress,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import CustomDatePicker from 'src/components/calender/custom-datepicker';
 import { useResponsive } from 'src/hooks/use-responsive';
 import SearchProperty from './searchProperty';
@@ -25,52 +24,31 @@ export default function HeroContent({ data }) {
     date: '',
     type: '',
   });
-  const [loading, setLoading] = useState(false);
+
   const isMobile = useResponsive('down', 'sm');
-
-  const [searchQuery, setSearchQuery] = useState('');
-
   const debouncedQuery = useDebounce(searchValues.query);
 
-  // const { products, productsLoading, productsEmpty } = useGetProducts();
-
   const { searchResults, searchLoading } = useSearchProperty({
-    name: searchValues.query,
-    location: searchValues.query,
-    address: searchValues.query,
+    name: debouncedQuery,
+    location: debouncedQuery,
+    address: debouncedQuery,
   });
 
   const handleChange = (field, value) => {
-    const newValues = { ...searchValues, [field]: value };
-    setSearchValues(newValues);
-
-    if (Object.values(newValues).every((val) => val === '')) {
-      setSearchQuery({});
-    } else {
-      setSearchQuery(newValues); // Perbaikan utama: langsung set filter
-    }
+    setSearchValues((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
-  // const handleSearch = () => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     const hasFilter = Object.values(searchValues).some((val) => val !== '');
-  //     setSearchParams(hasFilter ? searchValues : {});
-  //     setLoading(false);
-  //   }, 1000);
-  // };
-
   const handleSearch = useCallback(() => {
-    setLoading(true);
-    setSearchQuery(searchValues); // Pastikan searchValues dikirim ke setSearchParams
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-  }, [searchValues, setSearchQuery]);
+    if (!searchValues.query.trim() && !searchValues.date && !searchValues.type) return;
+    console.log('Searching with:', searchValues);
+  }, [searchValues]);
 
   useEffect(() => {
-    setSearchQuery(searchValues);
-  }, [debouncedQuery, searchValues, setSearchQuery]);
+    handleSearch();
+  }, [debouncedQuery]);
 
   return (
     <Box sx={{ position: 'relative', pt: 8, px: 4, color: 'white' }}>
@@ -95,37 +73,20 @@ export default function HeroContent({ data }) {
           borderRadius: 2,
           boxShadow: 3,
           display: 'grid',
-          // gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr auto' },
           gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr', md: '1fr 1fr 1fr 1fr auto' },
           gap: 2,
           p: 2,
         }}
       >
         {/* Pencarian Lokasi atau Nama Properti */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            px: 2,
-            minWidth: '200px',
-          }}
-        >
-          {/* <LocationOnIcon sx={{ color: '#FFD700', mr: 1 }} /> */}
+        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
           <SearchProperty
             query={debouncedQuery}
             results={searchResults}
-            onSearch={(value) => handleChange('query', value)} // Perbaiki agar update searchValues.query
+            onSearch={(value) => handleChange('query', value)}
             loading={searchLoading}
-            hrefItem={(slug) => paths.property.slug(slug)}
+            hrefItem={(slug) => `/property/${slug}`}
           />
-
-          {/* <InputBase
-            placeholder="Cari lokasi atau nama properti..."
-            fullWidth
-            value={searchValues.query}
-            onChange={(e) => handleChange('query', e.target.value)}
-            sx={{ borderBottom: '1px solid #ddd' }}
-          /> */}
         </Box>
 
         {/* Tanggal */}
@@ -171,16 +132,9 @@ export default function HeroContent({ data }) {
             alignSelf: 'center',
             '&:hover': { bgcolor: '#FFC107' },
           }}
-          disabled={loading}
         >
-          {loading ? (
-            <CircularProgress size={24} sx={{ color: 'black' }} />
-          ) : (
-            <>
-              <SearchIcon />
-              {!isMobile && 'Cari hunian'}
-            </>
-          )}
+          <SearchIcon />
+          {!isMobile && 'Cari hunian'}
         </Button>
       </Box>
     </Box>

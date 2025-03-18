@@ -19,18 +19,11 @@ export const useListProperty = () => {
 };
 
 export function useSearchProperty({ name, location, address }) {
-  // Ambil nilai pertama yang tersedia untuk search query
-  const searchKey = name || location || address;
-  const searchParam = name
-    ? `name=${encodeURIComponent(name)}`
-    : location
-      ? `location=${encodeURIComponent(location)}`
-      : address
-        ? `address=${encodeURIComponent(address)}`
-        : '';
+  const searchKey = name?.trim() || location?.trim() || address?.trim();
+
+  const searchParam = searchKey ? `search=${encodeURIComponent(searchKey)}` : '';
 
   const URL = searchKey ? `${endpoints.property.public.list}?${searchParam}` : null;
-  console.log('Search URL:', URL); // Debug URL
 
   const { data, isLoading, error, isFetching } = useQuery({
     queryKey: ['searchProperty', searchKey],
@@ -38,8 +31,7 @@ export function useSearchProperty({ name, location, address }) {
       if (!URL) return null;
       try {
         const response = await axiosInstance.get(URL);
-        console.log('Search Response:', response.data); // Debug response
-        return response.data.data; // Sama seperti useListProperty
+        return response.data.data || [];
       } catch (err) {
         console.error('Search Error:', err);
         throw new Error('An error occurred while fetching properties.');
@@ -49,9 +41,9 @@ export function useSearchProperty({ name, location, address }) {
     keepPreviousData: true,
   });
 
-  const memoizedValue = useMemo(
+  return useMemo(
     () => ({
-      searchResults: data || [], // Karena data adalah response.data.data
+      searchResults: data || [],
       searchLoading: isLoading,
       searchError: error,
       searchFetching: isFetching,
@@ -59,6 +51,4 @@ export function useSearchProperty({ name, location, address }) {
     }),
     [data, error, isLoading, isFetching]
   );
-
-  return memoizedValue;
 }

@@ -11,39 +11,39 @@ import {
   DialogTitle,
   DialogActions,
   Button,
-  Box,
   useMediaQuery,
 } from '@mui/material';
 import { Bookmark } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-
-const dummyWishlist = [
-  {
-    id: 1,
-    title: 'V Hotel Lavender',
-    category: 'Hotel',
-    location: 'Lavender, Singapore',
-    price: 'Rp 2.097.961',
-    image: 'https://placehold.co/400',
-  },
-];
+import { useFetchWishlist } from 'src/hooks/users/useFetchWishlist';
 
 export default function WishlistPageView() {
-  const [wishlist, setWishlist] = useState(dummyWishlist);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm')); // Jika layar <= 600px
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const { data } = useFetchWishlist(); // Mengambil data dari API
+  const wishlist = data?.wishlist || []; // Pastikan tidak error jika data belum ada
 
   const handleRemoveClick = (item) => {
     setSelectedItem(item);
     setConfirmOpen(true);
   };
 
-  const handleConfirmRemove = () => {
-    setWishlist((prev) => prev.filter((item) => item.id !== selectedItem.id));
-    setConfirmOpen(false);
-    setSelectedItem(null);
+  const handleConfirmRemove = async () => {
+    try {
+      // Panggil API untuk menghapus item dari wishlist (jika ada endpoint)
+      // await removeWishlistItem(selectedItem.id);
+
+      // Menutup dialog
+      setConfirmOpen(false);
+      setSelectedItem(null);
+
+      // Bisa ditambahkan refetch atau state update jika data harus diperbarui
+    } catch (error) {
+      console.error('Gagal menghapus item:', error);
+    }
   };
 
   return (
@@ -55,12 +55,12 @@ export default function WishlistPageView() {
         Tempat untuk menyimpan wishlist Anda!
       </Typography>
       <Grid container spacing={3}>
-        {wishlist.map((item) => (
+        {wishlist?.property?.map((item) => (
           <Grid item xs={12} key={item.id}>
             <Card
               sx={{
                 display: 'flex',
-                flexDirection: isMobile ? 'column' : 'row', // Jika layar kecil, ubah ke kolom
+                flexDirection: isMobile ? 'column' : 'row',
                 alignItems: isMobile ? 'flex-start' : 'center',
                 p: 2,
                 boxShadow: 2,

@@ -15,6 +15,8 @@ import { CircularProgress, Container } from '@mui/material';
 import { useAppContext } from 'src/context/user-context';
 import { useUpdateProfile } from 'src/hooks/users/profile/useUpdateProfile';
 import { useQueryClient } from '@tanstack/react-query';
+import { MenuItem } from '@mui/material';
+import { format } from 'date-fns';
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
@@ -25,14 +27,19 @@ export default function AccountGeneral() {
   const [loading, setLoading] = useState(true);
 
   const UpdateUserSchema = Yup.object().shape({
+    name: Yup.string().required('Nama wajib diisi'),
+    email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
     phone_number: Yup.string().nullable(),
+    nomor_ktp: Yup.string().nullable(),
+    nik: Yup.string().nullable(),
+    date_of_birth: Yup.string().nullable(),
+    gender: Yup.string().nullable().oneOf(['male', 'female'], 'Jenis kelamin tidak valid'),
     photo_profile: Yup.mixed()
       .nullable()
       .test(
         'fileType',
         'Format file tidak valid (hanya jpg, jpeg, png)',
-        (value) =>
-          !value || (value && ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type))
+        (value) => !value || ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type)
       ),
   });
 
@@ -42,6 +49,10 @@ export default function AccountGeneral() {
       name: '',
       email: '',
       phone_number: '',
+      nomor_ktp: '',
+      nik: '',
+      date_of_birth: '',
+      gender: '',
       photo_profile: '',
     },
   });
@@ -55,10 +66,18 @@ export default function AccountGeneral() {
 
   useEffect(() => {
     if (user) {
+      const formattedDate = user.date_of_birth
+        ? format(new Date(user.date_of_birth), 'yyyy-MM-dd')
+        : '';
+
       reset({
         name: user.name || '',
         email: user.email || '',
         phone_number: user.phone_number || '',
+        nomor_ktp: user.nomor_ktp || '',
+        nik: user.nik || '',
+        date_of_birth: formattedDate,
+        gender: user.gender || '',
         photo_profile: user.photo_profile_url || '',
       });
     }
@@ -68,42 +87,33 @@ export default function AccountGeneral() {
   const { mutateAsync: editUser } = useUpdateProfile();
 
   const onSubmit = async (data) => {
-    // Buat objek formData hanya jika ada perubahan
+    console.log('Sebelum dikirim:', data);
+
+    const formattedData = {
+      ...data,
+      date_of_birth: data.date_of_birth ? format(new Date(data.date_of_birth), 'yyyy-MM-dd') : null,
+    };
+
+    console.log('Formatted Data:', formattedData);
+
     const formData = new FormData();
-
-    // Cek apakah ada perubahan data
-    const hasChanges =
-      data.name !== user.name ||
-      data.email !== user.email ||
-      data.phone_number !== user.phone_number ||
-      data.photo_profile !== user.photo_profile;
-
-    if (!hasChanges) {
-      enqueueSnackbar('Tidak ada perubahan data', { variant: 'info' });
-      return;
-    }
-
-    if (data.name !== user.name) formData.append('name', data.name);
-    if (data.email !== user.email) formData.append('email', data.email);
-    if (data.phone_number !== user.phone_number) formData.append('phone_number', data.phone_number);
-    if (data.photo_profile && data.photo_profile !== user.photo_profile) {
-      formData.append('photo_profile', data.photo_profile);
-    }
+    Object.entries(formattedData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
 
     formData.append('_method', 'PUT');
 
     try {
       const updatedUser = await editUser({ userId, data: formData });
+      console.log('User setelah update:', updatedUser);
       enqueueSnackbar('Profil berhasil diperbarui', { variant: 'success' });
-      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
 
-      // Perbarui state dengan data terbaru
-      reset({
-        name: updatedUser.name || '',
-        email: updatedUser.email || '',
-        phone_number: updatedUser.phone_number || '',
-        photo_profile: updatedUser.photo_profile || '',
-      });
+      // setTimeout(() => {
+      //   console.log('Data terbaru dari query:', queryClient.getQueryData(['authenticated.user']));
+      // }, 2000);
+
+      reset(updatedUser);
     } catch (error) {
       enqueueSnackbar('Gagal memperbarui user', { variant: 'error' });
       console.error('Error update user:', error);
@@ -113,7 +123,6 @@ export default function AccountGeneral() {
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
-
       if (file) {
         const validFormats = ['image/jpeg', 'image/png', 'image/jpg'];
         if (!validFormats.includes(file.type)) {
@@ -124,8 +133,6 @@ export default function AccountGeneral() {
           enqueueSnackbar('Ukuran file terlalu besar (maks 3MB)', { variant: 'error' });
           return;
         }
-
-        // Jangan pakai FileReader, langsung simpan file
         setValue('photo_profile', file, { shouldValidate: true });
       }
     },
@@ -162,8 +169,7 @@ export default function AccountGeneral() {
                     color: 'text.disabled',
                   }}
                 >
-                  Tipe Gambar *.jpeg, *.jpg, *.png,
-                  <br /> max ukuran file {fData(3000000)}
+                  Tipe Gambar *.jpeg, *.jpg, *.png, max ukuran file {fData(3000000)}
                 </Typography>
               }
               preview={methods.watch('photo_profile')}
@@ -182,8 +188,26 @@ export default function AccountGeneral() {
               <RHFTextField name="name" label="Nama" />
               <RHFTextField name="email" label="Email" />
               <RHFTextField name="phone_number" label="Nomor Telepon" />
+              <RHFTextField name="nik" label="NIK" />
+              <RHFTextField name="nomor_ktp" label="Nomor KTP" />
+              <RHFTextField
+                select
+                label="Jenis Kelamin"
+                fullWidth
+                name="gender"
+                value={methods.watch('gender')}
+                onChange={(e) => setValue('gender', e.target.value)}
+              >
+                <MenuItem value="male">Laki-laki</MenuItem>
+                <MenuItem value="female">Perempuan</MenuItem>
+              </RHFTextField>
+              <RHFTextField
+                name="date_of_birth"
+                label="Tanggal Lahir"
+                InputLabelProps={{ shrink: true }}
+                type="date"
+              />
             </Box>
-
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <LoadingButton type="submit" variant="contained" loading={isSubmitting}>
                 Simpan

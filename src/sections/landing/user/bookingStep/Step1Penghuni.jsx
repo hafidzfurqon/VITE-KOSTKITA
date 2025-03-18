@@ -31,16 +31,22 @@ export default function Step1Penghuni({ onNext, user, savedata }) {
     savedata?.booking_user_data?.occupants || [defaultOccupant]
   );
 
-  // Simpan data ke local state saat savedata berubah
+  // Saat "Saya sendiri" dipilih, isi otomatis dengan data user
   useEffect(() => {
-    if (savedata) {
-      setOccupant(savedata.occupant || 'user');
-      setIncludeUser(savedata.includeUser || false);
-      setOccupants(
-        savedata.booking_user_data?.length ? savedata.booking_user_data : [defaultOccupant]
-      );
+    if (occupant === 'user') {
+      setOccupants([
+        {
+          fullname: user.name || '',
+          phone_number: user.phone_number || '',
+          email: user.email || '',
+          nomor_ktp: user.nomor_ktp || '',
+          nik: user.nik || '',
+          gender: user.gender === 'Laki-laki' ? 'male' : 'female',
+          date_of_birth: user.date_of_birth || '',
+        },
+      ]);
     }
-  }, [savedata]);
+  }, [occupant, user]);
 
   const handleChange = (index, e) => {
     const { name, value } = e.target;
@@ -62,20 +68,19 @@ export default function Step1Penghuni({ onNext, user, savedata }) {
   const handleNext = () => {
     let bookingUserData = [...occupants];
 
-    // Jika "Saya Ikut Booking" dicentang, tambahkan data user ke booking_user_data
     if (includeUser) {
       const userData = {
-        fullname: user.name,
-        phone_number: user.phone,
-        email: user.email,
-        nomor_ktp: user.idNumber,
+        fullname: user.name || '',
+        phone_number: user.phone_number || '',
+        email: user.email || '',
+        nomor_ktp: user.nomor_ktp || '',
         nik: user.nik || '',
         gender: user.gender === 'Laki-laki' ? 'male' : 'female',
-        date_of_birth: user.birthDate,
+        date_of_birth: user.date_of_birth || '',
       };
 
       const isUserAlreadyIncluded = bookingUserData.some(
-        (occ) => occ.fullname === user.name && occ.phone_number === user.phone
+        (occ) => occ.fullname === user.name && occ.phone_number === user.phone_number
       );
 
       if (!isUserAlreadyIncluded) {
@@ -206,7 +211,6 @@ export default function Step1Penghuni({ onNext, user, savedata }) {
             + Tambah Penghuni
           </Button>
 
-          {/* Checkbox Saya Ikut Booking */}
           <FormControlLabel
             control={<Checkbox checked={includeUser} onChange={handleCheckboxChange} />}
             label="Saya Ikut Booking"

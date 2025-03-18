@@ -11,8 +11,7 @@ import {
   Switch,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-quill/dist/quill.snow.css';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
@@ -30,8 +29,7 @@ export const CreatePromo = () => {
     watch,
     formState: { errors },
   } = useForm();
-  const [description, setDescription] = useState('');
-  const [howToUse, setHowToUse] = useState('');
+  const [promoValue, setPromoValue] = useState('');
   const [isActive, setIsActive] = useState(false);
   const [selectedImages, setSelectedImages] = useState([]);
   const queryClient = useQueryClient();
@@ -39,7 +37,7 @@ export const CreatePromo = () => {
   const routers = useRouter();
 
   const discountType = watch('discount_type', 'percentage');
-
+  console.log(discountType);
   const cleanPrice = (price) => {
     return parseInt(price.replace(/[^\d]/g, ''), 10) || 0;
   };
@@ -50,25 +48,23 @@ export const CreatePromo = () => {
     setValue('status', status);
   };
 
-  const handleQuillChange = (value) => {
-    setDescription(value);
-    setValue('description', value);
-  };
-
-  const handleQuillHowToUse = (value) => {
-    setHowToUse(value);
-    setValue('how_to_use', value);
-  };
-
   const handleDiscountChange = (event) => {
     let value = event.target.value;
+    let formattedValue = '';
+
     if (discountType === 'fixed') {
-      value = `Rp ${cleanPrice(value).toLocaleString('id-ID')}`;
+      formattedValue = `Rp ${cleanPrice(value).toLocaleString('id-ID')}`;
     } else if (discountType === 'percentage') {
-      value = `${cleanPrice(value)}%`;
+      formattedValue = `${cleanPrice(value)}%`;
     }
-    setValue('promo_value', value);
+
+    setPromoValue(formattedValue);
+    setValue('promo_value', formattedValue);
   };
+  useEffect(() => {
+    setPromoValue('');
+    setValue('promo_value', '');
+  }, [discountType]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
@@ -96,7 +92,6 @@ export const CreatePromo = () => {
       enqueueSnackbar('Promo gagal dibuat', { variant: 'error' });
     },
   });
-
   const Submitted = (data) => {
     const { image: gambar, promo_value, ...rest } = data;
     const formData = new FormData();
@@ -162,20 +157,31 @@ export const CreatePromo = () => {
             select
             {...register('applicable_to_owner_property')}
             defaultValue=""
-            label="Apakah Owner Property Boleh Menggunakan?"
+            label="Apakah Owner Property Boleh Menggunakan Promo?"
             fullWidth
           >
             <MenuItem value="0">Tidak</MenuItem>
             <MenuItem value="1">Ya, Bisa</MenuItem>
           </TextField>
           <TextField
-            {...register('promo_value', { required: 'Besar Promo Wajib Diisi' })}
-            label="Besar Promo"
+            label="Besar Promos"
             fullWidth
             variant="outlined"
+            placeholder={
+              discountType === 'fixed'
+                ? 'Masukkan nominal (ex: 100000)'
+                : 'Masukkan persentase (ex: 10)'
+            }
+            value={promoValue}
+            onChange={handleDiscountChange}
             error={!!errors.promo_value}
             helperText={errors.promo_value?.message}
-            onChange={handleDiscountChange}
+            InputProps={{
+              startAdornment:
+                discountType === 'fixed' ? (
+                  <InputAdornment position="start">Rp</InputAdornment>
+                ) : null,
+            }}
           />
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
@@ -225,10 +231,6 @@ export const CreatePromo = () => {
               </Box>
             ))}
           </Stack>
-          {/* <Typography>Deskripsi :</Typography>
-          <ReactQuill theme="snow" value={description} onChange={handleQuillChange} />
-          <Typography>Cara Pakai :</Typography>
-          <ReactQuill theme="snow" value={howToUse} onChange={handleQuillHowToUse} /> */}
           <FormLabel>Deskripsi :</FormLabel>
           <Editor
             apiKey="yasvptnfevk9xym8j96v784lyihi0w3tsyfkkvowp2pu91az"

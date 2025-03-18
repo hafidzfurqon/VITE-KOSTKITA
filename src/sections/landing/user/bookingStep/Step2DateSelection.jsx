@@ -30,8 +30,9 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
   }, [months, discounts]);
 
   const discountedPrice = useMemo(() => {
-    return applicableDiscount ? applicableDiscount.price_after_discount : startPrice;
-  }, [startPrice, applicableDiscount]);
+    const totalPrice = startPrice * months; // Harga bertambah sesuai jumlah bulan
+    return applicableDiscount ? applicableDiscount.price_after_discount : totalPrice;
+  }, [startPrice, months, applicableDiscount]);
 
   // Hanya kirim data jika ada salah satu ID yang tersedia
   const propertyDiscountId = applicableDiscount?.property_discount_id || null;
@@ -109,8 +110,9 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
         </Grid>
         <Grid item xs={12}>
           <Typography variant="body1">
-            Harga: <strong>Rp {startPrice?.toLocaleString()}</strong>
+            Harga: <strong>Rp {(startPrice * months).toLocaleString()}</strong>
           </Typography>
+
           {applicableDiscount && (
             <Typography variant="body1" color="secondary">
               Diskon: -Rp {parseInt(applicableDiscount.discount_amount).toLocaleString()}

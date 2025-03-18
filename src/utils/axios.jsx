@@ -189,6 +189,11 @@ export const endpoints = {
       detail: '/api/public/banner/detail',
     },
   },
+  wishlist: {
+    list: '/api/user/wishlist/all',
+    add: '/api/user/wishlist/add',
+    remove: '/api/user/wishlist/remove',
+  },
   property: {
     list: '/api/admin/property/list',
     detail_by_id: '/api/admin/property/detail/id', // need id here
@@ -272,3 +277,4 @@ export const endpoints = {
     },
   },
 };
+
