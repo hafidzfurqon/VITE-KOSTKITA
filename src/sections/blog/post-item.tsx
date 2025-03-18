@@ -18,6 +18,14 @@ import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useMutationDeletePromo } from 'src/hooks/promo';
+import { Link as Links } from 'react-router-dom';
+// import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+// import Typography from '@mui/material/Typography';
+import CardActionArea from '@mui/material/CardActionArea';
+import { Button } from '@mui/material';
+import { useAppContext } from 'src/context/user-context';
 
 // ----------------------------------------------------------------------
 
@@ -51,6 +59,9 @@ export function PostItem({
   latestPost: boolean;
   latestPostLarge: boolean;
 }) {
+  const { UserContextValue: authUser }: any = useAppContext();
+  const { user } = authUser;
+  const isAdmin = user?.roles?.some((role: any) => role.name === 'admin');
   const [open, setOpen] = useState(false);
   const handleClickOpen = () => {
     setOpen(true);
@@ -60,6 +71,7 @@ export function PostItem({
   const { mutate: DeletePromo, isPending } = useMutationDeletePromo({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetch.promo'] });
+      queryClient.refetchQueries({ queryKey: ['fetch.promo'] });
       setOpen(false);
       enqueueSnackbar('Promo berhasil dihapus', { variant: 'success' });
     },
@@ -88,37 +100,84 @@ export function PostItem({
         }),
       }}
     >
+      {post.title}
+    </Link>
+  );
+
+  const renderTempat = (
+    <Link
+      color="inherit"
+      variant="subtitle2"
+      underline="hover"
+      sx={{
+        height: 24,
+        overflow: 'hidden',
+        WebkitLineClamp: 2,
+        display: '-webkit-box',
+        WebkitBoxOrient: 'vertical',
+        ...(latestPostLarge && { typography: 'h5', height: 40 }),
+        ...((latestPostLarge || latestPost) && {
+          color: 'common.white',
+        }),
+      }}
+    >
       {post.name}
     </Link>
   );
 
-  const renderInfo = (
-    <Box
-      gap={1.5}
-      display="flex"
-      flexWrap="wrap"
-      justifyContent="flex-end"
-      sx={{
-        mt: 3,
-        color: 'text.disabled',
-      }}
-    >
-      <Box
-        component="button"
-        onClick={handleClickOpen}
-        display="flex"
-        sx={{
-          ...((latestPostLarge || latestPost) && {
-            opacity: 0.64,
-            color: 'red',
-            cursor: 'pointer',
-          }),
-        }}
-      >
-        <Iconify width={16} icon={'solar:trash-bin-trash-bold'} sx={{ mr: 0.5 }} />
-      </Box>
-    </Box>
-  );
+  const renderInfo = () => {
+    return (
+      <>
+        <Box
+          display="flex"
+          flexWrap="wrap"
+          justifyContent="flex-end"
+          sx={{
+            mt: 3,
+            color: 'text.disabled',
+          }}
+        >
+          <Box
+            display="flex"
+            sx={{
+              ...((latestPostLarge || latestPost) && {
+                color: 'common.white',
+              }),
+            }}
+          >
+            <Links style={{ color: 'slategray' }} to="">
+              <Iconify width={16} icon="solar:eye-bold" sx={{ mr: 0.5 }} />
+            </Links>
+            <Box
+              component="button"
+              sx={{
+                border: 'none',
+                cursor: 'pointer',
+                background: 'none',
+                color: 'green',
+                ...((latestPostLarge || latestPost) && {
+                  color: 'common.white',
+                }),
+              }}
+            >
+              <Iconify width={16} icon="solar:pen-bold" sx={{ mr: 0.5 }} />
+            </Box>
+            <Box
+              component="button"
+              onClick={handleClickOpen}
+              sx={{
+                border: 'none',
+                background: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              <Iconify width={16} icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
+            </Box>
+          </Box>
+        </Box>
+      </>
+    );
+  };
 
   const renderCover = (
     <Box
@@ -152,22 +211,6 @@ export function PostItem({
     </Typography>
   );
 
-  const renderShape = (
-    <SvgColor
-      width={88}
-      height={36}
-      src="/assets/icons/shape-avatar.svg"
-      sx={{
-        left: 0,
-        zIndex: 9,
-        bottom: -16,
-        position: 'absolute',
-        color: 'background.paper',
-        ...((latestPostLarge || latestPost) && { display: 'none' }),
-      }}
-    />
-  );
-
   return (
     <>
       <Card sx={sx} {...other}>
@@ -194,8 +237,6 @@ export function PostItem({
             }),
           })}
         >
-          {/* {renderShape} */}
-          {/* {renderAvatar} */}
           {renderCover}
         </Box>
 
@@ -210,8 +251,9 @@ export function PostItem({
           })}
         >
           {renderDate}
+          {renderTempat}
           {renderTitle}
-          {renderInfo}
+          {isAdmin && renderInfo()}
         </Box>
       </Card>
       <DialogDelete
@@ -224,4 +266,35 @@ export function PostItem({
       />
     </>
   );
+  // return (
+  //   <>
+  //     <Card sx={{ maxWidth: 345 }}>
+  //       <CardActionArea>
+  //         <CardMedia component="img" height="auto" image={post.promo_image_url} alt={post.name} />
+  //         <CardContent>
+  //           <Typography gutterBottom variant="h5" component="div">
+  //             {post.name}
+  //           </Typography>
+  //           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+  //             {post.description}
+  //           </Typography>
+  //         </CardContent>
+  //         {isAdmin && (
+  //           <Box component="div" p={1}>
+  //             <Button>
+  //               <Iconify icon="solar:pen-bold" />
+  //               Edit
+  //             </Button>
+
+  //             <Button sx={{ color: 'error.main' }} onClick={handleClickOpen}>
+  //               <Iconify icon="solar:trash-bin-trash-bold" />
+  //               Delete
+  //             </Button>
+  //           </Box>
+  //         )}
+  //       </CardActionArea>
+  //     </Card>
+  //
+  //   </>
+  // );
 }

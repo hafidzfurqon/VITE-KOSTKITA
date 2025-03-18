@@ -7,6 +7,7 @@ import {
   TextField,
   FormLabel,
   Autocomplete,
+  Grid,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import ReactQuill from 'react-quill';
@@ -53,7 +54,7 @@ export const CreateApartement = () => {
     isLoading: loadingPropertyType,
     isFetching: FetchingPropertyType,
   } = isAdmin ? useFetchAllPropertyType() : useFetchAllPropertyTypeOwner();
-
+  console.log(property_type);
   const {
     control,
     register,
@@ -376,30 +377,39 @@ export const CreateApartement = () => {
             <MenuItem value="monthly">Monthly</MenuItem>
             <MenuItem value="yearly">Yearly</MenuItem>
           </TextField>
-          <Typography sx={{ mb: 2 }}>Fasilitas Property : </Typography>
-          <FormGroup>
-            {facilities?.map((facility) => (
-              <FormControlLabel
-                key={facility.id}
-                control={
-                  <Checkbox
-                    checked={watch('facilities')?.includes(facility.id)}
-                    onChange={() => handleCheckboxChange(facility.id)}
-                  />
-                }
-                label={facility.name}
-              />
+          <Typography sx={{ mb: 2 }}>Fasilitas Bersama : </Typography>
+          <Grid container spacing="1" columns={{ xs: 4, sm: 8, md: 12 }} sx={{ mb: 3 }}>
+            {facilities?.map((facility, index) => (
+              <Grid item xs={2} sm={4} md={5} key={index}>
+                <FormControlLabel
+                  key={facility.id}
+                  control={
+                    <Checkbox
+                      checked={watch('facilities')?.includes(facility.id)}
+                      onChange={() => handleCheckboxChange(facility.id)}
+                    />
+                  }
+                  label={facility.name}
+                />
+              </Grid>
             ))}
-          </FormGroup>
+          </Grid>
         </Stack>
-        <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb: 5, mr: 3 }}>
-          Submit
-        </Button>
-        <Link to={router.property.list}>
-          <Button type="button" variant="outlined" sx={{ mt: 3, mb: 5 }}>
-            Kembali
+        <Box sx={{ mt: 3 }}>
+          <Button
+            type="submit"
+            disabled={isPending}
+            variant="contained"
+            sx={{ mt: 3, mb: 5, mr: 3 }}
+          >
+            Submit
           </Button>
-        </Link>
+          <Link to={router.property.list}>
+            <Button type="button" variant="outlined" sx={{ mt: 3, mb: 5 }}>
+              Kembali
+            </Button>
+          </Link>
+        </Box>
       </Box>
     </Container>
   );

@@ -34,7 +34,7 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Person } from '@mui/icons-material';
+import { Dashboard, Person } from '@mui/icons-material';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
@@ -48,14 +48,14 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role) => role.name === "admin");
-  const isOwner = user?.roles?.some((role) => role.name === "owner_property");
+  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
+  const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
       navigate('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
-      sessionStorage.removeItem('token'); // Hapus token saat logout
+      localStorage.removeItem('token'); // Hapus token saat logout
       setTimeout(() => {
         window.location.reload(); // Refresh halaman agar reset state
       }, 500);
@@ -66,7 +66,7 @@ export default function Header() {
   });
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     setIsLoggedIn(!!token && user); // Harus ada token dan user untuk dianggap login
   }, [user]);
 
@@ -97,13 +97,15 @@ export default function Header() {
   ];
 
   const navMobile = [
-    { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
-    { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
+    !isAdmin && isOwner
+      ? { label: 'Sewa', icon: <HomeIcon />, path: '/' }
+      : { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+    !isAdmin && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
+    !isAdmin && { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
-  ];
+  ].filter(Boolean);
 
   return (
     <AppBar
@@ -118,7 +120,7 @@ export default function Header() {
     >
       <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         {/* Logo */}
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }} p={1}>
           <Link to="/">
             <img src={Logo} alt="Logo" width={150} style={{ filter: 'brightness(1.2)' }} />
           </Link>
@@ -167,11 +169,12 @@ export default function Header() {
                       href: isAdmin ? '/dashboard' : '/profile',
                       icon: <Person />,
                     },
-                    !isAdmin && !isOwner && {
-                      label: 'Riwayat Booking',
-                      href: '/history/booking',
-                      icon: <HistoryIcon />,
-                    },
+                    !isAdmin &&
+                      !isOwner && {
+                        label: 'Riwayat Booking',
+                        href: '/history/booking',
+                        icon: <HistoryIcon />,
+                      },
                     !isAdmin && {
                       label: 'Riwayat Visit',
                       href: '/history/visit',
@@ -241,7 +244,10 @@ export default function Header() {
               .filter(
                 (item) =>
                   isLoggedIn ||
-                  (!isLoggedIn && item.path !== '/history/booking' && item.path !== '/profile')
+                  (!isLoggedIn &&
+                    item.path !== '/history/booking' &&
+                    item.path !== '/profile' &&
+                    item.path !== '/history/visit')
               ) // Sembunyikan history booking & profile jika belum login
               .map((item, index) => {
                 const isActived = item.path === pathname;

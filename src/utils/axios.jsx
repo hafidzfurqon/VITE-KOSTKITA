@@ -20,7 +20,7 @@ const processQueue = (error, token = null) => {
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = sessionStorage.getItem('token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -53,8 +53,8 @@ axiosInstance.interceptors.response.use(
 
       try {
         // Request untuk mendapatkan refresh token
-        const token = sessionStorage.getItem('token');
-        const refresh_token = sessionStorage.getItem('refresh_token');
+        const token = localStorage.getItem('token');
+        const refresh_token = localStorage.getItem('refresh_token');
         if (!refresh_token) {
           throw new Error('Sesi anda telah berakhir, Silahkan login');
         }
@@ -73,17 +73,17 @@ axiosInstance.interceptors.response.use(
         const newToken = data.new_access_token;
         const newRefreshToken = data.new_refresh_token;
 
-        sessionStorage.setItem('token', newToken);
-        sessionStorage.setItem('refresh_token', newRefreshToken);
+        localStorage.setItem('token', newToken);
+        localStorage.setItem('refresh_token', newRefreshToken);
 
         axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
         processQueue(null, newToken);
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        alert(err);
-        sessionStorage.removeItem('token');
-        sessionStorage.removeItem('refresh_token');
+        // alert(err);
+        localStorage.removeItem('token');
+        localStorage.removeItem('refresh_token');
         window.location.href = '/sign-in'; // Redirect ke halaman login
         return Promise.reject(err);
       } finally {
@@ -128,8 +128,8 @@ export const endpoints = {
       getBookingproperty: '/api/user/booking/property/all',
       getBookingDetail: '/api/user/booking/property/detail',
       admin: {
-        list: '/api/admin/statistic/property/all',
-        detail: '/api/admin/statistic/property/booking_information',
+        list: '/api/admin/property/booking/all',
+        detail: '/api/admin/property/booking/detail/code',
       },
     },
     visit: {
@@ -229,6 +229,9 @@ export const endpoints = {
     add: '/api/admin/property/property_room/add',
     delete: '/api/admin/property_room/delete',
   },
+  data_booking: {
+    detail: '/api/admin/property/booking/all_bookings_in_property',
+  },
   apartment: {
     create: '/api/admin/apartment/create',
     list: '/api/admin/property/list',
@@ -248,6 +251,7 @@ export const endpoints = {
       list: '/api/owner_property/property/type/all',
     },
   },
+
   owner: {
     property: {
       create: '/api/owner_property/property/create',
@@ -260,11 +264,11 @@ export const endpoints = {
     },
     city: {
       list: '/api/owner_property/city/list',
-      detail: '/api/owner_property/city/detail',
+      detail: '/api/owner_property/state/detail',
     },
     sector: {
       list: '/api/owner_property/sector/list',
-      detail: '/api/owner_property/sector/detail',
+      detail: '/api/owner_property/city/detail',
     },
   },
 };

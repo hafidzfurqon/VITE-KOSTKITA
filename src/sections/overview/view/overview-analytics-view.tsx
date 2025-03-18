@@ -27,13 +27,6 @@ export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   const isAdmin = user?.roles?.some((role: { name: string }) => role.name === 'admin');
-  // const {data : total_booking, isLoading : isload, isFetching : isFetch} = useQuery({
-  //   queryKey : ['get.all_booking'],
-  //   queryFn : async () => {
-  //     const res = await axiosInstance.get('/api/admin/statistic/property/bookings')
-  //     return res.data.total_bookings
-  //   }
-  // })
   const { data, isLoading, isFetching } = isAdmin
     ? useFetchAllApartement()
     : useFetchAllPropertyOwner();
@@ -42,11 +35,11 @@ export function OverviewAnalyticsView() {
     isLoading: LoadingUser,
     isFetching: FecthingUser,
   } = isAdmin ? useFetchAllUser() : { data: null, isLoading: false, isFetching: false };
-  // const {
-  //   data: DataBooking,
-  //   isLoading: LoadingBooking,
-  //   isFetching: FecthingBooking,
-  // } = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner();
+  const {
+    data: DataBooking,
+    isLoading: LoadingBooking,
+    isFetching: FecthingBooking,
+  } = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner();
   const {
     data: DataPromo,
     isLoading: LoadingPromo,
@@ -57,10 +50,9 @@ export function OverviewAnalyticsView() {
     isFetching ||
     LoadingUser ||
     FecthingUser ||
-    // LoadingBooking ||
-    // FecthingBooking ||
+    LoadingBooking ||
+    FecthingBooking ||
     LoadingPromo ||
-    // || isload|| isFetch 
     FecthingPromo
   ) {
     return <Loading />;
@@ -105,8 +97,8 @@ export function OverviewAnalyticsView() {
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
             // percent={2.8}
-            // total={isAdmin ? total_booking : DataBooking?.map((total : any) => total.total_booking)}
-            total={5}
+            total={DataBooking?.length}
+            // total={5}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{

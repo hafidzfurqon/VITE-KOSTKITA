@@ -75,8 +75,11 @@ export default function HeroContent({ data }) {
   return (
     <Box sx={{ position: 'relative', pt: 8, px: 4, color: 'white' }}>
       <Box sx={{ mt: { xs: 10, md: 20 }, mb: { xs: 2, md: 4 } }}>
-        <Typography variant="h3" sx={{ mb: 2, color: '#FFD700', fontWeight: 'bold' }}>
-          Kost, Coliving, Apartemen
+        <Typography variant="h3" sx={{ mb: 2 }}>
+          Kost, Coliving,{' '}
+          <Box component="span" sx={{ color: '#FFD700', fontWeight: 'bold' }}>
+            Apartemen
+          </Box>
         </Typography>
         <Typography variant="h6" sx={{ mb: 4 }}>
           Sewa hunian impian untuk setiap fase kehidupan

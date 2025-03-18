@@ -11,10 +11,10 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
-import { BookedPropertyTableRow } from '../booked-property-table-row';
-import { BookedPropertyTableHead } from '../booked-property-table-head';
+import { BookedDetailPropertyTableRow } from '../data-booking-property-table-row';
+import { BookedPropertyTableHead } from '../data-booking-property-table';
 import { TableEmptyRows } from '../table-empty-rows';
-import { BookedPropertyTableToolbar } from '../booked-property-table-toolbar';
+import { BookedPropertyTableToolbar } from '../data-booking-property-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
 
@@ -30,18 +30,20 @@ import {
   useMutationCreateFacilitiesOwner,
 } from 'src/hooks/owner_property/fasilitas';
 import { useFetchAllBooking } from 'src/hooks/booking_admin';
+import { useFetchDetailBookedProperty } from 'src/hooks/property/booking';
+import { useParams } from 'react-router-dom';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
-export function BookedPropertyView() {
+export function DataBookingProperty() {
   const table = useTable();
+  const { id } = useParams();
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
   const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-  } = isOwnerProperty ? useFetchFacilityPropertyOwner() : useFetchAllBooking();
+  // const { data : dataBooking } = ;
+  // console.log(dataBooking)
+  const { data = [], isLoading, isFetching } = useFetchDetailBookedProperty(id);
   const [filterName, setFilterName] = useState('');
   const [opened, setOpened] = useState(false);
   const queryClient = useQueryClient();
@@ -120,10 +122,22 @@ export function BookedPropertyView() {
       <DashboardContent>
         <Box display="flex" alignItems="center" mb={5}>
           <Typography variant="h4" flexGrow={1}>
-            Management Booked Property
+            Management Penyewa Property
           </Typography>
         </Box>
-
+        <CustomBreadcrumbs
+          links={[
+            { name: 'Management Booking', href: `/booked-property` },
+            {
+              name: 'List Pengguna pembooking',
+            },
+          ]}
+          sx={{ mb: { xs: 2, md: 3 } }}
+          action={null}
+          heading=""
+          moreLink={[]}
+          activeLast={true}
+        />
         <Card>
           <BookedPropertyTableToolbar
             numSelected={table.selected.length}
@@ -150,21 +164,22 @@ export function BookedPropertyView() {
                     )
                   }
                   headLabel={[
-                    { id: 'nama', label: 'Nama Property Di Bookng' },
-                    // { id: 'nama_user', label: 'Nama Pengguna' },
+                    { id: 'nama', label: 'Nama' },
+                    { id: 'nama_user', label: 'No Telp' },
+                    { id: 'rest', label: 'Sisa Hari' },
+                    // { id: 'nama_user', label: 'Email' },
                     { id: 'action', label: 'Action' },
                   ]}
                 />
                 <TableBody>
                   {dataFiltered
-                    .filter((row: any) => row.bookings.length > 0) // Hanya tampilkan properti yang memiliki booking
                     .slice(
                       table.page * table.rowsPerPage,
                       table.page * table.rowsPerPage + table.rowsPerPage
                     )
                     .map((row: any) => {
                       return (
-                        <BookedPropertyTableRow
+                        <BookedDetailPropertyTableRow
                           key={row.id}
                           row={row}
                           booked={row.bookings}

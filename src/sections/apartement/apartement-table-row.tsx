@@ -103,7 +103,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
         <TableCell align="center">
           {row.status === 'available' ? (
             <>
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
                 <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
                 <span>Available</span>
               </Box>
@@ -132,7 +132,7 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
               Delete
             </Button>
           </Box>
-          <Box>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Link to={`${router.property.list}/${row.slug}`} target="_blank">
               <Button sx={{ color: 'secondary.main' }}>
                 <Iconify icon="solar:eye-bold" />

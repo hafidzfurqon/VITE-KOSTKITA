@@ -119,7 +119,7 @@ export function FasilitasView() {
       <DashboardContent>
         <Box display="flex" alignItems="center" mb={5}>
           <Typography variant="h4" flexGrow={1}>
-            Management Fasilitas
+            Management Fasilitas Bersama
           </Typography>
           {/* <Link to={router.fasilitas.create}> */}
           <Button
