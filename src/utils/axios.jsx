@@ -128,13 +128,8 @@ export const endpoints = {
       getBookingproperty: '/api/user/booking/property/all',
       getBookingDetail: '/api/user/booking/property/detail',
       admin: {
-<<<<<<< HEAD
-        list: '/api/admin/property/booking/all',
-        detail: '/api/admin/property/booking/detail/code',
-=======
         list: '/api/admin/statistic/property/all',
         detail: '/api/admin/statistic/property/booking_information',
->>>>>>> 1c3ea1686f1aa55fe040af0d7c72e3c272fdecfb
       },
     },
     visit: {
@@ -278,3 +273,4 @@ export const endpoints = {
     },
   },
 };
+
