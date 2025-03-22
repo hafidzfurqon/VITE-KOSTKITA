@@ -76,26 +76,25 @@ export default function HeroContent({ data }) {
         }}
       >
         {/* Pencarian Lokasi atau Nama Properti */}
-        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
-          <SearchProperty
-            query={debouncedQuery}
-            results={searchResults}
-            onSearch={(value) => handleChange('query', value)}
-            loading={searchLoading}
-            hrefItem={(slug) => `/property/${slug}`}
-          />
-        </Box>
+
+        <SearchProperty
+          query={debouncedQuery}
+          results={searchResults}
+          onSearch={(value) => handleChange('query', value)}
+          loading={searchLoading}
+          hrefItem={(slug) => `/property/${slug}`}
+        />
 
         {/* Tanggal */}
-        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
+        {/* <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
           <CustomDatePicker
             selectedDate={searchValues.date}
             onDateChange={(newDate) => handleChange('date', newDate)}
           />
-        </Box>
+        </Box> */}
 
         {/* Tipe Properti */}
-        <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
+        {/* <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
           <FormControl fullWidth>
             <InputLabel shrink>Tipe Properti</InputLabel>
             <Select
@@ -109,10 +108,10 @@ export default function HeroContent({ data }) {
               <MenuItem value="Coliving">Coliving</MenuItem>
             </Select>
           </FormControl>
-        </Box>
+        </Box> */}
 
         {/* Tombol Cari */}
-        <Button
+        {/* <Button
           onClick={handleSearch}
           variant="contained"
           sx={{
@@ -132,7 +131,7 @@ export default function HeroContent({ data }) {
         >
           <SearchIcon />
           {!isMobile && 'Cari hunian'}
-        </Button>
+        </Button> */}
       </Box>
     </Box>
   );

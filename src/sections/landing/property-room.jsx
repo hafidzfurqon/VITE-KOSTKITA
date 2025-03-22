@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Container,
   Box,
@@ -6,7 +6,6 @@ import {
   Button,
   Grid,
   Card,
-  CardMedia,
   CardContent,
   Chip,
   Stack,
@@ -15,22 +14,14 @@ import {
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
 import { WhatsApp } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useAppContext } from 'src/context/user-context';
 import { useSnackbar } from 'notistack';
 
-// Styled components
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
   boxShadow: theme.shadows[1],
 }));
-
-const ImageContainer = styled(Box)({
-  position: 'relative',
-  width: '100%',
-  height: '100%', // Sesuaikan dengan kebutuhan
-  objectFit: 'cover',
-});
 
 const AvailabilityChip = styled(Chip)(({ theme }) => ({
   position: 'absolute',
@@ -40,24 +31,44 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
   color: 'white',
 }));
 
-const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
+const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = [] }) => {
   const navigate = useNavigate();
+  const [selectedMonthRange, setSelectedMonthRange] = useState({});
   const [bookingData, setBookingData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  console.log(rooms);
-  // Helper function to format price
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('id-ID', {
-      currency: 'IDR',
-      style: 'currency',
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    })
-      .format(price)
-      .replace('IDR', 'Rp');
+
+  const discountRanges = useMemo(() => discountData || [], [discountData]);
+
+  const currentMonths = useMemo(() => {
+    return Object.values(selectedMonthRange).reduce((acc, value) => {
+      return acc + (value === 0 ? 1 : value === 1 ? 3 : value === 2 ? 6 : 12);
+    }, 0);
+  }, [selectedMonthRange]);
+
+  const applicableDiscount = useMemo(() => {
+    return (
+      discountRanges.find(
+        (discount) => currentMonths >= discount.min_month && currentMonths <= discount.max_month
+      ) || null
+    );
+  }, [currentMonths, discountRanges]);
+
+  const priceAfterDiscount = useMemo(() => {
+    const basePrice = rooms?.[0]?.price || 0;
+    return applicableDiscount?.discount_value
+      ? basePrice * (1 - applicableDiscount.discount_value / 100)
+      : basePrice;
+  }, [applicableDiscount, rooms]);
+
+  const selectRoom = (roomId) => {
+    setBookingData((prev) => ({
+      ...prev,
+      room_id: prev.room_id === roomId ? null : roomId, // Toggle jika sudah dipilih
+    }));
   };
+
 
   if (!rooms.length) {
     return (
@@ -69,26 +80,18 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
     );
   }
 
-  const selectRoom = (roomId) => {
-    setBookingData((prev) => ({
-      ...prev,
-      room_id: prev.room_id === roomId ? null : roomId, // Toggle jika sudah dipilih
-    }));
-  };
-
   return (
     <Container maxWidth="lg" sx={{ mt: 5 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
         Kamar
       </Typography>
+
       {rooms.map((room) => (
         <StyledCard key={room.id}>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
-              <ImageContainer>
-                <ImageSlider images={room.room_files || []} />
-                <AvailabilityChip label={room.status} size="small" />
-              </ImageContainer>
+            <Grid item xs={12} md={4} sx={{ position: 'relative' }}>
+              <ImageSlider images={room.room_files || []} />
+              <AvailabilityChip label={room.status} size="small" />
             </Grid>
             <Grid item xs={12} md={8}>
               <CardContent>
@@ -100,16 +103,50 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug }) => {
                   <Chip label={room.room_type.name} />
                   <Chip label={`${room.area_size}m²`} />
                 </Stack>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ textDecoration: 'line-through' }}
-                >
-                  {formatPrice(room.price * 1.1)}
-                </Typography>
+
+                <Box sx={{ display: 'flex', mb: 3, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                  {[0, 1, 2, 3].map((rangeIndex) => (
+                    <Box
+                      key={rangeIndex}
+                      onClick={() =>
+                        setSelectedMonthRange((prev) => ({ ...prev, [room.id]: rangeIndex }))
+                      }
+                      sx={{
+                        p: 1,
+                        flex: '1 1 25%',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        backgroundColor:
+                          selectedMonthRange[room.id] === rangeIndex ? '#f0f7ff' : 'transparent',
+                      }}
+                    >
+                      <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                        {rangeIndex === 0
+                          ? '1-2'
+                          : rangeIndex === 1
+                            ? '3-5'
+                            : rangeIndex === 2
+                              ? '6-11'
+                              : '>12'}{' '}
+                        bulan
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
                 <Typography variant="h6" fontWeight="bold">
-                  {formatPrice(room.price)} / {payment === 'monthly' ? 'bulan' : 'tahun'}
+                  {applicableDiscount && (
+                    <Typography
+                      component="span"
+                      sx={{ textDecoration: 'line-through', color: 'gray', mr: 1 }}
+                    >
+                      {rooms?.[0]?.start_price?.toLocaleString('id-ID') || 0}
+                    </Typography>
+                  )}
+                  {priceAfterDiscount.toLocaleString('id-ID')} /{' '}
+                  {payment === 'monthly' ? 'bulan' : 'tahun'}
                 </Typography>
+
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
                     variant="outlined"
@@ -181,7 +218,7 @@ function ImageSlider({ images }) {
             sx={{ textAlign: 'center', p: 2, backgroundColor: 'gray' }}
           >
             <Typography variant="caption" color="white">
-              No Image Available
+              Tidak ada image yang tersedia
             </Typography>
           </Box>
         )}

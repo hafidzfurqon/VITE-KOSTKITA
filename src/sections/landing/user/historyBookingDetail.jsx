@@ -8,6 +8,7 @@ import {
   Box,
   Alert,
   Avatar,
+  Stack,
 } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import { useGetBookingDetail } from 'src/hooks/users/useGetBookingDetail';
@@ -16,14 +17,27 @@ import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FacilityModal from '../modal-facility';
 import { fDate } from 'src/utils/format-time';
-import { Stack } from '@mui/material';
-// import FacilityModal from 'src/components/FacilityModal';
+import DetailDataPenghuni from './bookingStep/detailDataPenghuni';
+import { Button } from '@mui/material';
+import ModalDataPenghuni from './modalDataPenghuni';
 
 export default function HistoryBookingDetail() {
   const { bookingCode } = useParams();
   const { data: booking, isLoading, isFetching, error } = useGetBookingDetail(bookingCode);
   const [open, setOpen] = useState(false);
-console.log(booking)
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedResident, setSelectedResident] = useState(null);
+
+  const handleOpenModal = (resident) => {
+    setSelectedResident(resident);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedResident(null);
+  };
+
   if (isLoading || isFetching) {
     return (
       <Box
@@ -60,18 +74,44 @@ console.log(booking)
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
             Data Penghuni
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Avatar
-              src={booking.user.photo_profile}
-              alt={booking.user.name}
-              sx={{ width: 56, height: 56, mr: 2 }}
+
+          <Box>
+            {booking.booking_user_information.length > 0 ? (
+              booking.booking_user_information.map((resident, index) => (
+                <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                  <Avatar
+                    src={resident.photo_profile}
+                    alt={resident.fullname}
+                    sx={{ width: 56, height: 56, mr: 2 }}
+                  />
+                  <Box>
+                    <Typography sx={{ fontWeight: 'medium' }}>Nama: {resident.fullname}</Typography>
+                    <Typography sx={{ color: 'grey.800' }}>
+                      Nomor Telepon: {resident.phone_number}
+                    </Typography>
+                    <Typography sx={{ color: 'grey.800' }}>Email: {resident.email}</Typography>
+                  </Box>
+                  <Button
+                    variant="outlined"
+                    sx={{ ml: 'auto' }}
+                    onClick={() => handleOpenModal(resident)}
+                  >
+                    Lihat Selengkapnya
+                  </Button>
+                </Box>
+              ))
+            ) : (
+              <Typography sx={{ color: 'grey.800' }}>Tidak ada data penghuni.</Typography>
+            )}
+
+            {/* Modal Detail Penghuni */}
+            <ModalDataPenghuni
+              open={openModal}
+              onClose={handleCloseModal}
+              data={selectedResident}
             />
-            <Box>
-              <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user.name}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Nomor Telepon: {booking.user.phone_number}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Email: {booking.user.email}</Typography>
-            </Box>
           </Box>
+
           <Divider sx={{ my: 2 }} />
 
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Pesanan</Typography>
@@ -84,7 +124,7 @@ console.log(booking)
 
           <Typography sx={{ fontWeight: 'medium' }}>{booking.property_room.name}</Typography>
           <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
-            {booking.number_of_guests} Orang 
+            {booking.number_of_guests} Orang
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
@@ -110,28 +150,30 @@ console.log(booking)
             facilities={booking.property.facilities || []}
           />
 
-              <Link 
-               to={`/property/${booking.property.slug}`}
-              style={{ textDecoration: 'none', display: 'block' }}>
-                <Stack direction="row" spacing={2}>
-            {booking.property.files.slice(0,3).map((file, index) => (
-              <img
-                key={index}
-                src={file.file_url}
-                alt={`preview-${index}`}
-                width={80}
-                height={80}
-                style={{ borderRadius: 8, objectFit: "cover" }}
-              />
-            ))}
-          </Stack>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
+          <Link
+            to={`/property/${booking.property.slug}`}
+            style={{ textDecoration: 'none', display: 'block' }}
           >
-            
-            <Typography variant='subtitle1' sx={{color : 'black'}}>{booking.property.name}</Typography>
-            <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
-          </Box>
+            <Stack direction="row" spacing={2}>
+              {booking.property.files.slice(0, 3).map((file, index) => (
+                <img
+                  key={index}
+                  src={file.file_url}
+                  alt={`preview-${index}`}
+                  width={80}
+                  height={80}
+                  style={{ borderRadius: 8, objectFit: 'cover' }}
+                />
+              ))}
+            </Stack>
+            <Box
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
+            >
+              <Typography variant="subtitle1" sx={{ color: 'black' }}>
+                {booking.property.name}
+              </Typography>
+              <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
+            </Box>
           </Link>
           <Typography>{booking.property.address}</Typography>
           <Divider sx={{ my: 2 }} />

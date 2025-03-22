@@ -82,8 +82,9 @@ export default function BookingView() {
   const confirmBooking = () => {
     const finalBookingData = {
       ...bookingData,
-      room_id: roomIdFromUrl, // Pastikan room_id diisi
+      room_id: roomIdFromUrl,
       property_id: defaultValues?.id,
+      additional_services: selectedServices.map((service) => service.id), // Tambahkan ini
     };
     mutate(finalBookingData);
   };
@@ -95,6 +96,10 @@ export default function BookingView() {
       </Box>
     );
   }
+
+  const totalHarga =
+    parseInt(bookingData.discounted_price || 0) +
+    selectedServices.reduce((sum, service) => sum + service.price, 0);
 
   return (
     <Container maxWidth="md">
@@ -157,7 +162,7 @@ export default function BookingView() {
                   <Typography>Check-in:</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography fontWeight="bold">{bookingData.check_in}</Typography>
+                  <Typography fontWeight="bold">{bookingData.booking_date}</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography>Check-out:</Typography>
@@ -175,9 +180,7 @@ export default function BookingView() {
                   <Typography>Harga</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography fontWeight="bold">
-                    Rp {parseInt(bookingData.discounted_price).toLocaleString()}{' '}
-                  </Typography>
+                  <Typography fontWeight="bold">Rp {totalHarga.toLocaleString()}</Typography>
                 </Grid>
               </Grid>
               <Divider sx={{ mt: 2, mb: 2 }} />

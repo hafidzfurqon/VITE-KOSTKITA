@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -32,12 +32,15 @@ import { useSnackbar } from 'notistack';
 import ModalVisit from './visit/modal-visit';
 import { useMutationAddWishlist } from 'src/hooks/users/useMutationAddWishlist';
 import { useMutationRemoveWishlist } from 'src/hooks/users/useMutationRemoveWishlist';
+import Review from './review';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import PolicyPage from './policy-page';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-  
+
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -60,7 +63,7 @@ export default function PropertyDetail() {
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
-  const hasDiscount = data?.discounts && data?.discounts?.length > 0;
+  // const hasDiscount = data?.discounts && data?.discounts?.length > 0;
 
   const { mutateAsync: addWishlist, isLoading: isAdding } = useMutationAddWishlist({
     onSuccess: () => {
@@ -82,6 +85,42 @@ export default function PropertyDetail() {
     },
   });
 
+  const [selectedMonthRange, setSelectedMonthRange] = useState(0);
+
+  const discountRanges = useMemo(() => data?.discounts || [], [data?.discounts]);
+
+  const currentMonths = useMemo(() => {
+    switch (selectedMonthRange) {
+      case 0:
+        return 1;
+      case 1:
+        return 3;
+      case 2:
+        return 6;
+      case 3:
+        return 12;
+      default:
+        return 1;
+    }
+  }, [selectedMonthRange]);
+
+  const applicableDiscount = useMemo(
+    () =>
+      discountRanges.find(
+        (discount) => currentMonths >= discount.min_month && currentMonths <= discount.max_month
+      ),
+    [currentMonths, discountRanges]
+  );
+
+  const priceAfterDiscount = useMemo(() => {
+    const basePrice = data?.start_price || 0;
+    return applicableDiscount && applicableDiscount.discount_value
+      ? basePrice * (1 - applicableDiscount.discount_value / 100)
+      : basePrice;
+  }, [applicableDiscount, data?.start_price]);
+
+  const hasDiscount = useMemo(() => applicableDiscount?.discount_value > 0, [applicableDiscount]);
+
   useEffect(() => {
     setIsWishlist(data?.is_wishlist ?? false); // Pastikan selalu ada nilai
   }, [data?.is_wishlist]);
@@ -91,20 +130,20 @@ export default function PropertyDetail() {
       enqueueSnackbar('Anda harus login untuk menambahkan ke wishlist', { variant: 'warning' });
       return;
     }
-  
+
     if (!data?.id) {
       enqueueSnackbar('Data tidak valid', { variant: 'error' });
       return;
     }
-  
+
     const propertyId = data.id;
     const propertyRoomId = data.rooms?.length ? data.rooms[0].id : null;
-  
+
     const wishlistData = {
       property_id: propertyId,
       ...(propertyRoomId && { property_room_id: propertyRoomId }),
     };
-  
+
     try {
       if (isWishlist) {
         await removeWishlist({ wishlist_ids: Array.isArray(data.id) ? data.id : [data.id] });
@@ -119,7 +158,6 @@ export default function PropertyDetail() {
       enqueueSnackbar('Terjadi kesalahan, coba lagi', { variant: 'error' });
     }
   };
-  
 
   if (isLoading || isFetching) {
     return (
@@ -330,74 +368,65 @@ export default function PropertyDetail() {
 
             {/* Bagian Harga dengan Card */}
             <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
-              <Card sx={{ p: 2, boxShadow: 3 }}>
+              <Card sx={{ p: 2, borderRadius: 2, boxShadow: 3 }}>
+                <Box sx={{ display: 'flex', mb: 3, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                  {[0, 1, 2, 3].map((rangeIndex) => (
+                    <Box
+                      key={rangeIndex}
+                      onClick={() => setSelectedMonthRange(rangeIndex)}
+                      sx={{
+                        p: 1,
+                        flex: '1 1 25%',
+                        textAlign: 'center',
+                        borderRight: rangeIndex < 3 ? '1px solid #e0e0e0' : 'none',
+                        backgroundColor:
+                          selectedMonthRange === rangeIndex ? '#f0f7ff' : 'transparent',
+                        position: 'relative',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontSize: '14px',
+                          fontWeight: selectedMonthRange === rangeIndex ? 600 : 500,
+                        }}
+                      >
+                        {rangeIndex === 0
+                          ? '1-2'
+                          : rangeIndex === 1
+                            ? '3-5'
+                            : rangeIndex === 2
+                              ? '6-11'
+                              : '>12'}{' '}
+                        <Typography component="span" sx={{ fontSize: '12px', color: '#666' }}>
+                          bulan
+                        </Typography>
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
                 {hasDiscount ? (
                   <>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        color: 'gray',
-                        textAlign: { xs: 'center', sm: 'left' },
-                      }}
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ textDecoration: 'line-through', color: 'gray' }}
                     >
-                      <Typography sx={{ fontSize: { xs: '12px', sm: '14px' }, mr: 1 }}>
-                        mulai dari
-                      </Typography>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{
-                          textDecoration: 'line-through',
-                          fontWeight: 700,
-                          fontSize: { xs: '10px', sm: '12px' },
-                        }}
-                      >
-                        {formatCurrency(data.start_price)}/
-                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px',
-                        justifyContent: { xs: 'center', sm: 'flex-start' },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          backgroundColor: 'red',
-                          color: 'white',
-                          fontSize: { xs: '10px', sm: '11px' },
-                          borderRadius: '10px',
-                          px: '5px',
-                        }}
-                      >
-                        -Rp {fPercent(data.discounts[0].discount_value)}
-                      </Box>
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ color: 'black', fontSize: { xs: '12px', sm: '14px' } }}
-                      >
-                        {formatCurrency(data.discounts[0].price_after_discount)}/
-                        {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
-                      </Typography>
-                    </Box>
+                      {formatCurrency(data?.start_price)}/
+                      {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
+                    </Typography>
+                    <Typography variant="h6" sx={{ color: 'black' }}>
+                      {priceAfterDiscount}/bulan
+                    </Typography>
                   </>
                 ) : (
-                  <Typography
-                    variant="subtitle1"
-                    sx={{
-                      color: 'black',
-                      fontSize: { xs: '12px', sm: '14px' },
-                      textAlign: { xs: 'center', sm: 'left' },
-                    }}
-                  >
-                    {formatCurrency(data.start_price)}/
-                    {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                  <Typography variant="h6" sx={{ color: 'black' }}>
+                    {formatCurrency(data?.start_price)}/
+                    {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
                   </Typography>
                 )}
 
+                {/* Action Buttons */}
                 <Box
                   sx={{
                     display: 'flex',
@@ -408,7 +437,7 @@ export default function PropertyDetail() {
                     flexDirection: { xs: 'column', sm: 'row' },
                   }}
                 >
-                  {data.rooms.length > 0 && (
+                  {data?.rooms?.length > 0 && (
                     <Button
                       href="#room"
                       variant="outlined"
@@ -419,20 +448,19 @@ export default function PropertyDetail() {
                         flexGrow: { xs: 1, sm: 0 },
                       }}
                     >
-                      Lihat Kamar
+                      Lihat Tipe Kamar
                     </Button>
                   )}
 
                   <Button
                     variant="outlined"
                     color="primary"
-                    fullWidth={data.rooms.length === 0}
-                    startIcon={<WhatsApp />}
-                    href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data.name}, Boleh dibantu?\n\nTerima kasih`)}`}
+                    fullWidth={data?.rooms?.length === 0}
+                    startIcon={<WhatsAppIcon />}
+                    href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost ${data?.name}, Boleh dibantu?\n\nTerima kasih`)}`}
                     target="_blank"
                     sx={{
                       color: '#25D366',
-
                       height: 48,
                       minWidth: '150px',
                       flexGrow: { xs: 1, sm: 0 },
@@ -441,30 +469,6 @@ export default function PropertyDetail() {
                     Chat KostKita
                   </Button>
                 </Box>
-
-                {data.rooms.length === 0 && !['admin', 'owner_property'].includes(user.roles) && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    disabled={isOwnerId === data.created_by.id}
-                    sx={{ mt: 2 }}
-                    onClick={() => {
-                      if (user.length === 0) {
-                        enqueueSnackbar('Anda harus login terlebih dahulu!', {
-                          variant: 'error',
-                        });
-                        navigate(`/sign-in`);
-                      } else {
-                        navigate(`/booking/${data.slug}`);
-                      }
-                    }}
-                  >
-                    {isOwnerId === data.created_by.id
-                      ? 'Property ini milik Anda'
-                      : 'Booking Sekarang'}
-                  </Button>
-                )}
               </Card>
             </Grid>
           </Grid>
@@ -518,6 +522,9 @@ export default function PropertyDetail() {
               <hr />
             </>
           )}
+          <Review />
+
+          <hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
             <Card sx={{ mt: 5 }}>
@@ -548,7 +555,7 @@ export default function PropertyDetail() {
             </Card>
           )}
         </Box>
-        <Divider />
+        <hr />
         <Box sx={{ my: 5 }}>
           <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
             Visit Hunian
@@ -572,8 +579,8 @@ export default function PropertyDetail() {
         </Box>
         {/* Modal visit */}
         <ModalVisit isOpen={visitModal} onClose={() => setVisitModal(false)} data={data} />
-        <Divider />
-        <Box id="room">
+        <hr />
+        <Box sx={{ mt: 5, mb: 5 }} id="room">
           <PropertyRoom
             rooms={data?.rooms}
             payment={data?.payment_type}
@@ -582,6 +589,8 @@ export default function PropertyDetail() {
           />
           {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
+        <hr />
+        <PolicyPage />
       </Container>
     </>
   );

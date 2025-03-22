@@ -12,76 +12,57 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { useState, forwardRef } from 'react';
-import { useMutationCreateVisit } from 'src/hooks/users/useMutationCreateVIsit';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { TimePicker } from '@mui/x-date-pickers/TimePicker';
-import idLocale from 'date-fns/locale/id';
 import { LocalizationProvider } from '@mui/x-date-pickers';
+import idLocale from 'date-fns/locale/id';
+import { useMutationCreateVisit } from 'src/hooks/users/useMutationCreateVIsit';
 
-// Animasi transisi modal
 const Transition = forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} timeout={1000} {...props} />;
 });
 
 const ModalVisit = ({ isOpen, onClose, data }) => {
-  const [visitDate, setVisitDate] = useState('');
-  const [visitTime, setVisitTime] = useState('');
-  const [estimatedStart, setEstimatedStart] = useState('');
-  const [estimatedEnd, setEstimatedEnd] = useState('');
+  const [visitDate, setVisitDate] = useState(null);
+  const [visitTime, setVisitTime] = useState(null);
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
-  // Menggunakan mutate dengan format yang diminta
   const { mutate, isPending } = useMutationCreateVisit({
-    onSuccess: (response) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['visit.property'] });
       enqueueSnackbar('Visit berhasil dijadwalkan', { variant: 'success' });
       onClose();
     },
     onError: (error) => {
-      const errors = error.response?.data?.errors;
-      if (errors?.visit_date[0]) {
-        enqueueSnackbar('Jam visit wajib diiisi', { variant: 'error' });
-      }
-      enqueueSnackbar(error?.response?.data?.errors || 'Terjadi kesalahan', { variant: 'error' });
+      const errorMessage = error.response?.data?.errors?.visit_date?.[0] || 'Terjadi kesalahan';
+      enqueueSnackbar(errorMessage, { variant: 'error' });
     },
   });
 
   const handleSubmit = () => {
-    const now = new Date();
-    const selectedDateTime = new Date(`${visitDate}T${visitTime}`);
-    const startDate = new Date(estimatedStart);
-    const endDate = new Date(estimatedEnd);
-    const minEndDate = new Date(startDate);
-    minEndDate.setDate(minEndDate.getDate() + 30); // Tambah 30 hari dari startDate
+    if (!visitDate || !visitTime) {
+      enqueueSnackbar('Tanggal dan jam visit wajib diisi!', { variant: 'error' });
+      return;
+    }
 
-    if (selectedDateTime < now) {
+    const selectedDateTime = new Date(visitDate);
+    selectedDateTime.setHours(visitTime.getHours(), visitTime.getMinutes(), 0);
+
+    if (selectedDateTime < new Date()) {
       enqueueSnackbar('Tanggal dan waktu visit harus minimal saat ini!', { variant: 'error' });
       return;
     }
 
-    if (startDate <= now) {
-      enqueueSnackbar('Tanggal masuk harus lebih dari hari ini!', { variant: 'error' });
-      return;
-    }
-
-    if (endDate < minEndDate) {
-      enqueueSnackbar('Tanggal keluar harus minimal 30 hari setelah tanggal masuk!', {
-        variant: 'error',
-      });
-      return;
-    }
-
+    const formattedVisitDate = selectedDateTime.toISOString().slice(0, 19).replace('T', ' ');
     mutate({
       property_id: data.id,
-      visit_date: `${visitDate} ${visitTime}:00`,
-      estimated_stay_date_start: estimatedStart,
-      estimated_stay_date_end: estimatedEnd,
+      visit_date: formattedVisitDate,
     });
   };
 
@@ -111,7 +92,7 @@ const ModalVisit = ({ isOpen, onClose, data }) => {
       <DialogContent dividers>
         <Box display="flex" gap={2} mb={2}>
           <img
-            src={data?.files[0]?.file_url}
+            src={data?.files?.[0]?.file_url}
             alt={data.name}
             style={{ width: 100, height: 80, borderRadius: 8 }}
           />
@@ -126,7 +107,7 @@ const ModalVisit = ({ isOpen, onClose, data }) => {
                 color="black"
               >
                 {formatCurrency(data.start_price)}/
-                {data.payment_type === 'monthly' ? 'bulan' : 'Tahun'}
+                {data.payment_type === 'monthly' ? 'bulan' : 'tahun'}
               </Typography>
             </Typography>
           </Box>
@@ -140,47 +121,19 @@ const ModalVisit = ({ isOpen, onClose, data }) => {
             label="Tanggal Visit"
             type="date"
             fullWidth
-            value={visitDate}
+            value={visitDate ? visitDate.toISOString().split('T')[0] : ''}
             InputLabelProps={{ shrink: true }}
-            onChange={(e) => setVisitDate(e.target.value)}
+            onChange={(e) => setVisitDate(new Date(e.target.value))}
           />
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={idLocale}>
+          <LocalizationProvider dateAdapter={AdapterDateFns} locale={idLocale}>
             <TimePicker
               label="Jam Visit"
-              value={visitTime ? new Date(`2000-01-01T${visitTime}`) : null}
-              onChange={(time) => {
-                if (time) {
-                  const hours = time.getHours().toString().padStart(2, '0');
-                  const minutes = time.getMinutes().toString().padStart(2, '0');
-                  setVisitTime(`${hours}:${minutes}`);
-                }
-              }}
+              value={visitTime}
+              onChange={setVisitTime}
               renderInput={(params) => <TextField {...params} fullWidth />}
             />
           </LocalizationProvider>
         </Box>
-
-        <Typography fontWeight="bold" mb={2} mt={2}>
-          Estimasi Tinggal
-        </Typography>
-        <TextField
-          type="date"
-          fullWidth
-          label="Tanggal Masuk"
-          value={estimatedStart}
-          onChange={(e) => setEstimatedStart(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ mt: 1 }}
-        />
-        <TextField
-          type="date"
-          fullWidth
-          label="Tanggal Keluar"
-          value={estimatedEnd}
-          onChange={(e) => setEstimatedEnd(e.target.value)}
-          InputLabelProps={{ shrink: true }}
-          sx={{ mt: 1 }}
-        />
       </DialogContent>
       <DialogActions>
         <Button variant="contained" color="primary" onClick={handleSubmit} disabled={isPending}>
