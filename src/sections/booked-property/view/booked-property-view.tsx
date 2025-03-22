@@ -42,6 +42,7 @@ export function BookedPropertyView() {
     isLoading,
     isFetching,
   } = isOwnerProperty ? useFetchFacilityPropertyOwner() : useFetchAllBooking();
+  console.log(data);
   const [filterName, setFilterName] = useState('');
   const [opened, setOpened] = useState(false);
   const queryClient = useQueryClient();
@@ -156,24 +157,29 @@ export function BookedPropertyView() {
                   ]}
                 />
                 <TableBody>
-                  {dataFiltered
-                    .filter((row: any) => row.bookings.length > 0) // Hanya tampilkan properti yang memiliki booking
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row: any) => {
-                      return (
+                  {dataFiltered.filter((row: any) => row.bookings.length > 0).length > 0 ? (
+                    dataFiltered
+                      .filter((row: any) => row.bookings.length > 0) // Hanya tampilkan properti yang memiliki booking
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row: any) => (
                         <BookedPropertyTableRow
                           key={row.id}
                           row={row}
                           booked={row.bookings}
-                          // NamaProperty={NamaProperty}
                           selected={table.selected.includes(row.id)}
                           onSelectRow={() => table.onSelectRow(row.id)}
                         />
-                      );
-                    })}
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                        Data Booking belum ada
+                      </td>
+                    </tr>
+                  )}
 
                   <TableEmptyRows
                     height={68}

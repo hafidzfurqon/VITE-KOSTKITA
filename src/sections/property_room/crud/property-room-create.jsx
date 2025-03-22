@@ -1,94 +1,119 @@
-  import { Button, Box, Container, Stack, Typography, TextField, FormLabel, Autocomplete } from "@mui/material";
-  import { Controller, useForm } from "react-hook-form";
-  import { useEffect, useState } from "react";
-  import "react-quill/dist/quill.snow.css";
-  import { MenuItem } from "@mui/material";
-  import { FormControlLabel } from "@mui/material";
-  import { Switch } from "@mui/material";
-  import { useQueryClient } from "@tanstack/react-query";
-  import { useSnackbar } from "notistack";
-  import { useRouter } from "src/routes/hooks";
-  import { Link, useParams } from "react-router-dom";
-  import { router } from "src/hooks/routing/useRouting";
-  import { InputAdornment } from "@mui/material";
-  import { NumericFormat } from "react-number-format";
-  import { useDropzone } from "react-dropzone";
-import { useFetchFacilities } from "src/hooks/facilities";
-import Loading from "src/components/loading/loading";
-import { Checkbox } from "@mui/material";
-import { FormGroup } from "@mui/material";
-import { useFetchAllPropertyType } from "src/hooks/property_type";
-import CustomBreadcrumbs from "src/components/custom-breadcrumbs";
-import { useMutationCreatePropertyRoom } from "src/hooks/property_room";
-import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
+import {
+  Button,
+  Box,
+  Container,
+  Stack,
+  Typography,
+  TextField,
+  FormLabel,
+  Autocomplete,
+  Grid,
+} from '@mui/material';
+import { Controller, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+// import "react-quill/dist/quill.snow.css";
+import { MenuItem } from '@mui/material';
+import { FormControlLabel } from '@mui/material';
+import { Switch } from '@mui/material';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSnackbar } from 'notistack';
+import { useRouter } from 'src/routes/hooks';
+import { Link, useParams } from 'react-router-dom';
+import { router } from 'src/hooks/routing/useRouting';
+import { InputAdornment } from '@mui/material';
+import { NumericFormat } from 'react-number-format';
+import { useDropzone } from 'react-dropzone';
+import { useFetchFacilities } from 'src/hooks/facilities';
+import Loading from 'src/components/loading/loading';
+import { Checkbox } from '@mui/material';
+import { FormGroup } from '@mui/material';
+// import { useFetchAllPropertyType } from 'src/hooks/property_type';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
+import { useMutationCreatePropertyRoom } from 'src/hooks/property_room';
+import { useFetchAllRoomFacilities } from 'src/hooks/room-facilities';
+import { useAppContext } from 'src/context/user-context';
+import { useFetchAllPropertyRoomType } from 'src/hooks/property-room-type';
+// import { useFetchAllPropertyTypeOwner } from 'src/hooks/owner/useFetchAllTypePropertyOwner';
 
+export const PropertyRoomCreate = () => {
+  const { id } = useParams();
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
 
-  export const PropertyRoomCreate = () => {
-    const {id} = useParams();
-    const {data : facilities, isLoading, isFetching} = useFetchAllRoomFacilities();
-    const {data : property_type, isLoading : loadingPropertyType, isFetching : FetchingPropertyType} = useFetchAllPropertyType();
-    
-    const {
-      control,
-      register,
-      handleSubmit,
-      setValue,
-      watch,
-      formState: { errors },
-    } = useForm({defaultValues: {
+  // Pastikan roles adalah array sebelum memanggil .some()
+  const isOwnerProperty =
+    Array.isArray(user?.roles) && user.roles.some((role) => role.name === 'owner_property');
+
+  const {
+    data: facilities = [],
+    isLoading,
+    isFetching,
+  } = useFetchAllRoomFacilities(isOwnerProperty);
+  const {
+    data: property_room_type,
+    isLoading: loadingPropertyType,
+    isFetching: FetchingPropertyType,
+  } = useFetchAllPropertyRoomType(isOwnerProperty);
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
       facilities: [],
-    },});
-    const [description, setDescription] = useState('');
-    const [isActive, setIsActive] = useState(false);
-    const queryClient = useQueryClient();
-    const { enqueueSnackbar } = useSnackbar();
-    const routers = useRouter();
-    const [selectedImages, setSelectedImages] = useState([]);
+    },
+  });
 
-    const handleCheckboxChange = (facilityId) => {
-      const currentFacilities = watch('facilities') || []; // Ambil value saat ini
-      const updatedFacilities = currentFacilities.includes(facilityId)
-        ? currentFacilities.filter(id => id !== facilityId)
-        : [...currentFacilities, facilityId];
-    
-      setValue('facilities', updatedFacilities); // Update nilai dengan array baru
-    }
+  const [isActive, setIsActive] = useState(false);
+  const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
+  const routers = useRouter();
+  const [selectedImages, setSelectedImages] = useState([]);
 
-    // ✅ Handle file selection
-    const handleFileChange = (event) => {
-      const files = event.target.files;
-      if (!files.length) return;
-  
-      // Konversi FileList ke array
-      const imageFiles = Array.from(files);
-      setSelectedImages(imageFiles);
-  
-      // Simpan ke react-hook-form
-      setValue("files", imageFiles);
-    };
-    const handleToggle = (event) => {
-      const status = event.target.checked ? 'available' : 'unavailable';
-      setIsActive(event.target.checked);
-      setValue('status', status); // Simpan status ke react-hook-form
-    };
+  const handleCheckboxChange = (facilityId) => {
+    const currentFacilities = watch('facilities') || []; // Ambil value saat ini
+    const updatedFacilities = currentFacilities.includes(facilityId)
+      ? currentFacilities.filter((id) => id !== facilityId)
+      : [...currentFacilities, facilityId];
 
+    setValue('facilities', updatedFacilities); // Update nilai dengan array baru
+  };
 
-    const {
-      getRootProps,
-      getInputProps,
-      acceptedFiles,
-    } = useDropzone({
-      accept: "image/*",
-      multiple: true,
-      maxFiles: 5,
-      onDrop: (acceptedFiles) => {
-        setSelectedImages(acceptedFiles);
-        setValue("files", acceptedFiles);
-      },
-    });
+  // ✅ Handle file selection
+  const handleFileChange = (event) => {
+    const files = event.target.files;
+    if (!files.length) return;
 
-    const {mutate, isPending} = useMutationCreatePropertyRoom({
-      onSuccess : () => {
+    // Konversi FileList ke array
+    const imageFiles = Array.from(files);
+    setSelectedImages(imageFiles);
+
+    // Simpan ke react-hook-form
+    setValue('files', imageFiles);
+  };
+  const handleToggle = (event) => {
+    const status = event.target.checked ? 'available' : 'unavailable';
+    setIsActive(event.target.checked);
+    setValue('status', status); // Simpan status ke react-hook-form
+  };
+
+  const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
+    accept: 'image/*',
+    multiple: true,
+    maxFiles: 5,
+    onDrop: (acceptedFiles) => {
+      setSelectedImages(acceptedFiles);
+      setValue('files', acceptedFiles);
+    },
+  });
+
+  const { mutate, isPending } = useMutationCreatePropertyRoom(
+    {
+      onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['fetch.property-room', id] });
         routers.push(`/property/property-room/${id}`);
         enqueueSnackbar('Property Room berhasil dibuat', { variant: 'success' });
@@ -96,126 +121,142 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
       onError: () => {
         enqueueSnackbar('Property Room gagal dibuat', { variant: 'error' });
       },
-    })
-    const Submitted = (data) => {
-      // console.log("Data sebelum dikirim:", data);
-    
-      const formData = new FormData();
-      
-      // Pastikan `property_id` ada
-      if (id) {
-        formData.append("property_id", id);
-      }
-    
-      Object.entries(data).forEach(([key, value]) => {
-        if (Array.isArray(value)) {
-          value.forEach(item => formData.append(`${key}[]`, item));
-        } else if (key === "price") {
-          formData.append(key, cleanPrice(value));
-        } else {
-          formData.append(key, value);
-        }
-      });
-    
-      // console.log("FormData yang dikirim:", Object.fromEntries(formData.entries()));
-    
-      mutate(formData);
-    };
-    
+    },
+    isOwnerProperty
+  );
+  const Submitted = (data) => {
+    // console.log("Data sebelum dikirim:", data);
 
-    
-    const cleanPrice = (price) => {
-      return parseInt(price.replace(/[^\d]/g, ''), 10);
-    };
-    if ( isLoading||isFetching || loadingPropertyType || FetchingPropertyType) {
-      return <Loading/>
+    const formData = new FormData();
+
+    // Pastikan `property_id` ada
+    if (id) {
+      formData.append('property_id', id);
     }
-    return (
-      <Container>
-        <Typography variant="h3" sx={{ mb: 5 }}>
-          Tambah Property Room
-        </Typography>
-        <CustomBreadcrumbs 
-                          links={[{ name: 'Property', href: '/property' }, { name: 'Property Room',href: `/property/property-room/${id}`}, { name: 'Create Property Room',}]} 
-                          sx={{ mb: { xs: 2, md: 3 } }} 
-                          action={null} 
-                          heading="" 
-                          moreLink={[]} 
-                          activeLast={true} 
-                          />
-        <Box component="form" onSubmit={handleSubmit(Submitted)}>
-          <Stack spacing={3}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-              <TextField
-                {...register('name', { required: 'Nama Wajib Diisi' })}
-                margin="dense"
-                id="name"
-                label="Nama Property Room"
-                type="text"
-                fullWidth
-                variant="outlined"
-                error={!!errors.name}
-                helperText={errors.name?.message}
-              />
-            <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={TextField}
-                    label="Harga"
-                    fullWidth
-                    required
-                    prefix="Rp "
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                  />
-                )}
-              />
-            </Stack>
-            <Typography>Status : </Typography>
-            <FormControlLabel
-              control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
-              label={isActive ? 'Available' : 'Non-Available'}
+
+    Object.entries(data).forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(`${key}[]`, item));
+      } else if (key === 'price') {
+        formData.append(key, cleanPrice(value));
+      } else {
+        formData.append(key, value);
+      }
+    });
+
+    // console.log("FormData yang dikirim:", Object.fromEntries(formData.entries()));
+
+    mutate(formData);
+  };
+
+  const cleanPrice = (price) => {
+    return parseInt(price.replace(/[^\d]/g, ''), 10);
+  };
+  if (isLoading || isFetching || loadingPropertyType || FetchingPropertyType) {
+    return <Loading />;
+  }
+  return (
+    <Container>
+      <Typography variant="h3" sx={{ mb: 5 }}>
+        Tambah Property Room
+      </Typography>
+      <CustomBreadcrumbs
+        links={[
+          { name: 'Property', href: '/property' },
+          { name: 'Property Room', href: `/property/property-room/${id}` },
+          { name: 'Create Property Room' },
+        ]}
+        sx={{ mb: { xs: 2, md: 3 } }}
+        action={null}
+        heading=""
+        moreLink={[]}
+        activeLast={true}
+      />
+      <Box component="form" onSubmit={handleSubmit(Submitted)}>
+        <Stack spacing={3}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <TextField
+              {...register('name', { required: 'Nama Wajib Diisi' })}
+              margin="dense"
+              id="name"
+              label="Nama Property Room"
+              type="text"
+              fullWidth
+              variant="outlined"
+              error={!!errors.name}
+              helperText={errors.name?.message}
             />
-           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+            <Controller
+              name="price"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Harga wajib diisi' }}
+              render={({ field, fieldState }) => (
+                <NumericFormat
+                  {...field}
+                  customInput={TextField}
+                  label="Harga"
+                  fullWidth
+                  required
+                  prefix="Rp "
+                  thousandSeparator="."
+                  decimalSeparator=","
+                  error={!!fieldState.error}
+                  helperText={fieldState.error?.message}
+                />
+              )}
+            />
+          </Stack>
+          <TextField
+            select
+            {...register('room_type_id', { required: true })}
+            label="Tipe Properti Ruangan"
+            fullWidth
+            required
+          >
+            {property_room_type.map((property, idx) => {
+              return (
+                <MenuItem key={idx} value={property.id}>
+                  {property.name}
+                </MenuItem>
+              );
+            })}
+          </TextField>
+          <Typography>Status : </Typography>
+          <FormControlLabel
+            control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
+            label={isActive ? 'Available' : 'Non-Available'}
+          />
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <TextField
-          {...register("area_size", { required: "Luas Kamar Wajib Diisi" })}
-          margin="dense"
-          id="area_size"
-          label="Luas Kamar" // harus ada 3 min
-          type="text"
-          inputMode="numeric"
-          fullWidth
-          variant="outlined"
-          error={!!errors.area_size}
-          helperText={errors.area_size?.message}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">m²</InputAdornment>,
-          }}
-        />
-           
+              {...register('area_size', { required: 'Luas Kamar Wajib Diisi' })}
+              margin="dense"
+              id="area_size"
+              label="Luas Kamar" // harus ada 3 min
+              type="text"
+              inputMode="numeric"
+              fullWidth
+              variant="outlined"
+              error={!!errors.area_size}
+              helperText={errors.area_size?.message}
+              InputProps={{
+                endAdornment: <InputAdornment position="end">m²</InputAdornment>,
+              }}
+            />
+
             <TextField
-          {...register("floor", { required: "Total Lantai Wajib Diisi" })}
-          margin="dense"
-          id="floor"
-          label="Total Lantai"
-          type="text"
-          inputMode="numeric"
-          fullWidth
-          variant="outlined"
-          error={!!errors.floor}
-          helperText={errors.floor?.message}
-          InputProps={{
-            endAdornment: <InputAdornment position="end">Lt</InputAdornment>,
-          }}
-        />
-            </Stack>
+              {...register('stock', { required: 'Stock Wajib Diisi' })}
+              margin="dense"
+              id="stock"
+              label="Stock Kamar"
+              type="text"
+              inputMode="numeric"
+              fullWidth
+              variant="outlined"
+              error={!!errors.stock}
+              helperText={errors.stock?.message}
+            />
+          </Stack>
           <TextField
             {...register('capacity')}
             margin="dense"
@@ -224,33 +265,36 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
             // rows={4}
             fullWidth
             variant="outlined"
+            InputProps={{
+              endAdornment: <InputAdornment position="end">Orang</InputAdornment>,
+            }}
           />
           {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}> */}
           <TextField
-              select
-              {...register('room_type', { required: true })}
-              label="Khusus Untuk"
-              fullWidth
-              required
-            >
-              <MenuItem value="male">Pria</MenuItem>
-              <MenuItem value="female">Wanita</MenuItem>
-              <MenuItem value="Umum">Umum</MenuItem>
-            </TextField>
-     <FormLabel>Upload Images (Max 5)</FormLabel>
-<Box
-  {...getRootProps()}
-  sx={{
-    border: "2px dashed #ccc",
-    padding: "20px",
-    textAlign: "center",
-    cursor: "pointer",
-    borderRadius: "8px",
-  }}
->
-  <input {...getInputProps()} />
-  <Typography>Drag & Drop atau Klik untuk Upload</Typography>
-</Box>
+            select
+            {...register('room_gender_type', { required: true })}
+            label="Khusus Untuk"
+            fullWidth
+            required
+          >
+            <MenuItem value="male">Pria</MenuItem>
+            <MenuItem value="female">Wanita</MenuItem>
+            <MenuItem value="both">Umum</MenuItem>
+          </TextField>
+          <FormLabel>Upload Images (Max 5)</FormLabel>
+          <Box
+            {...getRootProps()}
+            sx={{
+              border: '2px dashed #ccc',
+              padding: '20px',
+              textAlign: 'center',
+              cursor: 'pointer',
+              borderRadius: '8px',
+            }}
+          >
+            <input {...getInputProps()} />
+            <Typography>Drag & Drop atau Klik untuk Upload</Typography>
+          </Box>
 
           {/* ✅ Preview Gambar */}
           <Stack direction="row" spacing={2}>
@@ -261,37 +305,38 @@ import { useFetchAllRoomFacilities } from "src/hooks/room-facilities";
                 alt={`preview-${index}`}
                 width={80}
                 height={80}
-                style={{ borderRadius: 8, objectFit: "cover" }}
+                style={{ borderRadius: 8, objectFit: 'cover' }}
               />
             ))}
           </Stack>
-          
-            <Typography sx={{ mb : 2}}>Fasilitas Property : </Typography>
-            <FormGroup>
-  {facilities?.map((facility) => (
-    <FormControlLabel
-      key={facility.id}
-      control={
-        <Checkbox
-          checked={watch('facilities')?.includes(facility.id)}
-          onChange={() => handleCheckboxChange(facility.id)}
-        />
-      }
-      label={facility.name}
-    />
-  ))}
-</FormGroup>
 
-          </Stack>
-          <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb:5, mr : 3 }}>
-            Submit
-          </Button>
-          <Link to={router.property.list}>
-          <Button type="button" variant="outlined" sx={{ mt: 3, mb:5 }}>
+          <Typography sx={{ mb: 2 }}>Fasilitas Property : </Typography>
+          <Grid container spacing="1" columns={{ xs: 4, sm: 8, md: 12 }} sx={{ mb: 3 }}>
+            {facilities?.map((facility, index) => (
+              <Grid item xs={2} sm={4} md={5} key={index}>
+                <FormControlLabel
+                  key={facility.id}
+                  control={
+                    <Checkbox
+                      checked={watch('facilities')?.includes(facility.id)}
+                      onChange={() => handleCheckboxChange(facility.id)}
+                    />
+                  }
+                  label={facility.name}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        </Stack>
+        <Button type="submit" disabled={isPending} variant="contained" sx={{ mt: 3, mb: 5, mr: 3 }}>
+          Submit
+        </Button>
+        <Link to={router.property.list}>
+          <Button type="button" variant="outlined" sx={{ mt: 3, mb: 5 }}>
             Kembali
           </Button>
-          </Link>
-        </Box>
-      </Container>
-    );
-  };
+        </Link>
+      </Box>
+    </Container>
+  );
+};

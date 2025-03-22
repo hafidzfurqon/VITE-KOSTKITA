@@ -44,7 +44,7 @@ export function LandingPage() {
   //   date: '',
   //   type: '',
   // });
-  
+
   // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
   //   ? data?.filter((property) => {
   //       const query = searchParams.query.trim().toLowerCase();
@@ -269,8 +269,9 @@ export function LandingPage() {
                 </Button>
               </Box>
             </Box>
-
-            <PromoPage />
+            <Container>
+              <PromoPage />
+            </Container>
 
             <Container
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
@@ -285,8 +286,8 @@ export function LandingPage() {
             <Container
               sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
             >
-              <Typography sx={{ fontSize: { xs: '20px', md: '30px' }, fontWeight: 'bold' }}>
-                Cari Apartement
+              <Typography sx={{ fontSize: { xs: '16px', md: '30px' }, fontWeight: 'bold' }}>
+                Cari Apartemen
               </Typography>
               <Link to="/apartment">
                 <Button
@@ -300,7 +301,7 @@ export function LandingPage() {
                   endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
                 >
                   <Typography
-                    sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
+                    sx={{ fontSize: { xs: '14px', md: '16px' }, textDecoration: 'underline' }}
                   >
                     Lihat Semua
                   </Typography>
@@ -310,6 +311,24 @@ export function LandingPage() {
 
             <ApartementGrid />
             <PropertyBudget />
+
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+              <Button
+                variant="outlined"
+                sx={{
+                  width: { xs: '100%', md: 'auto' },
+                  p: 2,
+                  color: 'black',
+                  bgcolor: 'white',
+                  mx: 3,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+                onClick={() => navigate('/coliving')}
+              >
+                Lihat Semua
+              </Button>
+            </Box>
           </Box>
         </SimpleBar>
 

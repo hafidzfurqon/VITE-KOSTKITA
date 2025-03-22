@@ -40,7 +40,10 @@ export default function PropertyBudgety() {
   ];
 
   const filteredProperties = selectedRange
-    ? data.filter((property) => property.start_price >= selectedRange.min && property.start_price <= selectedRange.max)
+    ? data.filter(
+        (property) =>
+          property.start_price >= selectedRange.min && property.start_price <= selectedRange.max
+      )
     : data;
 
   return (
@@ -49,8 +52,12 @@ export default function PropertyBudgety() {
         <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 3 }}>
           Cari hunian sesuai budgetmu
         </Typography>
-        
-        <Stack direction="row" spacing={2} sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { display: 'none' } }}>
+
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ overflowX: 'auto', pb: 1, '&::-webkit-scrollbar': { display: 'none' } }}
+        >
           {priceRanges.map((range) => (
             <Chip
               key={range.label}
@@ -79,15 +86,93 @@ export default function PropertyBudgety() {
       </Box>
 
       <Box mt={2} maxWidth="100%" sx={{ px: 0 }}>
-        <Carousel responsive={responsive} swipeable draggable infinite autoPlay autoPlaySpeed={4500} keyBoardControl transitionDuration={500}>
-          {filteredProperties.map((property) => (
-            <Box key={property.id} sx={{ backgroundColor: 'white', borderRadius: 2,  m: 1,overflow: 'hidden', boxShadow: 1, '&:hover': { boxShadow: 3 } }}>
+        <Carousel
+          responsive={responsive}
+          swipeable
+          draggable
+          infinite
+          autoPlay
+          autoPlaySpeed={4500}
+          keyBoardControl
+          transitionDuration={500}
+        >
+          {filteredProperties.slice(0, 4).map((property) => (
+            <Box
+              key={property.id}
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: 2,
+                m: 1,
+                overflow: 'hidden',
+                boxShadow: 1,
+                '&:hover': { boxShadow: 3 },
+              }}
+            >
               <ImageSlider images={property.files} />
-              <Link to={`/property/${property.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
+              <Link
+                to={`/property/${property.slug}`}
+                style={{ textDecoration: 'none', display: 'block' }}
+              >
                 <Box sx={{ p: 2 }}>
-                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>{property.name}</Typography>
-                  <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>{property.address}, {property.city.name}</Typography>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}>{formatCurrency(property.start_price)} / bulan</Typography>
+                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
+                    {property.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
+                    {property.address}, {property.city.name}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                  >
+                    {formatCurrency(property.start_price)} / bulan
+                  </Typography>
+                </Box>
+              </Link>
+            </Box>
+          ))}
+        </Carousel>
+      </Box>
+      <Box mt={2} maxWidth="100%" sx={{ px: 0 }}>
+        <Carousel
+          responsive={responsive}
+          swipeable
+          draggable
+          infinite
+          autoPlay
+          autoPlaySpeed={4500}
+          keyBoardControl
+          transitionDuration={500}
+        >
+          {filteredProperties.slice(4, 8).map((property) => (
+            <Box
+              key={property.id}
+              sx={{
+                backgroundColor: 'white',
+                borderRadius: 2,
+                m: 1,
+                overflow: 'hidden',
+                boxShadow: 1,
+                '&:hover': { boxShadow: 3 },
+              }}
+            >
+              <ImageSlider images={property.files} />
+              <Link
+                to={`/property/${property.slug}`}
+                style={{ textDecoration: 'none', display: 'block' }}
+              >
+                <Box sx={{ p: 2 }}>
+                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
+                    {property.name}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
+                    {property.address}, {property.city.name}
+                  </Typography>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                  >
+                    {formatCurrency(property.start_price)} / bulan
+                  </Typography>
                 </Box>
               </Link>
             </Box>
@@ -222,4 +307,3 @@ function ImageSlider({ images }) {
     </Box>
   );
 }
-

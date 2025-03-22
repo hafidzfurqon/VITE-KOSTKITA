@@ -27,21 +27,23 @@ export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   const isAdmin = user?.roles?.some((role: { name: string }) => role.name === 'admin');
-  const { data, isLoading, isFetching } = isAdmin
-    ? useFetchAllApartement()
-    : useFetchAllPropertyOwner();
   const {
-    data: DataUser,
+    data = [],
+    isLoading,
+    isFetching,
+  } = isAdmin ? useFetchAllApartement() : useFetchAllPropertyOwner();
+  const {
+    data: DataUser = [],
     isLoading: LoadingUser,
     isFetching: FecthingUser,
   } = isAdmin ? useFetchAllUser() : { data: null, isLoading: false, isFetching: false };
   const {
-    data: DataBooking,
+    data: DataBooking = [],
     isLoading: LoadingBooking,
     isFetching: FecthingBooking,
   } = isAdmin ? useFetchAllBooking() : useFetchAllBookingOwner();
   const {
-    data: DataPromo,
+    data: DataPromo = [],
     isLoading: LoadingPromo,
     isFetching: FecthingPromo,
   } = isAdmin ? useFetchPromo() : { data: null, isLoading: false, isFetching: false };
@@ -57,6 +59,13 @@ export function OverviewAnalyticsView() {
   ) {
     return <Loading />;
   }
+
+  const totalBookings =
+    DataBooking?.reduce(
+      (acc: number, property: { bookings: any[] }) => acc + property.bookings.length,
+      0
+    ) ?? 0;
+
   return (
     <DashboardContent maxWidth="xl">
       <Typography variant="h4" sx={{ mb: { xs: 3, md: 5 } }}>
@@ -93,11 +102,11 @@ export function OverviewAnalyticsView() {
           </Grid>
         )}
 
-        <Grid xs={12} sm={6} md={3}>
+        <Grid xs={12} sm={6} md={6}>
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
             // percent={2.8}
-            total={DataBooking?.length}
+            total={totalBookings}
             // total={5}
             color="warning"
             icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
@@ -108,19 +117,21 @@ export function OverviewAnalyticsView() {
           />
         </Grid>
 
-        <Grid xs={12} sm={6} md={3}>
-          <AnalyticsWidgetSummary
-            title="Jumlah Promo"
-            // percent={3.6}
-            total={DataPromo?.length}
-            color="error"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
-            chart={{
-              categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-              series: [56, 30, 23, 54, 47, 40, 62, 73],
-            }}
-          />
-        </Grid>
+        {isAdmin && (
+          <Grid xs={12} sm={6} md={3}>
+            <AnalyticsWidgetSummary
+              title="Jumlah Promo"
+              // percent={3.6}
+              total={DataPromo?.length ?? 0}
+              color="error"
+              icon={<img alt="icon" src="/assets/icons/glass/ic-glass-message.svg" />}
+              chart={{
+                categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+                series: [56, 30, 23, 54, 47, 40, 62, 73],
+              }}
+            />
+          </Grid>
+        )}
 
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits

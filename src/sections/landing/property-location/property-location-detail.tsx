@@ -89,6 +89,9 @@ const PropertyLocationDetail = () => {
         moreLink={[]}
         activeLast={true}
       />
+      <Typography sx={{ mb: 4, fontSize: { xs: '18px', md: '30px' }, fontWeight: 'bold' }}>
+        Kost Dekat IPB Bogor
+      </Typography>
       <Grid
         container
         spacing={{ xs: 2, md: 3 }}

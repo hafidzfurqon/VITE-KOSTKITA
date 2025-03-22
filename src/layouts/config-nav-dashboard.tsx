@@ -51,9 +51,14 @@ export const navData = [
     icon: <Iconify icon="mdi:office-building" />, // Ikon bangunan untuk fasilitas bersama
   },
   {
-    title: 'Fasilitas Room',
+    title: 'Fasilitas Ruangan',
     path: '/room-facility',
     icon: <Iconify icon="mdi:bed" />, // Ikon tempat tidur untuk fasilitas kamar
+  },
+  {
+    title: 'Tipe Ruangan',
+    path: '/room-type',
+    icon: <Iconify icon="mdi:door-open" />, // Ikon tempat tidur untuk fasilitas kamar
   },
   {
     title: 'Property TerBooking',

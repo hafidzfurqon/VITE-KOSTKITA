@@ -24,14 +24,28 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 // import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
-import { Button } from '@mui/material';
+import {
+  Button,
+  CardActions,
+  Collapse,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  styled,
+  TextField,
+} from '@mui/material';
 import { useAppContext } from 'src/context/user-context';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+// import { IconButton } from '@mui/material';
+// import { ExpandMore } from '@mui/icons-material';
+import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 
 // ----------------------------------------------------------------------
 
 export type PostItemProps = {
   id: any;
   title: string;
+  slug: string;
   promo_image_url: string;
   coverUrl: string;
   totalViews: number;
@@ -47,22 +61,50 @@ export type PostItemProps = {
     avatarUrl: string;
   };
 };
+interface ExpandMoreProps extends IconButtonProps {
+  expand: boolean;
+}
+
+const ExpandMore = styled((props: ExpandMoreProps) => {
+  const { expand, ...other } = props;
+  return <IconButton {...other} />;
+})(({ theme }) => ({
+  marginLeft: 'auto',
+  transition: theme.transitions.create('transform', {
+    duration: theme.transitions.duration.shortest,
+  }),
+  variants: [
+    {
+      props: ({ expand }) => !expand,
+      style: {
+        transform: 'rotate(0deg)',
+      },
+    },
+    {
+      props: ({ expand }) => !!expand,
+      style: {
+        transform: 'rotate(180deg)',
+      },
+    },
+  ],
+}));
 
 export function PostItem({
   sx,
   post,
-  latestPost,
-  latestPostLarge,
-  ...other
 }: CardProps & {
   post: PostItemProps;
-  latestPost: boolean;
-  latestPostLarge: boolean;
 }) {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   const isAdmin = user?.roles?.some((role: any) => role.name === 'admin');
   const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+
+  const handleExpandClick = () => {
+    setExpanded(!expanded);
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -83,178 +125,70 @@ export function PostItem({
   const handleSubmit = () => {
     DeletePromo(post.id);
   };
-  const renderTitle = (
-    <Link
-      color="inherit"
-      variant="subtitle2"
-      underline="hover"
-      sx={{
-        height: 44,
-        overflow: 'hidden',
-        WebkitLineClamp: 2,
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
-        ...(latestPostLarge && { typography: 'h5', height: 60 }),
-        ...((latestPostLarge || latestPost) && {
-          color: 'common.white',
-        }),
-      }}
-    >
-      {post.title}
-    </Link>
-  );
 
-  const renderTempat = (
-    <Link
-      color="inherit"
-      variant="subtitle2"
-      underline="hover"
-      sx={{
-        height: 24,
-        overflow: 'hidden',
-        WebkitLineClamp: 2,
-        display: '-webkit-box',
-        WebkitBoxOrient: 'vertical',
-        ...(latestPostLarge && { typography: 'h5', height: 40 }),
-        ...((latestPostLarge || latestPost) && {
-          color: 'common.white',
-        }),
-      }}
-    >
-      {post.name}
-    </Link>
-  );
-
-  const renderInfo = () => {
-    return (
-      <>
-        <Box
-          display="flex"
-          flexWrap="wrap"
-          justifyContent="flex-end"
-          sx={{
-            mt: 3,
-            color: 'text.disabled',
-          }}
-        >
-          <Box
-            display="flex"
-            sx={{
-              ...((latestPostLarge || latestPost) && {
-                color: 'common.white',
-              }),
-            }}
-          >
-            <Links style={{ color: 'slategray' }} to="">
-              <Iconify width={16} icon="solar:eye-bold" sx={{ mr: 0.5 }} />
-            </Links>
-            <Box
-              component="button"
-              sx={{
-                border: 'none',
-                cursor: 'pointer',
-                background: 'none',
-                color: 'green',
-                ...((latestPostLarge || latestPost) && {
-                  color: 'common.white',
-                }),
-              }}
-            >
-              <Iconify width={16} icon="solar:pen-bold" sx={{ mr: 0.5 }} />
-            </Box>
-            <Box
-              component="button"
-              onClick={handleClickOpen}
-              sx={{
-                border: 'none',
-                background: 'none',
-                cursor: 'pointer',
-              }}
-            >
-              <Iconify width={16} icon="solar:trash-bin-trash-bold" sx={{ color: 'error.main' }} />
-            </Box>
-          </Box>
-        </Box>
-      </>
-    );
-  };
-
-  const renderCover = (
-    <Box
-      component="img"
-      alt={post.title}
-      src={post.promo_image_url}
-      sx={{
-        top: 0,
-        width: 1,
-        height: 1,
-        objectFit: 'cover',
-        position: 'absolute',
-      }}
-    />
-  );
-
-  const renderDate = (
-    <Typography
-      variant="caption"
-      component="div"
-      sx={{
-        mb: 1,
-        color: 'text.disabled',
-        ...((latestPostLarge || latestPost) && {
-          opacity: 0.48,
-          color: 'common.white',
-        }),
-      }}
-    >
-      {fDate(post.created_at)}
-    </Typography>
-  );
+  const properties = [
+    {
+      id: 1,
+      name: 'Property Pertama',
+      files: [
+        {
+          file_url:
+            'https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/6/LrNRxWalSMh1Pw39eYGwu5Sip3PBskEv7GUaS5At.webp',
+        },
+      ],
+    },
+  ];
 
   return (
     <>
-      <Card sx={sx} {...other}>
-        <Box
-          sx={(theme) => ({
-            position: 'relative',
-            pt: 'calc(100% * 3 / 4)',
-            ...((latestPostLarge || latestPost) && {
-              pt: 'calc(100% * 4 / 3)',
-              '&:after': {
-                top: 0,
-                content: "''",
-                width: '100%',
-                height: '100%',
-                position: 'absolute',
-                bgcolor: varAlpha(theme.palette.grey['900Channel'], 0.72),
-              },
-            }),
-            ...(latestPostLarge && {
-              pt: {
-                xs: 'calc(100% * 4 / 3)',
-                sm: 'calc(100% * 3 / 4.66)',
-              },
-            }),
-          })}
-        >
-          {renderCover}
-        </Box>
-
-        <Box
-          sx={(theme) => ({
-            p: theme.spacing(6, 3, 3, 3),
-            ...((latestPostLarge || latestPost) && {
-              width: 1,
-              bottom: 0,
-              position: 'absolute',
-            }),
-          })}
-        >
-          {renderDate}
-          {renderTempat}
-          {renderTitle}
-          {isAdmin && renderInfo()}
-        </Box>
+      <Card sx={{ maxWidth: 380, minWidth: 345 }}>
+        <CardMedia component="img" height="194" image={post.promo_image_url} alt="Paella dish" />
+        <CardContent>
+          <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
+            {post.name}
+          </Typography>
+        </CardContent>
+        <CardActions disableSpacing sx={{ pb: 2, px: 1 }}>
+          {isAdmin && (
+            <>
+              <Links to={`/promo/${post.slug}`} target="_blank">
+                <Button sx={{ color: 'secondary.main' }}>
+                  <Iconify icon="solar:eye-bold" />
+                  Lihat
+                </Button>
+              </Links>
+              {/* <Button>
+                <Iconify icon="solar:pen-bold" />
+                Edit
+              </Button> */}
+              <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
+                <Iconify icon="solar:trash-bin-trash-bold" />
+                Delete
+              </Button>
+            </>
+          )}
+          <Button variant="outlined" component={Links} to={`/management-promo/follow/${post.id}`}>
+            <Iconify icon="mingcute:add-line" />
+            Add Property
+          </Button>
+          <ExpandMore
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore>
+        </CardActions>
+        <Collapse in={expanded} timeout="auto" unmountOnExit>
+          <CardContent>
+            <Typography sx={{ marginBottom: 2 }}>Deskripsi:</Typography>
+            <Typography
+              color="text.secondary"
+              dangerouslySetInnerHTML={{ __html: post.description }}
+            />
+          </CardContent>
+        </Collapse>
       </Card>
       <DialogDelete
         title="yakin untuk menghapus Promo ?"

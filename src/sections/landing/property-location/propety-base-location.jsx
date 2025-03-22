@@ -1,54 +1,139 @@
-import { Grid } from '@mui/material';
-import { Typography } from '@mui/material';
-import { Box } from '@mui/material';
-import { Container } from '@mui/material';
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { Box, Typography, Button, Container } from '@mui/material';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
+import { Link, useNavigate } from 'react-router-dom';
+import Loading from 'src/components/loading/loading';
 
 const PropertyBaseLocation = () => {
-  const data = {
-    image: 'https://akademiprestasi.com/wp-content/uploads/2022/11/ipb.jpg',
-    city_code: 3201,
-    title: 'Bogor',
-  };
+  const location = [
+    {
+      id: 1,
+      image: 'https://akademiprestasi.com/wp-content/uploads/2022/11/ipb.jpg',
+      city_code: 3201,
+      title: 'Bogor',
+    },
+  ];
+
+  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  // Refs untuk tombol navigasi
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   return (
     <Container sx={{ mb: 5 }}>
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 4, sm: 8, md: 16 }}
-        sx={{ placeItems: 'center', mt: 3 }}
-      >
-        <Grid item xs={12} sm={6} md={4} lg={3} key={data.title}>
-          <Link
-            to={`/sewa/kost/kota/${data.city_code}`}
-            style={{ textDecoration: 'none', display: 'block' }}
+      <Box sx={{ maxWidth: '1120px', mx: 'auto', pt: 3, pb: 5 }}>
+        {/* Container Swiper */}
+        <Box
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          sx={{ position: 'relative' }}
+        >
+          {/* Tombol Custom */}
+          <Box
+            ref={prevRef}
+            className="custom-prev"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: 0,
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              width: 50,
+              height: 50,
+              borderRadius: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              transition: '0.3s',
+              opacity: isHovered ? 1 : 0,
+            }}
           >
-            <Box
-              sx={{
-                width: '100%',
-                height: 190,
-                overflow: 'hidden',
-                mb: 1,
-                borderRadius: 1,
-              }}
-            >
-              <img
-                src={data.image}
-                alt={data.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </Box>
-            <Typography variant="subtitle1" sx={{ color: 'black' }}>
-              {data.title}
-            </Typography>
-          </Link>
-        </Grid>
-      </Grid>
+            <ArrowBackIosNewIcon sx={{ color: '#fff', fontSize: 20 }} />
+          </Box>
+
+          <Box
+            ref={nextRef}
+            className="custom-next"
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              right: 0,
+              transform: 'translateY(-50%)',
+              zIndex: 10,
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              width: 50,
+              height: 50,
+              borderRadius: '50%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              transition: '0.3s',
+              opacity: isHovered ? 1 : 0,
+            }}
+          >
+            <ArrowForwardIosIcon sx={{ color: '#fff', fontSize: 20 }} />
+          </Box>
+
+          {/* Swiper */}
+          <Swiper
+            modules={[Navigation]}
+            spaceBetween={20}
+            slidesPerView={1}
+            breakpoints={{
+              768: { slidesPerView: 3 },
+              1024: { slidesPerView: 4 },
+            }}
+            navigation={{
+              prevEl: prevRef.current,
+              nextEl: nextRef.current,
+            }}
+            onInit={(swiper) => {
+              swiper.params.navigation.prevEl = prevRef.current;
+              swiper.params.navigation.nextEl = nextRef.current;
+              swiper.navigation.init();
+              swiper.navigation.update();
+            }}
+          >
+            {location.map((lokasi) => (
+              <SwiperSlide
+                key={lokasi.id}
+                onClick={() => navigate(`/sewa/kost/kota/${lokasi.city_code}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <Box
+                  sx={{
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    boxShadow: 3,
+                    transition: 'transform 0.3s ease',
+                    '&:hover': { transform: 'translateY(-4px)', boxShadow: 5 },
+                  }}
+                >
+                  <img
+                    src={lokasi.image}
+                    alt="lokasi"
+                    style={{ width: '100%', height: '220px', objectFit: 'cover' }}
+                  />
+                </Box>
+                <Typography sx={{ py: 2 }} variant="h6">
+                  {lokasi.title}
+                </Typography>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        </Box>
+      </Box>
     </Container>
   );
 };

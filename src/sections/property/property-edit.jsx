@@ -12,9 +12,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useForm, Controller } from 'react-hook-form';
 import { NumericFormat } from 'react-number-format';
-import { useCreateProperty, useGetCity, useGetState, useUpdateProperty } from 'src/hooks/property';
-import { useRouter } from 'src/routes/hooks';
-import { Link } from 'react-router-dom';
+import { useGetCity, useGetState, useUpdateProperty } from 'src/hooks/property';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { router } from 'src/hooks/routing/useRouting';
 import { useLocation } from 'react-router-dom';
@@ -22,7 +20,7 @@ import { useLocation } from 'react-router-dom';
 export default function PropertyEdit() {
   const location = useLocation();
   const propertyData = location.state?.propertyData || {}; // Ensure the data is loaded from state
-  console.log(propertyData)
+  console.log(propertyData);
 
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();

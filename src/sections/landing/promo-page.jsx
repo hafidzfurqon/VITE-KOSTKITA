@@ -1,171 +1,137 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import 'keen-slider/keen-slider.min.css';
-import { useKeenSlider } from 'keen-slider/react';
-import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+
+import { Link, useNavigate } from 'react-router-dom';
 import { useFetchPromo } from 'src/hooks/promo';
 import Loading from 'src/components/loading/loading';
-import { Container } from '@mui/material';
-
-const Arrow = ({ left = false, onClick, disabled, show }) => (
-  <Box
-    onClick={onClick}
-    sx={{
-      position: 'absolute',
-      top: '50%',
-      transform: 'translateY(-50%)',
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      opacity: show ? (disabled ? 0.5 : 1) : 0,
-      left: left ? '10px' : 'auto',
-      right: !left ? '10px' : 'auto',
-      width: '30px',
-      height: '30px',
-      backgroundColor: 'white',
-      borderRadius: '50%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-      zIndex: 2,
-      transition: 'opacity 0.3s ease',
-      '&:hover': { backgroundColor: '#F3F4F6' },
-    }}
-  >
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="#1F2937">
-      {left ? (
-        <path d="M16.67 0l2.83 2.829-9.339 9.175 9.339 9.167-2.83 2.829-12.17-11.996z" />
-      ) : (
-        <path d="M5 3l3.057-3 11.943 12-11.943 12-3.057-3 9-9z" />
-      )}
-    </svg>
-  </Box>
-);
 
 export default function PromoPage() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [loaded, setLoaded] = useState(false);
-  const [hovered, setHovered] = useState(false);
-
-  const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
-    slides: { perView: 1, spacing: 12 }, // Default mobile
-    breakpoints: {
-      '(min-width: 768px)': { slides: { perView: 2, spacing: 15 } }, // Tablet
-      '(min-width: 1024px)': { slides: { perView: 3, spacing: 20 } }, // Desktop
-    },
-    slideChanged(slider) {
-      setCurrentSlide(slider.track.details.rel);
-    },
-    created(slider) {
-      console.log('Current perView:', slider.options.slides.perView);
-      setLoaded(true);
-    },
-  });
-
   const { data: promos, isLoading, isFetching } = useFetchPromo();
+  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+
+  // Refs untuk tombol navigasi
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+
   if (isLoading || isFetching) {
     return <Loading />;
   }
 
-  if (!promos || (Array.isArray(promos) && promos.length === 0)) {
-    return (
-      <Container sx={{ textAlign: 'center', mt: 6 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography
-            variant="h3"
-            sx={{ fontSize: { xs: '14px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+  return (
+    <Box sx={{ maxWidth: '1120px', mx: 'auto', pt: 3, pb: 5 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography
+          variant="h3"
+          sx={{ fontSize: { xs: '14px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+        >
+          Promo berlangsung
+        </Typography>
+        <Link to="/promo">
+          <Button
+            sx={{
+              color: 'black',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontWeight: '500',
+            }}
+            endIcon={<ArrowForwardIosIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
           >
-            Promo berlangsung
-          </Typography>
-          <Link to="/promo">
-            <Button
-              sx={{
-                color: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontWeight: '500',
-              }}
-              endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
-            >
-              <Typography
-                sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
-              >
-                Lihat Semua
-              </Typography>
-            </Button>
-          </Link>
-        </Box>
+            <Typography sx={{ fontSize: { xs: '12px', md: '16px' } }}>Lihat Semua</Typography>
+          </Button>
+        </Link>
+      </Box>
+
+      {/* Container Swiper */}
+      <Box
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{ position: 'relative' }}
+      >
+        {/* Tombol Custom */}
         <Box
+          ref={prevRef}
+          className="custom-prev"
           sx={{
+            position: 'absolute',
+            top: '50%',
+            left: 0,
+            transform: 'translateY(-50%)',
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
             justifyContent: 'center',
-            mb : 2
+            alignItems: 'center',
+            cursor: 'pointer',
+            transition: '0.3s',
+            opacity: isHovered ? 1 : 0,
           }}
         >
-          {/* <img
-            src="/assets/no-data.svg"
-            alt="No Data"
-            style={{ width: 250, marginBottom: 16 }}
-          /> */}
-          <Typography variant="h6" color="textSecondary">
-            Belum ada promo yang tersedia.
-          </Typography>
-          <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-            Coba lagi nanti.
-          </Typography>
-        </Box>
-      </Container>
-    );
-  }
-
-  const totalSlides = promos?.length;
-  const maxSlides = instanceRef.current?.options.slides.perView || 1; // Default 1 untuk mobile
-  const isSlideDisabled = totalSlides <= maxSlides;
-
-  return (
-    <Box sx={{ p: { xs: 4, md: 4 } }}>
-      <Box sx={{ maxWidth: '1120px', mx: 'auto' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-          <Typography
-            variant="h3"
-            sx={{ fontSize: { xs: '14px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
-          >
-            Promo berlangsung
-          </Typography>
-          <Link to="/promo">
-            <Button
-              sx={{
-                color: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontWeight: '500',
-              }}
-              endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
-            >
-              <Typography
-                sx={{ fontSize: { xs: '12px', md: '16px' }, textDecoration: 'underline' }}
-              >
-                Lihat Semua
-              </Typography>
-            </Button>
-          </Link>
+          <ArrowBackIosNewIcon sx={{ color: '#fff', fontSize: 20 }} />
         </Box>
 
         <Box
-          sx={{ position: 'relative', cursor: 'pointer' }}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
+          ref={nextRef}
+          className="custom-next"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: 0,
+            transform: 'translateY(-50%)',
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            transition: '0.3s',
+            opacity: isHovered ? 1 : 0,
+          }}
         >
-          <Box ref={sliderRef} className="keen-slider">
-            {promos.map((promo) => (
+          <ArrowForwardIosIcon sx={{ color: '#fff', fontSize: 20 }} />
+        </Box>
+
+        {/* Swiper */}
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={10}
+          slidesPerView={1.2} // Default untuk layar kecil
+          breakpoints={{
+            640: { slidesPerView: 1.5 }, // Menampilkan 1.5 slide pada layar >= 640px
+            768: { slidesPerView: 2 }, // 2 slide pada tablet
+            1024: { slidesPerView: 3 }, // 3 slide pada desktop
+          }}
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          onInit={(swiper) => {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+            swiper.navigation.init();
+            swiper.navigation.update();
+          }}
+        >
+          {promos.map((promo) => (
+            <SwiperSlide
+              key={promo.id}
+              onClick={() => navigate(`/promo/${promo.slug}`)}
+              style={{ cursor: 'pointer' }}
+            >
               <Box
-                key={promo.id}
-                className="keen-slider__slide"
                 sx={{
                   borderRadius: '10px',
                   overflow: 'hidden',
@@ -174,33 +140,15 @@ export default function PromoPage() {
                   '&:hover': { transform: 'translateY(-4px)', boxShadow: 5 },
                 }}
               >
-                <Box sx={{ position: 'relative' }}>
-                  <img
-                    src={promo.promo_image_url}
-                    alt="Promo"
-                    style={{ width: '100%', height: '220px', objectFit: 'cover' }}
-                  />
-                </Box>
+                <img
+                  src={promo.promo_image_url}
+                  alt="Promo"
+                  style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+                />
               </Box>
-            ))}
-          </Box>
-
-          {loaded && instanceRef.current && !isSlideDisabled && (
-            <>
-              <Arrow
-                left
-                onClick={(e) => e.stopPropagation() || instanceRef.current?.prev()}
-                disabled={currentSlide === 0}
-                show={hovered}
-              />
-              <Arrow
-                onClick={(e) => e.stopPropagation() || instanceRef.current?.next()}
-                disabled={currentSlide === totalSlides - maxSlides}
-                show={hovered}
-              />
-            </>
-          )}
-        </Box>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </Box>
     </Box>
   );
