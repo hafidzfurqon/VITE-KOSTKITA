@@ -1,41 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Checkbox, Button, Dialog, DialogTitle, DialogContent, IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';  
+import CloseIcon from '@mui/icons-material/Close';
+import { useFetchServiceUser } from 'src/hooks/users/useFetchServiceUser';
 
 export default function ModalJasaLayanan({ open, onClose, onSubmit }) {
-  const [services, setServices] = useState([]);
+  const [selectedServices, setSelectedServices] = useState([]);
+  const { data } = useFetchServiceUser();
 
-  const toggleService = (service) => {
-    setServices((prev) =>
-      prev.includes(service) ? prev.filter((s) => s !== service) : [...prev, service]
+  // Pastikan data ada sebelum diakses
+  const services = data?.data || [];
+
+  const toggleService = (serviceId) => {
+    setSelectedServices((prev) =>
+      prev.includes(serviceId) ? prev.filter((id) => id !== serviceId) : [...prev, serviceId]
     );
   };
-
-  const serviceCategories = [
-    {
-      title: 'Parkir Mobil',
-      services: [{ name: 'Car Parking', price: 'Rp300.000/bulan', type: 'Berlangganan' }],
-    },
-    {
-      title: 'Parkir Motor',
-      services: [
-        {
-          name: 'Parking - Motorbike',
-          price: 'Rp100.000/bulan',
-          type: 'Berlangganan',
-          description: 'Hanya diperbolehkan membawa 1 motor per kamar',
-        },
-      ],
-    },
-    {
-      title: 'Laundry',
-      services: [
-        { name: 'Extra Laundry 1 Kg (OTP)', price: 'Rp10.000', type: 'Bayar sekali' },
-        { name: 'Extra Laundry 2 Kg (OTP)', price: 'Rp20.000', type: 'Bayar sekali' },
-        { name: 'Extra Laundry 3 Kg (OTP)', price: 'Rp30.000', type: 'Bayar sekali' },
-      ],
-    },
-  ];
 
   return (
     <Dialog
@@ -46,7 +25,7 @@ export default function ModalJasaLayanan({ open, onClose, onSubmit }) {
       PaperProps={{
         sx: {
           borderRadius: '12px',
-          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // Efek shadow ringan
+          boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
           padding: '16px',
         },
       }}
@@ -68,49 +47,50 @@ export default function ModalJasaLayanan({ open, onClose, onSubmit }) {
       </DialogTitle>
 
       <DialogContent dividers sx={{ maxHeight: '60vh', overflowY: 'auto' }}>
-        {serviceCategories.map((category) => (
-          <div key={category.title} style={{ marginBottom: '16px' }}>
-            <h3 style={{ fontWeight: 'bold', marginBottom: '8px' }}>{category.title}</h3>
-            {category.services.map((service) => (
-              <div
-                key={service.name}
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '8px',
-                  borderBottom: '1px solid #ddd',
-                }}
-              >
-                <div>
-                  <p style={{ margin: '0', fontWeight: 'bold' }}>{service.name}</p>
-                  {service.description && (
-                    <p style={{ margin: '4px 0', fontSize: '14px', color: '#666' }}>
-                      {service.description}
-                    </p>
-                  )}
-                  <span
-                    style={{
-                      fontSize: '12px',
-                      color: '#fff',
-                      backgroundColor: '#2196F3',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      marginRight: '8px',
-                    }}
-                  >
-                    {service.type}
-                  </span>
-                  <span style={{ fontSize: '14px', fontWeight: 'bold' }}>{service.price}</span>
-                </div>
-                <Checkbox
-                  checked={services.includes(service.name)}
-                  onChange={() => toggleService(service.name)}
-                />
+        {services.length > 0 ? (
+          services.map((service) => (
+            <div
+              key={service.id}
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '8px',
+                borderBottom: '1px solid #ddd',
+              }}
+            >
+              <div>
+                <p style={{ margin: '0', fontWeight: 'bold' }}>{service.name}</p>
+                {service.description && (
+                  <p style={{ margin: '4px 0', fontSize: '14px', color: '#666' }}>
+                    {service.description}
+                  </p>
+                )}
+                <span
+                  style={{
+                    fontSize: '12px',
+                    color: '#fff',
+                    backgroundColor: '#2196F3',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    marginRight: '8px',
+                  }}
+                >
+                  {service.payment_type === 'pay_once' ? 'Bayar Sekali' : 'Berlangganan'}
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: 'bold' }}>
+                  Rp{service.price.toLocaleString()}
+                </span>
               </div>
-            ))}
-          </div>
-        ))}
+              <Checkbox
+                checked={selectedServices.includes(service.id)}
+                onChange={() => toggleService(service.id)}
+              />
+            </div>
+          ))
+        ) : (
+          <p style={{ textAlign: 'center', color: '#666' }}>Tidak ada layanan tersedia</p>
+        )}
       </DialogContent>
 
       <Button
@@ -125,7 +105,7 @@ export default function ModalJasaLayanan({ open, onClose, onSubmit }) {
           ':hover': { backgroundColor: '#333' },
         }}
         onClick={() => {
-          onSubmit(services);
+          onSubmit({ additional_services: selectedServices });
           onClose();
         }}
       >

@@ -10,6 +10,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 
 export default function DetailDataPenghuni({ open, onClose, data }) {
+  console.log(data)
   return (
     <Dialog
       open={open}

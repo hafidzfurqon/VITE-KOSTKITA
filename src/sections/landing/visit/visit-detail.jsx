@@ -14,15 +14,12 @@ import {
 } from '@mui/material';
 import { Link, useParams } from 'react-router-dom';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HomeIcon from '@mui/icons-material/Home';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FacilityModal from '../modal-facility';
-import { fDate } from 'src/utils/format-time';
-import { useFetchVisitByCode } from 'src/hooks/users/useFetchVisitByCode';
 import { format, parseISO } from 'date-fns';
-// import FacilityModal from 'src/components/FacilityModal';
+import { useFetchVisitByCode } from 'src/hooks/users/useFetchVisitByCode';
 
 export default function VisitDetail() {
   const { visitCode } = useParams();
@@ -75,10 +72,6 @@ export default function VisitDetail() {
 
   const visitDate = parseISO(visit.visit_date);
   const formattedVisitDate = format(visitDate, 'dd MMMM yyyy, HH:mm');
-  const stayStartDate = parseISO(visit.estimated_stay_date_start);
-  const formattedStartDate = format(stayStartDate, 'dd MMMM yyyy');
-  const stayEndDate = parseISO(visit.estimated_stay_date_end);
-  const formattedEndDate = format(stayEndDate, 'dd MMMM yyyy');
 
   return (
     <Box sx={{ backgroundColor: 'grey.100', minHeight: '100vh', py: 3 }}>
@@ -122,61 +115,29 @@ export default function VisitDetail() {
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
             <Avatar
-              src={visit.user.photo_profile_url}
-              alt={visit.user.name}
+              src={visit.user?.photo_profile_url || '/default-avatar.png'}
+              alt={visit.user?.name}
               sx={{ width: 56, height: 56, mr: 2 }}
             />
             <Box>
-              <Typography sx={{ fontWeight: 'medium' }}>Nama: {visit.user.name}</Typography>
+              <Typography sx={{ fontWeight: 'medium' }}>Nama: {visit.user?.name}</Typography>
               <Typography sx={{ color: 'grey.800' }}>
-                Nomor Telepon: {visit.user.phone_number}
+                Nomor Telepon: {visit.user?.phone_number}
               </Typography>
-              <Typography sx={{ color: 'grey.800' }}>Email: {visit.user.email}</Typography>
             </Box>
           </Box>
           <Divider sx={{ my: 2 }} />
 
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
-            Rencana Stay
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
-            <CalendarTodayIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
-            <Typography sx={{ fontSize: '0.875rem' }}>
-              {formattedStartDate} - {formattedEndDate}
-            </Typography>
-          </Box>
+          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Properti</Typography>
 
-          <Typography sx={{ fontWeight: 'medium' }}>{visit.property.type}</Typography>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <Typography
-              sx={{
-                fontSize: '0.875rem',
-                color: 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-              }}
-              onClick={() => setOpen(true)}
-            >
-              Fasilitas unit <ChevronRightIcon sx={{ ml: 0.5, fontSize: 16 }} />
-            </Typography>
-          </Box>
-
-          {/* Modal Fasilitas */}
-          <FacilityModal
-            isOpen={open}
-            title="Fasilitas Bersama"
-            onClose={() => setOpen(false)}
-            facilities={visit.property.facilities || []}
-          />
+          <Typography sx={{ fontWeight: 'medium' }}>{visit.property?.name}</Typography>
 
           <Link
-            to={`/property/${visit.property.slug}`}
+            to={`/property/${visit.property?.slug}`}
             style={{ textDecoration: 'none', display: 'block' }}
           >
             <Stack direction="row" spacing={2}>
-              {visit.property.files.slice(0, 3).map((file, index) => (
+              {(visit.property?.files || []).slice(0, 3).map((file, index) => (
                 <img
                   key={index}
                   src={file.file_url}
@@ -191,7 +152,7 @@ export default function VisitDetail() {
               sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
             >
               <Typography variant="subtitle1" sx={{ color: 'black' }}>
-                {visit.property.name}
+                {visit.property?.name}
               </Typography>
               <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
             </Box>
@@ -200,13 +161,13 @@ export default function VisitDetail() {
           <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
             <HomeIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
             <Typography sx={{ fontSize: '0.875rem' }}>
-              {visit.property.address}, {visit.property.sector.name}, {visit.property.city.name}
+              {visit.property?.address || 'Alamat tidak tersedia'}
             </Typography>
           </Box>
 
           <Divider sx={{ my: 2 }} />
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-            Rp{visit.property.start_price.toLocaleString()} /bulan
+            Rp{visit.property?.start_price?.toLocaleString() || '0'} /bulan
           </Typography>
 
           {visit.status === 'pending' && (

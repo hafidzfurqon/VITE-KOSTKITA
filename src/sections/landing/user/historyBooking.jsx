@@ -26,6 +26,11 @@ export default function HistoryBooking() {
   const { data, isLoading, isFetching, error } = useGetBookingUser();
   const bookings = data?.data || [];
 
+  const filteredBookings = bookings.filter((booking) => {
+    if (tabIndex === 0) return booking.status === 'pending';
+    return booking.status !== 'pending';
+  });
+
   if (isLoading || isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">
@@ -74,19 +79,21 @@ export default function HistoryBooking() {
                     fontSize: '1rem',
                     textTransform: 'none',
                     py: 1.5,
+                    textAlign: 'center',
+                    width: '100%',
                   },
                 }}
               >
-                <Tab label="Riwayat" />
-                <Tab label="Akan Datang" />
+                <Tab label="Pending" />
+                <Tab label="Dikonfirmasi" />
               </Tabs>
             </Paper>
           </Grid>
 
           {/* Booking List */}
           <Grid item xs={12} md={9}>
-            {bookings.length > 0 ? (
-              bookings.map((booking) => (
+            {filteredBookings.length > 0 ? (
+              filteredBookings.map((booking) => (
                 <Card
                   key={booking.id}
                   sx={{
@@ -121,24 +128,23 @@ export default function HistoryBooking() {
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
                       <Typography variant="body2">
-                        Check-in: <b>{format(new Date(booking.check_in), 'dd MMM yyyy')}</b>
+                        Check-in:{' '}
+                        <b>
+                          {booking.check_in
+                            ? format(new Date(booking.check_in), 'dd MMM yyyy')
+                            : '-'}
+                        </b>
                       </Typography>
                       <Typography variant="body2">
                         Check-out: <b>{format(new Date(booking.check_out), 'dd MMM yyyy')}</b>
                       </Typography>
                     </Box>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        mt: 2,
-                      }}
-                    >
-                      <Typography variant="h6" color="primary" fontWeight="bold">
-                        Rp {booking.total_price.toLocaleString('id-ID')}
-                      </Typography>
+                    <Box sx={{ mt: 2 }}>
+                      <Chip
+                        label={booking.status}
+                        color={booking.status === 'pending' ? 'warning' : 'success'}
+                      />
                     </Box>
 
                     <Box sx={{ mt: 2 }}>
@@ -159,20 +165,21 @@ export default function HistoryBooking() {
               <Box sx={{ textAlign: 'center', mt: 5, py: 3, borderRadius: 2, boxShadow: 2 }}>
                 <CloudIcon sx={{ fontSize: 60, color: '#ccc' }} />
                 <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
-                  Kamu belum memiliki riwayat booking
+                  Tidak ada booking {tabIndex === 0 ? 'pending' : 'dikonfirmasi'}
                 </Typography>
-                <Typography variant="body2" sx={{ mb: 3 }}>
-                  Cari hunian yang ingin kamu lihat langsung dan booking
-                </Typography>
-                <Button
-                  component={Link}
-                  to="/"
-                  variant="contained"
-                  color="primary"
-                  sx={{ fontWeight: 'bold' }}
-                >
-                  Cari Hunian Sekarang
-                </Button>
+
+                {/* Tombol Cari Hunian hanya muncul jika tabIndex = 0 (Pending) */}
+                {tabIndex === 0 && (
+                  <Button
+                    component={Link}
+                    to="/"
+                    variant="contained"
+                    color="primary"
+                    sx={{ mt: 3, textTransform: 'none' }}
+                  >
+                    Cari Hunian
+                  </Button>
+                )}
               </Box>
             )}
           </Grid>

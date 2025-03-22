@@ -88,7 +88,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
-      }
+      } 
     }
 
     return Promise.reject(error);
@@ -132,13 +132,6 @@ export const endpoints = {
         detail: '/api/admin/property/booking/detail/code',
       },
     },
-    visit: {
-      createVisit: '/api/user/visit/create',
-      cancelVisit: '/api/user/visit/cancel',
-      listVisit: '/api/user/visit/list',
-      detailIdVisit: '/api/user/visit/detail', // need id here
-      detailCodeVisit: '/api/user/visit/detail', // need id here
-    },
     profile: {
       update: '/api/user/profile/update',
       updatePassword: '/api/user/profile/update_password',
@@ -147,9 +140,9 @@ export const endpoints = {
   visit: {
     createVisit: '/api/user/visit/create',
     cancelVisit: '/api/user/visit/cancel',
-    listVisit: '/api/user/visit/list',
+    listVisit: '/api/user/visit/all',
     detailIdVisit: '/api/user/visit/detail', // need id here
-    detailCodeVisit: '/api/user/visit/detail', // need id here
+    detailCodeVisit: '/api/user/visit/detail/code', // need id here
   },
   profile: {
     update: '/api/user/profile/update',
@@ -307,6 +300,33 @@ export const endpoints = {
     },
     promo: {
       add: '/api/owner_property/property/promo/add',
+    },
+  },
+};
+
+export const EndpointLandingPage = {
+  service: {
+    list: '/api/user/additional_service/list',
+    detail: '/api/user/additional_service/detail',
+  },
+  ratingreview: {
+    list: '/api/user/rating_and_review/all',
+    reviewProperty: '/api/user/rating_and_review/property',
+    add: '/api/user/rating_and_review/add',
+    update: '/api/user/rating_and_review/update',
+    delete: '/api/user/rating_and_review/delete',
+    detail: '/api/user/rating_and_review/detail',
+    room: {
+      list: '/api/user/rating_and_review/room/all',
+      reviewProperty: '/api/user/rating_and_review/room/user',
+      add: '/api/user/rating_and_review/room/add',
+      update: '/api/user/rating_and_review/room/update',
+      delete: '/api/user/rating_and_review/room/delete',
+      detail: '/api/user/rating_and_review/room/detail',
+    },
+    booking: {
+      getBookingDetail: '/api/user/booking/property/detail',
+      getBookingAll: '/api/user/booking/property/all',
     },
   },
 };

@@ -1,8 +1,4 @@
-import { Typography } from '@mui/material';
-import { TextField } from '@mui/material';
-import { Button } from '@mui/material';
-import { Grid } from '@mui/material';
-import { Box } from '@mui/material';
+import { Typography, TextField, Button, Grid, Box, Chip } from '@mui/material';
 import { useState, useMemo, useEffect } from 'react';
 
 export default function Step2DateSelection({ onNext, startPrice, discounts, savedData }) {
@@ -30,27 +26,38 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
   }, [months, discounts]);
 
   const discountedPrice = useMemo(() => {
-    const totalPrice = startPrice * months; // Harga bertambah sesuai jumlah bulan
+    const totalPrice = startPrice * months;
     return applicableDiscount ? applicableDiscount.price_after_discount : totalPrice;
   }, [startPrice, months, applicableDiscount]);
 
-  // Hanya kirim data jika ada salah satu ID yang tersedia
-  const propertyDiscountId = applicableDiscount?.property_discount_id || null;
-  const propertyRoomDiscountId = applicableDiscount?.property_room_discount_id || null;
-  const promoId = applicableDiscount?.promo_id || null;
+  const monthRanges = [
+    { range: '1-2', min: 1, max: 2 },
+    { range: '3-5', min: 3, max: 5 },
+    { range: '6-11', min: 6, max: 11 },
+    { range: '>12', min: 12, max: 100 },
+  ];
 
   const handleNext = () => {
+    if (!checkIn) {
+      alert('Tanggal check-in wajib diisi.');
+      return;
+    }
+    if (!months || months < 1) {
+      alert('Durasi sewa wajib diisi.');
+      return;
+    }
+
     const nextData = {
-      check_in: checkIn,
+      booking_date: checkIn, // Ubah nama key sesuai kebutuhan API
+      total_booking_month: months, // Pastikan sesuai dengan request API
       check_out: checkOut,
-      months,
       discounted_price: discountedPrice,
     };
 
-    if (propertyDiscountId || propertyRoomDiscountId || promoId) {
-      nextData.property_discount_id = propertyDiscountId;
-      nextData.property_room_discount_id = propertyRoomDiscountId;
-      nextData.promo_id = promoId;
+    if (applicableDiscount) {
+      nextData.property_discount_id = applicableDiscount.property_discount_id || null;
+      nextData.property_room_discount_id = applicableDiscount.property_room_discount_id || null;
+      nextData.promo_id = applicableDiscount.promo_id || null;
     }
 
     onNext(nextData);
@@ -70,6 +77,8 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            error={!checkIn}
+            helperText={!checkIn ? 'Tanggal check-in wajib diisi.' : ''}
           />
         </Grid>
         <Grid item xs={12} sm={6}>
@@ -87,21 +96,26 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
             Pilih Durasi Sewa:
           </Typography>
           <Grid container spacing={1}>
-            {[...Array(12).keys()].map((i) => {
-              const num = i + 1;
+            {monthRanges.map((rangeItem, rangeIndex) => {
               const hasDiscount = discounts?.some(
-                (discount) => num >= discount?.min_month && num <= discount?.max_month
+                (discount) =>
+                  rangeItem.min >= discount?.min_month && rangeItem.max <= discount?.max_month
               );
 
               return (
-                <Grid item xs={4} sm={3} md={2} key={num}>
+                <Grid item xs={6} sm={3} key={rangeIndex}>
                   <Button
-                    onClick={() => setMonths(num)}
-                    variant={months === num ? 'contained' : 'outlined'}
-                    color={months === num ? 'inherit' : 'primary'}
+                    onClick={() => setMonths(rangeItem.min)}
+                    variant={
+                      months >= rangeItem.min && months <= rangeItem.max ? 'contained' : 'outlined'
+                    }
+                    color={
+                      months >= rangeItem.min && months <= rangeItem.max ? 'inherit' : 'primary'
+                    }
                     sx={{ width: '100%' }}
                   >
-                    {num} Bulan {hasDiscount && <Chip label="%" color="error" size="small" />}
+                    {rangeItem.range} Bulan{' '}
+                    {hasDiscount && <Chip label="%" color="error" size="small" />}
                   </Button>
                 </Grid>
               );
@@ -112,7 +126,6 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
           <Typography variant="body1">
             Harga: <strong>Rp {(startPrice * months).toLocaleString()}</strong>
           </Typography>
-
           {applicableDiscount && (
             <Typography variant="body1" color="secondary">
               Diskon: -Rp {parseInt(applicableDiscount.discount_amount).toLocaleString()}
