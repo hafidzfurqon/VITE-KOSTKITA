@@ -16,7 +16,6 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   // const router = useRouter();
 
   // const [sortBy, setSortBy] = useState(['coliving', 'kost']);
-  
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
@@ -199,13 +198,36 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                           )}
                         </Typography>
                       </Box>
+                      {/* Diskon dan Voucher */}
+                      <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                        {property.discounts.some((d) => d.discount_value >= 10) && (
+                          <Chip
+                            icon={<Home fontSize="small" />}
+                            label="Diskon sewa 12 Bulan"
+                            variant="outlined"
+                            color="primary"
+                            size="small"
+                          />
+                        )}
+                        {property.promos && property.promos.length > 0 && (
+                          <Chip
+                            icon={<Home fontSize="small" />}
+                            label={`${
+                              property.promos.length
+                            } Voucher s.d. ${fPercent(property.promos[0]?.discount_value)}`}
+                            variant="outlined"
+                            size="small"
+                          />
+                        )}
+                      </Stack>
                     </>
                   ) : (
                     <Typography
                       variant="subtitle1"
                       sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                     >
-                      {fCurrency(property.start_price)} / bulan
+                      {fCurrency(property.start_price)} /{' '}
+                      {property?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
                     </Typography>
                   )}
                 </Box>

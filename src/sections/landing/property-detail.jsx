@@ -35,6 +35,9 @@ import { useMutationRemoveWishlist } from 'src/hooks/users/useMutationRemoveWish
 import Review from './review';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import PolicyPage from './policy-page';
+import PropertyLocationDetail from './property-location/property-location-detail';
+import PropertyBaseLocation from './PropertyLocation';
+import NearbyPlaces from './nearbly-places';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -525,6 +528,9 @@ export default function PropertyDetail() {
           <Review />
 
           <hr />
+          <NearbyPlaces data={data} />
+          <hr />
+
           {/* Google Maps */}
           {data.link_googlemaps && (
             <Card sx={{ mt: 5 }}>
@@ -591,6 +597,8 @@ export default function PropertyDetail() {
         </Box>
         <hr />
         <PolicyPage />
+        <hr />
+        <PropertyBaseLocation data={data?.city?.city_code} />
       </Container>
     </>
   );
