@@ -229,7 +229,7 @@ export function LayananTableRow({ row, selected, onSelectRow }: LayananTableRowP
         <TableCell align="center">
           {row.status === 'available' ? (
             <>
-              <Box sx={{ display: 'flex', gap: 1 }}>
+              <Box sx={{ display: 'flex', gap: 1, alignItems : 'center', justifyContent : 'center' }}>
                 <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
                 <span>Available</span>
               </Box>

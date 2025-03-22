@@ -1,3 +1,5 @@
+import { DateRange } from '@mui/icons-material';
+import { Iconify } from 'src/components/iconify';
 import { Label } from 'src/components/label';
 import { SvgColor } from 'src/components/svg-color';
 
@@ -5,15 +7,6 @@ import { SvgColor } from 'src/components/svg-color';
 
 const icon = (name: string) => (
   <SvgColor width="100%" height="100%" src={`/assets/icons/navbar/${name}.svg`} />
-);
-const Anothericon = (name: string) => (
-  <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
-);
-const iconsNavbar = (name: string) => (
-  <SvgColor width="100%" height="100%" src={`/assets/icons/notification/${name}.svg`} />
-);
-const Kegiatanicon = (name: string) => (
-  <SvgColor width="100%" height="100%" src={`/assets/icons/glass/${name}.svg`} />
 );
 
 export const navData = [
@@ -25,7 +18,7 @@ export const navData = [
   {
     title: 'Property Tipe',
     path: '/management-property-type',
-    icon: iconsNavbar('ic-notification-package'),
+    icon: <Iconify icon="material-symbols:category" />, // Ikon kategori untuk tipe properti
   },
   {
     title: 'User',
@@ -35,42 +28,46 @@ export const navData = [
   {
     title: 'Banner',
     path: '/banner',
-    icon: iconsNavbar('ic-notification-mail'),
+    icon: <Iconify icon="mdi:image" />, // Ikon gambar untuk banner
   },
   {
     title: 'Property',
     path: '/property',
-    icon: Anothericon('ic-glass-message'), 
+    icon: <Iconify icon="mdi:home" />, // Ikon rumah untuk properti
     info: (
       <Label color="error" variant="inverted">
         🏠
       </Label>
-    ), 
+    ),
   },
-  
   {
-    title: 'promo',
+    title: 'Promo',
     path: '/management-promo',
-    icon:  Anothericon('ic-glass-buy'),
+    icon: <Iconify icon="mdi:tag" />, // Ikon tag untuk promo
   },
   {
-    title: 'Fasilitas',
+    title: 'Fasilitas Bersama',
     path: '/fasilitas',
-    icon: Anothericon('ic-glass-bag'),
+    icon: <Iconify icon="mdi:office-building" />, // Ikon bangunan untuk fasilitas bersama
   },
   {
     title: 'Fasilitas Room',
     path: '/room-facility',
-    icon: Anothericon('ic-glass-users'),
+    icon: <Iconify icon="mdi:bed" />, // Ikon tempat tidur untuk fasilitas kamar
   },
   {
     title: 'Property TerBooking',
     path: '/booked-property',
-    icon: Anothericon('ic-glass-users'),
+    icon: <Iconify icon="mdi:calendar-check" />, // Ikon kalender dengan tanda centang untuk properti yang dibooking
   },
   {
     title: 'Layanan Tambahan',
     path: '/services',
     icon: icon('ic-cart'),
+  },
+  {
+    title: 'Kunjungan',
+    path: '/visit',
+    icon: <DateRange />,
   },
 ];

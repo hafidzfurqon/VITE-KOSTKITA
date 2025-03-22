@@ -20,13 +20,17 @@ import { fDate } from 'src/utils/format-time';
 import FacilityModal from '../../modal-facility';
 import { Stack } from '@mui/material';
 
-
 export default function HistoryBookingDetailAdmin() {
   const { bookingCode } = useParams();
-  const { data: booking, isLoading, isFetching, error } = useFetchBookingDetailProperty(bookingCode);
+  const {
+    data: booking,
+    isLoading,
+    isFetching,
+    error,
+  } = useFetchBookingDetailProperty(bookingCode);
   // clg
   const [open, setOpen] = useState(false);
-console.log(booking)
+  console.log(booking);
   if (isLoading || isFetching) {
     return (
       <Box
@@ -46,103 +50,121 @@ console.log(booking)
   }
 
   return (
-    <Box sx={{ backgroundColor: 'grey.100', minHeight: '100vh', py: 3 }}>
-      <Container maxWidth="lg" sx={{ p: 0 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Detail Booking
-        </Typography>
-        <CustomBreadcrumbs
-          links={[
-            { name: 'Management Booking', href: `/booked-property` },
-            { name: 'Booking Detail', href: '' },
-          ]}
-          sx={{ mb: 3 }}
-        />
-
-        <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
-            Data Penghuni
+    <Container>
+      <Box sx={{ backgroundColor: 'grey.100', minHeight: '100vh', py: 3 }}>
+        <Container maxWidth="lg" sx={{ p: 0 }}>
+          <Typography variant="h5" fontWeight="bold" gutterBottom>
+            Detail Booking
           </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <Avatar
-              src={booking.user_booking.user.photo_profile}
-              alt={booking.user_booking.user.name}
-              sx={{ width: 56, height: 56, mr: 2 }}
-            />
-            <Box>
-              <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user_booking.user.name}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Nomor Telepon: {booking.user_booking.user.phone_number}</Typography>
-              <Typography sx={{ color: 'grey.800' }}>Email: {booking.user_booking.user.email}</Typography>
-            </Box>
-          </Box>
-          <Divider sx={{ my: 2 }} />
-
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>Pesanan</Typography>
-          <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
-            <CalendarTodayIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
-            <Typography sx={{ fontSize: '0.875rem' }}>
-              {fDate(booking.user_booking.check_in)} - {fDate(booking.user_booking.check_out)}
-            </Typography>
-          </Box>
-
-          <Typography sx={{ fontWeight: 'medium' }}>{booking.user_booking.property_room.name}</Typography>
-          <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
-            {booking?.user_booking?.number_of_guests} Orang 
-          </Typography>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
-            <Typography
-              sx={{
-                fontSize: '0.875rem',
-                color: 'primary.main',
-                display: 'flex',
-                alignItems: 'center',
-                cursor: 'pointer',
-              }}
-              onClick={() => setOpen(true)}
-            >
-              Fasilitas unit <ChevronRightIcon sx={{ ml: 0.5, fontSize: 16 }} />
-            </Typography>
-          </Box>
-
-          {/* Modal Fasilitas */}
-          <FacilityModal
-            isOpen={open}
-            title="Fasilitas Bersama"
-            onClose={() => setOpen(false)}
-            facilities={booking.user_booking.property.facilities || []}
+          <CustomBreadcrumbs
+            links={[
+              { name: 'Management Booking', href: `/booked-property` },
+              {
+                name: 'List Pengguna pembooking',
+                href: `/booked-property/data-booking/${booking.property.id}`,
+              },
+              { name: 'Booking Detail', href: '' },
+            ]}
+            sx={{ mb: 3 }}
           />
 
-              <Link 
-               to={`/property/${booking.user_booking.property.slug}`}
-              style={{ textDecoration: 'none', display: 'block' }}>
-                 <Stack direction="row" spacing={2}>
-            {booking.user_booking.property.files.map((file, index) => (
-              <img
-                key={index}
-                src={file.file_url}
-                alt={`preview-${index}`}
-                width={80}
-                height={80}
-                style={{ borderRadius: 8, objectFit: "cover" }}
+          <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
+            <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
+              Data Penghuni
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Avatar
+                src={booking.user.photo_profile_url}
+                alt={booking.user.name}
+                sx={{ width: 56, height: 56, mr: 2 }}
               />
-            ))}
-          </Stack>
-          <Box
-            sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
-          >
-           
-            <Typography variant='subtitle1' sx={{color : 'black'}}>{booking.user_booking.property.name}</Typography>
-            <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
+              <Box>
+                <Typography sx={{ fontWeight: 'medium' }}>Nama: {booking.user.name}</Typography>
+                <Typography sx={{ color: 'grey.800' }}>
+                  Nomor Telepon: {booking.user.phone_number}
+                </Typography>
+                <Typography sx={{ color: 'grey.800' }}>Email: {booking.user.email}</Typography>
+              </Box>
+            </Box>
+            <Divider sx={{ my: 2 }} />
+
+            <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
+              Pesanan
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'start', mb: 2 }}>
+              <CalendarTodayIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
+              <Typography sx={{ fontSize: '0.875rem' }}>
+                {fDate(booking.check_in)} - {fDate(booking.check_out)}
+              </Typography>
+            </Box>
+
+            <Typography sx={{ fontWeight: 'medium' }}>{booking.property_room.name}</Typography>
+            <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
+              {booking?.number_of_guests} Orang
+            </Typography>
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
+              <Typography
+                sx={{
+                  fontSize: '0.875rem',
+                  color: 'primary.main',
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                }}
+                onClick={() => setOpen(true)}
+              >
+                Fasilitas unit <ChevronRightIcon sx={{ ml: 0.5, fontSize: 16 }} />
+              </Typography>
+            </Box>
+
+            {/* Modal Fasilitas */}
+            <FacilityModal
+              isOpen={open}
+              title="Fasilitas Bersama"
+              onClose={() => setOpen(false)}
+              facilities={booking.property.facilities || []}
+            />
+
+            <Link
+              to={`/property/${booking.property.slug}`}
+              // to={``}
+              style={{ textDecoration: 'none', display: 'block' }}
+            >
+              <Stack direction="row" spacing={2}>
+                {booking.property.files.map((file, index) => (
+                  <img
+                    key={index}
+                    src={file.file_url}
+                    alt={`preview-${index}`}
+                    width={80}
+                    height={80}
+                    style={{ borderRadius: 8, objectFit: 'cover' }}
+                  />
+                ))}
+              </Stack>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  py: 2,
+                }}
+              >
+                <Typography variant="subtitle1" sx={{ color: 'black' }}>
+                  {booking.property.name}
+                </Typography>
+                <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
+              </Box>
+            </Link>
+            <Typography>{booking.property.address}</Typography>
+            <Divider sx={{ my: 2 }} />
+            <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
+              Rp{booking.total_price.toLocaleString()} /bulan
+            </Typography>
           </Box>
-          </Link>
-          <Typography>{booking.user_booking.property.address}</Typography>
-          <Divider sx={{ my: 2 }} />
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-            Rp{booking.user_booking.total_price.toLocaleString()} /bulan
-          </Typography>
-        </Box>
-      </Container>
-    </Box>
+        </Container>
+      </Box>
+    </Container>
   );
 }

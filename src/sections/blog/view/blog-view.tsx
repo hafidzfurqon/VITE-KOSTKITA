@@ -28,12 +28,11 @@ export function BlogView() {
     setSortBy(newSort);
   }, []);
 
-  const {data, isFetching, isPending} = useFetchPromo();
+  const { data, isFetching, isPending } = useFetchPromo();
 
-  if(isFetching || isPending) {
-    return <Loading/>
+  if (isFetching || isPending) {
+    return <Loading />;
   }
-
 
   return (
     <DashboardContent>
@@ -42,13 +41,13 @@ export function BlogView() {
           Management Promo
         </Typography>
         <Link to={router.promo.create}>
-        <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
-        >
-          Tambah Promo
-        </Button>
+          <Button
+            variant="contained"
+            color="inherit"
+            startIcon={<Iconify icon="mingcute:add-line" />}
+          >
+            Tambah Promo
+          </Button>
         </Link>
       </Box>
 
@@ -65,14 +64,32 @@ export function BlogView() {
       </Box>
 
       <Grid container spacing={3}>
-        {data.map((post : any, index : number) => {
+        {data.map((post: any, index: number) => {
           const latestPostLarge = index === 0;
           const latestPost = index === 1 || index === 2;
 
           return (
-            <Grid key={post.id} xs={12} sm={latestPostLarge ? 12 : 6} md={latestPostLarge ? 6 : 3}>
-              <PostItem post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
-            </Grid>
+            <Grid
+            key={post.id}
+            xs={12}
+            sm={latestPostLarge ? 12 : 6}
+            md={latestPostLarge ? 6 : 3}
+          >
+            <PostItem
+              post={post}
+              latestPost={latestPost}
+              latestPostLarge={latestPostLarge}
+            />
+          </Grid>
+            // <Grid
+            //   key={post.id}
+            //   xs={12}
+            //   sm={latestPostLarge ? 12 : 6}
+            //   md={latestPostLarge ? 6 : 3}
+            //   sx={{ xs: { placeItems: 'center' } }}
+            // >
+            //   <PostItem post={post} latestPost={latestPost} latestPostLarge={latestPostLarge} />
+            // </Grid>
           );
         })}
       </Grid>

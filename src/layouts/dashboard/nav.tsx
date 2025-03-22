@@ -18,7 +18,7 @@ import { Scrollbar } from 'src/components/scrollbar';
 
 import { WorkspacesPopover } from '../components/workspaces-popover';
 
-import imageLogo from '../../../public/assets/images/logo.png'
+import imageLogo from '../../../public/assets/images/logo.png';
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
 import { useAppContext } from 'src/context/user-context';
@@ -119,19 +119,19 @@ export function NavMobile({
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
   const pathname = usePathname();
   const { UserContextValue: authUser }: any = useAppContext();
-const { user } = authUser;
+  const { user } = authUser;
 
-// Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-const isOwnerProperty = user?.roles?.some((role: any) => role.name === "owner_property");
+  // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
+  const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
 
-const filteredNavData = isOwnerProperty
-  ? data.filter((item) =>
-      ['Dashboard', 'Property', 'Fasilitas'].includes(item.title)
-    )
-  : data;
+  const filteredNavData = isOwnerProperty
+    ? data.filter((item) =>
+        ['Dashboard', 'Property', 'Promo', 'Fasilitas Bersama'].includes(item.title)
+      )
+    : data;
 
   // console.log(filteredNavData)
-  return (  
+  return (
     <>
       {/* <Logo /> */}
       <Box

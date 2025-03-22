@@ -7,8 +7,8 @@ export const userContext = createContext({})
 export const useAppContext = () => useContext(userContext);
 
 export function UserProvider({ children }: { children: React.ReactNode }) {
-  const token = sessionStorage.getItem("token"); 
-  const refresh_token = sessionStorage.getItem("refresh_token"); 
+  const token = localStorage.getItem("token"); 
+  const refresh_token = localStorage.getItem("refresh_token"); 
   const isAuthenticated = Boolean(token || refresh_token); 
   const { data = [], isLoading, isPending, } = useFetchAuthenticatedUser(isAuthenticated);
   // const data : any = []

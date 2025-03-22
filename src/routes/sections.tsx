@@ -53,6 +53,8 @@ export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-p
 export const RoomFasilitasPage = lazy(() => import('src/pages/room-fasilitas'));
 export const BookedPropertyPage = lazy(() => import('src/pages/booked-property'));
 export const LayananPage = lazy(() => import('src/pages/services'));
+export const VerifyEmailPage = lazy(() => import('src/pages/verify-email'));
+export const DetailBooking = lazy(() => import('src/pages/detail-booking'));
 
 // ----------------------------------------------------------------------
 
@@ -89,6 +91,10 @@ export function Router() {
         {
           path: 'booked-property/booking/detail/admin/:bookingCode',
           element: <HistoryBookingDetailAdmin />,
+        },
+        {
+          path: 'booked-property/data-booking/:id',
+          element: <DetailBooking />,
         },
         // untuk routing user
         {
@@ -251,6 +257,10 @@ export function Router() {
         {
           path: 'about-us',
           element: <About />,
+        },
+        {
+          path: 'verify_email',
+          element: <VerifyEmailPage />,
         },
         {
           path: 'property/:slug',

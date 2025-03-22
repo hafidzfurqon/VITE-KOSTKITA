@@ -5,7 +5,7 @@ export const useFetchBookingDetailProperty = (id) => useQuery({
     queryKey: ['detail-booking',id],  
     queryFn: async () => {
       const response = await axiosInstance.get(`${endpoints.user.booking.admin.detail}/${id}`);
-      console.log(response)  
-      return response.data;
+      console.log(response.data)  
+      return response.data.booking;
     },
 })
