@@ -3,21 +3,23 @@ import { Link } from 'react-router-dom';
 
 const PromoItem = ({ post }) => {
   return (
-    <Link to={'/'} style={{ textDecoration: 'none', color: 'inherit' }}>
+    <Link to={`/promo/${post.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
       <Box
         sx={{
-          width: '100%', // Pastikan semua item mengambil lebar penuh container parent
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: 3,
+          transition: 'transform 0.3s ease',
+          '&:hover': { transform: 'translateY(-4px)', boxShadow: 5 },
         }}
       >
         <img
           src={post.promo_image_url}
-          alt={post.name}
-          style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+          alt="Promo"
+          style={{ width: '100%', height: '220px', objectFit: 'cover' }}
         />
-        <Typography variant="h6" sx={{ mt: 2 }}>
-          {post.name}
-        </Typography>
       </Box>
+      <Typography sx={{py : 3}} variant='h6'>{post.name}</Typography>
     </Link>
   );
 };

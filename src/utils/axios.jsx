@@ -225,14 +225,28 @@ export const endpoints = {
     list: '/api/admin/promo/list',
     create: '/api/admin/promo/create',
     delete: '/api/admin/promo/delete',
+    add: {
+      store: '/api/admin/promo/property/add',
+    },
     public: {
       list: '/api/public/promo/all',
+      detail: '/api/public/promo/detail/slug',
     },
   },
   property_room: {
     detail: '/api/admin/property/detail/id', // need id here
+    update: '/api/admin/property/property_room/update',
+    details: {
+      property_room_detail: '/api/admin/property/property_room/detail',
+    },
     add: '/api/admin/property/property_room/add',
     delete: '/api/admin/property_room/delete',
+    type: {
+      list: '/api/admin/property/property_room/type/list',
+      create: '/api/admin/property/property_room/type/create',
+      update: '/api/admin/property/property_room/type/update',
+      delete: '/api/admin/property/property_room/type/delete',
+    },
   },
   data_booking: {
     detail: '/api/admin/property/booking/all_bookings_in_property',
@@ -260,8 +274,24 @@ export const endpoints = {
   owner: {
     property: {
       create: '/api/owner_property/property/create',
+      detail: '/api/owner_property/property/detail/id',
+      update: '/api/owner_property/property/update',
       statistic: {
-        booking: '/api/owner_property/statistic/property/all_with_bookings',
+        booking: '/api/owner_property/property/booking/all',
+      },
+      facilities_room: {
+        list: '/api/owner_property/facility/room/all',
+        create: '/api/owner_property/facility/room/create',
+        update: '/api/owner_property/facility/room/update',
+        delete: '/api/owner_property/facility/room/delete',
+      },
+      property_room: {
+        add: '/api/owner_property/property/room/add',
+        update: '/api/owner_property/property/room/update',
+        detail: '/api/owner_property/property/room/detail',
+        type: {
+          list: '/api/owner_property/property/room/type/all',
+        },
       },
     },
     state: {
@@ -275,6 +305,8 @@ export const endpoints = {
       list: '/api/owner_property/sector/list',
       detail: '/api/owner_property/city/detail',
     },
+    promo: {
+      add: '/api/owner_property/property/promo/add',
+    },
   },
 };
-

@@ -1,14 +1,9 @@
 import { useState, useCallback } from 'react';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
-import MenuList from '@mui/material/MenuList';
+
 import TableCell from '@mui/material/TableCell';
-import IconButton from '@mui/material/IconButton';
-import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
@@ -16,16 +11,15 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { DialogUpdate } from 'src/component/DialogUpdate';
-import { useDeleteProperty, useUpdateProperty } from 'src/hooks/property';
-import { DialogContent, TextField, Typography } from '@mui/material';
-import { Tooltip } from '@mui/material';
-import { Dialog } from '@mui/material';
-import { DialogTitle } from '@mui/material';
-import { DialogActions } from '@mui/material';
-import { Button } from '@mui/material';
+
+import { Button, TextField } from '@mui/material';
+
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useMutationDeleteFacilities, useMutationUpdatePropertyType } from 'src/hooks/property_type';
+import {
+  useMutationDeleteFacilities,
+  useMutationUpdatePropertyType,
+} from 'src/hooks/property_type';
 
 // ----------------------------------------------------------------------
 
@@ -56,24 +50,25 @@ type UserTableRowProps = {
 export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [open, setOpen] = useState(false);
   const [opened, setOpened] = useState(false);
-   const handleClickOpen = () => {
-    setOpen(true)
-   }
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
 
-  const {mutate, isPending : isPendingMutate} = useMutationUpdatePropertyType({
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['fetch.property_type'] });
-      setOpen(false);
-      enqueueSnackbar('Tipe Property berhasil diupdate', { variant: 'success' });
+  const { mutate, isPending: isPendingMutate } = useMutationUpdatePropertyType(
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['fetch.property_type'] });
+        setOpen(false);
+        enqueueSnackbar('Tipe Property berhasil diupdate', { variant: 'success' });
+      },
+      onError: () => {
+        enqueueSnackbar('Tipe Property gagal diupdate', { variant: 'error' });
+      },
     },
-    onError: () => {
-      enqueueSnackbar('Tipe Property gagal diupdate', { variant: 'error' });
-    },
-  },
-  row.id
-)
+    row.id
+  );
 
   const { mutate: DeleteFacilities, isPending } = useMutationDeleteFacilities({
     onSuccess: () => {
@@ -81,14 +76,14 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
       setOpen(false);
       enqueueSnackbar('Tipe Property berhasil dihapus', { variant: 'success' });
     },
-    onError: (err : any) => {
+    onError: (err: any) => {
       enqueueSnackbar('Tipe Property gagal dihapus', { variant: 'error' });
     },
   });
 
   const handleSubmit = () => {
-    DeleteFacilities(row.id)
-  }
+    DeleteFacilities(row.id);
+  };
   const handleClickOpened = () => {
     setOpened(true);
   };
@@ -96,8 +91,8 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
     name: row?.name || '',
   };
 
-  const { register, handleSubmit : handleSubmitForm} = useForm({
-    defaultValues
+  const { register, handleSubmit: handleSubmitForm } = useForm({
+    defaultValues,
   });
   // const { register, handleSubmit: submitEdit } = useForm();
 
@@ -114,27 +109,27 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
         fullWidth
         variant="outlined"
       />
-      </>
-      )
-      
+    </>
+  );
+
   const handleClose = () => {
     setOpened(false);
   };
 
-    const handleCreate = (data : any) => {
-      // console.log(data)
-      mutate(data)
-      handleClose();
-    }
+  const handleCreate = (data: any) => {
+    // console.log(data)
+    mutate(data);
+    handleClose();
+  };
   return (
     <>
       <TableRow hover tabIndex={-1} role="checkbox" selected={selected}>
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell align='center'>{row.name}</TableCell>
+        <TableCell align="center">{row.name}</TableCell>
         <TableCell align="center">
-        <Button onClick={handleClickOpened}>
+          <Button onClick={handleClickOpened}>
             <Iconify icon="solar:pen-bold" />
             Edit
           </Button>
@@ -145,23 +140,23 @@ export function PropertyTableRow({ row, selected, onSelectRow }: UserTableRowPro
           </Button>
         </TableCell>
       </TableRow>
-      <DialogDelete 
-      title="yakin untuk menghapus tipe property ?"
-       description="data yang telah di hapus tidak akan kembali"
-       setOpen={setOpen}
-       open={open}
-       Submit={handleSubmit}
-       pending={isPending}
+      <DialogDelete
+        title="yakin untuk menghapus tipe property ?"
+        description="data yang telah di hapus tidak akan kembali"
+        setOpen={setOpen}
+        open={open}
+        Submit={handleSubmit}
+        pending={isPending}
       />
-      <DialogUpdate 
-      pending={isPendingMutate}
-      SubmitFormValue={handleCreate}
-      open={opened}
-      title="Update Nama Tipe Property"
-      subTitle="Tipe Property untuk coliving maupun apartemen"
-      setOpen={setOpened}
-      field={FieldRHF}
-      SubmitForm={handleSubmitForm}
+      <DialogUpdate
+        pending={isPendingMutate}
+        SubmitFormValue={handleCreate}
+        open={opened}
+        title="Update Nama Tipe Property"
+        subTitle="Tipe Property untuk coliving maupun apartemen"
+        setOpen={setOpened}
+        field={FieldRHF}
+        SubmitForm={handleSubmitForm}
       />
     </>
   );

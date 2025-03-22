@@ -1,18 +1,18 @@
-import { Container, Toolbar } from "@mui/material";
-import React from "react";
-import Footer from "src/sections/landing/footer";
-import Header from "src/sections/landing/header";
+import { Container, Toolbar } from '@mui/material';
+import React from 'react';
+import Footer from 'src/sections/landing/footer';
+import Header from 'src/sections/landing/header';
 
-export function LandingLayout ({children} : {children : React.ReactNode}) {
+export function LandingLayout({ children }: { children: React.ReactNode }) {
   return (
-<>
-    <Header />
+    <>
+      <Header />
       <Container>
-        <Toolbar sx={{ marginBottom: "40px" }} /> {/* Tambahkan Toolbar sebelum konten */}
+        <Toolbar sx={{ marginBottom: '40px' }} /> {/* Tambahkan Toolbar sebelum konten */}
         {children}
-        <Toolbar sx={{ marginTop: "40px" }} /> 
+        <Toolbar sx={{ marginTop: '40px' }} />
       </Container>
       <Footer />
     </>
-  )
+  );
 }

@@ -5,6 +5,7 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { useFetchBannerPublic } from 'src/hooks/banner';
 import Loading from 'src/components/loading/loading';
+import { useFetchDetailApartement } from 'src/hooks/apartement';
 
 interface HeroSectionProps {
   children?: ReactNode;
@@ -18,7 +19,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
     mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
   };
 
-  const { data, isLoading, isFetching } = useFetchBannerPublic();
+  const { data = [], isLoading, isFetching } = useFetchBannerPublic();
 
   if (isLoading || isFetching) {
     return <Loading />;
@@ -28,18 +29,15 @@ export default function HeroSection({ children }: HeroSectionProps) {
   const banners = Array.isArray(data) ? data : [];
 
   // Mengumpulkan semua gambar dari promo dan property
+
   const carouselImages = banners.flatMap((banner) => {
     const images = [];
-    if (banner.promo?.promo_image_url) {
-      images.push(banner.promo.promo_image_url);
-    }
-    if (banner.property?.files) {
-      images.push(banner.property.files[0].file_url);
-    }
+    images.push(banner?.image_url);
     return images;
   });
 
-  console.log("Banner Images:", carouselImages);
+  // console.log('Banner Images:', carouselImages);
+  console.log('Banner Imagesss:', banners);
 
   return (
     <Box

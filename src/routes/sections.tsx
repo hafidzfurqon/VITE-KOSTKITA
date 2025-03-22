@@ -55,6 +55,9 @@ export const BookedPropertyPage = lazy(() => import('src/pages/booked-property')
 export const LayananPage = lazy(() => import('src/pages/services'));
 export const VerifyEmailPage = lazy(() => import('src/pages/verify-email'));
 export const DetailBooking = lazy(() => import('src/pages/detail-booking'));
+export const DetailPromo = lazy(() => import('src/pages/promo-detail'));
+export const AddPromoToProperty = lazy(() => import('src/pages/add-promo-property'));
+export const PropertyRoomType = lazy(() => import('src/pages/property-room-type'));
 
 // ----------------------------------------------------------------------
 
@@ -154,6 +157,10 @@ export function Router() {
               path: 'create',
               element: <CreatePromo />,
             },
+            {
+              path: 'follow/:id',
+              element: <AddPromoToProperty />,
+            },
           ],
         },
         // untuk routing banner
@@ -235,6 +242,10 @@ export function Router() {
           path: 'room-facility',
           element: <RoomFasilitasPage />,
         },
+        {
+          path: 'room-type',
+          element: <PropertyRoomType />,
+        },
       ],
     },
     {
@@ -269,6 +280,10 @@ export function Router() {
         {
           path: 'apartement/:slug',
           element: <PropertyDetailPage />,
+        },
+        {
+          path: 'promo/:slug',
+          element: <DetailPromo />,
         },
         {
           path: 'profile',

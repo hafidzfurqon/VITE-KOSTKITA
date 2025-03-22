@@ -22,13 +22,23 @@ import { router } from 'src/hooks/routing/useRouting';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useFetchAllPropertyRoom } from 'src/hooks/property_room';
 import { TableCell, TableRow } from '@mui/material';
+import { useAppContext } from 'src/context/user-context';
 
 export function PropertyRoomView() {
   const table = useTable();
   const { id } = useParams();
-  const { data: room = [], isLoading, isFetching } = useFetchAllPropertyRoom(id);
-  const data = room.rooms;
-  console.log(data)
+  const { UserContextValue: authUser }: any = useAppContext();
+  const { user } = authUser;
+  
+  // Pastikan roles adalah array sebelum memanggil .some()
+  const isOwnerProperty = Array.isArray(user?.roles) && user.roles.some((role: any) => role.name === 'owner_property');
+  
+  const { data: room = {}, isLoading, isFetching } = useFetchAllPropertyRoom(id, isOwnerProperty);
+  
+  // Gunakan optional chaining atau default value untuk menghindari error jika room undefined
+  const data = room?.rooms || [];
+  
+  console.log(data);
   const [filterName, setFilterName] = useState('');
 
   if (isLoading || isFetching) {

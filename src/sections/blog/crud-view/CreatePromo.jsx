@@ -9,10 +9,10 @@ import {
   MenuItem,
   FormControlLabel,
   Switch,
+  InputAdornment,
 } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useEffect, useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useRouter } from 'src/routes/hooks';
@@ -20,6 +20,7 @@ import { Link } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { useMutationCreatePromo } from 'src/hooks/promo';
 import { Editor } from '@tinymce/tinymce-react';
+import { VITE_TINY_KEY } from 'src/config';
 
 export const CreatePromo = () => {
   const {
@@ -35,9 +36,11 @@ export const CreatePromo = () => {
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
-
-  const discountType = watch('discount_type', 'percentage');
-  console.log(discountType);
+  const handleEditorChange = (content, fieldName) => {
+    setValue(fieldName, content, { shouldValidate: true }); // Tambahkan shouldValidate
+  };
+  const PromoType = watch('promo_type', 'percentage');
+  console.log(PromoType);
   const cleanPrice = (price) => {
     return parseInt(price.replace(/[^\d]/g, ''), 10) || 0;
   };
@@ -52,9 +55,9 @@ export const CreatePromo = () => {
     let value = event.target.value;
     let formattedValue = '';
 
-    if (discountType === 'fixed') {
-      formattedValue = `Rp ${cleanPrice(value).toLocaleString('id-ID')}`;
-    } else if (discountType === 'percentage') {
+    if (PromoType === 'fixed_amount') {
+      formattedValue = `${cleanPrice(value).toLocaleString('id-ID')}`;
+    } else if (PromoType === 'percentage') {
       formattedValue = `${cleanPrice(value)}%`;
     }
 
@@ -64,7 +67,7 @@ export const CreatePromo = () => {
   useEffect(() => {
     setPromoValue('');
     setValue('promo_value', '');
-  }, [discountType]);
+  }, [PromoType]);
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: 'image/*',
@@ -107,6 +110,7 @@ export const CreatePromo = () => {
 
     mutate(formData);
   };
+  const ApiKey = VITE_TINY_KEY;
 
   return (
     <Container>
@@ -135,9 +139,9 @@ export const CreatePromo = () => {
           </Stack>
           <TextField select {...register('apply_to')} defaultValue="" label="Promo untuk" fullWidth>
             <MenuItem value="general">General</MenuItem>
-            <MenuItem value="Coliving">Coliving</MenuItem>
-            <MenuItem value="Kostan">Kostan</MenuItem>
-            <MenuItem value="Kontrakan">Kontrakan</MenuItem>
+            <MenuItem value="other">Lainnya</MenuItem>
+            <MenuItem value="specific_property">Spesifik Property</MenuItem>
+            <MenuItem value="specific_apartment">Spesifik Apartement</MenuItem>
           </TextField>
           <FormControlLabel
             control={<Switch checked={isActive} onChange={handleToggle} />}
@@ -151,7 +155,7 @@ export const CreatePromo = () => {
             fullWidth
           >
             <MenuItem value="percentage">Presentase</MenuItem>
-            <MenuItem value="fixed">Harga</MenuItem>
+            <MenuItem value="fixed_amount">Harga</MenuItem>
           </TextField>
           <TextField
             select
@@ -168,7 +172,7 @@ export const CreatePromo = () => {
             fullWidth
             variant="outlined"
             placeholder={
-              discountType === 'fixed'
+              PromoType === 'fixed_amount'
                 ? 'Masukkan nominal (ex: 100000)'
                 : 'Masukkan persentase (ex: 10)'
             }
@@ -178,7 +182,7 @@ export const CreatePromo = () => {
             helperText={errors.promo_value?.message}
             InputProps={{
               startAdornment:
-                discountType === 'fixed' ? (
+                PromoType === 'fixed_amount' ? (
                   <InputAdornment position="start">Rp</InputAdornment>
                 ) : null,
             }}
@@ -233,8 +237,9 @@ export const CreatePromo = () => {
           </Stack>
           <FormLabel>Deskripsi :</FormLabel>
           <Editor
-            apiKey="yasvptnfevk9xym8j96v784lyihi0w3tsyfkkvowp2pu91az"
-            onEditorChange={(content, editor) => handleEditorChange(content, editor, 'description')}
+            apiKey={ApiKey}
+            value={watch('description')}
+            onEditorChange={(content) => handleEditorChange(content, 'description')}
             init={{
               height: 250,
               menubar: false,
@@ -243,10 +248,12 @@ export const CreatePromo = () => {
                 'undo redo | bold italic | alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat',
             }}
           />
+
           <FormLabel>Cara Pakai :</FormLabel>
           <Editor
-            apiKey="yasvptnfevk9xym8j96v784lyihi0w3tsyfkkvowp2pu91az"
-            onEditorChange={(content, editor) => handleEditorChange(content, editor, 'how_to_use')}
+            apiKey={ApiKey}
+            onEditorChange={(content) => handleEditorChange(content, 'how_to_use')}
+            value={watch('how_to_use')}
             init={{
               height: 250,
               menubar: false,

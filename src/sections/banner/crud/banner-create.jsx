@@ -12,21 +12,20 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useSnackbar } from 'notistack';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useCreateBanner } from 'src/hooks/banner';
 import { router } from 'src/hooks/routing/useRouting';
 import { useRouter } from 'src/routes/hooks';
-import { FormControlLabel } from '@mui/material';
-import { Switch } from '@mui/material';
-import { Autocomplete } from '@mui/material';
+import { FormControlLabel, Switch } from '@mui/material';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { useFetchPromo } from 'src/hooks/promo';
 
 export default function BannerCreate() {
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
-  const { register, handleSubmit, watch, setValue } = useForm();
+  const { register, handleSubmit, setValue } = useForm();
   const queryClient = useQueryClient();
   const { mutate, isPending } = useCreateBanner({
     onSuccess: () => {
@@ -39,26 +38,41 @@ export default function BannerCreate() {
     },
   });
 
-  // const [previewImage, setPreviewImage] = useState(null);
   const [isActive, setIsActive] = useState(false);
-  const [selectedState, setSelectedState] = useState(null);
-  const [selectedType, setSelectedType] = useState('');
-  const { data, isLoading: isLoadingProperty } = useListProperty();
-  const { data: dataPromo, isLoading: isLoadingPromo } = useFetchPromo();
+  const [image, setImage] = useState(null);
+
   const handleToggle = (event) => {
-    const status = event.target.checked ? 'active' : 'non-active';
+    const status = event.target.checked ? 'active' : 'inactive';
     setIsActive(event.target.checked);
-    setValue('status', status); // Simpan status ke react-hook-form
+    setValue('status', status);
   };
 
-  const OnSubmit = (data) => {
-    // console.log(data)
-    const { ...rest } = data;
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      const file = acceptedFiles[0];
+      setImage({ file, preview: URL.createObjectURL(file) });
+      setValue('image', file);
+    },
+    [setValue]
+  );
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: 'image/*',
+    multiple: false,
+  });
+
+  const removeImage = () => {
+    setImage(null);
+    setValue('image', null);
+  };
+
+  const onSubmit = (data) => {
     const formData = new FormData();
-    Object.entries(rest).forEach(([key, value]) => {
-      formData.append(key, value);
+    Object.entries(data).forEach(([key, value]) => {
+      if (value) formData.append(key, value);
     });
-    // formData.append('image', gambar[0]);
+    formData.append('type', 'general');
     mutate(formData);
   };
 
@@ -72,65 +86,38 @@ export default function BannerCreate() {
       />
 
       <Box sx={{ mt: 5 }}>
-        <Box component="form" onSubmit={handleSubmit(OnSubmit)}>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           <Stack spacing={3}>
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}>
-              <TextField
-                {...register('title', { required: 'Nama Banner perlu diisi' })}
-                autoFocus
-                required
-                margin="dense"
-                id="title"
-                label="Judul Banner"
-                type="text"
-                fullWidth
-                variant="outlined"
-              />
-              <TextField
-                select
-                {...register('type', { required: true })}
-                label="Banner diambil dari"
-                fullWidth
-                required
-                onChange={(e) => {
-                  setSelectedType(e.target.value);
-                  setValue('type', e.target.value); // Simpan ke react-hook-form
-                }}
-              >
-                <MenuItem value="reference_to_property">Property</MenuItem>
-                <MenuItem value="reference_to_promo">Promo</MenuItem>
-              </TextField>
-            </Stack>
-            {/* <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3}> */}
-            <Typography>Status : </Typography>
+            <TextField
+              {...register('title', { required: 'Nama Banner perlu diisi' })}
+              label="Judul Banner"
+              fullWidth
+              required
+            />
             <FormControlLabel
-              control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
+              control={<Switch checked={isActive} onChange={handleToggle} />}
               label={isActive ? 'Active' : 'Non-Active'}
             />
-            <Autocomplete
-              options={selectedType === 'reference_to_promo' ? dataPromo || [] : data || []}
-              getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              loading={selectedType === 'reference_to_promo' ? isLoadingPromo : isLoadingProperty}
-              disabled={!selectedType}
-              onChange={(_, value) => {
-                setSelectedState(value ? value.id : null);
-                setValue(
-                  selectedType === 'reference_to_promo' ? 'promo_id' : 'property_id',
-                  value ? value.id : ''
-                );
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Nama Promo atau Property"
-                  fullWidth
-                  variant="outlined"
+            <Box
+              {...getRootProps()}
+              sx={{ border: '2px dashed gray', p: 2, textAlign: 'center', cursor: 'pointer' }}
+            >
+              <input {...getInputProps()} />
+              <Typography>Drag & Drop gambar di sini atau klik untuk memilih</Typography>
+            </Box>
+            {image && (
+              <Box sx={{ mt: 2, position: 'relative' }}>
+                <img
+                  src={image.preview}
+                  alt="Preview"
+                  width="100%"
+                  style={{ maxHeight: '300px', objectFit: 'cover' }}
                 />
-              )}
-            />
-
-            {/* </Stack> */}
+                <Button onClick={removeImage} variant="contained" color="error" sx={{ mt: 1 }}>
+                  Hapus Gambar
+                </Button>
+              </Box>
+            )}
             <Box sx={{ display: 'flex', gap: 2, py: 2 }}>
               <Button type="submit" variant="contained" disabled={isPending}>
                 Submit

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { router } from 'src/hooks/routing/useRouting';
 
 import {
@@ -34,7 +34,7 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Dashboard, Person } from '@mui/icons-material';
+import { Dashboard, DashboardRounded, Person } from '@mui/icons-material';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
@@ -52,13 +52,10 @@ export default function Header() {
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
+      queryClient.removeQueries(['authenticated.user']);
       navigate('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
       localStorage.removeItem('token'); // Hapus token saat logout
-      setTimeout(() => {
-        window.location.reload(); // Refresh halaman agar reset state
-      }, 500);
     },
     onError: (error) => {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -83,9 +80,9 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleDrawer = () => {
-    setMobileOpen(!mobileOpen);
-  };
+  const toggleDrawer = useCallback(() => {
+    setMobileOpen((prev) => !prev);
+  }, []);
 
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
@@ -97,11 +94,13 @@ export default function Header() {
   ];
 
   const navMobile = [
-    !isAdmin && isOwner
-      ? { label: 'Sewa', icon: <HomeIcon />, path: '/' }
-      : { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
-    !isAdmin && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
-    !isAdmin && { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
+    isAdmin && isOwner ? { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' } : null,
+    { label: 'Sewa', icon: <HomeIcon />, path: '/' },
+    !isAdmin &&
+      !isOwner && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
+    !isAdmin &&
+      !isOwner && { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
+
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
@@ -129,7 +128,7 @@ export default function Header() {
           {!isSmallScreen && (
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p: 2 }}>
               {navItems.map((item, index) => {
-                const isActived = item.path === pathname;
+                const isActived = pathname.startsWith(item.path);
 
                 return (
                   <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
@@ -165,8 +164,13 @@ export default function Header() {
                       icon: <HomeIcon />,
                     },
                     {
-                      label: isAdmin ? 'Dashboard' : 'Profile',
-                      href: isAdmin ? '/dashboard' : '/profile',
+                      label: isAdmin || isOwner ? 'Dashboard' : null,
+                      href: isAdmin || isOwner ? '/dashboard' : null,
+                      icon: isAdmin || isOwner ? <DashboardRounded /> : null,
+                    },
+                    {
+                      label: 'Profile',
+                      href: '/profile',
                       icon: <Person />,
                     },
                     !isAdmin &&
@@ -175,11 +179,12 @@ export default function Header() {
                         href: '/history/booking',
                         icon: <HistoryIcon />,
                       },
-                    !isAdmin && {
-                      label: 'Riwayat Visit',
-                      href: '/history/visit',
-                      icon: <HistoryIcon />,
-                    },
+                    !isAdmin &&
+                      !isOwner && {
+                        label: 'Riwayat Visit',
+                        href: '/history/visit',
+                        icon: <HistoryIcon />,
+                      },
                   ]}
                 />
               ) : (
@@ -247,6 +252,7 @@ export default function Header() {
                   (!isLoggedIn &&
                     item.path !== '/history/booking' &&
                     item.path !== '/profile' &&
+                    item.path !== '/dashboard' &&
                     item.path !== '/history/visit')
               ) // Sembunyikan history booking & profile jika belum login
               .map((item, index) => {
@@ -305,7 +311,7 @@ export default function Header() {
         description="Apakah Anda yakin ingin logout?"
         confirmText="Logout"
         confirmColor="error"
-        isLoading={isPending}
+        pending={isPending}
       />
     </AppBar>
   );

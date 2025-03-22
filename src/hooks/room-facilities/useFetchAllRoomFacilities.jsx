@@ -1,10 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import axiosInstance, { endpoints } from "src/utils/axios";
+import { useQuery } from '@tanstack/react-query';
+import axiosInstance, { endpoints } from 'src/utils/axios';
 
-export const useFetchAllRoomFacilities = () => useQuery({
-    queryKey : ['fetch.facilities.room'],
-    queryFn : async () => {
-        const response = await axiosInstance.get(endpoints.facilities_room.list)
-        return response.data.data
-    }
-})
+export const useFetchAllRoomFacilities = (isOwner) =>
+  useQuery({
+    queryKey: ['fetch.facilities.room'],
+    queryFn: async () => {
+      const url = isOwner
+        ? `${endpoints.owner.property.facilities_room.list}`
+        : `${endpoints.facilities_room.list}`;
+      const response = await axiosInstance.get(url);
+      return response.data.data;
+    },
+  });

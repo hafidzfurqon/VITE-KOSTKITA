@@ -1,12 +1,16 @@
-import { useMutation } from "@tanstack/react-query";
-import axiosInstance, { endpoints } from "src/utils/axios";
+import { useMutation } from '@tanstack/react-query';
+import axiosInstance, { endpoints } from 'src/utils/axios';
 
-export const useMutationUpdateApartement = ({onSuccess, onError}, id) => useMutation({
-    mutationKey : ['update.promo'],
-    mutationFn : async (body) => {
-        const response = await axiosInstance.post(`${endpoints.apartment.update}/${id}`, body)
-        return response.data
+export const useMutationUpdateApartement = ({ onSuccess, onError }, id, isOwner) =>
+  useMutation({
+    mutationKey: ['update.promo'],
+    mutationFn: async (body) => {
+      const url = isOwner
+        ? `${endpoints.owner.property.update}/${id}`
+        : `${endpoints.apartment.update}/${id}`;
+      const response = await axiosInstance.post(url, body);
+      return response.data;
     },
     onSuccess,
-    onError
-})
+    onError,
+  });

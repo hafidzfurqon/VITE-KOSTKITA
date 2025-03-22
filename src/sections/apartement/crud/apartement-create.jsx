@@ -10,9 +10,7 @@ import {
   Grid,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import ReactQuill from 'react-quill';
-import { useEffect, useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
+import { useMemo, useRef, useState } from 'react';
 import { MenuItem } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
@@ -39,6 +37,8 @@ import { useFetchFacilityPropertyOwner } from 'src/hooks/owner_property/fasilita
 import { useFetchAllPropertyTypeOwner } from 'src/hooks/owner/useFetchAllTypePropertyOwner';
 import { useGetSectorOwner } from 'src/hooks/owner/useGetSectorOwner';
 import { useMutationCreatePropertyOwner } from 'src/hooks/owner/property/useMutationCreateProperty';
+import { VITE_TINY_KEY } from 'src/config';
+import { Editor } from '@tinymce/tinymce-react';
 
 export const CreateApartement = () => {
   const { UserContextValue: authUser } = useAppContext();
@@ -64,15 +64,29 @@ export const CreateApartement = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
+      description: '',
       facilities: [],
     },
   });
-  const [description, setDescription] = useState('');
+  // const [editorContent, setEditorContent] = useState(watch('description'));
   const [isActive, setIsActive] = useState(false);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
   const [selectedImages, setSelectedImages] = useState([]);
+  const [editorContent, setEditorContent] = useState(watch('description') || '');
+  const editorRef = useRef(null);
+
+  const editorConfig = useMemo(
+    () => ({
+      height: 250,
+      menubar: false,
+      plugins: ['lists', 'advlist', 'link', 'image', 'table', 'paste'],
+      toolbar:
+        'insertfile undo redo | image | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+    }),
+    []
+  );
 
   const handleCheckboxChange = (facilityId) => {
     const currentFacilities = watch('facilities') || []; // Ambil value saat ini
@@ -81,6 +95,10 @@ export const CreateApartement = () => {
       : [...currentFacilities, facilityId];
 
     setValue('facilities', updatedFacilities); // Update nilai dengan array baru
+  };
+
+  const handleEditorChange = (content, fieldName) => {
+    setValue(fieldName, content, { shouldValidate: true }); // Tambahkan shouldValidate
   };
 
   // ✅ Handle file selection
@@ -100,11 +118,7 @@ export const CreateApartement = () => {
     setIsActive(event.target.checked);
     setValue('status', status); // Simpan status ke react-hook-form
   };
-  // Menyimpan value ke state & React Hook Form
-  const handleQuillChange = (value) => {
-    setDescription(value);
-    setValue('description', value); // Update value untuk react-hook-form
-  };
+
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
   const { data: states = [], isLoading: isLoadingStates } = isAdmin
@@ -132,10 +146,10 @@ export const CreateApartement = () => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
           routers.push('/property');
-          enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
+          enqueueSnackbar('Property berhasil dibuat', { variant: 'success' });
         },
         onError: () => {
-          enqueueSnackbar('Apartement gagal dibuat', { variant: 'error' });
+          enqueueSnackbar('Property gagal dibuat', { variant: 'error' });
         },
       })
     : useMutationCreatePropertyOwner({
@@ -365,8 +379,23 @@ export const CreateApartement = () => {
               />
             ))}
           </Stack>
-          <Typography>Deskripsi : </Typography>
-          <ReactQuill theme="snow" value={description} onChange={handleQuillChange} />
+          <FormLabel>Deskripsi :</FormLabel>
+          <Editor
+            apiKey={VITE_TINY_KEY}
+            initialValue={watch('description')}
+            onInit={(evt, editor) => (editorRef.current = editor)}
+            onEditorChange={(content) => {
+              setValue('description', content, { shouldValidate: true });
+            }}
+            init={{
+              height: 250,
+              menubar: false,
+              plugins: ['lists', 'advlist', 'link', 'image', 'table', 'paste'],
+              toolbar:
+                'insertfile undo redo | image | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            }}
+          />
+
           <TextField
             select
             {...register('payment_type', { required: true })}
