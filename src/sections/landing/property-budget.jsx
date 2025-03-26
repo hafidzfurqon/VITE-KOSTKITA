@@ -50,7 +50,7 @@ export default function PropertyBudgety() {
     <Container>
       <Box sx={{ mt: 10 }}>
         <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 3 }}>
-          Cari hunian sesuai budgetmu
+          Cari hunian sesuai  <span style={{ color: '#FFCC00' }}>budgetmu</span>
         </Typography>
 
         <Stack

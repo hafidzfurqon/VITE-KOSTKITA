@@ -38,7 +38,7 @@ export function BookedPropertyTableToolbar({ numSelected, filterName, onFilterNa
           fullWidth
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search Fasilitas..."
+          placeholder="Search Data Booking..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />

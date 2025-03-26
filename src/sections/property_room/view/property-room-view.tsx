@@ -29,15 +29,16 @@ export function PropertyRoomView() {
   const { id } = useParams();
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  
+
   // Pastikan roles adalah array sebelum memanggil .some()
-  const isOwnerProperty = Array.isArray(user?.roles) && user.roles.some((role: any) => role.name === 'owner_property');
-  
+  const isOwnerProperty =
+    Array.isArray(user?.roles) && user.roles.some((role: any) => role.name === 'owner_property');
+
   const { data: room = {}, isLoading, isFetching } = useFetchAllPropertyRoom(id, isOwnerProperty);
-  
+
   // Gunakan optional chaining atau default value untuk menghindari error jika room undefined
   const data = room?.rooms || [];
-  
+
   console.log(data);
   const [filterName, setFilterName] = useState('');
 
@@ -104,7 +105,7 @@ export function PropertyRoomView() {
                 }
                 headLabel={[
                   { id: 'image_property_room', label: 'Gambar Property Room' },
-                  { id: 'title_property_room', label: 'Judul Property Room' },
+                  { id: 'title_property_room', label: 'Nama Property Room' },
                   // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}

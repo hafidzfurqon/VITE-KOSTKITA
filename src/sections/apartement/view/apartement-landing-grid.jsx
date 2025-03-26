@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography, Chip, Stack, Container } from '@mui/material';
+import { Box, Typography, Chip, Stack, Container, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
@@ -8,7 +8,7 @@ import { Home, Apartment } from '@mui/icons-material';
 import { useKeenSlider } from 'keen-slider/react';
 import Loading from 'src/components/loading/loading';
 import { useFetchAllPublicApartement } from 'src/hooks/apartement/public';
-import { fPercent } from 'src/utils/format-number';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function ApartementGrid() {
   const { data, isLoading, isFetching } = useFetchAllPublicApartement();
@@ -29,8 +29,8 @@ export default function ApartementGrid() {
   const filteredDataToApartement = data?.filter(
     (item) => item.type.name.toLowerCase() === 'apartment'
   );
-  console.log(data)
-  console.log(filteredDataToApartement)
+  console.log(data);
+  console.log(filteredDataToApartement);
   const responsive = {
     superLargeDesktop: {
       breakpoint: { max: 3000, min: 1024 },
@@ -85,6 +85,28 @@ export default function ApartementGrid() {
 
   return (
     <Container maxWidth="100%" sx={{ px: 0 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+        <Typography
+          variant="h3"
+          sx={{ fontSize: { xs: '22px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+        >
+          Cari <span style={{ color: '#FFCC00' }}>Apartement</span>
+        </Typography>
+        <Link to="/apartment">
+          <Button
+            sx={{
+              color: 'black',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              fontWeight: '500',
+            }}
+            endIcon={<ArrowForwardIosIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
+          >
+            <Typography sx={{ fontSize: { xs: '12px', md: '16px' } }}>Lihat Semua</Typography>
+          </Button>
+        </Link>
+      </Box>
       <Carousel
         responsive={responsive}
         swipeable={true}

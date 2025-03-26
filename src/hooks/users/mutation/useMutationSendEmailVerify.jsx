@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import axiosInstance from 'src/utils/axios';
 
-export const useMutationSendEmailVerify = () =>
+export const useMutationSendEmailVerify = ({onSuccess}) =>
   useMutation({
     mutationKey: ['send.email'],
     mutationFn: async (email) => {
@@ -10,4 +10,5 @@ export const useMutationSendEmailVerify = () =>
       });
       return response.data;
     },
+    onSuccess
   });

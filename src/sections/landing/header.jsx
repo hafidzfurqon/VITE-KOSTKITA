@@ -48,7 +48,7 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
+  const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
@@ -94,7 +94,7 @@ export default function Header() {
   ];
 
   const navMobile = [
-    isAdmin && isOwner ? { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' } : null,
+    isAdmin || isOwner ? { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' } : null,
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
     !isAdmin &&
       !isOwner && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },

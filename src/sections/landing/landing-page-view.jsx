@@ -1,4 +1,4 @@
-import { Box, Fab, Typography, Container, Button, IconButton } from '@mui/material';
+import { Box, Fab, Typography, Container, Button, IconButton, Stack, Card } from '@mui/material';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
 import { Iconify } from 'src/components/iconify';
@@ -171,7 +171,7 @@ export function LandingPage() {
               }}
             >
               <Typography variant="h3" sx={{ fontWeight: 'bold' }}>
-                Property terbaru dari kami
+                <span style={{ color: '#FFCC00' }}>Property</span> terbaru dari kami
               </Typography>
               <PostSort
                 sortBy={sortBy}
@@ -269,69 +269,227 @@ export function LandingPage() {
                 </Button>
               </Box>
             </Box>
-            <Container>
-              <PromoPage />
-            </Container>
-
-            <Container
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
-            >
-              <Typography sx={{ fontSize: { xs: '20px', md: '30px' }, fontWeight: 'bold' }}>
-                Cari hunian sesuai lokasi
-              </Typography>
-            </Container>
-
-            <PropertyBaseLocation />
-
-            <Container
-              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3 }}
-            >
-              <Typography sx={{ fontSize: { xs: '16px', md: '30px' }, fontWeight: 'bold' }}>
-                Cari Apartemen
-              </Typography>
-              <Link to="/apartment">
-                <Button
-                  sx={{
-                    color: 'black',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    fontWeight: '500',
-                  }}
-                  endIcon={<ArrowForwardIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
-                >
-                  <Typography
-                    sx={{ fontSize: { xs: '14px', md: '16px' }, textDecoration: 'underline' }}
-                  >
-                    Lihat Semua
-                  </Typography>
-                </Button>
-              </Link>
-            </Container>
-
-            <ApartementGrid />
-            <PropertyBudget />
-
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-              <Button
-                variant="outlined"
-                sx={{
-                  width: { xs: '100%', md: 'auto' },
-                  p: 2,
-                  color: 'black',
-                  bgcolor: 'white',
-                  mx: 3,
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-                onClick={() => navigate('/coliving')}
-              >
-                Lihat Semua
-              </Button>
-            </Box>
           </Box>
         </SimpleBar>
+        <Box sx={{ backgroundColor: 'white', pt: 5, pb: 5 }}>
+          <Container>
+            <PromoPage />
+          </Container>
+        </Box>
+        <Box sx={{ backgroundColor: 'white', pt: 5, pb: 5 }}>
+          <Container>
+            <PropertyBaseLocation />
+          </Container>
+        </Box>
 
+        <Box sx={{ bgcolor: 'white', pt: 5, pb: 10, px: 3 }}>
+          <Box sx={{ mt: 2 }}>
+            <Container>
+
+            <ApartementGrid />
+            </Container>
+          </Box>
+        </Box>
+        <PropertyBudget />
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Button
+            variant="outlined"
+            sx={{
+              width: { xs: '100%', md: 'auto' },
+              p: 2,
+              color: 'black',
+              bgcolor: 'white',
+              mx: 3,
+              mb: 5,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+            onClick={() => navigate('/coliving')}
+          >
+            Lihat Semua
+          </Button>
+        </Box>
+
+        <Box>
+          <Box sx={{ bgcolor: 'white', pt: 10, pb: 15 }}>
+            <Typography
+              sx={{
+                fontSize: { xs: '22px', md: '30px' },
+                fontWeight: 'bold',
+                textAlign: 'center',
+                mb: { xs: 6, md: 12 },
+              }}
+            >
+              Mengapa Tinggal di <span style={{ color: '#FFCC00' }}>KostKita?</span>
+            </Typography>
+            <Container>
+              <Stack
+                direction={{ xs: 'column', md: 'row-reverse', mt: 4 }}
+                spacing={4}
+                alignItems="center"
+              >
+                <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+                  <Typography variant="h3" fontWeight="bold" gutterBottom>
+                    Harga <span style={{ color: '#FFCC00' }}>Terjangkau</span>
+                  </Typography>
+
+                  <Typography
+                    variant="body1"
+                    sx={{ maxWidth: '500px', fontWeight: 200, letterSpacing: '1px' }}
+                  >
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit atque, ipsam
+                    necessitatibus corporis minima dignissimos rem. Quas soluta natus eos magni
+                    ducimus vitae libero molestias, ut unde, alias autem fuga? Lorem ipsum dolor sit
+                    amet consectetur adipisicing elit. Itaque cum quis aspernatur nesciunt
+                    asperiores mollitia ratione explicabo corporis dicta nostrum!
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    href="/coliving"
+                    // download
+                    sx={{
+                      mt: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      borderColor: 'primary',
+                      color: 'primary',
+                      ':hover': { backgroundColor: 'black', color: 'white' },
+                    }}
+                  >
+                    Cari Hunian
+                  </Button>
+                </Box>
+
+                <Box
+                  sx={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center' }}
+                >
+                  <Card
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      backgroundColor: 'primary',
+                      p: 1,
+                      borderRadius: 1,
+                      boxShadow: 3,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Aesthetic
+                    </Typography>
+                  </Card>
+                  <Card
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      left: 0,
+                      backgroundColor: 'primary',
+                      p: 1,
+                      borderRadius: 1,
+                      boxShadow: 3,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Murah
+                    </Typography>
+                  </Card>
+                  <img
+                    src="https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg"
+                    alt="Muhammad Hafidz"
+                    style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                  />
+                </Box>
+              </Stack>
+            </Container>
+          </Box>
+        </Box>
+        <Box>
+          <Box sx={{ pt: 10, pb: 15 }}>
+            <Container>
+              <Stack direction={{ xs: 'column', md: 'row', mt: 4 }} spacing={4} alignItems="center">
+                <Box sx={{ flex: 1, textAlign: { xs: 'center', md: 'left' } }}>
+                  <Typography variant="h3" fontWeight="bold" gutterBottom>
+                    Tempat <span style={{ color: '#FFCC00' }}>Aesthetic</span>
+                  </Typography>
+
+                  <Typography
+                    variant="body1"
+                    sx={{ maxWidth: '500px', fontWeight: 200, letterSpacing: '1px' }}
+                  >
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit atque, ipsam
+                    necessitatibus corporis minima dignissimos rem. Quas soluta natus eos magni
+                    ducimus vitae libero molestias, ut unde, alias autem fuga? Lorem ipsum dolor sit
+                    amet consectetur adipisicing elit. Itaque cum quis aspernatur nesciunt
+                    asperiores mollitia ratione explicabo corporis dicta nostrum!
+                  </Typography>
+                  <Button
+                    variant="outlined"
+                    href="/coliving"
+                    // download
+                    sx={{
+                      mt: 2,
+                      textTransform: 'none',
+                      fontSize: '1rem',
+                      borderColor: 'primary',
+                      color: 'primary',
+                      ':hover': { backgroundColor: 'black', color: 'white' },
+                    }}
+                  >
+                    Cari Kost
+                  </Button>
+                </Box>
+
+                <Box
+                  sx={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center' }}
+                >
+                  <Card
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      left: 8,
+                      backgroundColor: 'primary',
+                      p: 1,
+                      borderRadius: 1,
+                      boxShadow: 3,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Aesthetic
+                    </Typography>
+                  </Card>
+                  <Card
+                    sx={{
+                      position: 'absolute',
+                      bottom: 8,
+                      left: 0,
+                      backgroundColor: 'primary',
+                      p: 1,
+                      borderRadius: 1,
+                      boxShadow: 3,
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      Elegant
+                    </Typography>
+                  </Card>
+                  <img
+                    src="https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/4/b25bf50d-8f4.jpg"
+                    alt="Muhammad Hafidz"
+                    style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
+                  />
+                </Box>
+              </Stack>
+            </Container>
+          </Box>
+        </Box>
         <Footer />
       </Box>
 

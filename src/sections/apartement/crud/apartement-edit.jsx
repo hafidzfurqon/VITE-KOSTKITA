@@ -9,7 +9,7 @@ import {
   Autocomplete,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { MenuItem } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
@@ -95,7 +95,7 @@ export const EditApartement = () => {
         name: data.name || '',
         price: String(data.start_price || ''),
         address: data.address || '',
-        description: data.description || '',
+        // description: data.description || '',
         facilities: data.facilities?.map((f) => f.id) || [],
         property_type_id: data?.type?.id || '',
         payment_type: data?.payment_type || '',
@@ -111,7 +111,7 @@ export const EditApartement = () => {
           : {}),
       });
 
-      setDescription(data.description || '');
+      // setDescription(data.description || '');
       setIsActive(data.status === 'available');
 
       // Set nilai dropdown sesuai data yang di-load
@@ -125,7 +125,7 @@ export const EditApartement = () => {
   }, [data, reset]);
 
   //   console.log(data?.state?.state_code)
-  const [description, setDescription] = useState('');
+  // const [description, setDescription] = useState('');
   const [isActive, setIsActive] = useState(false);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
@@ -159,9 +159,18 @@ export const EditApartement = () => {
     setIsActive(event.target.checked);
     setValue('status', status); // Simpan status ke react-hook-form
   };
-
-  const handleEditorChange = (content, fieldName) => {
-    setValue(fieldName, content, { shouldValidate: true }); // Tambahkan shouldValidate
+  const editorRef = useRef(null);
+  const editorContentRef = useRef('');
+  useEffect(() => {
+    if (data?.description) {
+      editorContentRef.current = data.description;
+      if (editorRef.current) {
+        editorRef.current.setContent(data.description); // Update tanpa re-render
+      }
+    }
+  }, [data]); // Akan berjalan setiap kali data berubah
+  const handleEditorChange = (content) => {
+    editorContentRef.current = content;
   };
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -180,7 +189,7 @@ export const EditApartement = () => {
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: 'image/*',
     multiple: true,
-    maxFiles: 5,
+    maxFiles: 10,
     onDrop: (acceptedFiles) => {
       setSelectedImages(acceptedFiles);
       setValue('files', acceptedFiles);
@@ -204,7 +213,7 @@ export const EditApartement = () => {
   const Submitted = (data) => {
     // console.log(data)
     const formData = new FormData();
-
+    formData.append('description', editorContentRef.current);
     Object.entries(data).forEach(([key, value]) => {
       if (key !== 'price') {
         // Hindari duplikasi harga
@@ -404,7 +413,7 @@ export const EditApartement = () => {
             )}
           />
 
-          <FormLabel>Upload Images (Max 5)</FormLabel>
+          <FormLabel>Upload Images (Max 10)</FormLabel>
           <Box
             {...getRootProps()}
             sx={{
@@ -446,8 +455,9 @@ export const EditApartement = () => {
           <FormLabel>Deskripsi :</FormLabel>
           <Editor
             apiKey={VITE_TINY_KEY}
-            value={watch('description')}
-            onEditorChange={(content) => handleEditorChange(content, 'description')}
+            initialValue={editorContentRef.current} // Ambil dari useRef, bukan watch()
+            onInit={(evt, editor) => (editorRef.current = editor)}
+            onEditorChange={handleEditorChange} // Hanya simpan ke useRef
             init={{
               height: 250,
               menubar: false,

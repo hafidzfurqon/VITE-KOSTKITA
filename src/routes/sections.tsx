@@ -207,9 +207,19 @@ export function Router() {
               path: 'create',
               element: <LayananCreate />,
             },
+          ],
+        },
+        //  untuk routing Visit
+        {
+          path: 'visit',
+          children: [
             {
-              path: 'edit/:id',
-              element: <PropertyEdit />,
+              path: '',
+              element: <div>Visit</div>,
+            },
+            {
+              path: 'create',
+              element: <div>Create Visit</div>,
             },
           ],
         },
@@ -220,10 +230,6 @@ export function Router() {
             {
               path: '',
               element: <BookedPropertyPage />,
-            },
-            {
-              path: 'detail/:id',
-              element: <PropertyEdit />,
             },
           ],
         },

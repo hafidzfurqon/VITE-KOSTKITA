@@ -22,17 +22,17 @@ export function SignUpView() {
   const {
     mutate: mutateSendEmail,
     // isPending: isPendingEmailSend,
-    isSuccess,
-  } = useMutationSendEmailVerify();
+  } = useMutationSendEmailVerify({
+    onSuccess: () => {
+      enqueueSnackbar('Pendaftaran Berhasil Verifikasi Email Telah dikirim', {
+        variant: 'success',
+      });
+    },
+  });
   const { mutate, isPending } = useMutationRegister({
     onSuccess: (data: any) => {
       mutateSendEmail(data.data.email);
-      if (isSuccess) {
-        localStorage.setItem('email', data.data.email);
-        enqueueSnackbar('Pendaftaran Berhasil Verifikasi Email Telah dikirim', {
-          variant: 'success',
-        });
-      }
+      localStorage.setItem('email', data.data.email);
       router.push('/sign-in');
     },
     onError: (err: any) => {

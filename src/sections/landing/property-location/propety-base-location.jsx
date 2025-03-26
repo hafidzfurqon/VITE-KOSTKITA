@@ -28,8 +28,31 @@ const PropertyBaseLocation = () => {
   const nextRef = useRef(null);
 
   return (
-    <Container sx={{ mb: 5 }}>
+    <Container>
       <Box sx={{ maxWidth: '1120px', mx: 'auto', pt: 3, pb: 5 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
+          <Typography
+            variant="h3"
+            sx={{ fontSize: { xs: '19px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+          >
+            Cari hunian sesuai <span style={{ color: '#FFCC00' }}>lokasi</span>
+          </Typography>
+          <Link to="/promo">
+            <Button
+              sx={{
+                color: 'black',
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                fontWeight: '500',
+              }}
+              endIcon={<ArrowForwardIosIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
+            >
+              <Typography sx={{ fontSize: { xs: '12px', md: '16px' } }}>Lihat Semua</Typography>
+            </Button>
+          </Link>
+        </Box>
+
         {/* Container Swiper */}
         <Box
           onMouseEnter={() => setIsHovered(true)}
@@ -88,11 +111,12 @@ const PropertyBaseLocation = () => {
           {/* Swiper */}
           <Swiper
             modules={[Navigation]}
-            spaceBetween={20}
-            slidesPerView={1}
+            spaceBetween={10}
+            slidesPerView={1.2} // Default untuk layar kecil
             breakpoints={{
-              768: { slidesPerView: 3 },
-              1024: { slidesPerView: 4 },
+              640: { slidesPerView: 1.5 }, // Menampilkan 1.5 slide pada layar >= 640px
+              768: { slidesPerView: 2 }, // 2 slide pada tablet
+              1024: { slidesPerView: 3 }, // 3 slide pada desktop
             }}
             navigation={{
               prevEl: prevRef.current,
@@ -122,11 +146,11 @@ const PropertyBaseLocation = () => {
                 >
                   <img
                     src={lokasi.image}
-                    alt="lokasi"
-                    style={{ width: '100%', height: '220px', objectFit: 'cover' }}
+                    alt="Promo"
+                    style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                   />
                 </Box>
-                <Typography sx={{ py: 2 }} variant="h6">
+                <Typography variant="h6" sx={{ mt: 2 }}>
                   {lokasi.title}
                 </Typography>
               </SwiperSlide>

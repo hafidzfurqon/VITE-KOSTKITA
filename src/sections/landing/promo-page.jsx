@@ -29,9 +29,9 @@ export default function PromoPage() {
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Typography
           variant="h3"
-          sx={{ fontSize: { xs: '14px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+          sx={{ fontSize: { xs: '22px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
         >
-          Promo berlangsung
+          Promo <span style={{ color: '#FFCC00' }}>berlangsung</span>
         </Typography>
         <Link to="/promo">
           <Button

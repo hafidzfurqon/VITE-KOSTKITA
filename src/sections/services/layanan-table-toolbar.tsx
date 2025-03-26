@@ -15,7 +15,11 @@ type UserTableToolbarProps = {
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export function LayananTableToolbar({ numSelected, filterName, onFilterName }: UserTableToolbarProps) {
+export function LayananTableToolbar({
+  numSelected,
+  filterName,
+  onFilterName,
+}: UserTableToolbarProps) {
   return (
     <Toolbar
       sx={{
@@ -38,7 +42,7 @@ export function LayananTableToolbar({ numSelected, filterName, onFilterName }: U
           fullWidth
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search user..."
+          placeholder="Search Layanan..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />

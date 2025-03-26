@@ -46,7 +46,7 @@ export function PropertyViewPromo() {
     comparator: getComparator('desc', 'created_at'),
     filterName,
   });
-console.log(dataFiltered)
+  console.log(dataFiltered);
   const notFound = !dataFiltered.length && !!filterName;
 
   return (
@@ -78,26 +78,34 @@ console.log(dataFiltered)
                 }
                 headLabel={[
                   { id: 'image_property', label: 'Gambar Property' },
-                  { id: 'title_property', label: 'Judul Property' },
+                  { id: 'title_property', label: 'Nama Property' },
                   { id: 'status', label: 'Status' },
                   // { id: 'url_reference', label: 'URL Reference' },
                   { id: 'action', label: 'Action' },
                 ]}
               />
-              <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row: any) => (
-                    <PropertyTableRow
-                      key={row.id}
-                      row={row}
-                      selected={table.selected.includes(row.id)}
-                    />
-                  ))}
 
+              <TableBody>
+                {dataFiltered.length > 0 ? (
+                  dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row: any) => (
+                      <PropertyTableRow
+                        key={row.id}
+                        row={row}
+                        selected={table.selected.includes(row.id)}
+                      />
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                      Belum ada data Property
+                    </td>
+                  </tr>
+                )}
                 <TableEmptyRows
                   height={68}
                   emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}

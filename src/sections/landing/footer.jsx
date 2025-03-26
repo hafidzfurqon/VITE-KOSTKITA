@@ -65,17 +65,20 @@ export default function Footer() {
           </Typography>
           <Box display="flex" alignItems="center">
             <WhatsApp fontSize="small" sx={{ mr: 1 }} />
-            <Typography variant="body2">lorem</Typography>
+            <Typography variant="body2">+62 851-8331-1656</Typography>
           </Box>
           <Box display="flex" alignItems="center">
             <Mail fontSize="small" sx={{ mr: 1 }} />
-            <Typography variant="body2">lorem</Typography>
+            <Typography variant="body2">kostkita@gmail.com</Typography>
           </Box>
           <Typography variant="body2" color="gray">
-            {/* Jam Operasional: Senin - Jumat: 10.00 - 19.00 */} lorem
+            Jam Operasional:
           </Typography>
           <Typography variant="body2" color="gray">
-            {/* Sabtu - Minggu: 10.30 - 17.00 */} lorem
+            Senin - Jumat: 10.00 - 19.00
+          </Typography>
+          <Typography variant="body2" color="gray">
+            Sabtu - Minggu: 10.30 - 17.00
           </Typography>
         </Grid>
       </Grid>

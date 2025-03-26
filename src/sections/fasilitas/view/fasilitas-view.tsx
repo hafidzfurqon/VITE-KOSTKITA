@@ -29,6 +29,7 @@ import {
   useFetchFacilityPropertyOwner,
   useMutationCreateFacilitiesOwner,
 } from 'src/hooks/owner_property/fasilitas';
+import { tr } from 'date-fns/locale';
 
 export function FasilitasView() {
   const table = useTable();
@@ -57,7 +58,7 @@ export function FasilitasView() {
       }),
     [data, table.order, table.orderBy, filterName]
   );
-
+  // console.log(dataFiltered.filter((row) => row.length > 0));
   const notFound = !dataFiltered.length && !!filterName;
 
   // Menggunakan useCallback untuk menghindari re-render
@@ -164,19 +165,27 @@ export function FasilitasView() {
                   ]}
                 />
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row: any) => (
-                      <FasilitasTableRow
-                        key={row.id}
-                        row={row}
-                        selected={table.selected.includes(row.id)}
-                        onSelectRow={() => table.onSelectRow(row.id)}
-                      />
-                    ))}
+                  {dataFiltered.length > 0 ? (
+                    dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row: any) => (
+                        <FasilitasTableRow
+                          key={row.id}
+                          row={row}
+                          selected={table.selected.includes(row.id)}
+                          onSelectRow={() => table.onSelectRow(row.id)}
+                        />
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                        Belum ada data Fasilitas
+                      </td>
+                    </tr>
+                  )}
 
                   <TableEmptyRows
                     height={68}

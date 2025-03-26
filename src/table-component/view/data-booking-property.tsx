@@ -172,13 +172,13 @@ export function DataBookingProperty() {
                   ]}
                 />
                 <TableBody>
-                  {dataFiltered
-                    .slice(
-                      table.page * table.rowsPerPage,
-                      table.page * table.rowsPerPage + table.rowsPerPage
-                    )
-                    .map((row: any) => {
-                      return (
+                  {dataFiltered.length > 0 ? (
+                    dataFiltered
+                      .slice(
+                        table.page * table.rowsPerPage,
+                        table.page * table.rowsPerPage + table.rowsPerPage
+                      )
+                      .map((row: any) => (
                         <BookedDetailPropertyTableRow
                           key={row.id}
                           row={row}
@@ -187,8 +187,14 @@ export function DataBookingProperty() {
                           selected={table.selected.includes(row.id)}
                           onSelectRow={() => table.onSelectRow(row.id)}
                         />
-                      );
-                    })}
+                      ))
+                  ) : (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                        Belum ada data Tipe Properti
+                      </td>
+                    </tr>
+                  )}
 
                   <TableEmptyRows
                     height={68}

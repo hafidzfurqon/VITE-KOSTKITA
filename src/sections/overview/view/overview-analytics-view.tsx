@@ -102,7 +102,7 @@ export function OverviewAnalyticsView() {
           </Grid>
         )}
 
-        <Grid xs={12} sm={6} md={6}>
+        <Grid xs={12} sm={6} md={isAdmin ? 3 : 6}>
           <AnalyticsWidgetSummary
             title="Jumlah Booking"
             // percent={2.8}

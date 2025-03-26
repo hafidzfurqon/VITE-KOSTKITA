@@ -15,7 +15,11 @@ type BookedTableToolbarProps = {
   onFilterName: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-export function BookedPropertyTableToolbar({ numSelected, filterName, onFilterName }: BookedTableToolbarProps) {
+export function BookedPropertyTableToolbar({
+  numSelected,
+  filterName,
+  onFilterName,
+}: BookedTableToolbarProps) {
   return (
     <Toolbar
       sx={{
@@ -38,7 +42,7 @@ export function BookedPropertyTableToolbar({ numSelected, filterName, onFilterNa
           fullWidth
           value={filterName}
           onChange={onFilterName}
-          placeholder="Search Fasilitas..."
+          placeholder="Search Property TerBooking..."
           startAdornment={
             <InputAdornment position="start">
               <Iconify width={20} icon="eva:search-fill" sx={{ color: 'text.disabled' }} />

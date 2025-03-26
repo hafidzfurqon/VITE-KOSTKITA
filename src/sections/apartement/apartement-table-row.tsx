@@ -59,10 +59,10 @@ export function ApartementTableRow({ row, selected, onSelectRow }: ApartmentTabl
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
       setOpen(false);
-      enqueueSnackbar('Apartement berhasil dihapus', { variant: 'success' });
+      enqueueSnackbar('Property berhasil dihapus', { variant: 'success' });
     },
     onError: () => {
-      enqueueSnackbar('gagal menghapus apartement', { variant: 'error' });
+      enqueueSnackbar('gagal menghapus Property', { variant: 'error' });
     },
   });
 

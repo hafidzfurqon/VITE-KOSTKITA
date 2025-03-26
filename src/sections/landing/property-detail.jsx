@@ -8,12 +8,10 @@ import IconButton from '@mui/material/IconButton';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
-import Divider from '@mui/material/Divider';
 import CircularProgress from '@mui/material/CircularProgress';
 import Alert from '@mui/material/Alert';
 // icons
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
@@ -23,7 +21,6 @@ import { Button } from '@mui/material';
 import { BookmarkBorder, DateRange, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
-import { fPercent } from 'src/utils/format-number';
 import PropertyRoom from './property-room';
 import FacilityModal from './modal-facility';
 import { useAppContext } from 'src/context/user-context';
@@ -35,15 +32,16 @@ import { useMutationRemoveWishlist } from 'src/hooks/users/useMutationRemoveWish
 import Review from './review';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import PolicyPage from './policy-page';
+import { ImageList } from '@mui/material';
+import { ImageListItem } from '@mui/material';
+import FullScreenDialog from 'src/component/DialogFull';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
-
-  const navigate = useNavigate();
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [open, setOpen] = useState(false);
+  const [opened, setOpened] = useState(false);
   const [visitModal, setVisitModal] = useState(false);
   const { UserContextValue: authUser } = useAppContext();
   const [isWishlist, setIsWishlist] = useState(data?.is_wishlist ?? false);
@@ -51,15 +49,14 @@ export default function PropertyDetail() {
   const isOwnerId = user?.id;
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
-
-  const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+  console.log(slides);
+  const handleCloseDialog = () => {
+    setOpened(false);
   };
 
-  const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
+  const handleOpenDialog = () => {
+    setOpened(true);
   };
-
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
@@ -185,10 +182,24 @@ export default function PropertyDetail() {
 
   const tipeProperty = data.type.name.toLowerCase();
   // console.log(tipeProperty)
+  function srcset(image, size, rows = 1, cols = 1) {
+    return {
+      src: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format`,
+      srcSet: `${image}?w=${size * cols}&h=${size * rows}&fit=crop&auto=format&dpr=2 2x`,
+    };
+  }
+  if (slides.length === 0) return null;
+
+  const imageConfig = [
+    { cols: 1, rows: 1 }, // First image (larger)
+    { cols: 1, rows: 1 },
+    { cols: 1, rows: 1 },
+    { cols: 1, rows: 1 },
+  ];
   return (
     <>
       <Helmet>
-        <title>{data.name} - KostKita</title>
+        <title>{data.name}</title>
         <meta name="title" content={data.name} />
         <meta name="description" content={data.description.replace(/<[^>]*>?/gm, '')} />
         <meta property="og:image" content={data?.files[0]?.file_url} />
@@ -210,7 +221,7 @@ export default function PropertyDetail() {
         <meta property="og:description" content={`${data.description}`} />
         <meta property="og:image" content={`${data?.files[0]?.file_url}`} />
       </Helmet>
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Box sx={{ py: 4 }}>
         {/* Breadcrumbs */}
         <Box sx={{ display: 'grid', width: '100%' }}>
           <CustomBreadcrumbs
@@ -226,106 +237,110 @@ export default function PropertyDetail() {
         </Box>
 
         {/* Image Gallery */}
-        {slides.length > 0 && (
-          <Box sx={{ position: 'relative', mb: 4 }}>
-            <Box
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: { xs: 'column', md: 'row' },
+          }}
+          onClick={handleOpenDialog}
+        >
+          {slides.length > 0 && (
+            <ImageList
               sx={{
-                position: 'relative',
-                paddingTop: '56.25%',
-                borderRadius: 2,
-                overflow: 'hidden',
+                width: '100%',
+                maxWidth: 600,
+                height: 'auto',
+                mr: { xs: 0, md: 1 },
+                mb: { xs: 1, md: 0 },
+                '&:hover': {
+                  cursor: 'pointer',
+                  filter: 'brightness(0.9)',
+                },
               }}
+              variant="quilted"
+              cols={2}
+              gap={8}
             >
-              <Box
-                component="img"
-                src={slides[currentImageIndex]}
-                alt={data.name}
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-            </Box>
-
-            {slides.length > 1 && (
-              <>
-                <IconButton
-                  onClick={handlePrevImage}
-                  sx={{
-                    position: 'absolute',
-                    left: 16,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'background.paper',
-                    '&:hover': { bgcolor: 'background.paper' },
-                  }}
-                >
-                  <ChevronLeftIcon />
-                </IconButton>
-                <IconButton
-                  onClick={handleNextImage}
-                  sx={{
-                    position: 'absolute',
-                    right: 16,
-                    top: '50%',
-                    transform: 'translateY(-50%)',
-                    bgcolor: 'background.paper',
-                    '&:hover': { bgcolor: 'background.paper' },
-                  }}
-                >
-                  <ChevronRightIcon />
-                </IconButton>
-              </>
-            )}
-
-            {/* Thumbnails */}
-            <Stack
-              direction="row"
-              spacing={1}
-              sx={{
-                mt: 2,
-                overflowX: 'auto',
-                '&::-webkit-scrollbar': { display: 'none' },
-                scrollbarWidth: 'none',
-              }}
-            >
-              {slides.map((slide, index) => (
-                <Box
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  sx={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: 1,
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    border: index === currentImageIndex ? 2 : 0,
-                    borderColor: 'primary.main',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Box
-                    component="img"
-                    src={slide}
-                    alt={`${data.name} ${index + 1}`}
-                    sx={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
+              {slides.slice(0, 1).map((image, index) => (
+                <ImageListItem key={index} cols={2} rows={2}>
+                  <img
+                    {...srcset(image, 121)}
+                    alt={`Gallery Image ${index + 1}`}
+                    loading="lazy"
+                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
                   />
-                </Box>
+                </ImageListItem>
               ))}
-            </Stack>
-          </Box>
-        )}
-
+            </ImageList>
+          )}
+          {slides.length > 0 && (
+            <ImageList
+              sx={{ width: '100%', maxWidth: 600, height: 'auto' }}
+              variant="quilted"
+              cols={2}
+              gap={8}
+            >
+              {slides.slice(1, 5).map((image, index) => {
+                const remainingImages = slides.length - 5;
+                return (
+                  <ImageListItem
+                    key={index}
+                    cols={imageConfig[index]?.cols || 1}
+                    rows={imageConfig[index]?.rows || 1}
+                    style={{ position: 'relative' }}
+                    sx={{
+                      '&:hover': {
+                        cursor: 'pointer',
+                        filter: 'brightness(0.9)',
+                      },
+                    }}
+                  >
+                    <img
+                      {...srcset(image, 121)}
+                      alt={`Gallery Image ${index + 1}`}
+                      loading="lazy"
+                      style={{
+                        objectFit: 'cover',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                    {index === 3 && remainingImages > 0 && (
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#fff',
+                          fontSize: '20px',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        +{remainingImages}
+                        {/* <ImageIcon */}
+                      </div>
+                    )}
+                  </ImageListItem>
+                );
+              })}
+            </ImageList>
+          )}
+        </Box>
+        <FullScreenDialog
+          open={opened}
+          handleClose={handleCloseDialog}
+          title={data.name}
+          data={slides}
+        />
         {/* Property Details */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, pt: { xs: 5, md: 10 } }}>
           <Grid sx={{ mb: 5 }} container spacing={3} alignItems="center">
             {/* Bagian Judul */}
             <Grid
@@ -334,9 +349,14 @@ export default function PropertyDetail() {
               sm={12}
               sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
-              <Typography variant="h4" gutterBottom>
-                {data.name}
-              </Typography>
+              <Box>
+                <Typography variant="h4" gutterBottom>
+                  {data.name}
+                </Typography>
+                <span>
+                  {data.sector?.name}, {data.city?.name}
+                </span>
+              </Box>
               <Box sx={{ display: 'flex' }}>
                 <IconButton
                   onClick={handleWishlistToggle}
@@ -473,17 +493,6 @@ export default function PropertyDetail() {
             </Grid>
           </Grid>
 
-          {/* Description */}
-          {data.description && (
-            <>
-              <Typography variant="subtitle1">Description :</Typography>
-              <Typography
-                color="text.secondary"
-                dangerouslySetInnerHTML={{ __html: data.description }}
-              />
-            </>
-          )}
-
           {data.facilities.length > 0 && (
             <>
               <hr />
@@ -590,8 +599,8 @@ export default function PropertyDetail() {
           {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
         <hr />
-        <PolicyPage />
-      </Container>
+        <PolicyPage name={data?.name} description={data?.description} />
+      </Box>
     </>
   );
 }

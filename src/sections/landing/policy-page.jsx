@@ -1,6 +1,6 @@
 import { Container, Typography, Divider, Box } from '@mui/material';
 
-export default function PolicyPage() {
+export default function PolicyPage({ description, name }) {
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -13,7 +13,7 @@ export default function PolicyPage() {
           Ketentuan
         </Typography>
         <Typography variant="body1">
-          Penambahan jumlah penghuni tergantung dengan kebijakan tiap hunian dan ketersediaan. 
+          Penambahan jumlah penghuni tergantung dengan kebijakan tiap hunian dan ketersediaan.
           Hubungi Rukita untuk informasi lebih lanjut.
         </Typography>
       </Box>
@@ -26,7 +26,8 @@ export default function PolicyPage() {
           Deposit
         </Typography>
         <Typography variant="body1">
-          Deposit sebesar 50% dari biaya sewa bulanan, dibayarkan bersama atau terpisah dengan biaya sewa bulan pertama.
+          Deposit sebesar 50% dari biaya sewa bulanan, dibayarkan bersama atau terpisah dengan biaya
+          sewa bulan pertama.
         </Typography>
       </Box>
 
@@ -68,11 +69,18 @@ export default function PolicyPage() {
       {/* Tentang Green Harris View */}
       <Box mt={3} mb={3}>
         <Typography variant="h6" fontWeight="bold">
-          Tentang Green Harris View 2 Dramaga Bogor
+          Tentang {name}
         </Typography>
         <Typography variant="body1">
-          Buat kamu yang mengutamakan keamanan dan privasi saat ngekost di Bogor, maka Green Harris View 2 Dramaga Bogor adalah jawabannya.
-          Kost putri Bogor ini dilengkapi CCTV, staf...
+          {/* Description */}
+          {description && (
+            <>
+              <Typography
+                color="text.secondary"
+                dangerouslySetInnerHTML={{ __html: description }}
+              />
+            </>
+          )}
         </Typography>
         <Typography variant="body1" color="primary">
           Lihat Selengkapnya &gt;

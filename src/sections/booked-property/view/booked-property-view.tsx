@@ -36,18 +36,10 @@ export function BookedPropertyView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-  const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
-  const {
-    data = [],
-    isLoading,
-    isFetching,
-  } = isOwnerProperty ? useFetchFacilityPropertyOwner() : useFetchAllBooking();
-  console.log(data);
+  // const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
+  const { data = [], isLoading, isFetching } = useFetchAllBooking();
+  // console.log(data);
   const [filterName, setFilterName] = useState('');
-  const [opened, setOpened] = useState(false);
-  const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
-  const { register, handleSubmit: handleSubmitForm, reset } = useForm();
 
   // Menghindari re-render berulang saat data berubah
   const dataFiltered = useMemo(
@@ -62,60 +54,10 @@ export function BookedPropertyView() {
 
   const notFound = !dataFiltered.length && !!filterName;
 
-  // Menggunakan useCallback untuk menghindari re-render
-  const handleClickOpened = useCallback(() => setOpened(true), []);
-  const handleClose = useCallback(() => setOpened(false), []);
-
-  const { mutate, isPending: isPendingMutate } = isOwnerProperty
-    ? useMutationCreateFacilitiesOwner({
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['fetch.all.property.owner'] });
-          setOpened(false);
-          enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
-          reset();
-        },
-        onError: () => {
-          enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
-        },
-      })
-    : useMutationCreateFacilities({
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
-          setOpened(false);
-          enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
-          reset();
-        },
-        onError: () => {
-          enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
-        },
-      });
-
-  // Fungsi submit juga menggunakan useCallback agar tidak dibuat ulang setiap render
-  const handleCreate = useCallback(
-    (data: any) => {
-      mutate(data);
-      handleClose();
-    },
-    [mutate, handleClose]
-  );
-
   if (isLoading || isFetching) {
     return <Loading />;
   }
 
-  const FieldRHF = (
-    <TextField
-      {...register('name')}
-      autoFocus
-      required
-      margin="dense"
-      id="nama"
-      label="Nama Fasilitas"
-      type="text"
-      fullWidth
-      variant="outlined"
-    />
-  );
   return (
     <>
       <DashboardContent>
@@ -176,7 +118,7 @@ export function BookedPropertyView() {
                   ) : (
                     <tr>
                       <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
-                        Data Booking belum ada
+                        Belum ada data booking
                       </td>
                     </tr>
                   )}
@@ -202,16 +144,6 @@ export function BookedPropertyView() {
           />
         </Card>
       </DashboardContent>
-      <DialogCreate
-        pending={isPendingMutate}
-        SubmitFormValue={handleCreate}
-        open={opened}
-        title="Create Nama Fasilitas"
-        subTitle="Fasilitas untuk coliving maupun apartemen"
-        setOpen={setOpened}
-        field={FieldRHF}
-        SubmitForm={handleSubmitForm}
-      />
     </>
   );
 }

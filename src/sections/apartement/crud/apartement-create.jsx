@@ -64,29 +64,22 @@ export const CreateApartement = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      description: '',
       facilities: [],
     },
   });
-  // const [editorContent, setEditorContent] = useState(watch('description'));
+
   const [isActive, setIsActive] = useState(false);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
   const [selectedImages, setSelectedImages] = useState([]);
-  const [editorContent, setEditorContent] = useState(watch('description') || '');
-  const editorRef = useRef(null);
 
-  const editorConfig = useMemo(
-    () => ({
-      height: 250,
-      menubar: false,
-      plugins: ['lists', 'advlist', 'link', 'image', 'table', 'paste'],
-      toolbar:
-        'insertfile undo redo | image | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
-    }),
-    []
-  );
+  const editorRef = useRef(null);
+  const editorContentRef = useRef('');
+
+  const handleEditorChange = (content) => {
+    editorContentRef.current = content;
+  };
 
   const handleCheckboxChange = (facilityId) => {
     const currentFacilities = watch('facilities') || []; // Ambil value saat ini
@@ -97,9 +90,9 @@ export const CreateApartement = () => {
     setValue('facilities', updatedFacilities); // Update nilai dengan array baru
   };
 
-  const handleEditorChange = (content, fieldName) => {
-    setValue(fieldName, content, { shouldValidate: true }); // Tambahkan shouldValidate
-  };
+  // const handleEditorChange = (content, fieldName) => {
+  //   setValue(fieldName, content, { shouldValidate: true }); // Tambahkan shouldValidate
+  // };
 
   // ✅ Handle file selection
   const handleFileChange = (event) => {
@@ -164,7 +157,7 @@ export const CreateApartement = () => {
       });
   const Submitted = (data) => {
     const formData = new FormData();
-
+    formData.append('description', editorContentRef.current);
     Object.entries(data).forEach(([key, value]) => {
       if (key !== 'price') {
         // Hindari duplikasi harga
@@ -179,6 +172,7 @@ export const CreateApartement = () => {
     formData.append('price', cleanPrice(data.price)); // Tambahkan hanya satu price
 
     mutate(formData);
+    // console.log(formData)
   };
 
   const selectedType = watch('property_type_id');
@@ -298,7 +292,6 @@ export const CreateApartement = () => {
             error={!!errors.link_googlemaps}
             helperText={errors.link_googlemaps?.message}
           />
-
           <TextField
             {...register('address')}
             margin="dense"
@@ -322,7 +315,6 @@ export const CreateApartement = () => {
               <TextField {...params} label="Provinsi" fullWidth variant="outlined" />
             )}
           />
-
           {/* Pilih Kota / Kabupaten */}
           <Autocomplete
             options={cities || []}
@@ -350,7 +342,6 @@ export const CreateApartement = () => {
               <TextField {...params} label="Kecamatan" fullWidth variant="outlined" />
             )}
           />
-
           <FormLabel>Upload Images (Max 10)</FormLabel>
           <Box
             {...getRootProps()}
@@ -365,7 +356,6 @@ export const CreateApartement = () => {
             <input {...getInputProps()} />
             <Typography>Drag & Drop atau Klik untuk Upload</Typography>
           </Box>
-
           {/* ✅ Preview Gambar */}
           <Stack direction="row" spacing={2}>
             {selectedImages.map((file, index) => (
@@ -382,11 +372,9 @@ export const CreateApartement = () => {
           <FormLabel>Deskripsi :</FormLabel>
           <Editor
             apiKey={VITE_TINY_KEY}
-            initialValue={watch('description')}
+            initialValue={editorContentRef.current} // Ambil dari useRef, bukan watch()
             onInit={(evt, editor) => (editorRef.current = editor)}
-            onEditorChange={(content) => {
-              setValue('description', content, { shouldValidate: true });
-            }}
+            onEditorChange={handleEditorChange} // Hanya simpan ke useRef
             init={{
               height: 250,
               menubar: false,
@@ -395,7 +383,6 @@ export const CreateApartement = () => {
                 'insertfile undo redo | image | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
             }}
           />
-
           <TextField
             select
             {...register('payment_type', { required: true })}

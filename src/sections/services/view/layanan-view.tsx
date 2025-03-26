@@ -98,19 +98,27 @@ export function LayananView() {
                 ]}
               />
               <TableBody>
-                {dataFiltered
-                  .slice(
-                    table.page * table.rowsPerPage,
-                    table.page * table.rowsPerPage + table.rowsPerPage
-                  )
-                  .map((row) => (
-                    <LayananTableRow
-                      key={row.id}
-                      row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
-                    />
-                  ))}
+                {dataFiltered.length > 0 ? (
+                  dataFiltered
+                    .slice(
+                      table.page * table.rowsPerPage,
+                      table.page * table.rowsPerPage + table.rowsPerPage
+                    )
+                    .map((row: any) => (
+                      <LayananTableRow
+                        key={row.id}
+                        row={row}
+                        selected={table.selected.includes(row.id)}
+                        onSelectRow={() => table.onSelectRow(row.id)}
+                      />
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
+                      Belum ada data Layanan
+                    </td>
+                  </tr>
+                )}
 
                 <TableEmptyRows
                   height={68}
