@@ -17,6 +17,7 @@ import { WhatsApp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from 'src/context/user-context';
 import { useSnackbar } from 'notistack';
+import { Iconify } from 'src/components/iconify';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -69,7 +70,6 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
     }));
   };
 
-
   if (!rooms.length) {
     return (
       <Container maxWidth="lg">
@@ -91,7 +91,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
           <Grid container spacing={2}>
             <Grid item xs={12} md={4} sx={{ position: 'relative' }}>
               <ImageSlider images={room.room_files || []} />
-              <AvailabilityChip label={room.status} size="small" />
+              {/* <AvailabilityChip label={room.status} size="small" /> */}
             </Grid>
             <Grid item xs={12} md={8}>
               <CardContent>
@@ -103,6 +103,16 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                   <Chip label={room.room_type.name} />
                   <Chip label={`${room.area_size}m²`} />
                 </Stack>
+                <Grid sx={{ my: 2 }} container spacing={2}>
+                  {room.room_facilities.slice(0, 4).map((facility) => (
+                    <Grid item xs={6} key={facility.id}>
+                      <Stack direction="row" alignItems="center">
+                        <Iconify sx={{ mr: 1 }} icon="mingcute:check-line" />
+                        {facility.name}
+                      </Stack>
+                    </Grid>
+                  ))}
+                </Grid>
 
                 <Box sx={{ display: 'flex', mb: 3, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
                   {[0, 1, 2, 3].map((rangeIndex) => (

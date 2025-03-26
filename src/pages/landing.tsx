@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 
 import { CONFIG } from 'src/config-global';
-
 import { LandingPage } from 'src/sections/landing';
 
 export default function LandingPages() {

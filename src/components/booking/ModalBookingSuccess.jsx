@@ -58,10 +58,11 @@ export default function ModalBookingSuccess({ open, onReset, bookingCode }) {
           <Button
             fullWidth
             size="small"
+            component={Link}
+            to="/"
             variant="outlined"
             onClick={onReset}
             startIcon={<Iconify icon="eva:arrow-ios-back-fill" />}
-            component={m.button}
             variants={varFade().inUp}
           >
             Kembali ke Beranda
