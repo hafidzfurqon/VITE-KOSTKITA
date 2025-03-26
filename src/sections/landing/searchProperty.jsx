@@ -17,7 +17,7 @@ import { Iconify } from 'src/components/iconify';
 // ----------------------------------------------------------------------
 
 export default function SearchProperty({ query, results, onSearch, hrefItem, loading }) {
-  console.log(query)
+  console.log(query);
   const router = useRouter();
 
   const handleClick = (slug) => {
@@ -37,7 +37,9 @@ export default function SearchProperty({ query, results, onSearch, hrefItem, loa
 
   return (
     <Autocomplete
-      sx={{ width: { xs: 1, sm: 260 } }}
+      sx={{
+        width: { xs: '100%', sm: 400, md: 500 },
+      }}
       loading={loading}
       autoHighlight
       popupIcon={null}
@@ -51,6 +53,7 @@ export default function SearchProperty({ query, results, onSearch, hrefItem, loa
           placement: 'bottom-start',
           sx: {
             minWidth: 320,
+            maxWidth: 600,
           },
         },
         paper: {
@@ -66,11 +69,31 @@ export default function SearchProperty({ query, results, onSearch, hrefItem, loa
           {...params}
           placeholder="Search..."
           onKeyUp={handleKeyUp}
+          inputProps={{
+            ...params.inputProps,
+            sx: { fontSize: 16, py: 1.5 },
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderWidth: 2,
+              borderColor: 'grey.400',
+              borderRadius: 12,
+              '&:hover': {
+                borderColor: 'grey.600',
+              },
+              '&.Mui-focused': {
+                borderColor: 'primary.main',
+              },
+            },
+          }}
           InputProps={{
             ...params.InputProps,
             startAdornment: (
               <InputAdornment position="start">
-                <Iconify icon="eva:search-fill" sx={{ ml: 1, color: 'text.disabled' }} />
+                <Iconify
+                  icon="eva:search-fill"
+                  sx={{ ml: 1, color: 'text.disabled', fontSize: 24 }}
+                />
               </InputAdornment>
             ),
             endAdornment: (
@@ -88,7 +111,12 @@ export default function SearchProperty({ query, results, onSearch, hrefItem, loa
         const imageUrl = property.files.length > 0 ? property.files[0].file_url : '';
 
         return (
-          <Box component="li" {...props} onClick={() => handleClick(property.slug)} key={property.id}>
+          <Box
+            component="li"
+            {...props}
+            onClick={() => handleClick(property.slug)}
+            key={property.id}
+          >
             <Avatar
               alt={property.name}
               src={imageUrl}

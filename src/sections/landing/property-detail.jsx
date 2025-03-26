@@ -15,6 +15,7 @@ import Alert from '@mui/material/Alert';
 import ShareIcon from '@mui/icons-material/Share';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import HomeIcon from '@mui/icons-material/Home';
+import StarIcon from '@mui/icons-material/Star';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Button } from '@mui/material';
@@ -35,6 +36,8 @@ import PolicyPage from './policy-page';
 import { ImageList } from '@mui/material';
 import { ImageListItem } from '@mui/material';
 import FullScreenDialog from 'src/component/DialogFull';
+import PropertyBaseLocation from './PropertyLocation';
+import NearbyPlaces from './nearbly-places';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -374,15 +377,19 @@ export default function PropertyDetail() {
 
             {/* Bagian Lokasi dan Jenis Properti */}
             <Grid item xs={12} sm={8}>
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack direction="row" spacing={2} alignItems="center">
+                <HomeIcon color="action" />
+                <Typography>{data.type.name}</Typography>
+                <Stack direction="row" alignItems="center" spacing={0.5}>
+                  <StarIcon color="warning" fontSize="small" />
+                  <Typography>{data.average_rating}</Typography>
+                </Stack>
+              </Stack>
+              <Stack sx={{ my: 2 }} direction="row" spacing={1} alignItems="center">
                 <LocationOnIcon color="action" />
                 <Typography color="text.secondary">
                   {data.address}, {data.city?.name}, {data.state?.name}
                 </Typography>
-              </Stack>
-              <Stack direction="row" spacing={1} alignItems="center" mt={1}>
-                <HomeIcon color="action" />
-                <Typography>{data.type.name}</Typography>
               </Stack>
             </Grid>
 
@@ -472,6 +479,31 @@ export default function PropertyDetail() {
                     </Button>
                   )}
 
+                  {data.rooms.length === 0 && !['admin', 'owner_property'].includes(user.roles) && (
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      disabled={isOwnerId === data.created_by.id}
+                      sx={{ mt: 2 }}
+                      onClick={() => {
+                        if (user.length === 0) {
+                          enqueueSnackbar('Anda harus login terlebih dahulu!', {
+                            variant: 'error',
+                          });
+
+                          navigate(`/sign-in`);
+                        } else {
+                          navigate(`/booking/${data.slug}`);
+                        }
+                      }}
+                    >
+                      {isOwnerId === data.created_by.id
+                        ? 'Property ini milik Anda'
+                        : 'Booking Sekarang'}
+                    </Button>
+                  )}
+
                   <Button
                     variant="outlined"
                     color="primary"
@@ -531,9 +563,12 @@ export default function PropertyDetail() {
               <hr />
             </>
           )}
-          <Review />
+          <Review propertyId={data.id} />
 
           <hr />
+          <NearbyPlaces data={data} />
+          <hr />
+
           {/* Google Maps */}
           {data.link_googlemaps && (
             <Card sx={{ mt: 5 }}>
