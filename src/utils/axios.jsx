@@ -88,7 +88,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
-      } 
+      }
     }
 
     return Promise.reject(error);
@@ -324,9 +324,17 @@ export const EndpointLandingPage = {
       delete: '/api/user/rating_and_review/room/delete',
       detail: '/api/user/rating_and_review/room/detail',
     },
-    booking: {
-      getBookingDetail: '/api/user/booking/property/detail',
-      getBookingAll: '/api/user/booking/property/all',
+    public: {
+      list: '/api/public/property/rating_and_review/all',
+      detail: '/api/public/property/rating_and_review/detail',
+      room: {
+        list: '/api/public/property/rating_and_review/room/all',
+        detail: '/api/public/property/rating_and_review/room/detail',
+      },
     },
+  },
+  booking: {
+    getBookingDetail: '/api/user/booking/property/detail',
+    getBookingAll: '/api/user/booking/property/all',
   },
 };

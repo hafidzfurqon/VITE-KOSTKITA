@@ -5,6 +5,7 @@ import Carousel from 'react-multi-carousel';
 import 'react-multi-carousel/lib/styles.css';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { Home, Apartment } from '@mui/icons-material';
+import Loading from 'src/components/loading/loading';
 
 const PropertyBaseLocation = ({ data: cityCode }) => {
   const { data: allProperties, isLoading, isFetching } = useListProperty();
@@ -30,7 +31,7 @@ const PropertyBaseLocation = ({ data: cityCode }) => {
   };
 
   if (isLoading || isFetching) {
-    return <Typography sx={{ textAlign: 'center', mt: 3 }}>Loading...</Typography>;
+    return <Loading />;
   }
 
   return (
