@@ -1,0 +1,63 @@
+import React from 'react';
+import { Box, Grid, Typography, List, ListItemButton } from '@mui/material';
+import { Link } from 'react-router-dom';
+
+const directoryData = [
+  {
+    title: 'Kamu lagi cari tipe hunian apa?',
+    links: ['Cari Kost', 'Sewa Apartemen'],
+  },
+  {
+    title: 'Kost di Area Populer',
+    links: ['Kost Jakarta Selatan', 'Kost Jakarta Barat', 'Kost Jakarta Pusat', 'Kost Bandung'],
+  },
+  {
+    title: 'Kost dekat Universitas',
+    links: [
+      'Bina Nusantara University',
+      'Bina Nusantara Alam Sutera',
+      'Unika Atma Jaya - Semanggi',
+      'Universitas Bunda Mulia Serpong',
+    ],
+  },
+  {
+    title: 'Kost dekat Area Perkantoran',
+    links: ['Mega Kuningan', 'Tempo Scan Tower', 'Indofood Tower', 'UOB Plaza', 'Setiabudi One'],
+  },
+];
+
+const Directory = () => {
+  return (
+    <Box sx={{ p: 4 }}>
+      <Grid container spacing={4}>
+        {directoryData.map((section, index) => (
+          <Grid item xs={12} md={3} key={index}>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              {section.title}
+            </Typography>
+            <List disablePadding>
+              {section.links.map((link, i) => (
+                <ListItemButton key={i} sx={{ px: 0, py: 0.5 }}>
+                  <Link
+                    to="#"
+                    style={{
+                      textDecoration: 'none',
+                      color: 'inherit',
+                      transition: 'color 0.2s',
+                    }}
+                    onMouseEnter={(e) => (e.target.style.color = '#1976d2')}
+                    onMouseLeave={(e) => (e.target.style.color = 'inherit')}
+                  >
+                    {link}
+                  </Link>
+                </ListItemButton>
+              ))}
+            </List>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+};
+
+export default Directory;

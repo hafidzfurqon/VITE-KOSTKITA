@@ -14,74 +14,80 @@ export default function Footer() {
         borderTopRightRadius: '50px',
       }}
     >
-      <Grid container spacing={4} maxWidth="lg" margin="auto" alignItems={'center'}>
-        {/* Logo dan QR */}
-        <Grid item xs={12} md={3}>
-          <Typography variant="h5" fontWeight="bold">
-            KosKita.id
-          </Typography>
-          <img src={image} alt="gambar.log" width={150} />
-        </Grid>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          bgcolor: '#1E1E1E', // background biar keliatan jelas
+          px: { xs: 2, md: 8 },
+          py: { xs: 4, md: 6 },
+        }}
+      >
+        <Grid container spacing={4} justifyContent="space-between">
+          {/* Logo */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="h5" fontWeight="bold" sx={{ color: '#FFCC00', mb: 2 }}>
+              KostKita.id
+            </Typography>
+            <img src={image} alt="Logo" width={150} style={{ borderRadius: 8 }} />
+          </Grid>
 
-        {/* Tenant */}
-        <Grid item xs={12} sm={6} md={2}>
-          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
-            Tenant
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Kost
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Apartemen
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Community
-          </Typography>
-        </Grid>
+          {/* Tenant */}
+          <Grid item xs={6} md={2}>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#FFCC00', mb: 1 }}>
+              Tenant
+            </Typography>
+            {['Kost', 'Apartemen', 'Community'].map((item) => (
+              <Typography key={item} variant="body2" color="white" sx={{ mb: 0.5 }}>
+                {item}
+              </Typography>
+            ))}
+          </Grid>
 
-        {/* Kerjasama KosKata */}
-        <Grid item xs={12} sm={6} md={3}>
-          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
-            Kerjasama KosKita.id
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Coliving
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Apartemen
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Build to Rent
-          </Typography>
-          <Typography variant="body2" color="gray">
-            KosFinance
-          </Typography>
-        </Grid>
+          {/* Kerjasama */}
+          <Grid item xs={6} md={3}>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#FFCC00', mb: 1 }}>
+              Kerjasama KosKita.id
+            </Typography>
+            {['Coliving', 'Apartemen', 'Build to Rent', 'KosFinance'].map((item) => (
+              <Typography key={item} variant="body2" color="white" sx={{ mb: 0.5 }}>
+                {item}
+              </Typography>
+            ))}
+          </Grid>
 
-        {/* Support */}
-        <Grid item xs={12} md={4}>
-          <Typography variant="subtitle1" fontWeight="bold" sx={{ mb: 3 }}>
-            Support
-          </Typography>
-          <Box display="flex" alignItems="center">
-            <WhatsApp fontSize="small" sx={{ mr: 1 }} />
-            <Typography variant="body2">+62 851-8331-1656</Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <Mail fontSize="small" sx={{ mr: 1 }} />
-            <Typography variant="body2">kostkita@gmail.com</Typography>
-          </Box>
-          <Typography variant="body2" color="gray">
-            Jam Operasional:
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Senin - Jumat: 10.00 - 19.00
-          </Typography>
-          <Typography variant="body2" color="gray">
-            Sabtu - Minggu: 10.30 - 17.00
-          </Typography>
+          {/* Support */}
+          <Grid item xs={12} md={3}>
+            <Typography variant="subtitle1" fontWeight="bold" sx={{ color: '#FFCC00', mb: 1 }}>
+              Support
+            </Typography>
+
+            <Box display="flex" alignItems="center" sx={{ mb: 0.5 }}>
+              <WhatsApp fontSize="small" sx={{ mr: 1 }} />
+              <Typography variant="body2" color="white">
+                +62 851-8331-1656
+              </Typography>
+            </Box>
+
+            <Box display="flex" alignItems="center" sx={{ mb: 0.5 }}>
+              <Mail fontSize="small" sx={{ mr: 1 }} />
+              <Typography variant="body2" color="white">
+                kostkita@gmail.com
+              </Typography>
+            </Box>
+
+            <Typography variant="body2" color="white" sx={{ fontWeight: 'bold', mt: 1 }}>
+              Jam Operasional:
+            </Typography>
+            <Typography variant="body2" color="white">
+              Senin - Jumat: 10.00 - 19.00
+            </Typography>
+            <Typography variant="body2" color="white">
+              Sabtu - Minggu: 10.30 - 17.00
+            </Typography>
+          </Grid>
         </Grid>
-      </Grid>
+      </Box>
 
       {/* Footer Bottom */}
       <Box textAlign="center" mt={4} borderTop="1px solid #333" pt={3}>

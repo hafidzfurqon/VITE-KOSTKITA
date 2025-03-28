@@ -187,9 +187,9 @@ function ImageSlider({ images }) {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const [sliderRef, instanceRef] = useKeenSlider({
-    loop: true,
+    // loop: true,
     slides: { perView: 1 },
-    mode: 'free-snap',
+    // mode: 'free-snap',
     slideChanged(s) {
       setCurrentSlide(s.track.details.rel);
     },

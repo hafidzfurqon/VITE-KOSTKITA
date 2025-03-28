@@ -60,6 +60,7 @@ export const DetailVisit = lazy(() => import('src/pages/detail-visit'));
 export const DetailPromo = lazy(() => import('src/pages/promo-detail'));
 export const AddPromoToProperty = lazy(() => import('src/pages/add-promo-property'));
 export const PropertyRoomType = lazy(() => import('src/pages/property-room-type'));
+export const Faq = lazy(() => import('src/pages/Faq-page'));
 
 // ----------------------------------------------------------------------
 
@@ -356,6 +357,10 @@ export function Router() {
         {
           path: '/bussines',
           element: <div>Laman bussines ini masih dalam pengembangan</div>,
+        },
+        {
+          path: '/faq',
+          element: <Faq />,
         },
       ],
     },

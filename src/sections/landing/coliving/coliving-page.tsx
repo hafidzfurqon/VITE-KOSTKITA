@@ -1,14 +1,18 @@
 import { Apartment, Home } from '@mui/icons-material';
 import { Chip, Grid, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { Box } from '@mui/material';
 import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
-import React from 'react';
+import { useKeenSlider } from 'keen-slider/react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import Loading from 'src/components/loading/loading';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { fPercent } from 'src/utils/format-number';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 interface Property {
   type: {
@@ -83,42 +87,19 @@ const ColivingPage = () => {
         moreLink={[]}
         activeLast={true}
       />
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 4, sm: 8, md: 16 }}
-        sx={{ placeItems: 'center', mt: 3 }}
-      >
+      <Grid container spacing={2} sx={{ placeItems: 'center', mt: 3 }}>
         {filteredDataToColiving.map((coliving: any, index: number) => {
           const hasDiscount = coliving.discounts.length > 0;
           return (
-            <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Grid item xs={12} sm={6} md={4} lg={3} key={coliving.id}>
+              <Box sx={{ mb: 3 }}>
+                <ImageSlider images={coliving.files || []} />
+              </Box>
               <Box
                 component={Link}
                 to={`/property/${coliving.slug}`}
                 style={{ textDecoration: 'none' }}
               >
-                <Box
-                  key={coliving.id}
-                  sx={{
-                    width: '95%',
-                    height: 190,
-                    overflow: 'hidden',
-                    mb: 3,
-                    borderRadius: 1,
-                  }}
-                >
-                  <img
-                    src={coliving.files[0]?.file_url}
-                    alt={coliving.name}
-                    loading="lazy"
-                    style={{
-                      width: '100%',
-                      height: '100%',
-                      objectFit: 'cover',
-                    }}
-                  />
-                </Box>
                 <Chip
                   icon={getPropertyIcon(coliving.type.name)}
                   label={coliving.type.name}
@@ -132,17 +113,8 @@ const ColivingPage = () => {
                     {coliving.address}, {coliving.city.name}
                   </Typography>
                 </Box>
-                {coliving.discount_prifile_urlce ? (
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography
-                      variant="body2"
-                      sx={{ color: 'gray', textDecoration: 'line-through' }}
-                    >
-                      {formatCurrency(coliving.start_price)}
-                    </Typography>
-                    <Chip label="-12%" color="error" size="small" />
-                  </Stack>
-                ) : null}
+
+                {/* Price */}
                 {hasDiscount ? (
                   <>
                     <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
@@ -167,9 +139,7 @@ const ColivingPage = () => {
                         -Rp {fPercent(coliving.discounts[0]?.discount_value)}
                       </Box>
                       <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                        {formatCurrency(
-                          coliving.discounts.map((discount: any) => discount.price_after_discount)
-                        )}
+                        {formatCurrency(coliving.discounts[0]?.price_after_discount)}
                       </Typography>
                     </Box>
                   </>
@@ -190,4 +160,149 @@ const ColivingPage = () => {
   );
 };
 
+function ImageSlider({ images } : any) {
+  const [sliderRef, slider] = useKeenSlider({
+    slides: { perView: 1 },
+    initial: 0,
+    slideChanged(s) {
+      setCurrentSlide(s.track.details.rel);
+    },
+  });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+
+  // ❗ jika hanya 1 gambar, return biasa
+  if (images.length === 1) {
+    return (
+      <Box sx={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 2 }}>
+        <img
+          src={images[0].file_url}
+          alt="Property Image"
+          loading="lazy"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            borderRadius: '8px',
+          }}
+        />
+      </Box>
+    );
+  }
+
+  // ❗ jika lebih dari 1, pakai slider
+  return (
+    <Box
+      sx={{ position: 'relative' }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <Box ref={sliderRef} className="keen-slider">
+        {images.length > 0 ? (
+          images.map((image: any, index : number) => (
+            <Box
+              key={index}
+              className="keen-slider__slide"
+              sx={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 2 }}
+            >
+              <img
+                src={image.file_url}
+                loading="lazy"
+                alt={`Property Image ${index}`}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                }}
+              />
+            </Box>
+          ))
+        ) : (
+          <Box
+            className="keen-slider__slide"
+            sx={{ textAlign: 'center', p: 2, backgroundColor: 'gray' }}
+          >
+            <Typography variant="caption" color="white">
+              Tidak ada image yang tersedia
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      {/* Prev & Next Button */}
+      {images.length > 1 && isHovered && (
+        <>
+          <Button
+            disabled={currentSlide === 0}
+            onClick={() => slider.current?.prev()}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '10px',
+              transform: 'translateY(-50%)',
+              minWidth: 0,
+              padding: 1,
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+            }}
+          >
+            <ArrowBackIosIcon fontSize="small" sx={{ ml: '5px' }} />
+          </Button>
+
+          <Button
+            disabled={currentSlide === images.length - 1}
+            onClick={() => slider.current?.next()}
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              right: '10px',
+              transform: 'translateY(-50%)',
+              minWidth: 0,
+              padding: 1,
+              borderRadius: '50%',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              color: 'white',
+              '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+            }}
+          >
+            <ArrowForwardIosIcon fontSize="small" />
+          </Button>
+        </>
+      )}
+
+      {/* Dots */}
+      <Box
+        sx={{
+          position: 'absolute',
+          bottom: '10px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          display: 'flex',
+          justifyContent: 'center',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          padding: '5px 10px',
+          borderRadius: '20px',
+        }}
+      >
+        {images.map((_ : any, idx : number) => (
+          <Box
+            key={idx}
+            onClick={() => slider.current?.moveToIdx(idx)}
+            sx={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              backgroundColor: currentSlide === idx ? 'white' : 'grey',
+              mx: 0.5,
+              cursor: 'pointer',
+            }}
+          />
+        ))}
+      </Box>
+    </Box>
+  );
+}
 export default ColivingPage;

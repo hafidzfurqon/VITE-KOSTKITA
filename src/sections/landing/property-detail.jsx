@@ -235,7 +235,7 @@ export default function PropertyDetail() {
                 : { name: 'Kost & Coliving', href: '/coliving' },
               { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
             ]}
-            sx={{ mb: { xs: 3, md: 5 } }}
+            sx={{ mt: { xs: 1, md: 2 }, mb: 5 }}
           />
         </Box>
 
@@ -253,7 +253,7 @@ export default function PropertyDetail() {
               sx={{
                 width: '100%',
                 maxWidth: 600,
-                height: 'auto',
+                height: { xs: 'auto', md: 500 },
                 mr: { xs: 0, md: 1 },
                 mb: { xs: 1, md: 0 },
                 '&:hover': {
@@ -350,13 +350,13 @@ export default function PropertyDetail() {
         />
         {/* Property Details */}
         <Box sx={{ mb: 4, pt: { xs: 5, md: 10 } }}>
-          <Grid sx={{ mb: 5 }} container spacing={3} alignItems="center">
+          <Grid sx={{ mb: 3 }} container spacing={3} alignItems="center">
             {/* Bagian Judul */}
             <Grid
               item
               xs={12}
               sm={12}
-              sx={{ mt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}
             >
               <Box>
                 <Typography variant="h4" gutterBottom>
@@ -640,7 +640,7 @@ export default function PropertyDetail() {
         <hr />
         <PolicyPage name={data?.name} description={data?.description} />
         <hr />
-        <PropertyBaseLocation data={data.city.city_code} />
+        <PropertyBaseLocation id={data.id} data={data.city.city_code} />
       </Box>
     </>
   );

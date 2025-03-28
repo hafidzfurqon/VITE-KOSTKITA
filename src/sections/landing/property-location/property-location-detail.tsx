@@ -14,11 +14,11 @@ import { fPercent } from 'src/utils/format-number';
 interface Property {
   type: {
     name: string;
-    // city : string
+    city: string;
   };
 }
 
-const data: Property[] = [
+const data: Property[] | any = [
   { type: { name: 'coliving' } },
   { type: { name: 'apartement' } },
   { type: { name: 'coliving' } },
@@ -40,9 +40,9 @@ const PropertyLocationDetail = () => {
   if (isLoading || isFetching) {
     return <Loading />;
   }
-  console.log(data[0].city?.city_code);
+
   // console.log(slug);
-  const filteredDataToState: Property[] = data.filter(
+  const filteredDataToState: Property[] | any = data.filter(
     (item: any) => String(item.city?.city_code) === slug
   );
 
@@ -82,7 +82,7 @@ const PropertyLocationDetail = () => {
   return (
     <>
       <CustomBreadcrumbs
-        links={[{ name: 'Home', href: '/' }, { name: 'Bogor' }]}
+        links={[{ name: 'Home', href: '/' }, { name: filteredDataToState[0]?.city?.name }]}
         sx={{ mb: { xs: 2, md: 3 } }}
         action={null}
         heading=""
@@ -90,7 +90,7 @@ const PropertyLocationDetail = () => {
         activeLast={true}
       />
       <Typography sx={{ mb: 4, fontSize: { xs: '18px', md: '30px' }, fontWeight: 'bold' }}>
-        Kost Dekat IPB Bogor
+        Sewa Kost di {filteredDataToState[0]?.city?.name}
       </Typography>
       <Grid
         container

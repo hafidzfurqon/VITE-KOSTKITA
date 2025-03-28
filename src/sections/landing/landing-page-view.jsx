@@ -21,6 +21,7 @@ import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { PostSort } from '../blog/post-sort';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { useState, useCallback } from 'react';
+import Directory from 'src/component/QuickAccessPage';
 
 export function LandingPage() {
   const navigate = useNavigate();
@@ -491,6 +492,7 @@ export function LandingPage() {
             </Container>
           </Box>
         </Box>
+        <Directory />
         <Footer />
       </Box>
 

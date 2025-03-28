@@ -7,13 +7,17 @@ import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
 
-const PropertyBaseLocation = ({ data: cityCode }) => {
+const PropertyBaseLocation = ({ data: cityCode, id }) => {
   const { data: allProperties, isLoading, isFetching } = useListProperty();
 
   const propertyList = Array.isArray(allProperties)
-    ? allProperties.filter((item) => item.city?.city_code === cityCode)
+    ? allProperties.filter(
+        (item) =>
+          item.city?.city_code === cityCode && // hanya kota yang sesuai
+          item.id !== id // kecuali id yang sama
+      )
     : [];
-
+  // console.log(id);
   const getPropertyIcon = (type) => {
     if (!type) return null; // Jika type kosong, tidak menampilkan ikon
     if (type.toLowerCase().includes('apartment'))
@@ -40,15 +44,18 @@ const PropertyBaseLocation = ({ data: cityCode }) => {
         Hunian Lain Dekat Sini
       </Typography>
 
-      {propertyList?.length === 0 ? (
-        <Typography sx={{ textAlign: 'center', mt: 3 }}>Tidak ada properti di kota ini</Typography>
-      ) : (
+      {propertyList?.length === 0 && (
+        <Typography sx={{ textAlign: 'center', mt: 3 }}>
+          Belum ada properti di dekat kota ini
+        </Typography>
+      )}
+      {
         <Carousel responsive={responsive} infinite autoPlay>
           {propertyList?.map((item) => {
             const hasDiscount = item.discounts && item.discounts.length > 0;
-
+            // const
             return (
-              <Box key={item.id} sx={{ padding: '0 10px' }}>
+              <Box key={item.id}>
                 <Link
                   to={`/sewa/kost/kota/${item.city.city_code}`}
                   style={{ textDecoration: 'none', display: 'block', color: 'inherit' }}
@@ -88,15 +95,21 @@ const PropertyBaseLocation = ({ data: cityCode }) => {
                     </Box>
                   </Box>
 
-                  <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mt: 1 }}>
-                    {getPropertyIcon(item.type?.name || '')}
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ fontWeight: 'bold', mt: 1, display: 'flex', alignItems: 'center' }}
+                  >
+                    {getPropertyIcon(item.type?.name || '')}{' '}
+                    <Typography component="span" variant="">
+                      {item?.type?.name}
+                    </Typography>
                   </Typography>
 
                   <Typography variant="subtitle2" sx={{ fontWeight: 'bold', mt: 1 }}>
                     {item.name}
                   </Typography>
-                  <Typography variant="body2" sx={{ color: 'gray' }}>
-                    {item.address}
+                  <Typography variant="body2" sx={{ color: 'gray', my: '2px' }}>
+                    {item.sector?.name}, {item.city?.name}
                   </Typography>
 
                   {hasDiscount ? (
@@ -169,7 +182,7 @@ const PropertyBaseLocation = ({ data: cityCode }) => {
             );
           })}
         </Carousel>
-      )}
+      }
     </Container>
   );
 };

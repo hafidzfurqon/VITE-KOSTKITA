@@ -18,6 +18,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAppContext } from 'src/context/user-context';
 import { useSnackbar } from 'notistack';
 import { Iconify } from 'src/components/iconify';
+import { LoadingButton } from '@mui/lab';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -160,6 +163,8 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
                     variant="outlined"
+                    fullWidth
+                    size="large"
                     startIcon={<WhatsApp />}
                     href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya ingin menanyakan Kost/Property ${namaProperty}, - ${room.name} Boleh dibantu?\n\nTerima kasih`)}`}
                     sx={{ border: '1px solid green', color: 'green' }}
@@ -168,15 +173,20 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                   </Button>
                   {user ? (
                     !['admin', 'owner', 'owner_property'].includes(user.roles) ? (
-                      <Button
-                        variant={bookingData?.room_id === room.id ? 'contained' : 'outlined'}
+                      <LoadingButton
+                        fullWidth
+                        size="large"
+                        // type="submit"
+                        color="inherit"
+                        variant="contained"
+                        // variant={bookingData?.room_id === room.id ? 'contained' : 'outlined'}
                         onClick={() => {
                           selectRoom(room.id);
                           navigate(`/booking/${slug}?room_id=${room.id}`); // Tambahkan room_id ke URL
                         }}
                       >
                         Pilih Kamar {room.name}
-                      </Button>
+                      </LoadingButton>
                     ) : null
                   ) : (
                     <Button
@@ -203,23 +213,35 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
 };
 
 function ImageSlider({ images }) {
-  const [sliderRef] = useKeenSlider({
-    loop: true,
+  const [sliderRef, slider] = useKeenSlider({
     slides: { perView: 1 },
-    mode: 'free-snap',
+    initial: 0,
+    slideChanged(s) {
+      setCurrentSlide(s.track.details.rel);
+    },
   });
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   return (
-    <Box sx={{ position: 'relative', backgroundColor: 'grey.300' }}>
+    <Box sx={{ position: 'relative' }}>
       <Box ref={sliderRef} className="keen-slider">
         {images.length > 0 ? (
           images.map((image, index) => (
-            <Box key={index} className="keen-slider__slide">
+            <Box
+              key={index}
+              className="keen-slider__slide"
+              sx={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 2 }}
+            >
               <img
                 src={image.file_url}
                 loading="lazy"
                 alt={`Property Image ${index}`}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '8px',
+                }}
               />
             </Box>
           ))
@@ -233,6 +255,64 @@ function ImageSlider({ images }) {
             </Typography>
           </Box>
         )}
+      </Box>
+
+      {/* Prev & Next Button */}
+      <Button
+        disabled={currentSlide === 0}
+        onClick={() => slider.current?.prev()}
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          left: '10px',
+          transform: 'translateY(-50%)',
+          minWidth: 0,
+          padding: 1,
+          borderRadius: '50%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+        }}
+      >
+        <ArrowBackIosIcon fontSize="small" sx={{ ml: '5px' }} />
+      </Button>
+
+      {/* Next Arrow */}
+      <Button
+        disabled={currentSlide === images.length - 1}
+        onClick={() => slider.current?.next()}
+        sx={{
+          position: 'absolute',
+          top: '50%',
+          right: '10px',
+          transform: 'translateY(-50%)',
+          minWidth: 0,
+          padding: 1,
+          borderRadius: '50%',
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          color: 'white',
+          '&:hover': { backgroundColor: 'rgba(0,0,0,0.7)' },
+        }}
+      >
+        <ArrowForwardIosIcon fontSize="small" />
+      </Button>
+
+      {/* Dots */}
+      <Box sx={{ position: 'relative', display: 'flex', justifyContent: 'center', mt: 2 }}>
+        {images.map((_, idx) => (
+          <Box
+            key={idx}
+            onClick={() => slider.current?.moveToIdx(idx)}
+            sx={{
+              width: 10,
+              height: 10,
+              borderRadius: '50%',
+              backgroundColor: currentSlide === idx ? 'black' : 'grey',
+              mx: 0.5,
+              cursor: 'pointer',
+            }}
+          />
+        ))}
       </Box>
     </Box>
   );

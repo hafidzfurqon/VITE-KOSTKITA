@@ -91,6 +91,7 @@ export default function Header() {
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
     { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
+    { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },
   ];
 
   const navMobile = [
@@ -104,6 +105,7 @@ export default function Header() {
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
+    { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },
   ].filter(Boolean);
 
   return (
@@ -128,7 +130,7 @@ export default function Header() {
           {!isSmallScreen && (
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p: 2 }}>
               {navItems.map((item, index) => {
-                const isActived = pathname.startsWith(item.path);
+                const isActived = item.path === pathname;
 
                 return (
                   <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
