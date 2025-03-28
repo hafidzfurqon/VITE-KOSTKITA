@@ -30,7 +30,7 @@ export default function HistoryBooking() {
     if (tabIndex === 0) return booking.status === 'pending';
     return booking.status !== 'pending';
   });
-
+  console.log(filteredBookings)
   if (isLoading || isFetching) {
     return (
       <Box display="flex" justifyContent="center" alignItems="center" minHeight="50vh">

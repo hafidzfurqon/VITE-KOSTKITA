@@ -579,32 +579,34 @@ export default function PropertyDetail() {
           <hr />
           {/* Google Maps */}
           {data.link_googlemaps && (
-            <Card sx={{ mt: 5 }}>
-              <CardContent>
-                <Typography variant="subtitle1" gutterBottom>
-                  Location
-                </Typography>
-                <Box
-                  sx={{
-                    position: 'relative',
-                    width: '100%',
+            <>
+              <Typography variant="h6" gutterBottom sx={{ px: 2, fontWeight: 'bold', mt: 3 }}>
+                Lokasi
+              </Typography>
+              <Card sx={{ mt: 2 }}>
+                <CardContent>
+                  <Box
+                    sx={{
+                      position: 'relative',
+                      width: '100%',
 
-                    height: 400,
-                    borderRadius: 1,
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: data.link_googlemaps
-                        .replace(/width="\d+"/, 'width="100%"')
-                        .replace(/height="\d+"/, 'height="100%"'),
+                      height: 400,
+                      borderRadius: 1,
+                      overflow: 'hidden',
                     }}
-                    style={{ width: '100%', height: '100%' }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
+                  >
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: data.link_googlemaps
+                          .replace(/width="\d+"/, 'width="100%"')
+                          .replace(/height="\d+"/, 'height="100%"'),
+                      }}
+                      style={{ width: '100%', height: '100%' }}
+                    />
+                  </Box>
+                </CardContent>
+              </Card>
+            </>
           )}
         </Box>
         <hr />

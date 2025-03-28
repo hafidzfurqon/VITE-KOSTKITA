@@ -6,7 +6,7 @@ export const useFetchDetailVisitProperty = (id) =>
     queryKey: ['get.detail', id],
     queryFn: async () => {
       const response = await axiosInstance.get(`${endpoints.visit_admin.detail}/${id}`);
-      console.log(response.data.data);
-      return response.data.data;
+      console.log(response.data.data.visit);
+      return response.data.data.visit;
     },
   });

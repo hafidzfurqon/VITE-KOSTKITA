@@ -29,10 +29,11 @@ export function DataDetailPropertyVisitView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-  const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
+  // const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
   // const { data : dataBooking } = ;
   // console.log(dataBooking)
   const { data = [], isLoading, isFetching } = useFetchDetailVisitProperty(id);
+  console.log(data)
   const [filterName, setFilterName] = useState('');
 
   // Menghindari re-render berulang saat data berubah

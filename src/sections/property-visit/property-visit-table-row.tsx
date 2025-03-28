@@ -4,11 +4,14 @@ import TableCell from '@mui/material/TableCell';
 import { Iconify } from 'src/components/iconify';
 import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { fDate } from 'src/utils/format-time';
 // ----------------------------------------------------------------------
 
 export type BookedProps = {
   id?: undefined | any | number;
   name: string;
+  status: string;
+  visit_date: string;
   property: { name: string };
   apartments: [
     {
@@ -34,6 +37,8 @@ export function PropertyVisitTableRow({ row, selected, onSelectRow }: VisitTable
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
         <TableCell align="center">{row?.property?.name}</TableCell>
+        <TableCell align="center">{row?.status}</TableCell>
+        <TableCell align="center">{fDate(row?.visit_date)}</TableCell>
         {/* <TableCell align="center">{booked[0]?.user?.name || 'No User'}</TableCell> */}
         <TableCell align="center">
           {/* {booked.map((b: any, index: number) => ( */}

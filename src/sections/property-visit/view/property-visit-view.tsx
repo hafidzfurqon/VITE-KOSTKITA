@@ -47,6 +47,7 @@ export function PropertyVisitView() {
       }),
     [data, table.order, table.orderBy, filterName]
   );
+  console.log(dataFiltered);
 
   const notFound = !dataFiltered.length && !!filterName;
 
@@ -90,6 +91,8 @@ export function PropertyVisitView() {
                   }
                   headLabel={[
                     { id: 'nama', label: 'Nama Property Yang di Kunjungi' },
+                    { id: 'status', label: 'Status' },
+                    { id: 'date', label: 'Tanggal Kunjungan' },
                     // { id: 'nama_user', label: 'Nama Pengguna' },
                     { id: 'action', label: 'Action' },
                   ]}
