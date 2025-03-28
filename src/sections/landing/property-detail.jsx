@@ -570,11 +570,9 @@ export default function PropertyDetail() {
             </>
           )}
           <Review propertyId={data.id} />
-
           <hr />
           <NearbyPlaces data={data} />
           <hr />
-
           {/* Google Maps */}
           {data.link_googlemaps && (
             <Card sx={{ mt: 5 }}>
@@ -641,6 +639,8 @@ export default function PropertyDetail() {
         </Box>
         <hr />
         <PolicyPage name={data?.name} description={data?.description} />
+        <hr />
+        <PropertyBaseLocation data={data.city.city_code} />
       </Box>
     </>
   );

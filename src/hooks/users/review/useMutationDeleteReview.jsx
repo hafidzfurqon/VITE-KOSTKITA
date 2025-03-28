@@ -6,9 +6,9 @@ export const useMutationDeleteReview = ({ onSuccess, onError }) =>
     mutationKey: ['delete.review'],
     mutationFn: async (id) => {
       const response = await axiosInstance.delete(
-        `${EndpointLandingPage.ratingreview.delete}${id}`
+        `${EndpointLandingPage.ratingreview.delete}/${id}`
       );
-      return response.data;
+      return response;
     },
     onSuccess,
     onError,
