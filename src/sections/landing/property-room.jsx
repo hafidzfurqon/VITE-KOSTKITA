@@ -169,13 +169,23 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                   {user ? (
                     !['admin', 'owner', 'owner_property'].includes(user.roles) ? (
                       <Button
-                        variant={bookingData?.room_id === room.id ? 'contained' : 'outlined'}
+                        variant={
+                          room.isBooked
+                            ? 'contained'
+                            : bookingData?.room_id === room.id
+                              ? 'contained'
+                              : 'outlined'
+                        }
+                        color={room.isBooked ? 'error' : 'primary'}
+                        disabled={room.isBooked} // Disable button jika kamar sudah dibooking
                         onClick={() => {
-                          selectRoom(room.id);
-                          navigate(`/booking/${slug}?room_id=${room.id}`); // Tambahkan room_id ke URL
+                          if (!room.isBooked) {
+                            selectRoom(room.id);
+                            navigate(`/booking/${slug}?room_id=${room.id}`); // Tambahkan room_id ke URL
+                          }
                         }}
                       >
-                        Pilih Kamar {room.name}
+                        {room.isBooked ? 'Sudah Dibooking' : `Pilih Kamar ${room.name}`}
                       </Button>
                     ) : null
                   ) : (

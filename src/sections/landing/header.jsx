@@ -21,7 +21,6 @@ import BusinessIcon from '@mui/icons-material/Business';
 import InfoIcon from '@mui/icons-material/Info';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import HistoryIcon from '@mui/icons-material/History';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link, useNavigate } from 'react-router-dom';
 import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
@@ -33,8 +32,9 @@ import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Dashboard, DashboardRounded, Person } from '@mui/icons-material';
+import { NotificationsPopover } from 'src/layouts/components/notifications-popover';
+import { _notifications } from 'src/_mock';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
@@ -100,6 +100,7 @@ export default function Header() {
       !isOwner && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
     !isAdmin &&
       !isOwner && { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
+    { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
 
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
     { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
@@ -156,37 +157,40 @@ export default function Header() {
           {!isSmallScreen && (
             <Box sx={{ ml: 'auto' }}>
               {isLoggedIn ? (
-                <AccountPopover
-                  data={[
-                    {
-                      label: 'Home',
-                      href: '/',
-                      icon: <HomeIcon />,
-                    },
-                    {
-                      label: isAdmin || isOwner ? 'Dashboard' : null,
-                      href: isAdmin || isOwner ? '/dashboard' : null,
-                      icon: isAdmin || isOwner ? <DashboardRounded /> : null,
-                    },
-                    {
-                      label: 'Profile',
-                      href: '/profile',
-                      icon: <Person />,
-                    },
-                    !isAdmin &&
-                      !isOwner && {
-                        label: 'Riwayat Booking',
-                        href: '/history/booking',
-                        icon: <HistoryIcon />,
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <NotificationsPopover data={_notifications} />
+                  <AccountPopover
+                    data={[
+                      {
+                        label: 'Home',
+                        href: '/',
+                        icon: <HomeIcon />,
                       },
-                    !isAdmin &&
-                      !isOwner && {
-                        label: 'Riwayat Visit',
-                        href: '/history/visit',
-                        icon: <HistoryIcon />,
+                      {
+                        label: isAdmin || isOwner ? 'Dashboard' : null,
+                        href: isAdmin || isOwner ? '/dashboard' : null,
+                        icon: isAdmin || isOwner ? <DashboardRounded /> : null,
                       },
-                  ]}
-                />
+                      {
+                        label: 'Profile',
+                        href: '/profile',
+                        icon: <Person />,
+                      },
+                      !isAdmin &&
+                        !isOwner && {
+                          label: 'Riwayat Booking',
+                          href: '/history/booking',
+                          icon: <HistoryIcon />,
+                        },
+                      !isAdmin &&
+                        !isOwner && {
+                          label: 'Riwayat Visit',
+                          href: '/history/visit',
+                          icon: <HistoryIcon />,
+                        },
+                    ]}
+                  />
+                </Box>
               ) : (
                 <Link to={router.auth.login} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <Button
@@ -238,6 +242,9 @@ export default function Header() {
                   >
                     Edit Profile &gt;
                   </Typography>
+                </Box>
+                <Box sx={{ position: 'absolute', right: 16 }}>
+                  <NotificationsPopover data={_notifications} />
                 </Box>
               </Box>
               <Divider />

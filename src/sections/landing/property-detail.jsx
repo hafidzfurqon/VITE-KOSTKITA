@@ -41,6 +41,7 @@ import NearbyPlaces from './nearbly-places';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
+  const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
   const [open, setOpen] = useState(false);
@@ -50,6 +51,7 @@ export default function PropertyDetail() {
   const [isWishlist, setIsWishlist] = useState(data?.is_wishlist ?? false);
   const { user } = authUser;
   const isOwnerId = user?.id;
+  const isAlreadyBooked = data?.bookings?.some((booking) => booking.user_id === user.id);
   const allFiles = data?.files?.map((file) => file) || [];
   const slides = allFiles.map((file) => file.file_url);
   console.log(slides);
@@ -146,7 +148,7 @@ export default function PropertyDetail() {
 
     try {
       if (isWishlist) {
-        await removeWishlist({ wishlist_ids: Array.isArray(data.id) ? data.id : [data.id] });
+        await removeWishlist({ wishlist_ids: [data.id] });
         setIsWishlist(false);
         enqueueSnackbar('Dihapus dari wishlist', { variant: 'success' });
       } else {
@@ -484,7 +486,7 @@ export default function PropertyDetail() {
                       variant="contained"
                       color="primary"
                       fullWidth
-                      disabled={isOwnerId === data.created_by.id}
+                      disabled={isOwnerId === data.created_by.id || isAlreadyBooked} // Tambahkan validasi booking
                       sx={{ mt: 2 }}
                       onClick={() => {
                         if (user.length === 0) {
@@ -500,7 +502,9 @@ export default function PropertyDetail() {
                     >
                       {isOwnerId === data.created_by.id
                         ? 'Property ini milik Anda'
-                        : 'Booking Sekarang'}
+                        : isAlreadyBooked
+                          ? 'Sudah Dipesan'
+                          : 'Booking Sekarang'}
                     </Button>
                   )}
 
