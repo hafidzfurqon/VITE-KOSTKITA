@@ -17,14 +17,16 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import HomeIcon from '@mui/icons-material/Home';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import FacilityModal from '../modal-facility';
 import { format, parseISO } from 'date-fns';
 import { useFetchVisitByCode } from 'src/hooks/users/useFetchVisitByCode';
+import { useAppContext } from 'src/context/user-context';
 
 export default function VisitDetail() {
   const { visitCode } = useParams();
-  const { data: visit, isLoading, isFetching, error } = useFetchVisitByCode(visitCode);
-  const [open, setOpen] = useState(false);
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
+  const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
+  const { data: visit, isLoading, isFetching, error } = useFetchVisitByCode(visitCode, isAdmin);
 
   if (isLoading || isFetching) {
     return (
@@ -48,9 +50,9 @@ export default function VisitDetail() {
     switch (status) {
       case 'pending':
         return 'warning';
-      case 'confirmed':
+      case 'approved':
         return 'success';
-      case 'canceled':
+      case 'rejected':
         return 'error';
       default:
         return 'default';
@@ -87,7 +89,7 @@ export default function VisitDetail() {
           sx={{ mb: 3 }}
         />
 
-        <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
+        <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 1 }}>
           <Box
             sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
           >
@@ -170,7 +172,7 @@ export default function VisitDetail() {
             Rp{visit.property?.start_price?.toLocaleString() || '0'} /bulan
           </Typography>
 
-          {visit.status === 'pending' && (
+          {visit.status === 'pending' && !isAdmin && (
             <Button variant="outlined" color="error" sx={{ mt: 2 }}>
               Batalkan Visit
             </Button>

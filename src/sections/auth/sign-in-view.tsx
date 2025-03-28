@@ -10,13 +10,15 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { useRouter } from 'src/routes/hooks';
 
 import { Iconify } from 'src/components/iconify';
-import { ListItemButton, Stack } from '@mui/material';
+import { Button, ListItemButton, Stack } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { useMutationLogin } from 'src/hooks/auth/useMutationLogin';
 
 import logo from '../../../public/assets/images/logo.png';
 import { useSnackbar } from 'src/components/snackbar';
 import { useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
+import { useMutationSendEmailVerify } from 'src/hooks/users/mutation';
 
 // ----------------------------------------------------------------------
 type Login = {
@@ -35,7 +37,7 @@ export function SignInView() {
 
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { mutate, isPending } = useMutationLogin({
+  const { mutate, isPending, error } = useMutationLogin({
     onSuccess: (data: any) => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
 
@@ -53,17 +55,30 @@ export function SignInView() {
       enqueueSnackbar('Login berhasil', { variant: 'success' });
     },
     onError: (err: any) => {
+      if (err.response?.status === 403) {
+        enqueueSnackbar('Email belum diverifikasi. Silakan cek email Anda.', { variant: 'error' });
+        return;
+      }
       if (err.response?.status === 404) {
-        enqueueSnackbar('Email Atau Password Salah tidak ditemukan', { variant: 'error' });
+        enqueueSnackbar('Email atau password salah', { variant: 'error' });
       }
       if (err.response?.status === 422) {
-        console.log(err)
-        enqueueSnackbar('Email Atau Password Wajib diisi', { variant: 'error' });
-      } 
+        enqueueSnackbar('Email atau password wajib diisi', { variant: 'error' });
+      }
     },
   });
 
+  const { mutate: mutateSendEmail, isPending: isPendingEmailSend } = useMutationSendEmailVerify({
+    onSuccess: () => {
+      enqueueSnackbar('Verifikasi Email Berhasil dikirim', {
+        variant: 'success',
+        autoHideDuration: 5000,
+      });
+    },
+  });
+  const userEmail: any = localStorage.getItem('email');
   const [showPassword, setShowPassword] = useState(false);
+
   const { register, handleSubmit } = useForm<Login>();
 
   const OnSubmit = (data: any) => {
@@ -104,6 +119,22 @@ export function SignInView() {
           }}
           sx={{ mb: 3 }}
         />
+        {(error as AxiosError)?.response?.status === 403 && (
+          <Box sx={{ display: 'flex', mb: 2, alignItems: 'center', flexDirection: 'column' }}>
+            <Typography component="span" color="red">
+              Email belum diverifikasi. Silahkan cek email anda. atau
+            </Typography>
+            <Button
+              onClick={() => userEmail && mutateSendEmail(userEmail)}
+              variant="text"
+              size="medium"
+              color="error"
+              sx={{ mt: 2 }}
+            >
+              {isPendingEmailSend ? 'Loading...' : 'Kirim ulang email verifikasi'}
+            </Button>
+          </Box>
+        )}
         <LoadingButton
           fullWidth
           size="large"

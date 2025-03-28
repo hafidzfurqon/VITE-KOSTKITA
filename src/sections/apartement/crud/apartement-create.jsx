@@ -43,7 +43,7 @@ import { Editor } from '@tinymce/tinymce-react';
 export const CreateApartement = () => {
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role) => role.name === 'admin');
+  const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const {
     data: facilities,
     isLoading,

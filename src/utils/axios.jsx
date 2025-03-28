@@ -144,6 +144,11 @@ export const endpoints = {
     detailIdVisit: '/api/user/visit/detail', // need id here
     detailCodeVisit: '/api/user/visit/detail/code', // need id here
   },
+  visit_admin: {
+    list: '/api/admin/property/visit/all',
+    detail: '/api/admin/property/visit/by_property_id',
+    detailCode: '/api/admin/property/visit/detail/code',
+  },
   profile: {
     update: '/api/user/profile/update',
     updatePassword: '/api/user/profile/update_password',

@@ -33,7 +33,7 @@ const PropertyBaseLocation = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
           <Typography
             variant="h3"
-            sx={{ fontSize: { xs: '19px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
+            sx={{ fontSize: { xs: '16px', md: '30px' }, fontWeight: 'bold', color: '#1F2937' }}
           >
             Cari hunian sesuai <span style={{ color: '#FFCC00' }}>lokasi</span>
           </Typography>
@@ -147,6 +147,7 @@ const PropertyBaseLocation = () => {
                   <img
                     src={lokasi.image}
                     alt="Promo"
+                    loading="lazy"
                     style={{ width: '100%', height: '200px', objectFit: 'cover' }}
                   />
                 </Box>

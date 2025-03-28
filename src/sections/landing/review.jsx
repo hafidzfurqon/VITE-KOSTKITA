@@ -306,8 +306,8 @@ export default function Review({ propertyId }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Batal</Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-            {loading ? 'Mengirim...' : editData ? 'Perbarui' : 'Kirim'}
+          <Button onClick={handleSubmit} variant="contained" disabled={mutationCreate.isPending}>
+            {mutationCreate.isPending ? 'Mengirim...' : editData ? 'Perbarui' : 'Kirim'}
           </Button>
         </DialogActions>
       </Dialog>

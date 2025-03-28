@@ -95,15 +95,15 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
             </Grid>
             <Grid item xs={12} md={8}>
               <CardContent>
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" fontWeight="bold" sx={{ pb: 1 }}>
                   {room.name}
                 </Typography>
-                <Stack direction="row" spacing={1} my={1} flexWrap="wrap">
-                  <Chip label={`${room.capacity} Orang`} />
-                  <Chip label={room.room_type.name} />
-                  <Chip label={`${room.area_size}m²`} />
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  <Chip label={`${room.capacity} Orang`} size="small" />
+                  <Chip label={room.room_type.name} size="small" />
+                  <Chip label={`${room.area_size}m²`} size="small" />
                 </Stack>
-                <Grid sx={{ my: 2 }} container spacing={2}>
+                <Grid sx={{ my: 2, pb: 1 }} container spacing={2}>
                   {room.room_facilities.slice(0, 4).map((facility) => (
                     <Grid item xs={6} key={facility.id}>
                       <Stack direction="row" alignItems="center">
@@ -227,6 +227,7 @@ function ImageSlider({ images }) {
             <Box key={index} className="keen-slider__slide">
               <img
                 src={image.file_url}
+                loading="lazy"
                 alt={`Property Image ${index}`}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />

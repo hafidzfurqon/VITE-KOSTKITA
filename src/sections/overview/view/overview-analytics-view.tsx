@@ -26,7 +26,7 @@ import axiosInstance from 'src/utils/axios';
 export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role: { name: string }) => role.name === 'admin');
+  const isAdmin = user?.roles?.some((role : {name : string}) => role.name.toLowerCase() === 'admin');
   const {
     data = [],
     isLoading,

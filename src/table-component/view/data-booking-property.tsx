@@ -2,13 +2,13 @@ import { useState, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from 'src/components/iconify';
+// import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
 import { BookedDetailPropertyTableRow } from '../data-booking-property-table-row';
@@ -17,19 +17,7 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { BookedPropertyTableToolbar } from '../data-booking-property-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-
-import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { DialogCreate } from 'src/component/DialogCreate';
 import { useAppContext } from 'src/context/user-context';
-import {
-  useFetchFacilityPropertyOwner,
-  useMutationCreateFacilitiesOwner,
-} from 'src/hooks/owner_property/fasilitas';
-import { useFetchAllBooking } from 'src/hooks/booking_admin';
 import { useFetchDetailBookedProperty } from 'src/hooks/property/booking';
 import { useParams } from 'react-router-dom';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
@@ -45,10 +33,6 @@ export function DataBookingProperty() {
   // console.log(dataBooking)
   const { data = [], isLoading, isFetching } = useFetchDetailBookedProperty(id);
   const [filterName, setFilterName] = useState('');
-  const [opened, setOpened] = useState(false);
-  const queryClient = useQueryClient();
-  const { enqueueSnackbar } = useSnackbar();
-  const { register, handleSubmit: handleSubmitForm, reset } = useForm();
 
   // Menghindari re-render berulang saat data berubah
   const dataFiltered = useMemo(
@@ -64,59 +48,12 @@ export function DataBookingProperty() {
   const notFound = !dataFiltered.length && !!filterName;
 
   // Menggunakan useCallback untuk menghindari re-render
-  const handleClickOpened = useCallback(() => setOpened(true), []);
-  const handleClose = useCallback(() => setOpened(false), []);
 
-  const { mutate, isPending: isPendingMutate } = isOwnerProperty
-    ? useMutationCreateFacilitiesOwner({
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['fetch.all.property.owner'] });
-          setOpened(false);
-          enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
-          reset();
-        },
-        onError: () => {
-          enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
-        },
-      })
-    : useMutationCreateFacilities({
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ['fetch.facilities'] });
-          setOpened(false);
-          enqueueSnackbar('Fasilitas berhasil dibuat', { variant: 'success' });
-          reset();
-        },
-        onError: () => {
-          enqueueSnackbar('Fasilitas gagal dibuat', { variant: 'error' });
-        },
-      });
-
-  // Fungsi submit juga menggunakan useCallback agar tidak dibuat ulang setiap render
-  const handleCreate = useCallback(
-    (data: any) => {
-      mutate(data);
-      handleClose();
-    },
-    [mutate, handleClose]
-  );
+  // const handleClose = useCallback(() => setOpened(false), []);
 
   if (isLoading || isFetching) {
     return <Loading />;
   }
-
-  const FieldRHF = (
-    <TextField
-      {...register('name')}
-      autoFocus
-      required
-      margin="dense"
-      id="nama"
-      label="Nama Fasilitas"
-      type="text"
-      fullWidth
-      variant="outlined"
-    />
-  );
   return (
     <>
       <DashboardContent>
@@ -191,7 +128,7 @@ export function DataBookingProperty() {
                   ) : (
                     <tr>
                       <td colSpan={5} style={{ textAlign: 'center', padding: '20px' }}>
-                        Belum ada data Tipe Properti
+                        Belum ada data Tipe Pengunjung
                       </td>
                     </tr>
                   )}
@@ -217,16 +154,6 @@ export function DataBookingProperty() {
           />
         </Card>
       </DashboardContent>
-      <DialogCreate
-        pending={isPendingMutate}
-        SubmitFormValue={handleCreate}
-        open={opened}
-        title="Create Nama Fasilitas"
-        subTitle="Fasilitas untuk coliving maupun apartemen"
-        setOpen={setOpened}
-        field={FieldRHF}
-        SubmitForm={handleSubmitForm}
-      />
     </>
   );
 }

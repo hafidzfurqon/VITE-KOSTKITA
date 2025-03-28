@@ -233,6 +233,7 @@ function ImageSlider({ images }) {
             <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
               <img
                 src={image.file_url}
+                loading="lazy"
                 alt={`Apartement Image ${index}`}
                 style={{ width: '100%', height: '200px', objectFit: 'cover' }}
               />

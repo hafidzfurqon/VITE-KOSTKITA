@@ -110,6 +110,7 @@ const ApartmentList = () => {
                   <img
                     src={apartment.files[0]?.file_url}
                     alt={apartment.name}
+                    loading="lazy"
                     style={{
                       width: '100%',
                       height: '100%',

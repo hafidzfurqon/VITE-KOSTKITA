@@ -166,11 +166,13 @@ export default function Header() {
                         href: '/',
                         icon: <HomeIcon />,
                       },
-                      {
-                        label: isAdmin || isOwner ? 'Dashboard' : null,
-                        href: isAdmin || isOwner ? '/dashboard' : null,
-                        icon: isAdmin || isOwner ? <DashboardRounded /> : null,
-                      },
+                      isAdmin || isOwner
+                        ? {
+                            label: 'Dashboard',
+                            href: '/dashboard',
+                            icon: <DashboardRounded />,
+                          }
+                        : null,
                       {
                         label: 'Profile',
                         href: '/profile',
@@ -188,7 +190,7 @@ export default function Header() {
                           href: '/history/visit',
                           icon: <HistoryIcon />,
                         },
-                    ]}
+                    ].filter(Boolean)} // Membersihkan item yang null atau false
                   />
                 </Box>
               ) : (
