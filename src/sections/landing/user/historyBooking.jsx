@@ -127,17 +127,21 @@ export default function HistoryBooking() {
                     </Typography>
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-                      <Typography variant="body2">
-                        Check-in:{' '}
-                        <b>
-                          {booking.check_in
-                            ? format(new Date(booking.check_in), 'dd MMM yyyy')
-                            : '-'}
-                        </b>
-                      </Typography>
-                      <Typography variant="body2">
-                        Check-out: <b>{format(new Date(booking.check_out), 'dd MMM yyyy')}</b>
-                      </Typography>
+                      {booking.status === 'confirm' ? (
+                        <>
+                          <Typography variant="body2">
+                            Check-in: <b>{format(new Date(booking.check_in), 'dd MMM yyyy')}</b>
+                          </Typography>
+                          <Typography variant="body2">
+                            Check-out: <b>{format(new Date(booking.check_out), 'dd MMM yyyy')}</b>
+                          </Typography>
+                        </>
+                      ) : (
+                        <Typography variant="body2">
+                          Tanggal Booking:{' '}
+                          <b>{format(new Date(booking.booking_date), 'dd MMM yyyy')}</b>
+                        </Typography>
+                      )}
                     </Box>
 
                     <Box sx={{ mt: 2 }}>
@@ -188,3 +192,128 @@ export default function HistoryBooking() {
     </Container>
   );
 }
+
+// function ImageSlider({ images }) {
+//   const [currentSlide, setCurrentSlide] = useState(0);
+
+//   const [sliderRef, instanceRef] = useKeenSlider({
+//     loop: true,
+//     slides: { perView: 1 },
+//     mode: 'free-snap',
+//     slideChanged(s) {
+//       setCurrentSlide(s.track.details.rel);
+//     },
+//   });
+
+//   const prevSlide = () => instanceRef.current?.prev();
+//   const nextSlide = () => instanceRef.current?.next();
+
+//   return (
+//     <Box
+//       sx={{
+//         position: 'relative',
+//         height: 200,
+//         backgroundColor: 'grey.300',
+//         '&:hover .slider-arrow': { opacity: 1 },
+//       }}
+//     >
+//       <Box ref={sliderRef} className="keen-slider">
+//         {images.length > 0 ? (
+//           images.map((image, index) => (
+//             <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
+//               <img
+//                 src={image.file_url}
+//                 alt={`Apartement Image ${index}`}
+//                 style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+//               />
+//             </Box>
+//           ))
+//         ) : (
+//           <Box
+//             className="keen-slider__slide"
+//             sx={{
+//               display: 'flex',
+//               alignItems: 'center',
+//               justifyContent: 'center',
+//               height: '100%',
+//               backgroundColor: 'gray',
+//             }}
+//           >
+//             <Typography variant="caption" color="white">
+//               No Image Available
+//             </Typography>
+//           </Box>
+//         )}
+//       </Box>
+
+//       {images.length > 1 && (
+//         <>
+//           <Box
+//             className="slider-arrow"
+//             sx={{
+//               position: 'absolute',
+//               top: '50%',
+//               left: 10,
+//               transform: 'translateY(-50%)',
+//               cursor: 'pointer',
+//               backgroundColor: 'white',
+//               color: 'black',
+//               p: 1,
+//               borderRadius: '20%',
+//               opacity: 0,
+//               transition: 'opacity 0.3s',
+//             }}
+//             onClick={prevSlide}
+//           >
+//             {'<'}
+//           </Box>
+//           <Box
+//             className="slider-arrow"
+//             sx={{
+//               position: 'absolute',
+//               top: '50%',
+//               right: 10,
+//               transform: 'translateY(-50%)',
+//               cursor: 'pointer',
+//               backgroundColor: 'white',
+//               color: 'black',
+//               p: 1,
+//               borderRadius: '20%',
+//               opacity: 0,
+//               transition: 'opacity 0.3s',
+//             }}
+//             onClick={nextSlide}
+//           >
+//             {'>'}
+//           </Box>
+//         </>
+//       )}
+
+//       {images.length > 1 && (
+//         <Box
+//           sx={{
+//             position: 'absolute',
+//             bottom: 10,
+//             left: '50%',
+//             transform: 'translateX(-50%)',
+//             display: 'flex',
+//             gap: 1,
+//           }}
+//         >
+//           {images.map((_, index) => (
+//             <Box
+//               key={index}
+//               sx={{
+//                 width: 8,
+//                 height: 8,
+//                 borderRadius: '50%',
+//                 backgroundColor: index === currentSlide ? 'black' : 'white',
+//                 opacity: index === currentSlide ? 1 : 0.5,
+//               }}
+//             />
+//           ))}
+//         </Box>
+//       )}
+//     </Box>
+//   );
+// }

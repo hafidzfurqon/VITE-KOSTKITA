@@ -17,6 +17,11 @@ import {
   Paper,
   Divider,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import ModalBookingSuccess from 'src/components/booking/ModalBookingSuccess';
@@ -42,6 +47,7 @@ export default function BookingView() {
   const { UserContextValue: authUser } = useAppContext();
   const [searchParams] = useSearchParams();
   const roomIdFromUrl = searchParams.get('room_id');
+  const [openConfirmModal, setOpenConfirmModal] = useState(false);
   const { user } = authUser;
   const steps = ['Data Penghuni', 'Check-in & Check-out', 'Konfirmasi & Selesai'];
 
@@ -68,6 +74,7 @@ export default function BookingView() {
   const { mutate, isPending } = userBooking({
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['list.property'] });
+      queryClient.invalidateQueries({ queryKey: ['fetch.nontification'] });
       enqueueSnackbar('Properti berhasil dibooking', { variant: 'success' });
       reset();
       setOpenSuccessModal(true);
@@ -84,6 +91,7 @@ export default function BookingView() {
       console.error('selectedServices bukan array:', selectedServices);
       return;
     }
+    setOpenConfirmModal(false);
 
     const finalBookingData = {
       ...bookingData,
@@ -235,7 +243,7 @@ export default function BookingView() {
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={confirmBooking}
+                  onClick={() => setOpenConfirmModal(true)}
                   disabled={isPending}
                 >
                   {isPending ? 'Memproses...' : 'Konfirmasi'}
@@ -258,6 +266,23 @@ export default function BookingView() {
         bookingCode={bookingCode}
         onReset={() => setOpenSuccessModal(false)}
       />
+
+      <Dialog open={openConfirmModal} onClose={() => setOpenConfirmModal(false)}>
+        <DialogTitle>Konfirmasi Booking</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Apakah Anda yakin ingin melakukan booking dengan detail yang sudah dimasukkan?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenConfirmModal(false)} color="secondary">
+            Batal
+          </Button>
+          <Button onClick={confirmBooking} color="primary" variant="contained">
+            Konfirmasi
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
