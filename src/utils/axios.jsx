@@ -88,7 +88,7 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
-      } 
+      }
     }
 
     return Promise.reject(error);
@@ -143,6 +143,11 @@ export const endpoints = {
     listVisit: '/api/user/visit/all',
     detailIdVisit: '/api/user/visit/detail', // need id here
     detailCodeVisit: '/api/user/visit/detail/code', // need id here
+  },
+  visit_admin: {
+    list: '/api/admin/property/visit/all',
+    detail: '/api/admin/property/visit/by_property_id',
+    detailCode: '/api/admin/property/visit/detail/code',
   },
   profile: {
     update: '/api/user/profile/update',

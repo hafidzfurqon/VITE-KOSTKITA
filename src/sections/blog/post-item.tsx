@@ -97,7 +97,7 @@ export function PostItem({
 }) {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role: any) => role.name === 'admin');
+  const isAdmin = user?.roles?.some((role : any) => role.name.toLowerCase() === 'admin');
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
 

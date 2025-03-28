@@ -18,6 +18,7 @@ export function SignUpView() {
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword2, setShowPassword2] = useState<boolean>(false);
   const { register, handleSubmit } = useForm();
   const {
     mutate: mutateSendEmail,
@@ -26,6 +27,7 @@ export function SignUpView() {
     onSuccess: () => {
       enqueueSnackbar('Pendaftaran Berhasil Verifikasi Email Telah dikirim', {
         variant: 'success',
+        autoHideDuration: 5000,
       });
     },
   });
@@ -128,12 +130,12 @@ export function SignUpView() {
           {...register('password_confirmation')}
           label="Konfirmasi Password"
           InputLabelProps={{ shrink: true }}
-          type={showPassword ? 'text' : 'password'}
+          type={showPassword2 ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
-                  <Iconify icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
+                <IconButton onClick={() => setShowPassword2(!showPassword2)} edge="end">
+                  <Iconify icon={showPassword2 ? 'solar:eye-bold' : 'solar:eye-closed-bold'} />
                 </IconButton>
               </InputAdornment>
             ),

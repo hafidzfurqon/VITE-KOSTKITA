@@ -6,6 +6,7 @@ import Loading from 'src/components/loading/loading';
 import { useSnackbar } from 'notistack';
 import { ContentCopy } from '@mui/icons-material';
 import { fDate } from 'src/utils/format-time';
+import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 
 const PromoDetails = () => {
   const { slug } = useParams();
@@ -22,32 +23,37 @@ const PromoDetails = () => {
   };
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 4 }}>
-      {/* Banner Image */}
-      <Box sx={{ position: 'relative', paddingTop: '56.25%', borderRadius: 2, overflow: 'hidden' }}>
-        <Box
-          component="img"
-          src={data.promo_image_url}
-          alt={data.name}
-          sx={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
-        />
-      </Box>
+    <Box sx={{ mt: 4 }}>
+      <CustomBreadcrumbs
+        links={[
+          { name: 'Home', href: '/' },
+          { name: 'Promo', href: '/promo' },
+          { name: <span dangerouslySetInnerHTML={{ __html: data.slug }} />, href: '' },
+        ]}
+        sx={{ mb: { xs: 3, md: 5 } }}
+      />
+      <Box
+        component="img"
+        src={data.promo_image_url}
+        alt={data.name}
+        sx={{
+          width: '100%',
+          height: '100%',
+          maxHeight: 500,
+          borderRadius: '10px',
+          objectFit: 'cover',
+        }}
+      />
+      {/* </Box> */}
 
       <Grid container spacing={4} sx={{ mt: 4 }}>
         {/* Promo Details */}
-        <Grid item xs={12} md={8}>
-          <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+        <Grid item xs={12} md={7}>
+          <Typography variant="h6" sx={{ fontWeight: 'bolder' }}>
             {data.name}
           </Typography>
           <Typography
-            variant="subtitle1"
+            variant="body1"
             sx={{ mt: 2 }}
             dangerouslySetInnerHTML={{ __html: data.description }}
           />
@@ -61,10 +67,14 @@ const PromoDetails = () => {
               Periode promo berlaku {fDate(data.start_date)} - {fDate(data.end_date)}
             </li>
           </ul>
+          <Typography variant="h6" sx={{ mt: 4, fontWeight: 'bold' }}>
+            Disclaimer
+          </Typography>
+          <Typography variant="subtitle1">{data.disclaimer}</Typography>
         </Grid>
 
         {/* Cara Pakai */}
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} md={5}>
           <Paper elevation={3} sx={{ p: 2, backgroundColor: '#F5ECE0' }}>
             <Typography variant="h6" color={`black`}>
               Cara Pakai
@@ -94,16 +104,13 @@ const PromoDetails = () => {
               sx={{ mt: 2 }}
               dangerouslySetInnerHTML={{ __html: data.how_to_use }}
             />
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa repellendus dolorum
+            omnis? Accusamus deserunt, voluptates at, corrupti enim molestiae libero nemo sapiente
+            laudantium iusto atque nulla facere nam, doloribus reiciendis.
           </Paper>
         </Grid>
       </Grid>
-
-      {/* Disclaimer */}
-      <Typography variant="h6" sx={{ mt: 4, fontWeight: 'bold' }}>
-        Disclaimer
-      </Typography>
-      <Typography variant="subtitle1">{data.disclaimer}</Typography>
-    </Container>
+    </Box>
   );
 };
 

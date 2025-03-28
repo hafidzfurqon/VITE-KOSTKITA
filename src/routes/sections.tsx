@@ -52,9 +52,11 @@ export const PropertyRoomPage = lazy(() => import('src/pages/property_room'));
 export const PropertyDetailPage = lazy(() => import('src/pages/property-detail-page'));
 export const RoomFasilitasPage = lazy(() => import('src/pages/room-fasilitas'));
 export const BookedPropertyPage = lazy(() => import('src/pages/booked-property'));
+export const VisitPropertyPage = lazy(() => import('src/pages/property-visit'));
 export const LayananPage = lazy(() => import('src/pages/services'));
 export const VerifyEmailPage = lazy(() => import('src/pages/verify-email'));
 export const DetailBooking = lazy(() => import('src/pages/detail-booking'));
+export const DetailVisit = lazy(() => import('src/pages/detail-visit'));
 export const DetailPromo = lazy(() => import('src/pages/promo-detail'));
 export const AddPromoToProperty = lazy(() => import('src/pages/add-promo-property'));
 export const PropertyRoomType = lazy(() => import('src/pages/property-room-type'));
@@ -96,8 +98,16 @@ export function Router() {
           element: <HistoryBookingDetailAdmin />,
         },
         {
+          path: 'visit/visit-property/detail/admin/:visitCode',
+          element: <VisitDetail />,
+        },
+        {
           path: 'booked-property/data-booking/:id',
           element: <DetailBooking />,
+        },
+        {
+          path: 'visit/data-visit/:id',
+          element: <DetailVisit />,
         },
         // untuk routing user
         {
@@ -215,7 +225,7 @@ export function Router() {
           children: [
             {
               path: '',
-              element: <div>Visit</div>,
+              element: <VisitPropertyPage />,
             },
             {
               path: 'create',

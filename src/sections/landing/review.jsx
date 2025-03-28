@@ -42,7 +42,8 @@ export default function Review({ propertyId }) {
       enqueueSnackbar('Ulasan berhasil ditambahkan', { variant: 'success' });
       handleClose();
     },
-    onError: () => enqueueSnackbar('Gagal menambahkan ulasan', { variant: 'error' }),
+    onError: () =>
+      enqueueSnackbar('Anda harus membooking property ini dahulu', { variant: 'error' }),
   });
 
   const mutationDelete = useMutationDeleteReview({
@@ -188,8 +189,8 @@ export default function Review({ propertyId }) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Batal</Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-            {loading ? 'Mengirim...' : editData ? 'Perbarui' : 'Kirim'}
+          <Button onClick={handleSubmit} variant="contained" disabled={mutationCreate.isPending}>
+            {mutationCreate.isPending ? 'Mengirim...' : editData ? 'Perbarui' : 'Kirim'}
           </Button>
         </DialogActions>
       </Dialog>

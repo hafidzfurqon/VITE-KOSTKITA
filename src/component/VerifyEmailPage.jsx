@@ -4,10 +4,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import logo from '../../public/assets/images/logo.png';
 import { useMutationVerifyEmail } from 'src/hooks/users/mutation';
 import Loading from 'src/components/loading/loading';
+import { useSnackbar } from 'notistack';
 
 const VerifyEmailPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const queryParams = new URLSearchParams(location.search);
   const token = queryParams.get('token');
 
@@ -23,6 +25,12 @@ const VerifyEmailPage = () => {
 
   if (isPending) {
     return <Loading />;
+  }
+  if (isSuccess) {
+    enqueueSnackbar('Akun ter verifikasi, silahkan login', { variant: 'success' });
+  }
+  if (isError) {
+    enqueueSnackbar('Token Telah kadaluarsa silahkan request kembali', { variant: 'error' });
   }
 
   if (isError) {

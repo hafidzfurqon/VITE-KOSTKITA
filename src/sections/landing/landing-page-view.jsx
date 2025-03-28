@@ -277,16 +277,15 @@ export function LandingPage() {
           </Container>
         </Box>
         <Box sx={{ backgroundColor: 'white', pt: 5, pb: 5 }}>
-          <Container>
-            <PropertyBaseLocation />
-          </Container>
+          {/* <Container> */}
+          <PropertyBaseLocation />
+          {/* </Container> */}
         </Box>
 
         <Box sx={{ bgcolor: 'white', pt: 5, pb: 10, px: 3 }}>
           <Box sx={{ mt: 2 }}>
             <Container>
-
-            <ApartementGrid />
+              <ApartementGrid />
             </Container>
           </Box>
         </Box>
@@ -400,6 +399,7 @@ export function LandingPage() {
                   <img
                     src="https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg"
                     alt="Muhammad Hafidz"
+                    loading="lazy"
                     style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
                   />
                 </Box>
@@ -483,6 +483,7 @@ export function LandingPage() {
                   <img
                     src="https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/4/b25bf50d-8f4.jpg"
                     alt="Muhammad Hafidz"
+                    loading="lazy"
                     style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}
                   />
                 </Box>

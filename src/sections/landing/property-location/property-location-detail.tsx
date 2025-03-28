@@ -119,6 +119,7 @@ const PropertyLocationDetail = () => {
                   <img
                     src={coliving.files[0]?.file_url}
                     alt={coliving.name}
+                    loading="lazy"
                     style={{
                       width: '100%',
                       height: '100%',

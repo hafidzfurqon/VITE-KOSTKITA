@@ -224,7 +224,7 @@ export default function PropertyDetail() {
         <meta property="og:description" content={`${data.description}`} />
         <meta property="og:image" content={`${data?.files[0]?.file_url}`} />
       </Helmet>
-      <Box sx={{ py: 4 }}>
+      <Box>
         {/* Breadcrumbs */}
         <Box sx={{ display: 'grid', width: '100%' }}>
           <CustomBreadcrumbs
@@ -271,7 +271,13 @@ export default function PropertyDetail() {
                     {...srcset(image, 121)}
                     alt={`Gallery Image ${index + 1}`}
                     loading="lazy"
-                    style={{ objectFit: 'cover', width: '100%', height: '100%' }}
+                    style={{
+                      objectFit: 'cover',
+                      width: '100%',
+                      height: '100%',
+                      borderTopLeftRadius: '5px',
+                      borderBottomLeftRadius: '5px',
+                    }}
                   />
                 </ImageListItem>
               ))}

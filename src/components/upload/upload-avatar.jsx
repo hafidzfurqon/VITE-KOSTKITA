@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 //
-import {Iconify} from '../iconify';
+import { Iconify } from '../iconify';
 import Image from '../image';
 //
 import RejectionFiles from './errors-rejection-files';
@@ -22,7 +22,7 @@ export default function UploadAvatar({ error, file, disabled, helperText, sx, ..
     },
     ...other,
   });
-
+  console.log(file);
   const hasFile = !!file;
 
   const hasError = isDragReject || !!error;
@@ -93,6 +93,7 @@ export default function UploadAvatar({ error, file, disabled, helperText, sx, ..
       }}
     >
       {renderPreview}
+      {/* <img src={file} alt="" /> */}
       {renderPlaceholder}
     </Box>
   );

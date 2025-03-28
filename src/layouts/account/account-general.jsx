@@ -123,6 +123,7 @@ export default function AccountGeneral() {
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
+
       if (file) {
         const validFormats = ['image/jpeg', 'image/png', 'image/jpg'];
         if (!validFormats.includes(file.type)) {
@@ -133,11 +134,26 @@ export default function AccountGeneral() {
           enqueueSnackbar('Ukuran file terlalu besar (maks 3MB)', { variant: 'error' });
           return;
         }
-        setValue('photo_profile', file, { shouldValidate: true });
+
+        const preview = Object.assign(file, {
+          preview: URL.createObjectURL(file),
+        });
+
+        setValue('photo_profile', preview, { shouldValidate: true });
       }
     },
-    [setValue, enqueueSnackbar]
+    [enqueueSnackbar, setValue]
   );
+
+  useEffect(() => {
+    const currentFile = methods.watch('photo_profile');
+
+    return () => {
+      if (currentFile && typeof currentFile === 'object' && currentFile.preview) {
+        URL.revokeObjectURL(currentFile.preview);
+      }
+    };
+  }, [methods.watch('photo_profile')]);
 
   if (loading) {
     return (
