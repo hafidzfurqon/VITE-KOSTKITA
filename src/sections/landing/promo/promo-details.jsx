@@ -104,9 +104,6 @@ const PromoDetails = () => {
               sx={{ mt: 2 }}
               dangerouslySetInnerHTML={{ __html: data.how_to_use }}
             />
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Culpa repellendus dolorum
-            omnis? Accusamus deserunt, voluptates at, corrupti enim molestiae libero nemo sapiente
-            laudantium iusto atque nulla facere nam, doloribus reiciendis.
           </Paper>
         </Grid>
       </Grid>
