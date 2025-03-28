@@ -106,6 +106,11 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
       >
         {filteredDataToColiving?.map((property) => {
           const hasDiscount = property.discounts.length > 0;
+          const currentDate = new Date();
+          const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
+          const hasPromo = property.promos.length > 0;
+
+          console.log(activePromos);
           return (
             <Box
               key={property.id}
@@ -210,16 +215,16 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                             size="small"
                           />
                         )}
-                        {property.promos && property.promos.length > 0 && (
-                          <Chip
-                            icon={<Home fontSize="small" />}
-                            label={`${
-                              property.promos.length
-                            } Voucher s.d. ${fPercent(property.promos[0]?.discount_value)}`}
-                            variant="outlined"
-                            size="small"
-                          />
-                        )}
+
+                        {hasPromo &&
+                          activePromos.map((promo, index) => (
+                            <Chip
+                              key={index}
+                              label={promo.code} // Pastikan 'promo' memiliki properti 'code'
+                              color="primary"
+                              sx={{ position: 'absolute', top: 10, left: 10 }}
+                            />
+                          ))}
                       </Stack>
                     </>
                   ) : (

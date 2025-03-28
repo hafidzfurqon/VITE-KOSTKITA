@@ -53,7 +53,14 @@ const PropertyBaseLocation = ({ data: cityCode, id }) => {
         <Carousel responsive={responsive} infinite autoPlay>
           {propertyList?.map((item) => {
             const hasDiscount = item.discounts && item.discounts.length > 0;
-            // const
+            const currentDate = new Date();
+            const activePromos = item.promos; // Menampilkan semua promo tanpa filter tanggal
+
+
+            console.log(item);
+            console.log('Item Promos:', item.promos);
+            console.log('Active Promos:', activePromos);
+
             return (
               <Box key={item.id}>
                 <Link
@@ -153,13 +160,11 @@ const PropertyBaseLocation = ({ data: cityCode, id }) => {
                             size="small"
                           />
                         )}
-                        {item.promos && item.promos.length > 0 && (
+                        {activePromos.length > 0 && (
                           <Chip
-                            label={`${
-                              item.promos.length
-                            } Voucher s.d. ${fPercent(item.promos[0]?.discount_value)}`}
-                            variant="outlined"
-                            size="small"
+                            label="Promo"
+                            color="primary"
+                            sx={{ position: 'absolute', top: 10, left: 10 }}
                           />
                         )}
                       </Stack>
