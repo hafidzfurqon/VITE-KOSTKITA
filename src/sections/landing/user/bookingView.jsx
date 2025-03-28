@@ -80,14 +80,22 @@ export default function BookingView() {
   });
 
   const confirmBooking = () => {
+    if (!Array.isArray(selectedServices)) {
+      console.error('selectedServices bukan array:', selectedServices);
+      return;
+    }
+
     const finalBookingData = {
       ...bookingData,
       room_id: roomIdFromUrl,
       property_id: defaultValues?.id,
-      additional_services: selectedServices.map((service) => service.id), // Tambahkan ini
+      additional_services: selectedServices.map((service) => service.id),
     };
+
     mutate(finalBookingData);
   };
+
+  console.log(selectedServices);
 
   if (isLoading) {
     return (
@@ -99,7 +107,26 @@ export default function BookingView() {
 
   const totalHarga =
     parseInt(bookingData.discounted_price || 0) +
-    selectedServices.reduce((sum, service) => sum + service.price, 0);
+    (Array.isArray(selectedServices)
+      ? selectedServices.reduce((sum, service) => sum + (service.price || 0), 0)
+      : 0);
+
+  const handleServiceSubmit = (selectedServices) => {
+    console.log('Layanan yang dipilih:', selectedServices);
+    setSelectedServices(selectedServices); // Tambahkan ini
+    setBookingData((prev) => ({
+      ...prev,
+      selectedServices,
+    }));
+  };
+
+  const removeService = (id) => {
+    setSelectedServices((prev) => prev.filter((service) => service.id !== id));
+    setBookingData((prev) => ({
+      ...prev,
+      selectedServices: prev.selectedServices.filter((service) => service.id !== id),
+    }));
+  };
 
   return (
     <Container maxWidth="md">
@@ -159,22 +186,22 @@ export default function BookingView() {
                   </Button>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>Check-in:</Typography>
+                  <Typography>Tanggal Booking:</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography fontWeight="bold">{bookingData.booking_date}</Typography>
                 </Grid>
-                <Grid item xs={6}>
-                  <Typography>Check-out:</Typography>
-                </Grid>
-                <Grid item xs={6}>
-                  <Typography fontWeight="bold">{bookingData.check_out}</Typography>
-                </Grid>
+                {/* <Grid item xs={6}>
+                    <Typography>Check-out:</Typography>
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography fontWeight="bold">{bookingData.check_out}</Typography>
+                  </Grid> */}
                 <Grid item xs={6}>
                   <Typography>Durasi:</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography fontWeight="bold">{bookingData.months} Bulan</Typography>
+                  <Typography fontWeight="bold">{bookingData.total_booking_month} Bulan</Typography>
                 </Grid>
                 <Grid item xs={6}>
                   <Typography>Harga</Typography>
@@ -188,15 +215,19 @@ export default function BookingView() {
               <Button variant="outlined" onClick={() => setOpenModal(true)}>
                 Pilih Jasa Layanan
               </Button>
-              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 1 }}>
-                {selectedServices.length ? (
-                  selectedServices.map((service, index) => (
-                    <Chip key={index} label={service} color="primary" />
-                  ))
-                ) : (
-                  <Typography>Tidak ada Servis Tambahan</Typography>
-                )}
-              </Box>
+              {selectedServices.length ? (
+                selectedServices.map((service, index) => (
+                  <Chip
+                    key={index}
+                    label={service.name}
+                    color="primary"
+                    onDelete={() => removeService(service.id)}
+                  />
+                ))
+              ) : (
+                <Typography>Tidak ada Servis Tambahan</Typography>
+              )}
+
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                 <Button variant="outlined" onClick={prevStep}>
                   Kembali
@@ -217,8 +248,10 @@ export default function BookingView() {
       <ModalJasaLayanan
         open={openModal}
         onClose={() => setOpenModal(false)}
-        onSubmit={setSelectedServices}
+        onSubmit={handleServiceSubmit}
+        bookedServices={selectedServices} // Perbaiki di sini
       />
+
       <DetailDataPenghuni open={modalUser} onClose={() => setModalUser(false)} data={bookingData} />
       <ModalBookingSuccess
         open={openSuccessModal}

@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from 'react';
 export default function Step2DateSelection({ onNext, startPrice, discounts, savedData }) {
   const [checkIn, setCheckIn] = useState(savedData?.check_in || '');
   const [months, setMonths] = useState(savedData?.months || 1);
+  const [checkInTouched, setCheckInTouched] = useState(false);
 
   useEffect(() => {
     if (savedData) {
@@ -11,13 +12,6 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
       setMonths(savedData.months || 1);
     }
   }, [savedData]);
-
-  const checkOut = useMemo(() => {
-    if (!checkIn) return '';
-    return new Date(new Date(checkIn).setMonth(new Date(checkIn).getMonth() + months))
-      .toISOString()
-      .split('T')[0];
-  }, [checkIn, months]);
 
   const applicableDiscount = useMemo(() => {
     return discounts?.find(
@@ -39,26 +33,19 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
 
   const handleNext = () => {
     if (!checkIn) {
-      alert('Tanggal check-in wajib diisi.');
+      alert('Tanggal booking wajib diisi.');
       return;
     }
     if (!months || months < 1) {
-      alert('Durasi sewa wajib diisi.');
+      alert('Durasi booking wajib diisi.');
       return;
     }
 
     const nextData = {
-      booking_date: checkIn, // Ubah nama key sesuai kebutuhan API
-      total_booking_month: months, // Pastikan sesuai dengan request API
-      check_out: checkOut,
-      discounted_price: discountedPrice,
+      booking_date: checkIn, // Sesuai kebutuhan API
+      total_booking_month: months, // Sesuai kebutuhan API
+      discounted_price: discountedPrice, // Harga masih dipertahankan
     };
-
-    if (applicableDiscount) {
-      nextData.property_discount_id = applicableDiscount.property_discount_id || null;
-      nextData.property_room_discount_id = applicableDiscount.property_room_discount_id || null;
-      nextData.promo_id = applicableDiscount.promo_id || null;
-    }
 
     onNext(nextData);
   };
@@ -66,29 +53,20 @@ export default function Step2DateSelection({ onNext, startPrice, discounts, save
   return (
     <Box sx={{ p: 2, maxWidth: 600, mx: 'auto' }}>
       <Typography variant="h6" gutterBottom>
-        Pilih Tanggal Check-in
+        Pilih Tanggal Booking
       </Typography>
       <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
+        <Grid item xs={12}>
           <TextField
             label="Check-in"
             type="date"
             fullWidth
             value={checkIn}
             onChange={(e) => setCheckIn(e.target.value)}
+            onBlur={() => setCheckInTouched(true)} // Menandai bahwa input sudah disentuh
             InputLabelProps={{ shrink: true }}
-            error={!checkIn}
-            helperText={!checkIn ? 'Tanggal check-in wajib diisi.' : ''}
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            label="Check-out"
-            type="date"
-            fullWidth
-            value={checkOut}
-            disabled
-            InputLabelProps={{ shrink: true }}
+            error={checkInTouched && !checkIn} // Error hanya muncul jika input kosong setelah disentuh
+            helperText={checkInTouched && !checkIn ? 'Tanggal check-in wajib diisi.' : ''}
           />
         </Grid>
         <Grid item xs={12}>
