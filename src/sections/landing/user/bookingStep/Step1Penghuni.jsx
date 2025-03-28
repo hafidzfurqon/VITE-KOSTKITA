@@ -12,10 +12,12 @@ import {
   Checkbox,
 } from '@mui/material';
 import { Delete } from '@mui/icons-material';
+import { useSnackbar } from 'notistack';
 
 export default function Step1Penghuni({ onNext, user, savedata }) {
   const [occupant, setOccupant] = useState(savedata?.occupant || 'user');
   const [includeUser, setIncludeUser] = useState(savedata?.includeUser || false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const defaultOccupant = {
     fullname: '',
@@ -31,7 +33,6 @@ export default function Step1Penghuni({ onNext, user, savedata }) {
     savedata?.booking_user_data?.occupants || [defaultOccupant]
   );
 
-  // Saat "Saya sendiri" dipilih, isi otomatis dengan data user
   useEffect(() => {
     if (occupant === 'user') {
       setOccupants([
@@ -66,6 +67,11 @@ export default function Step1Penghuni({ onNext, user, savedata }) {
   };
 
   const handleNext = () => {
+    if (!isFormValid) {
+      enqueueSnackbar('Data belum lengkap, harap isi semua kolom.', { variant: 'error' });
+      return;
+    }
+
     let bookingUserData = [...occupants];
 
     if (includeUser) {

@@ -33,8 +33,10 @@ import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import { Dashboard, DashboardRounded, Person } from '@mui/icons-material';
-import { NotificationsPopover } from 'src/layouts/components/notifications-popover';
-import { _notifications } from 'src/_mock';
+import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontification';
+import { Notifications } from 'src/layouts/account/notification';
+// import { NotificationsPopover } from 'src/layouts/components/notifications-popover';
+// import { _notifications } from 'src/_mock';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
@@ -61,6 +63,24 @@ export default function Header() {
       enqueueSnackbar(error.message, { variant: 'error' });
     },
   });
+
+  const { data: _notifications, isLoading, isError } = useFetchNontification();
+  // console.log(notifications);
+  const mapNotifications = (data = []) => {
+    return data.map((item) => ({
+      id: item.id,
+      title: item.data?.title || 'Notifikasi',
+      isUnRead: item.read_at === null,
+      description: item.data?.message || '',
+      avatarUrl: item.data?.image || null,
+      postedAt: item.created_at,
+    }));
+  };
+
+  const notifications = mapNotifications(_notifications?.data || []);
+
+  // Terapkan mapping ke data notifikasi
+  // const notifications = ;
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -160,7 +180,21 @@ export default function Header() {
             <Box sx={{ ml: 'auto' }}>
               {isLoggedIn ? (
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <NotificationsPopover data={_notifications} />
+                  {isLoading ? (
+                    <Typography variant="body2" color="textSecondary">
+                      Memuat notifikasi...
+                    </Typography>
+                  ) : isError ? (
+                    <Typography variant="body2" color="error">
+                      Gagal memuat notifikasi
+                    </Typography>
+                  ) : notifications.length > 0 ? (
+                    <Notifications data={notifications} />
+                  ) : (
+                    <Typography variant="body2" color="textSecondary">
+                      Tidak ada notifikasi baru
+                    </Typography>
+                  )}
                   <AccountPopover
                     data={[
                       {
@@ -248,7 +282,21 @@ export default function Header() {
                   </Typography>
                 </Box>
                 <Box sx={{ position: 'absolute', right: 16 }}>
-                  <NotificationsPopover data={_notifications} />
+                  {isLoading ? (
+                    <Typography variant="body2" color="textSecondary">
+                      Memuat notifikasi...
+                    </Typography>
+                  ) : isError ? (
+                    <Typography variant="body2" color="error">
+                      Gagal memuat notifikasi
+                    </Typography>
+                  ) : notifications.length > 0 ? (
+                    <Notifications data={notifications} />
+                  ) : (
+                    <Typography variant="body2" color="textSecondary">
+                      Tidak ada notifikasi baru
+                    </Typography>
+                  )}
                 </Box>
               </Box>
               <Divider />

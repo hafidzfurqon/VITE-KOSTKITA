@@ -338,6 +338,9 @@ export const EndpointLandingPage = {
       },
     },
   },
+  nontification: {
+    getNontification: '/api/user/notification',
+  },
   booking: {
     getBookingDetail: '/api/user/booking/property/detail',
     getBookingAll: '/api/user/booking/property/all',
