@@ -1,20 +1,26 @@
 import { Box, Typography, Chip, Stack, Container } from '@mui/material';
-import { Link } from 'react-router-dom';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
-import 'keen-slider/keen-slider.min.css';
+
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
-import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import { fCurrency, fPercent } from 'src/utils/format-number';
-// import { fchmod } from 'fs';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
   // const numberSortsortCardBy[0] === 'apartment' ?
 
   // const router = useRouter();
-
+  const [isHovered, setIsHovered] = useState(false);
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+  const navigate = useNavigate();
   // const [sortBy, setSortBy] = useState(['coliving', 'kost']);
 
   const formatCurrency = (price) =>
@@ -34,28 +40,28 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
     sortCardBy.includes(item.type.name.toLowerCase())
   );
   console.log(sortCardBy);
-  const responsive = {
-    superLargeDesktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 4,
-      partialVisibilityGutter: 40,
-    },
-    desktop: {
-      breakpoint: { max: 1024, min: 768 },
-      items: 3,
-      partialVisibilityGutter: 30,
-    },
-    tablet: {
-      breakpoint: { max: 768, min: 464 },
-      items: 2,
-      partialVisibilityGutter: 20,
-    },
-    mobile: {
-      breakpoint: { max: 464, min: 0 },
-      items: 1,
-      partialVisibilityGutter: 10,
-    },
-  };
+  // const responsive = {
+  //   superLargeDesktop: {
+  //     breakpoint: { max: 3000, min: 1024 },
+  //     items: 4,
+  //     partialVisibilityGutter: 40,
+  //   },
+  //   desktop: {
+  //     breakpoint: { max: 1024, min: 768 },
+  //     items: 3,
+  //     partialVisibilityGutter: 30,
+  //   },
+  //   tablet: {
+  //     breakpoint: { max: 768, min: 464 },
+  //     items: 2,
+  //     partialVisibilityGutter: 20,
+  //   },
+  //   mobile: {
+  //     breakpoint: { max: 464, min: 0 },
+  //     items: 1,
+  //     partialVisibilityGutter: 10,
+  //   },
+  // };
 
   if (
     !filteredDataToColiving ||
@@ -88,51 +94,102 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   }
 
   return (
-    <Container maxWidth="100%" sx={{ px: 0, mt: 3 }}>
+    <Box maxWidth="100%" sx={{ px: 0, mt: 3 }}>
       {/* <Box position="relative"> */}
       {/* <Box */}
       {/* displayedData */}
-      <Carousel
-        responsive={responsive}
-        swipeable={true}
-        draggable={true}
-        infinite={true}
-        autoPlay={true}
-        autoPlaySpeed={4500}
-        keyBoardControl={true}
-        transitionDuration={500}
-        containerClass="carousel-container"
-        itemClass="carousel-item-padding"
+      <Box
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        sx={{ position: 'relative' }}
       >
-        {filteredDataToColiving?.map((property) => {
-          const hasDiscount = property.discounts.length > 0;
-          const currentDate = new Date();
-          const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
-          const hasPromo = property.promos.length > 0;
+        <Box
+          ref={prevRef}
+          className="custom-prev"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: 0,
+            transform: 'translateY(-50%)',
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            transition: '0.3s',
+            opacity: isHovered ? 1 : 0,
+          }}
+        >
+          <ArrowBackIosNewIcon sx={{ color: '#fff', fontSize: 20 }} />
+        </Box>
+        <Box
+          ref={nextRef}
+          className="custom-next"
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            right: 0,
+            transform: 'translateY(-50%)',
+            zIndex: 10,
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            width: 50,
+            height: 50,
+            borderRadius: '50%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            cursor: 'pointer',
+            transition: '0.3s',
+            opacity: isHovered ? 1 : 0,
+          }}
+        >
+          <ArrowForwardIosIcon sx={{ color: '#fff', fontSize: 20 }} />
+        </Box>
 
-          console.log(activePromos);
-          return (
-            <Box
-              key={property.id}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: 2,
-                overflow: 'hidden',
-                boxShadow: 1,
-                '&:hover': { boxShadow: 3 },
-                m: 1, // Tambahkan margin agar tidak menempel
-              }}
-            >
-              <Link
-                to={`/property/${property.slug}`}
-                style={{ textDecoration: 'none', display: 'block' }}
+        <Swiper
+          modules={[Navigation]}
+          spaceBetween={10}
+          slidesPerView={1.2} // Default untuk layar kecil
+          breakpoints={{
+            640: { slidesPerView: 1.5 }, // Menampilkan 1.5 slide pada layar >= 640px
+            768: { slidesPerView: 2 }, // 2 slide pada tablet
+            1024: { slidesPerView: 4 }, // 3 slide pada desktop
+          }}
+          navigation={{
+            prevEl: prevRef.current,
+            nextEl: nextRef.current,
+          }}
+          onInit={(swiper) => {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+            swiper.navigation.init();
+            swiper.navigation.update();
+          }}
+        >
+          {filteredDataToColiving?.map((property) => {
+            const hasDiscount = property.discounts.length > 0;
+            const currentDate = new Date();
+            const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
+            const hasPromo = property.promos.length > 0;
+
+            console.log(activePromos);
+            return (
+              <SwiperSlide
+                key={property.id}
+                onClick={() => navigate(`/property/${property.slug}`)}
+                style={{ cursor: 'pointer' }}
               >
                 <Box
                   sx={{
-                    borderRadius: 1,
+                    borderRadius: '10px',
                     overflow: 'hidden',
-                    boxShadow: 1,
-                    '&:hover': { boxShadow: 3 },
+                    boxShadow: 3,
+                    // transition: 'transform 0.3s ease',
+                    // '&:hover': { transform: 'translateY(-4px)', boxShadow: 5 },
                   }}
                 >
                   <img
@@ -237,11 +294,12 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                     </Typography>
                   )}
                 </Box>
-              </Link>
-            </Box>
-          );
-        })}
-      </Carousel>
-    </Container>
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+        {/* </Carousel> */}
+      </Box>
+    </Box>
   );
 }

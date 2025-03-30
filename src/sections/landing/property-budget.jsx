@@ -1,27 +1,39 @@
-import { useState } from 'react';
-import { Box, Typography, Chip, Stack, Container } from '@mui/material';
+import { Box, Typography, Chip, Stack, Container, Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import { useRouter } from 'src/routes/hooks';
 import Loading from 'src/components/loading/loading';
-import Carousel from 'react-multi-carousel';
-import 'react-multi-carousel/lib/styles.css';
+
+// import 'react-multi-carousel/lib/styles.css';
 import { useKeenSlider } from 'keen-slider/react';
+import { useRef, useState } from 'react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import { useNavigate } from 'react-router-dom';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import 'keen-slider/keen-slider.min.css';
+import { Home } from '@mui/icons-material';
+import ApartmentList from './apartement/apartemen-page-list';
+import { fCurrency } from 'src/utils/format-number';
 
 export default function PropertyBudgety() {
   const { data, isLoading, isFetching } = useListProperty();
   const [selectedRange, setSelectedRange] = useState(null);
-
+  const [sliderRef] = useKeenSlider({
+    slides: { perView: 1.2, spacing: 10 },
+    breakpoints: {
+      '(min-width: 640px)': { slides: { perView: 1.5 } },
+      '(min-width: 768px)': { slides: { perView: 2 } },
+      '(min-width: 1024px)': { slides: { perView: 4 } },
+    },
+  });
+  const prevRef = useRef(null);
+  const nextRef = useRef(null);
+  const navigate = useNavigate();
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
-
-  const responsive = {
-    superLargeDesktop: { breakpoint: { max: 3000, min: 1024 }, items: 4 },
-    desktop: { breakpoint: { max: 1024, min: 768 }, items: 3 },
-    tablet: { breakpoint: { max: 768, min: 464 }, items: 2 },
-    mobile: { breakpoint: { max: 464, min: 0 }, items: 1 },
-  };
 
   if (isLoading || isFetching) return <Loading />;
   if (!data || data.length === 0)
@@ -86,225 +98,105 @@ export default function PropertyBudgety() {
       </Box>
 
       <Box mt={2} maxWidth="100%" sx={{ px: 0 }}>
-        <Carousel
-          responsive={responsive}
-          swipeable
-          draggable
-          infinite
-          autoPlay
-          autoPlaySpeed={4500}
-          keyBoardControl
-          transitionDuration={500}
-        >
-          {filteredProperties.slice(0, 4).map((property) => (
-            <Box
-              key={property.id}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: 2,
-                m: 1,
-                overflow: 'hidden',
-                boxShadow: 1,
-                '&:hover': { boxShadow: 3 },
-              }}
-            >
-              <ImageSlider images={property.files} />
-              <Link
-                to={`/property/${property.slug}`}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <Box sx={{ p: 2 }}>
-                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-                    {property.name}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
-                    {property.address}, {property.city.name}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                  >
-                    {formatCurrency(property.start_price)} / bulan
-                  </Typography>
+        <Box sx={{ position: 'relative', width: '100%', p: 2 }}>
+          {/* Grid Layout for Desktop */}
+          <Grid container spacing={2} sx={{ display: { xs: 'none', md: 'flex' }, mt: 3 }}>
+            {filteredProperties.map((coliving) => (
+              <Grid item xs={12} sm={6} md={4} lg={3} key={coliving.id}>
+                <PropertyCard coliving={coliving} />
+              </Grid>
+            ))}
+          </Grid>
+          <Box ref={sliderRef} className="keen-slider">
+            <Box sx={{ display: { xs: 'flex', md: 'none' }, mt: 3 }}>
+              {filteredProperties.map((coliving) => (
+                <Box key={coliving.id} className="keen-slider__slide">
+                  <PropertyCard coliving={coliving} />
                 </Box>
-              </Link>
+              ))}
             </Box>
-          ))}
-        </Carousel>
-      </Box>
-      <Box mt={2} maxWidth="100%" sx={{ px: 0 }}>
-        <Carousel
-          responsive={responsive}
-          swipeable
-          draggable
-          infinite
-          autoPlay
-          autoPlaySpeed={4500}
-          keyBoardControl
-          transitionDuration={500}
-        >
-          {filteredProperties.slice(4, 8).map((property) => (
-            <Box
-              key={property.id}
-              sx={{
-                backgroundColor: 'white',
-                borderRadius: 2,
-                m: 1,
-                overflow: 'hidden',
-                boxShadow: 1,
-                '&:hover': { boxShadow: 3 },
-              }}
-            >
-              <ImageSlider images={property.files} />
-              <Link
-                to={`/property/${property.slug}`}
-                style={{ textDecoration: 'none', display: 'block' }}
-              >
-                <Box sx={{ p: 2 }}>
-                  <Typography sx={{ fontWeight: 700, mb: 0.5, color: 'black', fontSize: 16 }}>
-                    {property.name}
-                  </Typography>
-                  <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px' }}>
-                    {property.address}, {property.city.name}
-                  </Typography>
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                  >
-                    {formatCurrency(property.start_price)} / bulan
-                  </Typography>
-                </Box>
-              </Link>
-            </Box>
-          ))}
-        </Carousel>
+          </Box>
+        </Box>
       </Box>
     </Container>
   );
 }
 
-function ImageSlider({ images }) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  const [sliderRef, instanceRef] = useKeenSlider({
-    // loop: true,
-    slides: { perView: 1 },
-    // mode: 'free-snap',
-    slideChanged(s) {
-      setCurrentSlide(s.track.details.rel);
-    },
-  });
-
-  const prevSlide = () => instanceRef.current?.prev();
-  const nextSlide = () => instanceRef.current?.next();
+function PropertyCard({ coliving }) {
+  const hasDiscount = coliving.discounts.length > 0;
 
   return (
-    <Box
-      sx={{
-        position: 'relative',
-        height: 200,
-        backgroundColor: 'grey.300',
-        '&:hover .slider-arrow': { opacity: 1 },
-      }}
-    >
-      <Box ref={sliderRef} className="keen-slider">
-        {images.length > 0 ? (
-          images.map((image, index) => (
-            <Box sx={{ borderRadius: 2 }} key={index} className="keen-slider__slide">
-              <img
-                src={image.file_url}
-                loading="lazy"
-                alt={`Apartement Image ${index}`}
-                style={{ width: '100%', height: '200px', objectFit: 'cover' }}
-              />
+    <Box sx={{ mb: 3 }}>
+      <ImageSlider images={coliving.files || []} />
+      <Box component={Link} to={`/property/${coliving.slug}`} style={{ textDecoration: 'none' }}>
+        <Chip
+          icon={<Home fontSize="small" sx={{ mr: 0.5 }} />}
+          label={coliving.type.name}
+          sx={{ my: 2, fontWeight: 600 }}
+        />
+        <Typography variant="subtitle1" sx={{ color: 'black' }}>
+          {coliving.name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px', mb: 1 }}>
+          {coliving.address}, {coliving.city.name}
+        </Typography>
+
+        {hasDiscount ? (
+          <Box>
+            <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+              <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+              >
+                {fCurrency(coliving.start_price)}
+              </Typography>
             </Box>
-          ))
-        ) : (
-          <Box
-            className="keen-slider__slide"
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              backgroundColor: 'gray',
-            }}
-          >
-            <Typography variant="caption" color="white">
-              No Image Available
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Box
+                sx={{
+                  backgroundColor: 'red',
+                  color: 'white',
+                  fontSize: '11px',
+                  borderRadius: '10px',
+                  px: '5px',
+                }}
+              >
+                -Rp {fPercent(coliving.discounts[0]?.discount_value)}
+              </Box>
+              <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
+                {fCurrency(coliving.discounts[0]?.price_after_discount)}
+              </Typography>
+            </Box>
           </Box>
+        ) : (
+          <Typography
+            variant="subtitle1"
+            sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+          >
+            {fCurrency(coliving.start_price)} / bulan
+          </Typography>
         )}
       </Box>
-
-      {images.length > 1 && (
-        <>
-          <Box
-            className="slider-arrow"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: 10,
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'black',
-              p: 1,
-              borderRadius: '20%',
-              opacity: 0,
-              transition: 'opacity 0.3s',
-            }}
-            onClick={prevSlide}
-          >
-            {'<'}
-          </Box>
-          <Box
-            className="slider-arrow"
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              right: 10,
-              transform: 'translateY(-50%)',
-              cursor: 'pointer',
-              backgroundColor: 'white',
-              color: 'black',
-              p: 1,
-              borderRadius: '20%',
-              opacity: 0,
-              transition: 'opacity 0.3s',
-            }}
-            onClick={nextSlide}
-          >
-            {'>'}
-          </Box>
-        </>
-      )}
-
-      {images.length > 1 && (
-        <Box
-          sx={{
-            position: 'absolute',
-            bottom: 10,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            display: 'flex',
-            gap: 1,
-          }}
-        >
-          {images.map((_, index) => (
-            <Box
-              key={index}
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: '50%',
-                backgroundColor: index === currentSlide ? 'black' : 'white',
-                opacity: index === currentSlide ? 1 : 0.5,
-              }}
-            />
-          ))}
-        </Box>
-      )}
     </Box>
   );
+}
+
+function ImageSlider({ images }) {
+  return (
+    <Box sx={{ position: 'relative', aspectRatio: '4/3', overflow: 'hidden', borderRadius: 2 }}>
+      <img
+        src={images[0].file_url}
+        alt="Property Image"
+        loading="lazy"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          borderRadius: '8px',
+        }}
+      />
+    </Box>
+  );
+  // }
 }
