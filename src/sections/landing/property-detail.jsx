@@ -18,7 +18,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import StarIcon from '@mui/icons-material/Star';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { Button } from '@mui/material';
+import { Avatar, Button, Divider } from '@mui/material';
 import { BookmarkBorder, DateRange, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
@@ -399,8 +399,35 @@ export default function PropertyDetail() {
                   {data.address}, {data.city?.name}, {data.state?.name}
                 </Typography>
               </Stack>
+              <Box sx={{ mt: 3 }}>
+                <Divider /> {/* Garis atas */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingY: 2,
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px:2 }}>
+                    <Avatar
+                      src={`https:\/\/backend-koskita.hafidzfrqn.serv00.net\/\/storage\/users_photo_profile\/G8RuEIsSKlT1HpL3cnqX93L2FKH4CKXDr9TLfxNg.png`}
+                      sx={{ width: 48, height: 48 }}
+                    />
+                    <Box>
+                      <Typography variant="body1" fontWeight={600}>
+                        Dikelola oleh Hafidz
+                      </Typography>
+                      <Typography variant="body2" color="gray">
+                        sejak November 2024
+                      </Typography>
+                    </Box>
+                  </Box>
+                  {/* <ArrowForwardIosIcon sx={{ color: 'gray', fontSize: 16 }} /> */}
+                </Box>
+                <Divider /> {/* Garis bawah */}
+              </Box>
             </Grid>
-
             {/* Bagian Harga dengan Card */}
             <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
               <Card sx={{ p: 2, borderRadius: 2, boxShadow: 3 }}>
@@ -443,10 +470,7 @@ export default function PropertyDetail() {
 
                 {hasDiscount ? (
                   <>
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ textDecoration: 'line-through', color: 'gray' }}
-                    >
+                    <Typography variant="h6" sx={{ textDecoration: 'line-through', color: 'gray' }}>
                       {formatCurrency(data?.start_price)}/
                       {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
                     </Typography>
@@ -455,7 +479,7 @@ export default function PropertyDetail() {
                     </Typography>
                   </>
                 ) : (
-                  <Typography variant="h6" sx={{ color: 'black' }}>
+                  <Typography variant="h4" sx={{ color: 'black', px: 1 }}>
                     {formatCurrency(data?.start_price)}/
                     {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
                   </Typography>
@@ -467,7 +491,7 @@ export default function PropertyDetail() {
                     display: 'flex',
                     flexWrap: 'wrap',
                     gap: 2,
-                    mt: 3,
+                    // mt: 3,
                     justifyContent: { xs: 'center', sm: 'space-between' },
                     flexDirection: { xs: 'column', sm: 'row' },
                   }}

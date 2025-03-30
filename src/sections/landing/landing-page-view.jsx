@@ -232,7 +232,7 @@ export function LandingPage() {
                 </Box>
               ))}
             </Box>
-            <Box
+            <Container
               sx={{
                 bgcolor: '#F0EFEA',
                 pb: 8,
@@ -269,7 +269,7 @@ export function LandingPage() {
                   Lihat Semua
                 </Button>
               </Box>
-            </Box>
+            </Container>
           </Box>
         </SimpleBar>
         <Box sx={{ backgroundColor: 'white', pt: 5, pb: 5 }}>
@@ -283,13 +283,13 @@ export function LandingPage() {
           {/* </Container> */}
         </Box>
 
-        <Box sx={{ bgcolor: 'white', pt: 5, pb: 10, px: 3 }}>
+        {/* <Box sx={{ bgcolor: 'white', pt: 5, pb: 10, px: 3 }}>
           <Box sx={{ mt: 2 }}>
             <Container>
               <ApartementGrid />
             </Container>
           </Box>
-        </Box>
+        </Box> */}
         <PropertyBudget />
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Button
@@ -492,7 +492,13 @@ export function LandingPage() {
             </Container>
           </Box>
         </Box>
-        <Directory />
+        <Box>
+          <Box sx={{ pt: 10, pb: 15 }}>
+            <Container>
+              <Directory />
+            </Container>
+          </Box>
+        </Box>
         <Footer />
       </Box>
 
