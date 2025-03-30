@@ -84,7 +84,7 @@ axiosInstance.interceptors.response.use(
         // alert(err);
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/sign-in'; // Redirect ke halaman login
+        // window.location.href = '/sign-in'; // Redirect ke halaman login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -145,7 +145,7 @@ export const endpoints = {
     detailCodeVisit: '/api/user/visit/detail/code', // need id here
   },
   visit_admin: {
-    list: '/api/admin/property/visit/all',
+    list: '/api/admin/property/visit/all_property_with_visits',
     detail: '/api/admin/property/visit/by_property_id',
     detailCode: '/api/admin/property/visit/detail/code',
   },

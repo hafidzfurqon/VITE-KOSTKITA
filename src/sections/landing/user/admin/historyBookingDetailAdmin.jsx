@@ -98,7 +98,7 @@ export default function HistoryBookingDetailAdmin() {
               </Typography>
             </Box>
 
-            <Typography sx={{ fontWeight: 'medium' }}>{booking.property_room.name}</Typography>
+            <Typography sx={{ fontWeight: 'medium' }}>{booking?.property_room?.name}</Typography>
             <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
               {booking?.number_of_guests} Orang
             </Typography>
@@ -152,7 +152,7 @@ export default function HistoryBookingDetailAdmin() {
                 }}
               >
                 <Typography variant="subtitle1" sx={{ color: 'black' }}>
-                  {booking.property.name}
+                  {booking?.property?.name}
                 </Typography>
                 <ChevronRightIcon sx={{ color: 'grey.400', fontSize: 20 }} />
               </Box>

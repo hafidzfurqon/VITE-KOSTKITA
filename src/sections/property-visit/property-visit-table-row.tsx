@@ -29,6 +29,7 @@ type VisitTableRowProps = {
 
 export function PropertyVisitTableRow({ row, selected, onSelectRow }: VisitTableRowProps) {
   // console.log(booked[0].user.name)
+  // const date = row.visit.map((visit: any) => visit.visit_date);
   return (
     <>
       {/* {booked.length > 0 && ( */}
@@ -36,9 +37,9 @@ export function PropertyVisitTableRow({ row, selected, onSelectRow }: VisitTable
         <TableCell padding="checkbox">
           <Checkbox disableRipple checked={selected} onChange={onSelectRow} />
         </TableCell>
-        <TableCell align="center">{row?.property?.name}</TableCell>
+        <TableCell align="center">{row?.name}</TableCell>
         <TableCell align="center">{row?.status}</TableCell>
-        <TableCell align="center">{fDate(row?.visit_date)}</TableCell>
+        {/* <TableCell align="center">{fDate(date)}</TableCell> */}
         {/* <TableCell align="center">{booked[0]?.user?.name || 'No User'}</TableCell> */}
         <TableCell align="center">
           {/* {booked.map((b: any, index: number) => ( */}

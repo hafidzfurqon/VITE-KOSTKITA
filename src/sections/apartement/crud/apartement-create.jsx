@@ -172,8 +172,8 @@ export const CreateApartement = () => {
 
     formData.append('price', cleanPrice(data.price)); // Tambahkan hanya satu price
 
-    // mutate(formData);
-    console.log(data);
+    mutate(formData);
+    // console.log(data);
   };
 
   const selectedType = watch('property_type_id');
