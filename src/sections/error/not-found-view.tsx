@@ -15,6 +15,7 @@ export function NotFoundView() {
       <Container>
         <Typography variant="h3" sx={{ mb: 2 }}>
           Sorry, page not found!
+          {/* Maaf, Halaman Tidak Ditemukan! */}
         </Typography>
 
         <Typography sx={{ color: 'text.secondary' }}>

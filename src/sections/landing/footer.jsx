@@ -11,7 +11,7 @@ export default function Footer() {
         color: '#fff',
         py: 6,
         px: { xs: 4, md: 10 },
-        borderTopRightRadius: '50px',
+        // borderTopRightRadius: '50px',
       }}
     >
       <Box

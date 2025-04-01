@@ -127,8 +127,8 @@ function PropertyCard({ coliving }) {
 
   return (
     <Box sx={{ mb: 3 }}>
-      <ImageSlider images={coliving.files || []} />
       <Box component={Link} to={`/property/${coliving.slug}`} style={{ textDecoration: 'none' }}>
+        <ImageSlider images={coliving.files || []} />
         <Chip
           icon={<Home fontSize="small" sx={{ mr: 0.5 }} />}
           label={coliving.type.name}

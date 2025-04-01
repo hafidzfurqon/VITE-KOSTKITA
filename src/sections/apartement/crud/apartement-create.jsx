@@ -150,10 +150,10 @@ export const CreateApartement = () => {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ['fetch.property.owner'] });
           routers.push('/property');
-          enqueueSnackbar('Apartement berhasil dibuat', { variant: 'success' });
+          enqueueSnackbar('Property berhasil dibuat', { variant: 'success' });
         },
         onError: () => {
-          enqueueSnackbar('Apartement gagal dibuat', { variant: 'error' });
+          enqueueSnackbar('Property gagal dibuat', { variant: 'error' });
         },
       });
   const Submitted = (data) => {

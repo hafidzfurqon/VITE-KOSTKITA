@@ -40,10 +40,14 @@ export function SignUpView() {
     onError: (err: any) => {
       const errors = err.response?.data?.errors; // Ambil bagian errors dari response
 
-      if (errors?.phone_number) {
+      if (errors?.phone_number[0] === 'The phone number has already been taken.') {
+        enqueueSnackbar('No Telepon Sudah digunkan', { variant: 'error' });
+      } else {
         enqueueSnackbar('No Telepon Wajib Diisi', { variant: 'error' });
       }
-      if (errors?.email) {
+      if (errors?.email[0] === 'The email has already been taken.') {
+        enqueueSnackbar('Akun Email ini telah dipakai', { variant: 'error' });
+      } else {
         enqueueSnackbar('Email Wajib Diisi', { variant: 'error' });
       }
       if (errors?.password) {
@@ -148,9 +152,9 @@ export function SignUpView() {
           type="submit"
           color="inherit"
           variant="contained"
-          disabled={isPending}
+          loading={isPending}
         >
-          {isPending ? 'Loading...' : 'Sign Up'}
+          Daftar
         </LoadingButton>
       </Box>
     </Stack>

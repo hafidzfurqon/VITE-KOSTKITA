@@ -38,6 +38,7 @@ import { ImageListItem } from '@mui/material';
 import FullScreenDialog from 'src/component/DialogFull';
 import PropertyBaseLocation from './PropertyLocation';
 import NearbyPlaces from './nearbly-places';
+import { LoadingButton } from '@mui/lab';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -409,7 +410,7 @@ export default function PropertyDetail() {
                     paddingY: 2,
                   }}
                 >
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px:2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px: 2 }}>
                     <Avatar
                       src={`https:\/\/backend-koskita.hafidzfrqn.serv00.net\/\/storage\/users_photo_profile\/G8RuEIsSKlT1HpL3cnqX93L2FKH4CKXDr9TLfxNg.png`}
                       sx={{ width: 48, height: 48 }}
@@ -491,16 +492,16 @@ export default function PropertyDetail() {
                     display: 'flex',
                     flexWrap: 'wrap',
                     gap: 2,
-                    // mt: 3,
+                    mt: 2,
                     justifyContent: { xs: 'center', sm: 'space-between' },
-                    flexDirection: { xs: 'column', sm: 'row' },
+                    flexDirection: 'column',
                   }}
                 >
                   {data?.rooms?.length > 0 && (
-                    <Button
+                    <LoadingButton
                       href="#room"
-                      variant="outlined"
-                      color="primary"
+                      variant="contained"
+                      color="inherit"
                       sx={{
                         height: 48,
                         minWidth: '150px',
@@ -508,7 +509,7 @@ export default function PropertyDetail() {
                       }}
                     >
                       Lihat Tipe Kamar
-                    </Button>
+                    </LoadingButton>
                   )}
 
                   {data.rooms.length === 0 && !['admin', 'owner_property'].includes(user.roles) && (

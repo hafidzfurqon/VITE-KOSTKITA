@@ -1,4 +1,13 @@
-import { Dialog, DialogContent, DialogTitle, DialogContentText,Button, DialogActions, Stack } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
+  Button,
+  DialogActions,
+  Stack,
+} from '@mui/material';
 
 export function DialogCreate({
   SubmitForm,
@@ -37,7 +46,9 @@ export function DialogCreate({
         <Button onClick={handleClose} variant="outlined">
           Cancel
         </Button>
-        <Button type="submit">{pending ? 'Membuat...' : 'Buat'}</Button>
+        <LoadingButton color="inherit" variant="contained" loading={pending} type="submit">
+          Buat
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

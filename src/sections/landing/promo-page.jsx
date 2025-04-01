@@ -136,8 +136,6 @@ export default function PromoPage() {
                   borderRadius: '10px',
                   overflow: 'hidden',
                   boxShadow: 3,
-                  transition: 'transform 0.3s ease',
-                  '&:hover': { transform: 'translateY(-4px)', boxShadow: 5 },
                 }}
               >
                 <img

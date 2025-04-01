@@ -14,7 +14,7 @@ import BannerCreate from 'src/sections/banner/crud/banner-create';
 import PropertyPage from 'src/pages/property';
 import PropertyCreate from 'src/sections/property/property-create';
 import FasilitasPage from 'src/pages/fasilitas';
-import { LandingLayout } from 'src/layouts/landing';
+import { LandingLayout, LandingLayoutNoContainer } from 'src/layouts/landing';
 import { CreatePromo } from 'src/sections/blog/crud-view/CreatePromo';
 import PropertyEdit from 'src/sections/property/property-edit';
 import PropertyDetail from 'src/sections/landing/property-detail';
@@ -61,6 +61,8 @@ export const DetailPromo = lazy(() => import('src/pages/promo-detail'));
 export const AddPromoToProperty = lazy(() => import('src/pages/add-promo-property'));
 export const PropertyRoomType = lazy(() => import('src/pages/property-room-type'));
 export const Faq = lazy(() => import('src/pages/Faq-page'));
+export const PartnerWithUs = lazy(() => import('src/pages/partner-with-us'));
+export const TransactionPage = lazy(() => import('src/pages/transaction'));
 
 // ----------------------------------------------------------------------
 
@@ -111,6 +113,15 @@ export function Router() {
           element: <DetailVisit />,
         },
         // untuk routing user
+        {
+          path: 'transaction',
+          children: [
+            {
+              path: '',
+              element: <TransactionPage />,
+            },
+          ],
+        },
         {
           path: 'user',
           children: [
@@ -275,6 +286,16 @@ export function Router() {
     },
     {
       element: (
+        <Suspense fallback={renderFallback}>
+          <LandingLayoutNoContainer>
+            <PartnerWithUs />
+          </LandingLayoutNoContainer>
+        </Suspense>
+      ),
+      path: '/kerja-sama',
+    },
+    {
+      element: (
         <LandingLayout>
           <Suspense fallback={renderFallback}>
             <Outlet />
@@ -350,10 +371,10 @@ export function Router() {
           path: '/about-us',
           element: <div>Laman tentang ini masih dalam pengembangan</div>,
         },
-        {
-          path: '/kerja-sama',
-          element: <div>Laman kerja sama ini masih dalam pengembangan</div>,
-        },
+        // {
+        //   path: '/kerja-sama',
+        //   element: <PartnerWithUs />,
+        // },
         {
           path: '/bussines',
           element: <div>Laman bussines ini masih dalam pengembangan</div>,
@@ -406,7 +427,13 @@ export function Router() {
     },
     {
       path: '404',
-      element: <Page404 />,
+      element: (
+        <>
+          <LandingLayout>
+            <Page404 />
+          </LandingLayout>
+        </>
+      ),
     },
     {
       path: '*',

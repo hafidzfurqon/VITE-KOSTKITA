@@ -36,6 +36,9 @@ export function BookedDetailPropertyTableRow({
   onSelectRow,
 }: BookedTableRowProps) {
   const today = new Date(); // Ambil tanggal hari ini
+  // if (!row.check_out) {
+  //   return '';
+  // }
   const checkOutDate = new Date(row.check_out); // Konversi check_out ke Date
 
   // Hitung selisih hari
@@ -60,7 +63,11 @@ export function BookedDetailPropertyTableRow({
       <TableCell align="center">{row.user.name}</TableCell>
       <TableCell align="center">{row.user.phone_number}</TableCell>
       <TableCell align="center">
-        <Chip label={`${daysLeft} hari lagi`} color={badgeColor} />
+        {row.check_out ? (
+          <Chip label={`${daysLeft} hari lagi`} color={badgeColor} />
+        ) : (
+          'Tidak ada data'
+        )}
       </TableCell>
       <TableCell align="center">
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', justifyContent: 'center' }}>

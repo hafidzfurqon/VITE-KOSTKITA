@@ -141,7 +141,7 @@ export function SignInView() {
           type="submit"
           color="inherit"
           variant="contained"
-          disabled={isPending}
+          loading={isPending}
         >
           {isPending ? 'Loading...' : ' Sign in'}
         </LoadingButton>

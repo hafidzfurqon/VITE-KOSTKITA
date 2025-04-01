@@ -58,9 +58,8 @@ export function PropertyView() {
   const handleCreate = useCallback(
     (data: any) => {
       mutate(data);
-      handleClose();
     },
-    [mutate, handleClose]
+    [mutate]
   );
 
   if (isLoading || isFetching || isPending) {

@@ -58,11 +58,13 @@ export default function HeroSection({ children }: HeroSectionProps) {
         autoPlay={true}
         autoPlaySpeed={3500}
         transitionDuration={500}
+        arrows={false}
       >
         {carouselImages.map((image, index) => (
           <Box
             key={index}
             sx={{
+              cursor: 'pointer',
               width: '100%',
               height: '600px',
               backgroundImage: `url(${image})`,
@@ -86,6 +88,7 @@ export default function HeroSection({ children }: HeroSectionProps) {
           />
         ))}
       </Carousel>
+
       {children && (
         <Box
           sx={{
@@ -99,9 +102,10 @@ export default function HeroSection({ children }: HeroSectionProps) {
             justifyContent: 'center',
             zIndex: 10,
             color: '#fff',
+            // pointerEvents: 'none', // Pastikan overlay tidak menghalangi drag
           }}
         >
-          {children}
+          <Box>{children}</Box>
         </Box>
       )}
     </Box>

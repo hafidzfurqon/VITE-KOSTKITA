@@ -1,4 +1,12 @@
-import { Button, DialogActions, DialogContent, DialogTitle, DialogContentText, Dialog } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import {
+  Button,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
+  Dialog,
+} from '@mui/material';
 
 export default function DialogDelete({ title, description, Submit, open, setOpen, pending }) {
   const handleClose = () => {
@@ -34,7 +42,7 @@ export default function DialogDelete({ title, description, Submit, open, setOpen
         >
           Batal
         </Button>
-        <Button
+        <LoadingButton
           onClick={handleSubmit}
           sx={{
             bgcolor: 'red',
@@ -45,7 +53,7 @@ export default function DialogDelete({ title, description, Submit, open, setOpen
           }}
         >
           {pending ? 'Loading...' : 'Yakin'}
-        </Button>
+        </LoadingButton>
       </DialogActions>
     </Dialog>
   );

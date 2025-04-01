@@ -50,6 +50,8 @@ export default function Header() {
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { user } = authUser;
+  const userId = user.id
+  // console.log(userId)
   const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
   const { mutate: handleLogout, isPending } = useMutationLogout({
@@ -64,7 +66,7 @@ export default function Header() {
     },
   });
 
-  const { data: _notifications, isLoading, isError } = useFetchNontification();
+  const { data: _notifications, isLoading, isError } = useFetchNontification(userId);
   // console.log(notifications);
   const mapNotifications = (data = []) => {
     return data.map((item) => ({
@@ -108,7 +110,7 @@ export default function Header() {
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
     { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
-    { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
+    // { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
     { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
     { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },

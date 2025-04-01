@@ -189,7 +189,7 @@ export default function Review({ propertyId }) {
           handleClose();
         },
         onError: (error) => {
-          enqueueSnackbar('Gagal menambahkan ulasan', { variant: 'error' });
+          // enqueueSnackbar('Gagal menambahkan ulasan', { variant: 'error' });
           setLoading(false);
         },
       });
