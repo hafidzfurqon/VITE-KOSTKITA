@@ -33,7 +33,7 @@ export function PostSearch({ posts, sx }: PostSearchProps) {
         },
       }}
       options={posts}
-      getOptionLabel={(post) => post.name}
+      getOptionLabel={(post: any) => post.name}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <TextField

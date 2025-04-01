@@ -232,46 +232,48 @@ export function LandingPage() {
                 </Box>
               ))}
             </Box>
-            <Container
-              sx={{
-                bgcolor: '#F0EFEA',
-                pb: 8,
-                borderRadius: '16px',
-                mt: 5,
-                // border: { md: 'solid rgba(255, 255, 255, 0.6) 1px' },
-                border: { md: 'solid white 1px ' },
-                boxShadow: { md: '0 0 5px rgba(255, 255, 255, 0.5)' },
-              }}
-            >
-              <PropertyGrid
-                data={data}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                sortCardBy={sortBy}
-              />
-
-              <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
-                <Button
-                  variant="outlined"
-                  sx={{
-                    width: { xs: '100%', md: 'auto' },
-                    p: 2,
-                    color: 'black',
-                    bgcolor: 'white',
-                    mx: 3,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                  onClick={() =>
-                    sortBy[0] === 'apartment' ? navigate('/apartment') : navigate('/coliving')
-                  }
-                >
-                  Lihat Semua
-                </Button>
-              </Box>
-            </Container>
           </Box>
         </SimpleBar>
+        <Container
+          sx={{
+            pt: '3px',
+            bgcolor: '#F0EFEA',
+            pb: 8,
+            px: 2,
+            borderRadius: '16px',
+            // border: { md: 'solid rgba(255, 255, 255, 0.6) 1px' },
+            border: { md: 'solid white 1px ' },
+            boxShadow: { md: '0 0 5px rgba(255, 255, 255, 0.5)' },
+          }}
+        >
+          <PropertyGrid
+            data={data}
+            isLoading={isLoading}
+            isFetching={isFetching}
+            sortCardBy={sortBy}
+          />
+
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+            <Button
+              variant="outlined"
+              sx={{
+                width: { xs: '100%', md: 'auto' },
+                p: 2,
+                color: 'black',
+                bgcolor: 'white',
+                mx: 3,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              onClick={() =>
+                sortBy[0] === 'apartment' ? navigate('/apartment') : navigate('/coliving')
+              }
+            >
+              Lihat Semua
+            </Button>
+          </Box>
+        </Container>
+
         <Box sx={{ backgroundColor: 'white', pt: 5, pb: 5 }}>
           <Container>
             <PromoPage />
@@ -283,13 +285,6 @@ export function LandingPage() {
           {/* </Container> */}
         </Box>
 
-        {/* <Box sx={{ bgcolor: 'white', pt: 5, pb: 10, px: 3 }}>
-          <Box sx={{ mt: 2 }}>
-            <Container>
-              <ApartementGrid />
-            </Container>
-          </Box>
-        </Box> */}
         <PropertyBudget />
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
           <Button

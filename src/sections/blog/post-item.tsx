@@ -45,16 +45,17 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 export type PostItemProps = {
   id: any;
   title: string;
-  slug: string;
-  promo_image_url: string;
+  slug?: string;
+  promo_image_url?: string;
   coverUrl: string;
   totalViews: number;
   description: string;
   totalShares: number;
   totalComments: number;
   totalFavorites: number;
-  name: string;
-  created_at: string | any;
+  // post?: any;
+  name?: string;
+  created_at?: string | any;
   postedAt: string | number | null;
   author: {
     name: string;
@@ -97,7 +98,7 @@ export function PostItem({
 }) {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role : any) => role.name.toLowerCase() === 'admin');
+  const isAdmin = user?.roles?.some((role: any) => role.name.toLowerCase() === 'admin');
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState(false);
 

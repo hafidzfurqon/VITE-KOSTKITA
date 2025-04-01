@@ -21,19 +21,6 @@ import { fCurrency } from 'src/utils/format-number';
 export default function PropertyBudgety() {
   const { data, isLoading, isFetching } = useListProperty();
   const [selectedRange, setSelectedRange] = useState(null);
-  const [sliderRef] = useKeenSlider({
-    slides: { perView: 1.2, spacing: 10 },
-    breakpoints: {
-      '(min-width: 640px)': { slides: { perView: 1.5 } },
-      '(min-width: 768px)': { slides: { perView: 2 } },
-      '(min-width: 1024px)': { slides: { perView: 4 } },
-    },
-  });
-  const prevRef = useRef(null);
-  const nextRef = useRef(null);
-  const navigate = useNavigate();
-  const formatCurrency = (price) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
   if (isLoading || isFetching) return <Loading />;
   if (!data || data.length === 0)
@@ -100,22 +87,13 @@ export default function PropertyBudgety() {
       <Box mt={2} maxWidth="100%" sx={{ px: 0 }}>
         <Box sx={{ position: 'relative', width: '100%', p: 2 }}>
           {/* Grid Layout for Desktop */}
-          <Grid container spacing={2} sx={{ display: { xs: 'none', md: 'flex' }, mt: 3 }}>
-            {filteredProperties.map((coliving) => (
+          <Grid container spacing={2} sx={{ mt: 3 }}>
+            {filteredProperties.slice(0, 8).map((coliving) => (
               <Grid item xs={12} sm={6} md={4} lg={3} key={coliving.id}>
                 <PropertyCard coliving={coliving} />
               </Grid>
             ))}
           </Grid>
-          <Box ref={sliderRef} className="keen-slider">
-            <Box sx={{ display: { xs: 'flex', md: 'none' }, mt: 3 }}>
-              {filteredProperties.map((coliving) => (
-                <Box key={coliving.id} className="keen-slider__slide">
-                  <PropertyCard coliving={coliving} />
-                </Box>
-              ))}
-            </Box>
-          </Box>
         </Box>
       </Box>
     </Container>

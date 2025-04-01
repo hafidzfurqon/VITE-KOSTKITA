@@ -94,7 +94,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   }
 
   return (
-    <Box maxWidth="100%" sx={{ px: 0, mt: 3 }}>
+    <Box maxWidth="100%" sx={{ px: 0, mt: 3,  }}>
       {/* <Box position="relative"> */}
       {/* <Box */}
       {/* displayedData */}
