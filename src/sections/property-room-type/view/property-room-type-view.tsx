@@ -192,6 +192,7 @@ export function PropertyRoomTypeView() {
       </DashboardContent>
       <DialogCreate
         pending={isPendingMutate}
+        info={`Anda akan menambah tipe ruangan`}
         SubmitFormValue={handleCreate}
         open={opened}
         title="Create Nama Tipe Kamar"

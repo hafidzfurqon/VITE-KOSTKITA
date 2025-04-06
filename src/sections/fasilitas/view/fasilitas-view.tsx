@@ -209,6 +209,7 @@ export function FasilitasView() {
         </Card>
       </DashboardContent>
       <DialogCreate
+        info={`Anda Akan Menambah Fasilitas`}
         pending={isPendingMutate}
         SubmitFormValue={handleCreate}
         open={opened}

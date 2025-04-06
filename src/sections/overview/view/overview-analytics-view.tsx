@@ -26,7 +26,9 @@ import axiosInstance from 'src/utils/axios';
 export function OverviewAnalyticsView() {
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  const isAdmin = user?.roles?.some((role : {name : string}) => role.name.toLowerCase() === 'admin');
+  const isAdmin = user?.roles?.some(
+    (role: { name: string }) => role.name.toLowerCase() === 'admin'
+  );
   const {
     data = [],
     isLoading,
@@ -104,7 +106,7 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} sm={6} md={isAdmin ? 3 : 6}>
           <AnalyticsWidgetSummary
-            title="Jumlah Booking"
+            title="Jumlah Pengguna Booking Property"
             // percent={2.8}
             total={totalBookings}
             // total={5}

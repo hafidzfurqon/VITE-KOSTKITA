@@ -211,6 +211,7 @@ export function RoomFasilitasView() {
         </Card>
       </DashboardContent>
       <DialogCreate
+      info={`Anda akan menambah fasilitas ruangan`}
         pending={isPendingMutate}
         SubmitFormValue={handleCreate}
         open={opened}

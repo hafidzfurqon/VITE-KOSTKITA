@@ -39,6 +39,9 @@ import { useGetSectorOwner } from 'src/hooks/owner/useGetSectorOwner';
 import { useMutationCreatePropertyOwner } from 'src/hooks/owner/property/useMutationCreateProperty';
 import { VITE_TINY_KEY } from 'src/config';
 import { Editor } from '@tinymce/tinymce-react';
+import { InputLabel } from '@mui/material';
+import { FormControl } from '@mui/material';
+import { Input } from '@mui/material';
 
 export const CreateApartement = () => {
   const { UserContextValue: authUser } = useAppContext();
@@ -73,8 +76,8 @@ export const CreateApartement = () => {
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
   const [selectedImages, setSelectedImages] = useState([]);
-  const [showCampus, setShowCampus] = useState(false);
-  const [showHospital, setShowHospital] = useState(false);
+  // const [showCampus, setShowCampus] = useState(false);
+  // const [showHospital, setShowHospital] = useState(false);
   const editorRef = useRef(null);
   const editorContentRef = useRef('');
 
@@ -203,42 +206,22 @@ export const CreateApartement = () => {
               error={!!errors.name}
               helperText={errors.name?.message}
             />
-            <Controller
-              name="price"
-              control={control}
-              defaultValue=""
-              rules={{ required: 'Harga wajib diisi' }}
-              render={({ field, fieldState }) => (
-                <NumericFormat
-                  {...field}
-                  customInput={TextField}
-                  label="Harga"
-                  fullWidth
-                  required
-                  prefix="Rp "
-                  thousandSeparator="."
-                  decimalSeparator=","
-                  error={!!fieldState.error}
-                  helperText={fieldState.error?.message}
-                />
-              )}
-            />
+            <TextField
+              select
+              {...register('property_type_id', { required: true })}
+              label="Tipe Properti"
+              fullWidth
+              required
+            >
+              {property_type.map((property, idx) => {
+                return (
+                  <MenuItem key={idx} value={property.id}>
+                    {property.name}
+                  </MenuItem>
+                );
+              })}
+            </TextField>
           </Stack>
-          <TextField
-            select
-            {...register('property_type_id', { required: true })}
-            label="Tipe Properti"
-            fullWidth
-            required
-          >
-            {property_type.map((property, idx) => {
-              return (
-                <MenuItem key={idx} value={property.id}>
-                  {property.name}
-                </MenuItem>
-              );
-            })}
-          </TextField>
           {selectedType === 3 && (
             <>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -394,21 +377,8 @@ export const CreateApartement = () => {
             <MenuItem value="monthly">Monthly</MenuItem>
             <MenuItem value="yearly">Yearly</MenuItem>
           </TextField>
-          <Typography sx={{ mb: 2 }}>Property Dekat Dengan : </Typography>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showCampus}
-                onChange={(e) => {
-                  setShowCampus(e.target.checked);
-                  if (!e.target.checked) setValue('near_campus', '');
-                }}
-              />
-            }
-            label="Dekat Dengan Kampus?"
-          />
-
-          {showCampus && (
+          <Typography sx={{ mb: 2 }}>Property Dekat Dengan? : </Typography>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
             <Controller
               name="near_campus"
               control={control}
@@ -416,7 +386,7 @@ export const CreateApartement = () => {
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  label="Nama Kampus"
+                  label="Nama Kampus (Optional)"
                   placeholder="Contoh: IPB Dramaga"
                   variant="outlined"
                   fullWidth
@@ -428,21 +398,6 @@ export const CreateApartement = () => {
                 />
               )}
             />
-          )}
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={showHospital}
-                onChange={(e) => {
-                  setShowHospital(e.target.checked);
-                  if (!e.target.checked) setValue('near_hospital', '');
-                }}
-              />
-            }
-            label="Dekat Dengan Rumah Sakit?"
-          />
-
-          {showHospital && (
             <Controller
               name="near_hospital"
               control={control}
@@ -450,7 +405,7 @@ export const CreateApartement = () => {
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  label="Nama Rumah Sakit"
+                  label="Nama Rumah Sakit (Optional)"
                   placeholder="Contoh: RSUD Cibinong"
                   variant="outlined"
                   fullWidth
@@ -462,8 +417,30 @@ export const CreateApartement = () => {
                 />
               )}
             />
-          )}
+          </Stack>
 
+          <InputLabel htmlFor="harga-per-hari">Harga Per Hari*</InputLabel>
+          <Controller
+            name="price"
+            control={control}
+            defaultValue=""
+            rules={{ required: 'Harga wajib diisi' }}
+            render={({ field, fieldState }) => (
+              <NumericFormat
+                {...field}
+                customInput={Input}
+                fullWidth
+                required
+                prefix="'"
+                suffix="'"
+                thousandSeparator="."
+                decimalSeparator=","
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
+              />
+            )}
+          />
           <Typography sx={{ mb: 2 }}>Fasilitas Bersama : </Typography>
           <Grid container spacing="1" columns={{ xs: 4, sm: 8, md: 12 }} sx={{ mb: 3 }}>
             {facilities?.map((facility, index) => (

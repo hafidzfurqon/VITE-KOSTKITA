@@ -62,6 +62,7 @@ export const AddPromoToProperty = lazy(() => import('src/pages/add-promo-propert
 export const PropertyRoomType = lazy(() => import('src/pages/property-room-type'));
 export const Faq = lazy(() => import('src/pages/Faq-page'));
 export const PartnerWithUs = lazy(() => import('src/pages/partner-with-us'));
+export const PartnerColivingWithUs = lazy(() => import('src/pages/partner-coliving-with-kostkita'));
 export const TransactionPage = lazy(() => import('src/pages/transaction'));
 
 // ----------------------------------------------------------------------
@@ -288,11 +289,24 @@ export function Router() {
       element: (
         <Suspense fallback={renderFallback}>
           <LandingLayoutNoContainer>
-            <PartnerWithUs />
+            <Outlet />
           </LandingLayoutNoContainer>
         </Suspense>
       ),
-      path: '/kerja-sama',
+      children: [
+        {
+          path: '/kerja-sama',
+          element: <PartnerWithUs />,
+        },
+        {
+          path: '/about-us',
+          element: <About />,
+        },
+        {
+          path: '/kerja-sama-coliving',
+          element: <PartnerColivingWithUs />,
+        },
+      ],
     },
     {
       element: (
@@ -303,10 +317,6 @@ export function Router() {
         </LandingLayout>
       ),
       children: [
-        {
-          path: 'about-us',
-          element: <About />,
-        },
         {
           path: 'verify_email',
           element: <VerifyEmailPage />,
@@ -367,14 +377,7 @@ export function Router() {
           path: '/apartment',
           element: <ApartmentList />,
         },
-        {
-          path: '/about-us',
-          element: <div>Laman tentang ini masih dalam pengembangan</div>,
-        },
-        // {
-        //   path: '/kerja-sama',
-        //   element: <PartnerWithUs />,
-        // },
+
         {
           path: '/bussines',
           element: <div>Laman bussines ini masih dalam pengembangan</div>,

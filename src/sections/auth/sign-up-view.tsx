@@ -19,6 +19,8 @@ export function SignUpView() {
   const { enqueueSnackbar } = useSnackbar();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showPassword2, setShowPassword2] = useState<boolean>(false);
+  const [countryCode, setCountryCode] = useState('+62');
+  const countryCodes = [{ code: '+62', label: 'Indonesia' }];
   const { register, handleSubmit } = useForm();
   const {
     mutate: mutateSendEmail,
@@ -27,7 +29,7 @@ export function SignUpView() {
     onSuccess: () => {
       enqueueSnackbar('Pendaftaran Berhasil Verifikasi Email Telah dikirim', {
         variant: 'success',
-        autoHideDuration: 5000,
+        autoHideDuration: 8000,
       });
     },
   });
@@ -100,16 +102,17 @@ export function SignUpView() {
           InputLabelProps={{ shrink: true }}
           sx={{ mb: 3 }}
         />
+
         <TextField
           fullWidth
           {...register('phone_number')}
           margin="dense"
           id="Nomor Telepon"
           name="phone_number"
-          label="Nomor Telepon (0851 XXXX XXXX)"
+          label="e.g. 85183316262"
           type="number"
           inputMode="numeric"
-          InputLabelProps={{ shrink: true }}
+          // InputLabelProps={{ shrink: true }}
           sx={{ mb: 3 }}
         />
         <TextField

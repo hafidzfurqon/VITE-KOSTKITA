@@ -171,6 +171,7 @@ export function PropertyView() {
         </Card>
       </DashboardContent>
       <DialogCreate
+        info={`Anda akan menambah property tipe`}
         pending={isPendingMutate}
         SubmitFormValue={handleCreate}
         open={opened}

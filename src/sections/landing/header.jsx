@@ -49,8 +49,9 @@ export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
   const { UserContextValue: authUser } = useAppContext();
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [color, setColor] = useState('white');
   const { user } = authUser;
-  const userId = user.id
+  const userId = user.id;
   // console.log(userId)
   const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
@@ -92,9 +93,11 @@ export default function Header() {
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 50) {
+        setColor('black');
         setNavBg('rgba(255, 255, 255, 0.9)'); // Warna abu ke putih saat di-scroll
       } else {
         setNavBg('transparent'); // Transparan saat di atas
+        setColor('white');
       }
     };
 
@@ -154,7 +157,7 @@ export default function Header() {
             <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p: 2 }}>
               {navItems.map((item, index) => {
                 const isActived = item.path === pathname;
-
+                const home = pathname === '/';
                 return (
                   <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
                     <Typography
@@ -162,7 +165,7 @@ export default function Header() {
                         fontSize: '16px',
                         px: 1,
                         textTransform: 'none',
-                        color: isActived ? '#FFD700' : 'black', // Warna kuning jika aktif
+                        color: home ? color : isActived ? '#FFD700' : 'black', // Warna putih jika di home, kuning jika aktif
                         fontWeight: isActived ? 'bold' : 'normal', // Tebalkan teks jika aktif
                         transition: '0.3s',
                         '&:hover': { textDecoration: 'underline' }, // Warna emas saat hover

@@ -278,6 +278,7 @@ export const EditApartement = () => {
                   fullWidth
                   required
                   prefix="Rp "
+                  
                   thousandSeparator="."
                   decimalSeparator=","
                   error={!!fieldState.error}
