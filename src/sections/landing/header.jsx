@@ -13,6 +13,11 @@ import {
   ListItemText,
   Divider,
   Typography,
+  Link as MuiLink,
+  Grid,
+  Menu,
+  MenuItem,
+  Paper,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
@@ -32,11 +37,24 @@ import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
-import { Dashboard, DashboardRounded, Person } from '@mui/icons-material';
+import {
+  Dashboard,
+  DashboardRounded,
+  ExpandMore,
+  Person,
+  Person2Outlined,
+  PersonPinCircle,
+  PersonPinCircleOutlined,
+  SpaceBarTwoTone,
+} from '@mui/icons-material';
 import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontification';
 import { Notifications } from 'src/layouts/account/notification';
 // import { NotificationsPopover } from 'src/layouts/components/notifications-popover';
 // import { _notifications } from 'src/_mock';
+import React from 'react';
+import { Popover } from '@mui/material';
+import { useBoolean } from 'src/hooks/use-boolean';
+import { Fade } from '@mui/material';
 
 export default function Header() {
   const { enqueueSnackbar } = useSnackbar();
@@ -81,9 +99,17 @@ export default function Header() {
   };
 
   const notifications = mapNotifications(_notifications?.data || []);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  // Terapkan mapping ke data notifikasi
-  // const notifications = ;
+  const handlePopoverOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -112,11 +138,26 @@ export default function Header() {
   // Daftar menu navigasi (ikon hanya muncul di layar kecil)
   const navItems = [
     { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
+    {
+      label: 'Kerjasama Properti',
+
+      children: [
+        {
+          label: 'Semua Kerjasama Properti',
+          path: '/kerja-sama',
+          icon: <PersonPinCircleOutlined />,
+        },
+        {
+          label: 'Kerjasama Properti Coliving',
+          path: '/kerja-sama-coliving',
+          icon: <PersonPinCircleOutlined />,
+        },
+      ],
+    },
     // { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
     { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
-    { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },
+    { label: 'F.A.Q', icon: <InfoIcon />, path: '/faq' },
   ];
 
   const navMobile = [
@@ -133,6 +174,15 @@ export default function Header() {
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
     { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },
   ].filter(Boolean);
+
+  const nav = useBoolean();
+  useEffect(() => {
+    if (nav.value) {
+      nav.onFalse();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
+  const [hoveredItem, setHoveredItem] = useState(null);
 
   return (
     <AppBar
@@ -154,26 +204,116 @@ export default function Header() {
 
           {/* Navigation (Hanya tampil di layar besar) */}
           {!isSmallScreen && (
-            <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'center', gap: 3, p: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 2,
+                p: 2,
+                position: 'relative',
+              }}
+            >
               {navItems.map((item, index) => {
-                const isActived = item.path === pathname;
-                const home = pathname === '/';
+                const isActive = item.path === pathname;
+                const isHome = pathname === '/';
+
+                const handleMouseEnter = () => {
+                  if (item.children) setHoveredItem(item.label);
+                };
+
+                const handleMouseLeave = () => {
+                  if (item.children) setHoveredItem(null);
+                };
+
                 return (
-                  <Link to={item.path} key={index} style={{ textDecoration: 'none' }}>
-                    <Typography
-                      sx={{
-                        fontSize: '16px',
-                        px: 1,
-                        textTransform: 'none',
-                        color: home ? color : isActived ? '#FFD700' : 'black', // Warna putih jika di home, kuning jika aktif
-                        fontWeight: isActived ? 'bold' : 'normal', // Tebalkan teks jika aktif
-                        transition: '0.3s',
-                        '&:hover': { textDecoration: 'underline' }, // Warna emas saat hover
-                      }}
-                    >
-                      {item.label}
-                    </Typography>
-                  </Link>
+                  <Box
+                    key={index}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseLeave={handleMouseLeave}
+                    sx={{ position: 'relative' }}
+                  >
+                    {!item.children ? (
+                      <Link to={item.path} style={{ textDecoration: 'none' }}>
+                        <Typography
+                          sx={{
+                            fontSize: '14px',
+                            px: 1,
+                            textTransform: 'none',
+
+                            //  color: home ? color : isActived ? '#FFD700' : 'black'
+                            color: isHome ? color : isActive ? '#FFD700' : 'black',
+                            fontWeight: isActive ? 'bold' : 'normal',
+                            transition: '0.3s',
+                            '&:hover': { textDecoration: 'underline' },
+                          }}
+                        >
+                          {item.label}
+                        </Typography>
+                      </Link>
+                    ) : (
+                      <>
+                        <Typography
+                          sx={{
+                            fontSize: '14px',
+                            px: 1,
+                            cursor: 'pointer',
+                            textTransform: 'none',
+                            color: isHome ? color : isActive ? '#FFD700' : 'black',
+                            fontWeight: 'bold',
+                            '&:hover': { textDecoration: 'underline' },
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '2px',
+                          }}
+                        >
+                          <span> {item.label}</span> <ExpandMore />
+                        </Typography>
+                        <Fade in={hoveredItem === item.label}>
+                          <Paper
+                            elevation={3}
+                            sx={{
+                              position: 'absolute',
+                              top: '100%',
+                              left: 0,
+                              mt: 1,
+                              zIndex: 10,
+                              pt: 1,
+                              minWidth: 200,
+                              backgroundColor: '#fff',
+                              width: 360,
+                              overflow: 'hidden',
+                              display: 'flex',
+                              flexDirection: 'column',
+                            }}
+                          >
+                            {item.children.map((child, i) => (
+                              <Link
+                                to={child.path}
+                                key={i}
+                                onClick={handleMouseLeave}
+                                style={{ textDecoration: 'none', display: 'block' }}
+                              >
+                                <Typography
+                                  sx={{
+                                    fontSize: '14px',
+                                    py: 3,
+                                    px: 2,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: 2,
+                                    color: 'black',
+                                    '&:hover': { backgroundColor: '#f5f5f5' },
+                                  }}
+                                >
+                                  {child?.icon} <span>{child.label}</span>
+                                </Typography>
+                              </Link>
+                            ))}
+                          </Paper>
+                        </Fade>
+                      </>
+                    )}
+                  </Box>
                 );
               })}
             </Box>

@@ -127,17 +127,14 @@ export function PartnerWithKostKita() {
                     pb: 5,
                     color: 'black',
                     justifyContent: 'end',
-                  }}
+                }}
                 >
-                  {/* {' '} */}
-                  <Link to='/kerja-sama-coliving'>
-                    <Button
-                      // fullWidth
-                      // sx={{ my: { xs: 2, md: 1 } }}
-                      size="medium"
-                      color="inherit"
-                      variant="outlined"
-                    >
+                  <Link
+                    to="/kerja-sama-coliving"
+                    target="_blank"
+                    style={{ textDecoration: 'none', color: 'inherit' }} // <= Tambahkan ini
+                  >
+                    <Button size="medium" color="inherit" variant="outlined">
                       Lihat Selengkapnya
                     </Button>
                   </Link>

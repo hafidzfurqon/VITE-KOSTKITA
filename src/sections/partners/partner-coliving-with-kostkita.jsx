@@ -13,7 +13,9 @@ import {
   Button,
   Grid,
   StepLabel,
-  // StepContent,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   StepConnector,
   styled,
 } from '@mui/material';
@@ -24,8 +26,7 @@ import { Iconify } from 'src/components/iconify';
 import { Container } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
-// import Check from '@mui/icons-material/Check';
-// import { StepIconProps } from '@mui/material/StepIcon';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 export default function PartnerColivingWithKostKita() {
   const [opened, setOpened] = useState(false);
@@ -47,6 +48,29 @@ export default function PartnerColivingWithKostKita() {
     {
       label: 'Nikmati Hasilnya',
       description: 'Duduk manis dan nikmati hasil dari Rukita',
+    },
+  ];
+
+  const faqs = [
+    {
+      question: 'Apa benefit yang saya dapat jika bergabung menjadi partner agent KostKita?',
+      answer:
+        'Sebagai partner, Anda akan mendapatkan dukungan penuh operasional, akses ke jaringan penyewa, dan potensi income tambahan tanpa ribet.',
+    },
+    {
+      question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
+      answer:
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
+    },
+    {
+      question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
+      answer:
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
+    },
+    {
+      question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
+      answer:
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
     },
   ];
 
@@ -298,6 +322,7 @@ export default function PartnerColivingWithKostKita() {
                     strokeWidth={1.5}
                     stroke="currentColor"
                   >
+                    {/* <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" /> */}
                     <path
                       stroke-linecap="round"
                       stroke-linejoin="round"
@@ -497,7 +522,7 @@ export default function PartnerColivingWithKostKita() {
                   }}
                 >
                   <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>
-                    KostKita X IPB Bogor
+                    KostKita X IPB Bogors
                   </Typography>
                 </Box>
                 <img
@@ -597,6 +622,52 @@ export default function PartnerColivingWithKostKita() {
             </Grid>
           </Grid>
         </Box>
+      </Box>
+      <Box sx={{ px: '2rem', pt: { xs: 3, md: 12 }, pb: 16 }}>
+        <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid item xs={12} sm={6}>
+            <Box sx={{ color: '#FFCC00' }}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                width="50"
+                role="img"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"
+                />
+                {/* <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z"
+                    /> */}
+              </svg>
+            </Box>
+            <Typography variant="h4" fontWeight="bold" gutterBottom>
+              Frequently Asked Questions
+            </Typography>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Masih ragu untuk bekerja sama dengan KostKita? Kami bantu jawab semua pertanyaan Anda.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            {faqs.map((faq, index) => (
+              <Accordion key={index}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography fontWeight="bold">{faq.question}</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography>{faq.answer}</Typography>
+                </AccordionDetails>
+              </Accordion>
+            ))}
+          </Grid>
+        </Grid>
       </Box>
       <Box maxWidth="xl">
         <Box
