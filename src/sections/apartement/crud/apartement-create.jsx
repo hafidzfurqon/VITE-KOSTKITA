@@ -408,18 +408,7 @@ export const CreateApartement = () => {
             </Stack>
           </Container>
         </Card>
-        {/* <Stack direction="row" spacing={2}>
-                {selectedImages.map((file, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(file)}
-                    alt={`preview-${index}`}
-                    width={80}
-                    height={80}
-                    style={{ borderRadius: 8, objectFit: 'cover' }}
-                  />
-                ))}
-              </Stack> */}
+
         <Card sx={{ mt: 5 }}>
           <Container>
             <Stack spacing={3} sx={{ px: 3, py: 3 }}>

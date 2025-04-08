@@ -28,7 +28,7 @@ export const navData = [
   },
   {
     title: 'Management Property',
-    path: '#',
+    path: '/property',
     icon: <Iconify icon="mdi:home" />, // Ikon rumah untuk properti
     info: (
       <Label color="error" variant="inverted">
