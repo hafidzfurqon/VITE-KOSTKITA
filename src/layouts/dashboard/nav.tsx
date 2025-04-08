@@ -26,6 +26,7 @@ import { useState } from 'react';
 import Collapse from '@mui/material/Collapse';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Typography } from '@mui/material';
 
 // ----------------------------------------------------------------------
 
@@ -310,7 +311,10 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
           </Box>
         </Box>
       </Scrollbar>
-      ;{slots?.bottomArea}
+      <Typography variant="body2" color="gray" sx={{ p: 1 }}>
+        © 2025 KosKita.id. All rights reserved.
+      </Typography>
+      {/* {`© 2025 KosKita.id. All rights reserved.`} */}
       {/* <NavUpgrade /> */}
     </>
   );
