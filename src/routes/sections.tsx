@@ -119,8 +119,12 @@ export function Router() {
           path: 'transaction',
           children: [
             {
-              path: '',
+              path: 'add-transaction',
               element: <TransactionPage />,
+            },
+            {
+              path: 'list-transaction',
+              element: <div>This page is under Construction</div>,
             },
           ],
         },

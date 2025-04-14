@@ -251,6 +251,7 @@ export const endpoints = {
   data_booking: {
     detail: '/api/admin/property/booking/all_bookings_in_property',
     change_data: '/api/admin/property/booking/change_data',
+    create_new_data : '/api/admin/property/booking/create_new_data'
   },
   apartment: {
     create: '/api/admin/apartment/create',

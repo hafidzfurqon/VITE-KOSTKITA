@@ -332,7 +332,7 @@ export const PropertyRoomCreate = () => {
                     <TableRow>
                       <TableCell>Tipe Harga</TableCell>
                       <TableCell align="center">Harga Awal</TableCell>
-                      <TableCell align="center">Harga Setelah di Diskon</TableCell>
+                      <TableCell align="center">Harga Diskon</TableCell>
                       <TableCell align="center">Diskon (%)</TableCell>
                     </TableRow>
                   </TableHead>

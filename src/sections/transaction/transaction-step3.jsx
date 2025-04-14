@@ -1,10 +1,10 @@
-import { Box, Button, Divider, Radio, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { Grid, Stack } from '@mui/material';
 import { fCurrency } from 'src/utils/format-number';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useKeenSlider } from 'keen-slider/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import 'keen-slider/keen-slider.min.css';
 import { fDate } from 'src/utils/format-time';
 import { useAppContext } from 'src/context/user-context';
@@ -13,8 +13,8 @@ import Loading from 'src/components/loading/loading';
 import { useFetchAllServices } from 'src/hooks/services';
 import { Link } from 'react-router-dom';
 
-export function TransactionStepThree({ data }) {
-  // console.log();
+export function TransactionStepThree({ data, setValue }) {
+  console.log(data);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const isOwnerProperty =
@@ -30,10 +30,34 @@ export function TransactionStepThree({ data }) {
     const selectedIds = data.additional_services?.map((item) => item) || [];
     return service.filter((s) => selectedIds.includes(s.id));
   }, [service, data.additional_services]);
-  console.log(detail_property);
+ 
   const oneMonthPrice = detail_property.room_prices?.find((item) => item.duration === '1_month');
+console.log(oneMonthPrice)
+useEffect(() => {
+  if (oneMonthPrice?.id) {
+    setValue('price_id', oneMonthPrice.id); // ✅ menyimpan ke form
+  }
+}, [oneMonthPrice, setValue]);
 
-  console.log(oneMonthPrice);
+  const baseRoomPrice = oneMonthPrice?.price || 0;
+const roomTotal = baseRoomPrice * data.duration;
+
+const addonsTotal = filteredServices.reduce((total, serviceItem) => {
+  const { payment_type, price } = serviceItem;
+  if (payment_type === 'monthly') {
+    return total + price * data.duration;
+  } else if (payment_type === 'daily' && data.duration === 'daily_days') {
+    // Tambahan jika nanti kamu ingin support harian juga
+    return total + price * (data.daily_days || 1);
+  }
+  return total + price;
+}, 0);
+
+const subtotal = roomTotal + addonsTotal;
+const platformFee = Math.round(subtotal * 0.02);
+const grandTotal = subtotal + platformFee;
+
+  console.log(detail_property);
   if (isloadingRoomDetail || isfetchingRoomDetail || isLoadingService) {
     return <Loading />;
   }
@@ -106,7 +130,7 @@ export function TransactionStepThree({ data }) {
               mt: 3,
               border: '1px solid #F1EFEC',
               borderRadius: '5px',
-              // p: 2,
+              py: 2,
             }}
           >
             <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', my: 2 }}>
@@ -122,10 +146,14 @@ export function TransactionStepThree({ data }) {
               <Typography variant="body2">Diskon 14% untuk pemesanan 3 bulan</Typography>
               <Typography variant="subtitle1">{fCurrency(325000)}</Typography>
             </Box> */}
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            {/* <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2">Pesan selama {data?.duration} bulan</Typography>
-              <Typography variant="subtitle1">{fCurrency(1500000 + 1500000 + 1500000)}</Typography>
-            </Box>
+              <Typography variant="subtitle1">{fCurrency(oneMonthPrice?.price)}</Typography>
+            </Box> */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+  <Typography variant="body2">Harga Kamar ({data?.duration} bulan)</Typography>
+  <Typography variant="subtitle1">{fCurrency(roomTotal)}</Typography>
+</Box>
             {filteredServices.map((data, idx) => (
               <Box
                 key={idx}
@@ -135,15 +163,39 @@ export function TransactionStepThree({ data }) {
                   mb: 1, // memberi jarak antar item
                 }}
               >
-                <Typography variant="body2">+{data?.name}</Typography>
-                <Typography variant="subtitle1">{fCurrency(data?.price)}</Typography>
+                 <Typography variant="body2">
+      +{data?.name} ({data?.payment_type === 'monthly' ? `x${data?.price} / bulan` : 'Per hari'})
+    </Typography>
+    <Typography variant="subtitle1">
+      {fCurrency(data?.payment_type === 'monthly' ? data.price * data.duration : data.price)}
+    </Typography>
+                {/* <Typography variant="body2">+{data?.name} ({data?.payment_type === 'monthly' ? 'Per Bulan' : 'Per hari'})</Typography>
+                <Typography variant="subtitle1">{fCurrency(data?.price)}</Typography> */}
               </Box>
             ))}
             <Divider sx={{ mt: 2 }} />
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            {/* <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2">Total</Typography>
-              <Typography variant="subtitle1">{fCurrency(4794147 - 325000)}</Typography>
-            </Box>
+              <Typography variant="subtitle1">{fCurrency(oneMonthPrice?.price )}</Typography>
+            </Box> */}
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+  <Typography variant="body2">Subtotal</Typography>
+  <Typography variant="subtitle1">{fCurrency(subtotal)}</Typography>
+</Box>
+
+<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+  <Typography variant="body2">Biaya Platform (2%)</Typography>
+  <Typography variant="subtitle1">{fCurrency(platformFee)}</Typography>
+</Box>
+
+<Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+  <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+    Total
+  </Typography>
+  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+    {fCurrency(grandTotal)}
+  </Typography>
+</Box>
           </Box>
         </Grid>
 

@@ -14,6 +14,7 @@ import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
 import Loading from 'src/components/loading/loading';
 import { TransactionStepThree } from './transaction-step3';
 import { useFieldArray } from 'react-hook-form';
+import { fDate } from 'src/utils/format-time';
 
 export default function TransactionView() {
   const { register, handleSubmit, control, watch, setValue } = useForm({
@@ -29,6 +30,7 @@ export default function TransactionView() {
 
   const [step, setStep] = useState(2);
   const { enqueueSnackbar } = useSnackbar();
+  // console.log(watch('price_id'));
 
   const { mutate, isPending } = useMutationTransaction({
     onSuccess: () => enqueueSnackbar('Transaksi berhasil', { variant: 'success' }),
@@ -39,8 +41,32 @@ export default function TransactionView() {
     if (step < 3) {
       setStep(step + 1);
     } else {
-      console.log(data);
-      // mutate(data);
+      console.log(data)
+      const payload = {
+        // user_id: user.id,
+        property_id: data.property_id,
+        room_id: data.room_number,
+        room_price_id: data.price_id || null,
+        property_room_discount_id: data.property_room_discount_id || null,
+        promo_id: data.promo_id || null,
+        booking_date: new Date().toISOString().split('T')[0],
+        total_booking_month: data.duration,
+        check_in: fDate(data.checkin, 'YYYY-MM-DD'),
+        check_out: fDate(data.checkout, 'YYYY-MM-DD'),
+        status: 'pending', // Atau null sesuai kebutuhanmu
+        additional_services: data.additional_services || [],
+        booking_user_data: data.booking_user_data.map((person) => ({
+          fullname: person.fullname,
+          phone_number: person.phone_number,
+          email: person.email,
+          date_of_birth: fDate(person.date_of_birth, 'YYYY-MM-DD'),
+          gender: person.gender,
+          nomor_ktp: person.nomor_ktp,
+          nik: person.nik,
+        })),
+      };
+      console.log(payload)
+      mutate(payload);  
     }
   };
 
@@ -199,7 +225,7 @@ export default function TransactionView() {
           />
         )}
 
-        {step === 3 && <TransactionStepThree data={formValues} />}
+        {step === 3 && <TransactionStepThree data={formValues} setValue={setValue}/>}
 
         <Box display="flex" justifyContent="space-between" mt={4} gap={3}>
           <Button

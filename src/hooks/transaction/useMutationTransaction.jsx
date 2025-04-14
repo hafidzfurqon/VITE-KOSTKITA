@@ -4,8 +4,8 @@ import axiosInstance, { endpoints } from 'src/utils/axios';
 export const useMutationTransaction = ({ onSuccess, onError }) => {
   return useMutation({
     mutationKey: ['add.transaction'],
-    mutationFn: async () => {
-      const response = await axiosInstance.post(endpoints);
+    mutationFn: async (data) => {
+      const response = await axiosInstance.post(endpoints.data_booking.create_new_data, data);
       return response.data;
     },
     onSuccess,
