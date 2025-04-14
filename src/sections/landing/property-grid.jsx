@@ -171,10 +171,10 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
           }}
         >
           {filteredDataToColiving?.map((property) => {
-            const hasDiscount = property.discounts.length > 0;
+            const hasDiscount = property.discounts?.length > 0;
             const currentDate = new Date();
             const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
-            const hasPromo = property.promos.length > 0;
+            const hasPromo = property.promos?.length > 0;
 
             console.log(activePromos);
             return (

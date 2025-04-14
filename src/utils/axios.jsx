@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { secondsToHours } from 'date-fns/esm/fp';
 
 const HOST_API = import.meta.env.VITE_HOST_API;
 const axiosInstance = axios.create({ baseURL: HOST_API });
@@ -81,10 +80,13 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        // alert(err);
+        alert(err);
+        if (error.response && error.response.status === 401) {
+          console.warn('Refresh token expired. Logging out user...');
+          window.location.href = '/sign-in'; // Redirect ke halaman login
+        }
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
-        // window.location.href = '/sign-in'; // Redirect ke halaman login
         return Promise.reject(err);
       } finally {
         isRefreshing = false;
@@ -248,6 +250,7 @@ export const endpoints = {
   },
   data_booking: {
     detail: '/api/admin/property/booking/all_bookings_in_property',
+    change_data: '/api/admin/property/booking/change_data',
   },
   apartment: {
     create: '/api/admin/apartment/create',

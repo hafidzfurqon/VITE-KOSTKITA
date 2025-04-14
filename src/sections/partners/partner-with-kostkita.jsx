@@ -7,7 +7,6 @@ export function PartnerWithKostKita() {
   return (
     <Box sx={{ width: '100%', overflow: 'hidden' }}>
       <Box
-        maxWidth="xl"
         sx={{
           display: 'flex',
           flexDirection: { xs: 'column', md: 'row-reverse' },
@@ -67,9 +66,8 @@ export function PartnerWithKostKita() {
           </Button>
         </Box>
       </Box>
-      <Box maxWidth="xl" id="interest">
+      <Box id="interest">
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             background: 'white',
@@ -127,7 +125,7 @@ export function PartnerWithKostKita() {
                     pb: 5,
                     color: 'black',
                     justifyContent: 'end',
-                }}
+                  }}
                 >
                   <Link
                     to="/kerja-sama-coliving"
@@ -266,9 +264,8 @@ export function PartnerWithKostKita() {
           </Grid>
         </Box>
       </Box>
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             background: 'white',
@@ -408,9 +405,8 @@ export function PartnerWithKostKita() {
           </Grid>
         </Box>
       </Box>
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             backgroundImage: `url('https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg')`,

@@ -5,12 +5,17 @@ import {
   Stack,
   Typography,
   TextField,
-  FormLabel,
-  Autocomplete,
   Grid,
   IconButton,
+  Table,
+  TableContainer,
+  TableCell,
+  TableBody,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 // import "react-quill/dist/quill.snow.css";
 import { MenuItem } from '@mui/material';
@@ -22,12 +27,9 @@ import { useRouter } from 'src/routes/hooks';
 import { Link, useParams } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
 import { InputAdornment } from '@mui/material';
-import { NumericFormat } from 'react-number-format';
 import { useDropzone } from 'react-dropzone';
-import { useFetchFacilities } from 'src/hooks/facilities';
 import Loading from 'src/components/loading/loading';
 import { Checkbox } from '@mui/material';
-import { FormGroup } from '@mui/material';
 // import { useFetchAllPropertyType } from 'src/hooks/property_type';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useMutationCreatePropertyRoom } from 'src/hooks/property_room';
@@ -37,7 +39,17 @@ import { useFetchAllPropertyRoomType } from 'src/hooks/property-room-type';
 import { Card } from '@mui/material';
 import ImageIcon from '@mui/icons-material/Image';
 import { Iconify } from 'src/components/iconify';
+import { useDebounce } from 'src/hooks/use-debounce';
+import { NumericFormat } from 'react-number-format';
 // import { useFetchAllPropertyTypeOwner } from 'src/hooks/owner/useFetchAllTypePropertyOwner';
+
+const initialRows = [
+  { name: 'Harian' },
+  { name: '1 Bulan' },
+  { name: '3 Bulan' },
+  { name: '6 Bulan' },
+  { name: '12 Bulan / 1 Tahun' },
+];
 
 export const PropertyRoomCreate = () => {
   const { id } = useParams();
@@ -54,22 +66,20 @@ export const PropertyRoomCreate = () => {
     isFetching,
   } = useFetchAllRoomFacilities(isOwnerProperty);
   const {
-    data: property_room_type,
+    data: property_room_type = [],
     isLoading: loadingPropertyType,
     isFetching: FetchingPropertyType,
   } = useFetchAllPropertyRoomType(isOwnerProperty);
 
   const {
-    control,
+    // control,
     register,
     handleSubmit,
     setValue,
     watch,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      facilities: [],
-    },
+    defaultValues: {},
   });
 
   const [isActive, setIsActive] = useState(false);
@@ -77,6 +87,68 @@ export const PropertyRoomCreate = () => {
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
   const [selectedImages, setSelectedImages] = useState([]);
+  const [rows, setRows] = useState(
+    initialRows.map(() => ({
+      hargaAsli: '',
+      hargaDiskon: '',
+      diskonPersen: '',
+    }))
+  );
+
+  const handleHargaAsliChange = (index, value) => {
+    const hargaAsli = parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaDiskonRaw = rows[index].hargaDiskon;
+    const hargaDiskon = hargaDiskonRaw
+      ? parseFloat(hargaDiskonRaw.replace(/\./g, '').replace(',', '.')) || 0
+      : null;
+
+    const diskonPersen =
+      hargaDiskon !== null && hargaAsli
+        ? (((hargaAsli - hargaDiskon) / hargaAsli) * 100).toFixed(0)
+        : '';
+
+    updateRow(index, {
+      hargaAsli: value,
+      diskonPersen: hargaDiskon !== null ? diskonPersen : '',
+    });
+  };
+
+  const handleHargaDiskonChange = (index, value) => {
+    const hargaDiskon = parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaAsliRaw = rows[index].hargaAsli;
+    const hargaAsli = hargaAsliRaw
+      ? parseFloat(hargaAsliRaw.replace(/\./g, '').replace(',', '.')) || 0
+      : null;
+
+    const diskonPersen =
+      hargaAsli !== null && hargaAsli
+        ? (((hargaAsli - hargaDiskon) / hargaAsli) * 100).toFixed(0)
+        : '';
+
+    updateRow(index, {
+      hargaDiskon: value,
+      diskonPersen: hargaAsli !== null ? diskonPersen : '',
+    });
+  };
+
+  const handleDiskonPersenChange = (index, value) => {
+    const persen = parseFloat(value) || '';
+    const hargaAsli = parseFloat(rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaDiskon = hargaAsli ? (hargaAsli - (hargaAsli * persen) / 100).toFixed(0) : '';
+
+    updateRow(index, {
+      diskonPersen: value,
+      hargaDiskon: hargaDiskon ? hargaDiskon.toString() : '',
+    });
+  };
+
+  const updateRow = (index, updatedValues) => {
+    setRows((prevRows) => {
+      const updated = [...prevRows];
+      updated[index] = { ...updated[index], ...updatedValues };
+      return updated;
+    });
+  };
 
   const handleCheckboxChange = (facilityId) => {
     const currentFacilities = watch('facilities') || []; // Ambil value saat ini
@@ -133,6 +205,21 @@ export const PropertyRoomCreate = () => {
     },
   });
 
+  const areaSize = watch('area_size');
+  const lebar = watch('lebar');
+
+  useEffect(() => {
+    const panjangNum = parseFloat(areaSize);
+    const lebarNum = parseFloat(lebar);
+
+    if (!isNaN(panjangNum) && !isNaN(lebarNum)) {
+      const luas = panjangNum * lebarNum;
+      setValue('luas_asli_kamar', luas.toFixed(2)); // format 2 angka di belakang koma
+    } else {
+      setValue('luas_asli_kamar', '');
+    }
+  }, [areaSize, lebar, setValue]);
+
   const { mutate, isPending } = useMutationCreatePropertyRoom(
     {
       onSuccess: () => {
@@ -159,28 +246,21 @@ export const PropertyRoomCreate = () => {
     Object.entries(data).forEach(([key, value]) => {
       if (Array.isArray(value)) {
         value.forEach((item) => formData.append(`${key}[]`, item));
-      } else if (key === 'price') {
-        formData.append(key, cleanPrice(value));
       } else {
         formData.append(key, value);
       }
     });
 
-    // console.log("FormData yang dikirim:", Object.fromEntries(formData.entries()));
-
     mutate(formData);
   };
 
-  const cleanPrice = (price) => {
-    return parseInt(price.replace(/[^\d]/g, ''), 10);
-  };
   if (isLoading || isFetching || loadingPropertyType || FetchingPropertyType) {
     return <Loading />;
   }
   return (
     <Box sx={{ px: '2rem' }}>
       <Typography variant="h3" sx={{ mb: 5 }}>
-        Tambah Property Room
+        Tambah Ruangan di properti
       </Typography>
       <CustomBreadcrumbs
         links={[
@@ -214,48 +294,120 @@ export const PropertyRoomCreate = () => {
                   error={!!errors.name}
                   helperText={errors.name?.message}
                 />
-                <Controller
-                  name="price"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: 'Harga wajib diisi' }}
-                  render={({ field, fieldState }) => (
-                    <NumericFormat
-                      {...field}
-                      customInput={TextField}
-                      label="Harga"
-                      fullWidth
-                      required
-                      prefix="Rp "
-                      thousandSeparator="."
-                      decimalSeparator=","
-                      error={!!fieldState.error}
-                      helperText={fieldState.error?.message}
-                    />
-                  )}
-                />
+                <TextField
+                  select
+                  {...register('room_type_id', { required: true })}
+                  label="Tipe Properti Ruangan"
+                  fullWidth
+                  required
+                >
+                  {property_room_type.map((property, idx) => {
+                    return (
+                      <MenuItem key={idx} value={property.id}>
+                        {property.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
               </Stack>
-              <TextField
-                select
-                {...register('room_type_id', { required: true })}
-                label="Tipe Properti Ruangan"
-                fullWidth
-                required
-              >
-                {property_room_type.map((property, idx) => {
-                  return (
-                    <MenuItem key={idx} value={property.id}>
-                      {property.name}
-                    </MenuItem>
-                  );
-                })}
-              </TextField>
               <Typography>Status : </Typography>
               <FormControlLabel
                 control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
-                label={isActive ? 'Available' : 'Non-Available'}
+                label={isActive ? 'Aktif' : 'Tidak Aktif'}
               />
               {/* </Stack> */}
+            </Stack>
+          </Container>
+        </Card>
+        <Card sx={{ mt: 5 }}>
+          <Container>
+            <Stack spacing={3} sx={{ px: 3, py: 3 }}>
+              <Typography variant="subtitle1" sx={{ py: 2 }}>
+                Harga
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="caption table">
+                  <caption>Harga per tipe (harian & bulanan)</caption>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Tipe Harga</TableCell>
+                      <TableCell align="center">Harga Awal</TableCell>
+                      <TableCell align="center">Harga Setelah di Diskon</TableCell>
+                      <TableCell align="center">Diskon (%)</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {initialRows.map((field, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{field.name}</TableCell>
+
+                        {/* Harga Asli */}
+                        <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaAsli}
+                            onValueChange={(values) => handleHargaAsliChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell>
+
+                        {/* Harga Diskon */}
+                        <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaDiskon}
+                            onValueChange={(values) => handleHargaDiskonChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell>
+
+                        {/* Diskon % */}
+                        <TableCell align="center">
+                          <Box
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'start',
+                            }}
+                          >
+                            <TextField
+                              fullWidth
+                              type="number"
+                              value={rows[index].diskonPersen}
+                              onChange={(e) => handleDiskonPersenChange(index, e.target.value)}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                              }}
+                            />
+
+                            {/* Potongan */}
+                            <Typography variant="caption" color="textSecondary" mt={1}>
+                              {rows[index].hargaAsli && rows[index].hargaDiskon
+                                ? `Potongan Rp${(
+                                    parseFloat(
+                                      rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')
+                                    ) -
+                                    parseFloat(
+                                      rows[index].hargaDiskon.replace(/\./g, '').replace(',', '.')
+                                    )
+                                  )
+                                    .toLocaleString('id-ID')
+                                    .replace(',', '.')}`
+                                : ''}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Stack>
           </Container>
         </Card>
@@ -267,34 +419,43 @@ export const PropertyRoomCreate = () => {
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField
-                  {...register('area_size', { required: 'Luas Kamar Wajib Diisi' })}
+                  {...register('area_size', { required: 'Panjang kamar wajib diisi' })}
                   margin="dense"
                   id="area_size"
-                  label="Luas Kamar" // harus ada 3 min
-                  type="text"
+                  label="Panjang Kamar"
+                  type="number"
                   inputMode="numeric"
                   fullWidth
                   variant="outlined"
                   error={!!errors.area_size}
                   helperText={errors.area_size?.message}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">m²</InputAdornment>,
-                  }}
                 />
 
                 <TextField
-                  {...register('stock', { required: 'Stock Wajib Diisi' })}
+                  {...register('lebar', { required: 'Lebar kamar wajib diisi' })}
                   margin="dense"
-                  id="stock"
-                  label="Stock Kamar"
-                  type="text"
+                  id="lebar"
+                  label="Lebar Kamar"
+                  type="number"
                   inputMode="numeric"
                   fullWidth
                   variant="outlined"
-                  error={!!errors.stock}
-                  helperText={errors.stock?.message}
+                  error={!!errors.lebar}
+                  helperText={errors.lebar?.message}
                 />
               </Stack>
+
+              <TextField
+                {...register('luas_asli_kamar')}
+                margin="dense"
+                placeholder="Luas kamar diambil dari panjang × lebar"
+                disabled
+                fullWidth
+                variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">m²</InputAdornment>,
+                }}
+              />
               <TextField
                 {...register('capacity')}
                 margin="dense"
@@ -306,6 +467,18 @@ export const PropertyRoomCreate = () => {
                 InputProps={{
                   endAdornment: <InputAdornment position="end">Orang</InputAdornment>,
                 }}
+              />
+              <TextField
+                {...register('stock', { required: 'Stock Wajib Diisi' })}
+                margin="dense"
+                id="stock"
+                label="Stock Kamar"
+                type="text"
+                inputMode="numeric"
+                fullWidth
+                variant="outlined"
+                error={!!errors.stock}
+                helperText={errors.stock?.message}
               />
               {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}> */}
               <TextField

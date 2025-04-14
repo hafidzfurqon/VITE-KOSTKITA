@@ -5,8 +5,13 @@ import {
   Stack,
   Typography,
   TextField,
-  FormLabel,
-  Autocomplete,
+  Table,
+  TableContainer,
+  TableCell,
+  TableBody,
+  TableHead,
+  TableRow,
+  Paper,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
@@ -23,7 +28,6 @@ import { NumericFormat } from 'react-number-format';
 import { useDropzone } from 'react-dropzone';
 import Loading from 'src/components/loading/loading';
 import { Checkbox } from '@mui/material';
-import { FormGroup } from '@mui/material';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import {
   useFetchAllPropertyRoomDetail,
@@ -37,6 +41,14 @@ import { Card } from '@mui/material';
 import { IconButton } from '@mui/material';
 import { Iconify } from 'src/components/iconify';
 import ImageIcon from '@mui/icons-material/Image';
+
+const initialRows = [
+  { name: 'Harian' },
+  { name: '1 Bulan' },
+  { name: '3 Bulan' },
+  { name: '6 Bulan' },
+  { name: '12 Bulan / 1 Tahun' },
+];
 
 export const UpdatePropertyRoomCreate = () => {
   const { id } = useParams();
@@ -56,7 +68,7 @@ export const UpdatePropertyRoomCreate = () => {
   } = useFetchAllPropertyRoomDetail(id, isOwnerProperty);
 
   const {
-    data: property_room_type,
+    data: property_room_type = [],
     isLoading: loadingPropertyType,
     isFetching: FetchingPropertyType,
   } = useFetchAllPropertyRoomType(isOwnerProperty);
@@ -66,6 +78,13 @@ export const UpdatePropertyRoomCreate = () => {
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
   const [selectedImages, setSelectedImages] = useState([]);
+  const [rows, setRows] = useState(
+    initialRows.map(() => ({
+      hargaAsli: '',
+      hargaDiskon: '',
+      diskonPersen: '',
+    }))
+  );
   const inputRef = useRef();
   const {
     control,
@@ -119,7 +138,70 @@ export const UpdatePropertyRoomCreate = () => {
     }
   }, [data, setValue]);
 
+  useEffect(() => {
+    if (data && data.room_prices) {
+      const updatedRows = initialRows.map((row) => {
+        const matched = data.room_prices.find((price) => {
+          if (row.name === 'Harian') return price.duration === 'dayly';
+          if (row.name === '1 Bulan') return price.duration === '1_month';
+          if (row.name === '3 Bulan') return price.duration === '3_month';
+          if (row.name === '6 Bulan') return price.duration === '6_month';
+          if (row.name === '12 Bulan / 1 Tahun') return price.duration === '12_month';
+          return false;
+        });
+
+        const hargaAsli = matched ? matched.price.toString() : '';
+        return {
+          hargaAsli: hargaAsli,
+          hargaDiskon: '', // Kosong karena tidak ada data diskon di respons API
+          diskonPersen: '',
+        };
+      });
+
+      setRows(updatedRows);
+    }
+  }, [data]);
+
   const [defaultImages, setDefaultImages] = useState([]);
+
+  const handleHargaAsliChange = (index, value) => {
+    const hargaAsli = parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaDiskon = parseFloat(rows[index].hargaDiskon) || 0;
+    const diskonPersen = hargaAsli
+      ? (((hargaAsli - hargaDiskon) / hargaAsli) * 100).toFixed(0)
+      : '';
+
+    updateRow(index, { hargaAsli: value, diskonPersen });
+  };
+
+  const handleHargaDiskonChange = (index, value) => {
+    const hargaDiskon = parseFloat(value.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaAsli = parseFloat(rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')) || 0;
+    const diskonPersen = hargaAsli
+      ? (((hargaAsli - hargaDiskon) / hargaAsli) * 100).toFixed(0)
+      : '';
+
+    updateRow(index, { hargaDiskon: value, diskonPersen });
+  };
+
+  const handleDiskonPersenChange = (index, value) => {
+    const persen = parseFloat(value) || '';
+    const hargaAsli = parseFloat(rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')) || 0;
+    const hargaDiskon = hargaAsli ? (hargaAsli - (hargaAsli * persen) / 100).toFixed(0) : '';
+
+    updateRow(index, {
+      diskonPersen: value,
+      hargaDiskon: hargaDiskon ? hargaDiskon.toString() : '',
+    });
+  };
+
+  const updateRow = (index, updatedValues) => {
+    setRows((prevRows) => {
+      const updated = [...prevRows];
+      updated[index] = { ...updated[index], ...updatedValues };
+      return updated;
+    });
+  };
   // const existingFileIdss = defaultImages.map((img) => img.id);
   // console.log(defaultImages.map((img) => img.name));
   const handleCheckboxChange = (facilityId) => {
@@ -328,6 +410,98 @@ export const UpdatePropertyRoomCreate = () => {
                 control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}
                 label={isActive ? 'Available' : 'Non-Available'}
               />
+            </Stack>
+          </Container>
+        </Card>
+        <Card sx={{ mt: 5 }}>
+          <Container>
+            <Stack spacing={3} sx={{ px: 3, py: 3 }}>
+              <Typography variant="subtitle1" sx={{ py: 2 }}>
+                Harga
+              </Typography>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="caption table">
+                  <caption>Harga per tipe (harian & bulanan)</caption>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Tipe Harga</TableCell>
+                      <TableCell align="center">Harga Asli</TableCell>
+                      <TableCell align="center">Harga Diskon</TableCell>
+                      <TableCell align="center">Diskon (%)</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {initialRows.map((field, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{field.name}</TableCell>
+
+                        {/* Harga Asli */}
+                        <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaAsli}
+                            onValueChange={(values) => handleHargaAsliChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell>
+
+                        {/* Harga Diskon */}
+                        <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaDiskon}
+                            onValueChange={(values) => handleHargaDiskonChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell>
+
+                        {/* Diskon % */}
+                        <TableCell align="center">
+                          <Box
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'start',
+                            }}
+                          >
+                            <TextField
+                              fullWidth
+                              type="number"
+                              value={rows[index].diskonPersen}
+                              onChange={(e) => handleDiskonPersenChange(index, e.target.value)}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                              }}
+                            />
+
+                            {/* Potongan */}
+                            <Typography variant="caption" color="textSecondary" mt={1}>
+                              {rows[index].hargaAsli && rows[index].hargaDiskon
+                                ? `Potongan Rp${(
+                                    parseFloat(
+                                      rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')
+                                    ) -
+                                    parseFloat(
+                                      rows[index].hargaDiskon.replace(/\./g, '').replace(',', '.')
+                                    )
+                                  )
+                                    .toLocaleString('id-ID')
+                                    .replace(',', '.')}`
+                                : ''}
+                            </Typography>
+                          </Box>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </Stack>
           </Container>
         </Card>

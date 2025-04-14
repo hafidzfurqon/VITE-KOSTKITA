@@ -62,6 +62,7 @@ export function NotificationsPopover({ data = [], sx, ...other }: NotificationsP
     setNotifications(updatedNotifications);
   }, [notifications]);
 
+  console.log(notifications);
   return (
     <>
       <IconButton

@@ -7,16 +7,8 @@ import {
   Box,
   Button,
   IconButton,
-  Drawer,
-  List,
-  ListItem,
-  ListItemText,
-  Divider,
   Typography,
   Link as MuiLink,
-  Grid,
-  Menu,
-  MenuItem,
   Paper,
   SvgIcon,
 } from '@mui/material';
@@ -25,6 +17,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import HomeIcon from '@mui/icons-material/Home';
 import BusinessIcon from '@mui/icons-material/Business';
 import InfoIcon from '@mui/icons-material/Info';
+import { Label } from 'src/components/label';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import HistoryIcon from '@mui/icons-material/History';
 import { Link, useNavigate } from 'react-router-dom';
@@ -32,13 +25,13 @@ import { useResponsive } from 'src/hooks/use-responsive';
 import Logo from '../../../public/assets/images/logo.png';
 import { usePathname, useRouter } from 'src/routes/hooks';
 import { AccountPopover } from 'src/layouts/components/account-popover';
-import { Avatar } from '@mui/material';
 import { useAppContext } from 'src/context/user-context';
 import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
 import DialogDelete from 'src/component/DialogDelete';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import {
+  BookmarkBorderOutlined,
   Dashboard,
   DashboardRounded,
   ExpandMore,
@@ -52,36 +45,24 @@ import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontifica
 import { Notifications } from 'src/layouts/account/notification';
 import { useBoolean } from 'src/hooks/use-boolean';
 import { Fade } from '@mui/material';
+import { NavMobileLanding } from 'src/layouts/landing/nav';
+import { Iconify } from 'src/components/iconify';
+import { Badge } from '@mui/material';
 
 export default function Header() {
-  const { enqueueSnackbar } = useSnackbar();
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const isSmallScreen = useResponsive('down', 'md'); // Deteksi layar kecil
   const [navBg, setNavBg] = useState('transparent');
   const pathname = usePathname();
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State untuk status login
   const { UserContextValue: authUser } = useAppContext();
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [color, setColor] = useState('white');
   const { user } = authUser;
-  const userId = user.id;
+  const userId = user?.id;
   const isHome = pathname === '/';
   // console.log(userId)
   const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
-  const { mutate: handleLogout, isPending } = useMutationLogout({
-    onSuccess: () => {
-      queryClient.removeQueries(['authenticated.user']);
-      navigate('/'); // Kembali ke landing page
-      enqueueSnackbar('Logout berhasil', { variant: 'success' });
-      localStorage.removeItem('token'); // Hapus token saat logout
-    },
-    onError: (error) => {
-      enqueueSnackbar(error.message, { variant: 'error' });
-    },
-  });
 
   const { data: _notifications, isLoading, isError } = useFetchNontification(userId);
   // console.log(notifications);
@@ -97,17 +78,6 @@ export default function Header() {
   };
 
   const notifications = mapNotifications(_notifications?.data || []);
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -154,24 +124,67 @@ export default function Header() {
     },
     // { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
-    { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
+    user?.roles?.length > 0 && {
+      label: 'Wishlist',
+      icon: <BookmarkBorderOutlined />,
+      path: '/wishlist',
+    },
     { label: 'F.A.Q', icon: <InfoIcon />, path: '/faq' },
   ];
 
-  const navMobile = [
-    isAdmin || isOwner ? { label: 'Dashboard', icon: <Dashboard />, path: '/dashboard' } : null,
-    { label: 'Sewa', icon: <HomeIcon />, path: '/' },
-    !isAdmin &&
-      !isOwner && { label: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
-    !isAdmin &&
-      !isOwner && { label: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> },
-    { label: 'Wishlist', icon: <InfoIcon />, path: '/wishlist' },
+  const navMobileData = [];
 
-    { label: 'Kerjasama', icon: <HandshakeIcon />, path: '/kerja-sama' },
-    { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
-    { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
-    { label: 'FAQ', icon: <InfoIcon />, path: '/faq' },
-  ].filter(Boolean);
+  if (isAdmin || isOwner) {
+    navMobileData.push({ title: 'Dashboard', icon: <Dashboard />, path: '/dashboard' });
+  }
+
+  navMobileData.push({ title: 'Sewa', icon: <HomeIcon />, path: '/' });
+
+  if (!isAdmin && !isOwner) {
+    navMobileData.push(
+      { title: 'Riwayat Booking', path: '/history/booking', icon: <HistoryIcon /> },
+      { title: 'Riwayat Visit', path: '/history/visit', icon: <HistoryIcon /> }
+    );
+  }
+
+  navMobileData.push(
+    {
+      title: 'Kerjasama Properti',
+      icon: <HandshakeIcon />,
+      path: '/kerja',
+      children: [
+        {
+          title: 'Semua Kerjasama Properti',
+          path: '/kerja-sama',
+          icon: <PersonPinCircleOutlined />,
+        },
+        {
+          title: 'Kerjasama Properti Coliving',
+          path: '/kerja-sama-coliving',
+          icon: <PersonPinCircleOutlined />,
+        },
+      ],
+    },
+    { title: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
+    { title: 'FAQ', icon: <InfoIcon />, path: '/faq' }
+  );
+  if (user?.roles?.length > 0) {
+    navMobileData.push(
+      {
+        title: 'Notifikasi',
+        icon: (
+          <Badge
+            badgeContent={notifications.filter((item) => item.isUnRead === true).length}
+            color="error"
+          >
+            <Iconify width={24} icon="solar:bell-bing-bold-duotone" />
+          </Badge>
+        ),
+        path: '/notification',
+      },
+      { title: 'Wishlist', icon: <BookmarkBorderOutlined />, path: '/wishlist' }
+    );
+  }
 
   const nav = useBoolean();
   useEffect(() => {
@@ -331,7 +344,7 @@ export default function Header() {
                       Gagal memuat notifikasi
                     </Typography>
                   ) : notifications.length > 0 ? (
-                    <Notifications data={notifications} />
+                    <Notifications data={notifications} isHome={isHome} />
                   ) : (
                     <Typography variant="body2" color="textSecondary">
                       Tidak ada notifikasi baru
@@ -377,7 +390,8 @@ export default function Header() {
                     color="inherit"
                     sx={{
                       textTransform: 'none',
-                      color: 'black',
+                      color:
+                        isHome && window.scrollY > 50 ? 'black' : !isHome ? 'black' : 'inherit',
                       transition: '0.3s',
                       '&:hover': { color: '#FFD700' },
                     }}
@@ -414,9 +428,10 @@ export default function Header() {
           </IconButton>
         )}
       </Toolbar>
-      <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
+      <NavMobileLanding data={navMobileData} open={mobileOpen} onClose={toggleDrawer} />
+      {/* <Drawer anchor="right" open={mobileOpen} onClose={toggleDrawer}>
         <Box sx={{ p: 2 }}>
-          {/* Hanya tampil jika sudah login */}
+   
           {isLoggedIn && user && (
             <>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
@@ -471,7 +486,7 @@ export default function Header() {
                     item.path !== '/profile' &&
                     item.path !== '/dashboard' &&
                     item.path !== '/history/visit')
-              ) // Sembunyikan history booking & profile jika belum login
+              ) 
               .map((item, index) => {
                 const isActived = item.path === pathname;
                 return (
@@ -494,7 +509,7 @@ export default function Header() {
               })}
             <Divider sx={{ my: 1 }} />
 
-            {/* Hanya tampil jika belum login */}
+            
             {!isLoggedIn && (
               <ListItem button component={Link} to={router.auth.login} onClick={toggleDrawer}>
                 <LoginIcon />
@@ -502,7 +517,7 @@ export default function Header() {
               </ListItem>
             )}
 
-            {/* Tombol Logout, hanya muncul jika login */}
+          
             {isLoggedIn && (
               <ListItem
                 button
@@ -519,17 +534,7 @@ export default function Header() {
             )}
           </List>
         </Box>
-      </Drawer>
-      <DialogDelete
-        open={openDeleteDialog}
-        setOpen={() => setOpenDeleteDialog(false)}
-        Submit={handleLogout}
-        title="Konfirmasi Logout"
-        description="Apakah Anda yakin ingin logout?"
-        confirmText="Logout"
-        confirmColor="error"
-        pending={isPending}
-      />
+      </Drawer> */}
     </AppBar>
   );
 }

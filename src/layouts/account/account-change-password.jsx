@@ -25,7 +25,7 @@ export default function AccountChangePassword() {
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const userId = user?.id;
-console.log(userId)
+  console.log(userId);
   const password = useBoolean();
 
   const ChangePassWordSchema = Yup.object().shape({
@@ -60,7 +60,7 @@ console.log(userId)
     },
     onError: (error) => {
       console.error(error);
-      enqueueSnackbar('Gagal memperbarui password', { variant: 'error' });
+      enqueueSnackbar('Password Tidak Boleh Sama seperti password saat ini', { variant: 'error' });
     },
   });
 
@@ -76,7 +76,6 @@ console.log(userId)
       const response = await updatePassword({ userId, data: formData });
     } catch (error) {
       console.error(error);
-      enqueueSnackbar('Terjadi kesalahan', { variant: 'error' });
     }
   };
 

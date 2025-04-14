@@ -64,6 +64,7 @@ export const Faq = lazy(() => import('src/pages/Faq-page'));
 export const PartnerWithUs = lazy(() => import('src/pages/partner-with-us'));
 export const PartnerColivingWithUs = lazy(() => import('src/pages/partner-coliving-with-kostkita'));
 export const TransactionPage = lazy(() => import('src/pages/transaction'));
+export const NotificationPage = lazy(() => import('src/pages/notification-page'));
 
 // ----------------------------------------------------------------------
 
@@ -344,6 +345,10 @@ export function Router() {
         {
           path: 'wishlist',
           element: <WishlistPageView />,
+        },
+        {
+          path: 'notification',
+          element: <NotificationPage />,
         },
         {
           path: 'sewa/kost/kota/:slug',

@@ -23,7 +23,7 @@ export default function PropertyBudgety() {
   const [selectedRange, setSelectedRange] = useState(null);
 
   if (isLoading || isFetching) return <Loading />;
-  if (!data || data.length === 0)
+  if (!data || data?.length === 0)
     return (
       <Container sx={{ textAlign: 'center', mt: 6 }}>
         <Typography variant="h6" color="textSecondary">
@@ -101,7 +101,7 @@ export default function PropertyBudgety() {
 }
 
 function PropertyCard({ coliving }) {
-  const hasDiscount = coliving.discounts.length > 0;
+  const hasDiscount = coliving.discounts?.length > 0;
 
   return (
     <Box sx={{ mb: 3 }}>

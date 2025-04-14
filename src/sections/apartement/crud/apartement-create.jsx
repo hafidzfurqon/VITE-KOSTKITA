@@ -11,7 +11,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { MenuItem } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
 import { Switch } from '@mui/material';
@@ -187,27 +187,19 @@ export const CreateApartement = () => {
     const formData = new FormData();
     formData.append('description', editorContentRef.current);
     Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'price') {
-        // Hindari duplikasi harga
-        if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(`${key}[]`, item));
-        } else {
-          formData.append(key, value);
-        }
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(`${key}[]`, item));
+      } else {
+        formData.append(key, value);
       }
     });
-
-    formData.append('price', cleanPrice(data.price)); // Tambahkan hanya satu price
-
-    // mutate(formData);
+    mutate(formData);
     console.log(data);
   };
 
   const selectedType = watch('property_type_id');
   // console.log(selectedType);
-  const cleanPrice = (price) => {
-    return parseInt(price.replace(/[^\d]/g, ''), 10);
-  };
+
   if (isLoading || isFetching || loadingPropertyType || FetchingPropertyType) {
     return <Loading />;
   }
@@ -513,246 +505,6 @@ export const CreateApartement = () => {
                   toolbar:
                     'insertfile undo redo  | formatselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
                 }}
-              />
-            </Stack>
-          </Container>
-        </Card>
-        <Card sx={{ mt: 5 }}>
-          <Container>
-            <Stack spacing={3} sx={{ px: 3, py: 3, mb: 3 }}>
-              <Typography variant="subtitle1" sx={{ py: 2 }}>
-                Harga
-              </Typography>
-              <InputLabel htmlFor="harga-per-hari">Harga Per Hari*</InputLabel>
-              <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-coret-per-hari">
-                Harga Coret Per Hari (Optional)
-              </InputLabel>
-              <Controller
-                name="price_coret_per_hari"
-                control={control}
-                defaultValue=""
-                // rules={{ required: 'Harga  wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-per-hari">Harga Per 1-2 Bulan*</InputLabel>
-              <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-coret-per-hari">
-                Harga Coret Per 1-2 Bulan (Optional)
-              </InputLabel>
-              <Controller
-                name="price_coret_per_hari"
-                control={control}
-                defaultValue=""
-                // rules={{ required: 'Harga  wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-per-hari">Harga Per 3-5 Bulan*</InputLabel>
-              <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-coret-per-hari">
-                Harga Coret Per 3-5 Bulan (Optional)
-              </InputLabel>
-              <Controller
-                name="price_coret_per_hari"
-                control={control}
-                defaultValue=""
-                // rules={{ required: 'Harga  wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-per-hari">Harga Per 6-11 Bulan*</InputLabel>
-              <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-coret-per-hari">
-                Harga Coret Per 6-11 Bulan (Optional)
-              </InputLabel>
-              <Controller
-                name="price_coret_per_hari"
-                control={control}
-                defaultValue=""
-                // rules={{ required: 'Harga  wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-
-              <InputLabel htmlFor="harga-per-hari">Harga Per 12 Bulan atau lebih*</InputLabel>
-              <Controller
-                name="price"
-                control={control}
-                defaultValue=""
-                rules={{ required: 'Harga wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
-              />
-              <InputLabel htmlFor="harga-coret-per-hari">
-                Harga Coret Per 12 Bulan atau lebih (Optional)
-              </InputLabel>
-              <Controller
-                name="price_coret_per_hari"
-                control={control}
-                defaultValue=""
-                // rules={{ required: 'Harga  wajib diisi' }}
-                render={({ field, fieldState }) => (
-                  <NumericFormat
-                    {...field}
-                    customInput={Input}
-                    fullWidth
-                    required
-                    prefix="'"
-                    suffix="'"
-                    thousandSeparator="."
-                    decimalSeparator=","
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
-                    startAdornment={<InputAdornment position="start">Rp</InputAdornment>}
-                  />
-                )}
               />
             </Stack>
           </Container>

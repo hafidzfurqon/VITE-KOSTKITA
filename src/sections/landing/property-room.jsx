@@ -84,7 +84,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
   }
 
   return (
-    <Container maxWidth="lg" sx={{ mt: 5 }}>
+    <Box maxWidth="lg" sx={{ mt: 5 }}>
       <Typography variant="h5" sx={{ mb: 3, fontWeight: 'bold' }}>
         Kamar
       </Typography>
@@ -117,7 +117,15 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                   ))}
                 </Grid>
 
-                <Box sx={{ display: 'flex', mb: 3, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    mb: 3,
+                    backgroundColor: '#FFD600',
+                    borderTopRightRadius: '5px',
+                    borderTopLeftRadius: '5px',
+                  }}
+                >
                   {[0, 1, 2, 3].map((rangeIndex) => (
                     <Box
                       key={rangeIndex}
@@ -133,7 +141,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                           selectedMonthRange[room.id] === rangeIndex ? '#f0f7ff' : 'transparent',
                       }}
                     >
-                      <Typography sx={{ fontSize: '14px', fontWeight: 600 }}>
+                      <Typography sx={{ fontSize: '12px', fontWeight: 600 }}>
                         {rangeIndex === 0
                           ? '1-2'
                           : rangeIndex === 1
@@ -186,7 +194,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                           }
                         }}
                       >
-                        {room.isBooked ? 'Sudah Dibooking' : `Pilih Kamar ${room.name}`}
+                        {room.isBooked ? 'Sudah Dibooking' : `Pilih Kamar`}
                       </LoadingButton>
                     ) : null
                   ) : (
@@ -209,7 +217,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
           </Grid>
         </StyledCard>
       ))}
-    </Container>
+    </Box>
   );
 };
 

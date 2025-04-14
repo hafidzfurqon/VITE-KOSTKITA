@@ -21,6 +21,7 @@ import { fToNow } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -36,13 +37,14 @@ type NotificationItemProps = {
 
 export type NotificationsPopoverProps = IconButtonProps & {
   data?: NotificationItemProps[];
+  isHome: any;
 };
 
-export function Notifications({ data = [], sx, ...other }: NotificationsPopoverProps) {
+export function Notifications({ data = [], sx, isHome, ...other }: NotificationsPopoverProps) {
   const [notifications, setNotifications] = useState(data);
-
+  const navigate = useNavigate();
   const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
-
+  // console.log(notifications)
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
 
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
@@ -52,6 +54,11 @@ export function Notifications({ data = [], sx, ...other }: NotificationsPopoverP
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
   }, []);
+
+  const handleRedirectToNotificationPage = () => {
+    handleClosePopover;
+    navigate('/notification');
+  };
 
   const handleMarkAllAsRead = useCallback(() => {
     const updatedNotifications = notifications.map((notification) => ({
@@ -65,7 +72,7 @@ export function Notifications({ data = [], sx, ...other }: NotificationsPopoverP
   return (
     <>
       <IconButton
-        color={openPopover ? 'primary' : 'default'}
+        color={isHome && window.scrollY > 50 ? 'default' : !isHome ? 'default' : 'inherit'}
         onClick={handleOpenPopover}
         sx={sx}
         {...other}
@@ -120,13 +127,7 @@ export function Notifications({ data = [], sx, ...other }: NotificationsPopoverP
               </ListSubheader>
             }
           >
-            {notifications.slice(0, 2).map((notification) => (
-              <NotificationItem key={notification.id} notification={notification} />
-            ))}
-          </List>
-
-          <List disablePadding>
-            {notifications.slice(2, 5).map((notification) => (
+            {notifications.slice(0, 3).map((notification) => (
               <NotificationItem key={notification.id} notification={notification} />
             ))}
           </List>
@@ -135,7 +136,7 @@ export function Notifications({ data = [], sx, ...other }: NotificationsPopoverP
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth disableRipple color="inherit">
+          <Button fullWidth disableRipple color="inherit" onClick={handleRedirectToNotificationPage}>
             View all
           </Button>
         </Box>
@@ -148,7 +149,7 @@ export function Notifications({ data = [], sx, ...other }: NotificationsPopoverP
 
 function NotificationItem({ notification }: { notification: NotificationItemProps }) {
   const { avatarUrl, title } = renderContent(notification);
-
+  console.log(notification);
   return (
     <ListItemButton
       sx={{
@@ -161,7 +162,7 @@ function NotificationItem({ notification }: { notification: NotificationItemProp
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatarUrl}</Avatar>
+        <img alt={notification.title} src="/assets/icons/notification/ic-notification-mail.svg" />
       </ListItemAvatar>
       <ListItemText
         primary={title}

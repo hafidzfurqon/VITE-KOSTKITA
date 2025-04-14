@@ -2,13 +2,11 @@ import { useState, useCallback, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Table from '@mui/material/Table';
-import Button from '@mui/material/Button';
 import TableBody from '@mui/material/TableBody';
 import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
 import { PropertyVisitTableRow } from '../property-visit-table-row';
@@ -17,31 +15,25 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { PropertyVisitTableToolbar } from '../property-visit-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-
-import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { DialogCreate } from 'src/component/DialogCreate';
 import { useAppContext } from 'src/context/user-context';
 import { useFetchAllVisit } from 'src/hooks/visit-property';
 
 export function PropertyVisitView() {
   const table = useTable();
-  const { UserContextValue: authUser }: any = useAppContext();
-  const { user } = authUser;
+  // const { UserContextValue: authUser }: any = useAppContext();
+  // const { user } = authUser;
+
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
   // const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
   const { data = [], isLoading, isFetching } = useFetchAllVisit();
-  console.log(data);
+
   const [filterName, setFilterName] = useState('');
 
   // Menghindari re-render berulang saat data berubah
   const dataFiltered = useMemo(
     () =>
       applyFilter({
-        inputData: data,
+        inputData: data.filter((item: any) => item.visit?.length > 0),
         comparator: getComparator('desc', 'created_at'),
         filterName,
       }),
@@ -54,7 +46,7 @@ export function PropertyVisitView() {
   if (isLoading || isFetching) {
     return <Loading />;
   }
-
+  const lengthDataVisit = data.filter((item: any) => item.visit?.length > 0).length;
   return (
     <>
       <DashboardContent>
@@ -80,7 +72,7 @@ export function PropertyVisitView() {
                 <PropertyVisitTableHead
                   order={table.order}
                   orderBy={table.orderBy}
-                  rowCount={data.length}
+                  rowCount={lengthDataVisit}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked: any) =>
@@ -91,8 +83,8 @@ export function PropertyVisitView() {
                   }
                   headLabel={[
                     { id: 'nama', label: 'Nama Property Yang di Kunjungi' },
-                    { id: 'status', label: 'Status' },
-                    { id: 'date', label: 'Tanggal Kunjungan' },
+                    // { id: 'status', label: 'Status' },
+                    // { id: 'date', label: 'Tanggal Kunjungan' },
                     // { id: 'nama_user', label: 'Nama Pengguna' },
                     { id: 'action', label: 'Action' },
                   ]}
@@ -109,7 +101,7 @@ export function PropertyVisitView() {
                         <PropertyVisitTableRow
                           key={row.id}
                           row={row}
-                          // booked={row.bookings}
+                          visited={row.visit}
                           selected={table.selected.includes(row.id)}
                           onSelectRow={() => table.onSelectRow(row.id)}
                         />
@@ -124,7 +116,7 @@ export function PropertyVisitView() {
 
                   <TableEmptyRows
                     height={68}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, lengthDataVisit)}
                   />
                   {notFound && <TableNoData searchQuery={filterName} />}
                 </TableBody>
@@ -135,7 +127,7 @@ export function PropertyVisitView() {
           <TablePagination
             component="div"
             page={table.page}
-            count={data.length}
+            count={lengthDataVisit}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             rowsPerPageOptions={[5, 10, 25]}

@@ -22,6 +22,7 @@ import { err } from 'src/sections/auth';
 import DialogDelete from 'src/component/DialogDelete';
 import { useAppContext } from 'src/context/user-context';
 import { useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 // ----------------------------------------------------------------------
 
@@ -45,17 +46,16 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
   // State Management
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
+  const navigate = useNavigate();
   // Logout Mutation
   const { mutate: handleLogout, isPending } = useMutationLogout({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] }); // Reset cache
-      router.push('/'); // Kembali ke landing page
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
+      navigate('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
-
-      setTimeout(() => {
-        window.location.reload(); // Refresh halaman agar reset state
-      }, 500);
+      localStorage.removeItem('token'); // Hapus token saat logout
+      setOpenDeleteDialog(false);
+      handleClosePopover;
     },
     onError: (error: err) => {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -95,7 +95,17 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         }}
         {...other}
       >
-        <Avatar src={user?.photo_profile_url} alt={user?.name} sx={{ width: 1, height: 1 }}>
+        <Avatar
+          src={
+            user?.photo_profile_url
+              ? user.photo_profile_url
+              : user?.gender === 'male'
+                ? '/assets/images/avatar/avatar-25.webp'
+                : '/assets/images/avatar/avatar-5.webp'
+          }
+          alt={user?.name}
+          sx={{ width: 1, height: 1 }}
+        >
           {user.name.charAt(0).toUpperCase()}
         </Avatar>
       </IconButton>
@@ -179,11 +189,11 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
 
       {/* Logout Confirmation Dialog */}
       <DialogDelete
-        title="Apakah anda yakin akan Logout?"
-        description="Anda akan keluar dari dashboard"
-        setOpen={setOpenDeleteDialog}
         open={openDeleteDialog}
+        setOpen={() => setOpenDeleteDialog(false)}
         Submit={handleLogout}
+        title="Konfirmasi Logout"
+        description="Apakah Anda yakin ingin logout?"
         pending={isPending}
       />
     </>

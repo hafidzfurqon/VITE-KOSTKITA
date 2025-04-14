@@ -202,7 +202,7 @@ export default function PartnerColivingWithKostKita() {
   return (
     <>
       <Box
-        maxWidth="xl"
+       
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -285,9 +285,9 @@ export default function PartnerColivingWithKostKita() {
           </Box>
         </Box>
       </Box>
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
+         
           sx={{
             padding: 0,
             background: 'white',
@@ -453,9 +453,9 @@ export default function PartnerColivingWithKostKita() {
           </Grid>
         </Box>
       </Box>
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
+         
           sx={{
             bgcolor: '#F0EFEA',
             display: 'flex',
@@ -669,9 +669,9 @@ export default function PartnerColivingWithKostKita() {
           </Grid>
         </Grid>
       </Box>
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
+         
           sx={{
             padding: 0,
             backgroundImage: `url('https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg')`,

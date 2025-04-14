@@ -104,7 +104,7 @@ export function DataBookingProperty() {
                     { id: 'nama', label: 'Nama' },
                     { id: 'nama_user', label: 'No Telp' },
                     { id: 'rest', label: 'Sisa Hari' },
-                    // { id: 'nama_user', label: 'Email' },
+                    { id: 'nama_user', label: 'Status' },
                     { id: 'action', label: 'Action' },
                   ]}
                 />

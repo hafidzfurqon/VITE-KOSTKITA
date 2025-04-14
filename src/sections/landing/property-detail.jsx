@@ -205,7 +205,7 @@ export default function PropertyDetail() {
   return (
     <>
       <Helmet>
-        <title>{data.name}</title>
+        <title>{data.name} - Kost Exclusive</title>
         <meta name="title" content={data.name} />
         <meta name="description" content={data.description.replace(/<[^>]*>?/gm, '')} />
         <meta property="og:image" content={data?.files[0]?.file_url} />
@@ -645,10 +645,17 @@ export default function PropertyDetail() {
           </Typography>
           <Button
             onClick={() => setVisitModal(true)}
+            color="inherit"
             variant="outlined"
-            sx={{ p: 2 }}
-            display={'flex'}
-            alignItems={'center'}
+            sx={{
+              p: 2,
+              display: 'flex',
+              alignItems: 'center',
+              width: {
+                xs: '100%', // full width on small screens
+                sm: 'auto', // auto width on small-medium+
+              },
+            }}
           >
             <DateRange />
             <Typography variant="subtitle1" ml={1}>
