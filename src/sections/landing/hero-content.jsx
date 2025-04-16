@@ -25,7 +25,7 @@ export default function HeroContent({ data }) {
     type: '',
   });
 
-  const isMobile = useResponsive('down', 'sm');
+  // const isMobile = useResponsive('down', 'sm');
   const debouncedQuery = useDebounce(searchValues.query);
 
   const { searchResults, searchLoading } = useSearchProperty({

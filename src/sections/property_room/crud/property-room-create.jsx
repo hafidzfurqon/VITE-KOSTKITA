@@ -234,7 +234,7 @@ export const PropertyRoomCreate = () => {
     isOwnerProperty
   );
   const Submitted = (data) => {
-    // console.log("Data sebelum dikirim:", data);
+    console.log('Data sebelum dikirim:', data);
 
     const formData = new FormData();
 
@@ -250,6 +250,29 @@ export const PropertyRoomCreate = () => {
         formData.append(key, value);
       }
     });
+
+    const durations = ['dayly', '1_month', '3_month', '6_month', '1_year'];
+
+    rows.forEach((row, index) => {
+      const hargaAsli = parseInt(row.hargaAsli.replace(/\./g, '').replace(',', '.'), 10) || 0;
+      const hargaDiskon = parseInt(row.hargaDiskon.replace(/\./g, '').replace(',', '.'), 10) || 0;
+      const diskonPersen = parseFloat(row.diskonPersen) || 0;
+
+      formData.append(`prices[${index}][price_name]`, initialRows[index]?.key || `harga_${index}`);
+      formData.append(`prices[${index}][price_type]`, 'per_duration');
+      formData.append(`prices[${index}][duration]`, durations[index]);
+      formData.append(`prices[${index}][price]`, hargaAsli);
+
+      if (diskonPersen > 0) {
+        formData.append(`prices[${index}][discounts][0][discount_type]`, 'percentage');
+        formData.append(`prices[${index}][discounts][0][discount_value]`, diskonPersen);
+      }
+    });
+
+    // Debug
+    for (const pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]);
+    }
 
     mutate(formData);
   };

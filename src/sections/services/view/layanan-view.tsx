@@ -27,14 +27,17 @@ import Loading from 'src/components/loading/loading';
 import { Link } from 'react-router-dom';
 import { router } from 'src/hooks/routing/useRouting';
 import { useFetchAllServices } from 'src/hooks/services';
+import { useAppContext } from 'src/context/user-context';
 
 // ----------------------------------------------------------------------
 
 export function LayananView() {
   const table = useTable();
-
+  const { UserContextValue: authUser }: any = useAppContext();
+  const { user } = authUser;
+  const isAdmin = user?.roles?.some((role: any) => role.name.toLowerCase() === 'admin');
   const [filterName, setFilterName] = useState('');
-  const { data, isLoading, isFetching } = useFetchAllServices();
+  const { data, isLoading, isFetching } = useFetchAllServices(isAdmin);
   console.log(data);
   if (isLoading || isFetching) {
     return <Loading />;

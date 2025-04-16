@@ -14,10 +14,13 @@ import Zoom from 'yet-another-react-lightbox/plugins/zoom';
 import Fullscreen from 'yet-another-react-lightbox/plugins/fullscreen';
 import Slideshow from 'yet-another-react-lightbox/plugins/slideshow';
 import 'yet-another-react-lightbox/styles.css';
+import { AnimatePresence, motion } from 'framer-motion';
+// motion
+// AnimatePresence
 
-const Transition = React.forwardRef(function Transition(props, ref) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+// const Transition = React.forwardRef(function Transition(props, ref) {
+//   return <Slide direction="up" ref={ref} {...props} />;
+// });
 
 // Konfigurasi ukuran untuk setiap gambar
 const imageConfig = [
@@ -34,61 +37,70 @@ export default function FullScreenDialog({ open, handleClose, title, data }) {
   if (data.length === 0) return <div>No data...</div>;
 
   const slides = data.map((image) => ({ src: image }));
+  // const slides = data.map((image) => ({ src: image.original || image }));
 
   return (
     <>
-      <Dialog fullScreen open={open} onClose={handleClose} TransitionComponent={Transition}>
-        <AppBar sx={{ position: 'fixed', backgroundColor: '#f5f5f5' }}>
-          <Toolbar>
-            <IconButton edge="start" color="black" onClick={handleClose} aria-label="close">
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1, color: 'black' }} variant="h6">
-              {title}
-            </Typography>
-          </Toolbar>
-        </AppBar>
-
-        {/* Container untuk Grid Gambar */}
-        <Box sx={{ display: 'flex', mt: 10, mx: 1, pb: 3, justifyContent: 'center' }}>
-          <ImageList
-            sx={{ width: '100%', maxWidth: 700, mx: 'auto', height: 'auto' }}
-            cols={2}
-            gap={8}
+      <AnimatePresence>
+        <Dialog fullScreen open={open} onClose={handleClose} hideBackdrop>
+          <motion.div
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
+            transition={{ type: 'spring', stiffness: 80, damping: 15 }}
+            style={{ height: '100%' }}
           >
-            {data.map((image, index) => {
-              const config = imageConfig[index] || { cols: 1, rows: 1 };
-              return (
-                <ImageListItem
-                  key={index}
-                  cols={config.cols}
-                  rows={config.rows}
-                  onClick={() => {
-                    setCurrentIndex(index);
-                    setLightboxOpen(true);
-                  }}
-                  sx={{
-                    '&:hover': { cursor: 'pointer', filter: 'brightness(0.9)' },
-                  }}
-                >
-                  <img
-                    src={image}
-                    alt={`Gallery Image ${index + 1}`}
-                    loading="lazy"
-                    style={{
-                      objectFit: 'cover',
-                      width: '100%',
-                      height: '100%',
-                      borderRadius: '7px',
-                    }}
-                  />
-                </ImageListItem>
-              );
-            })}
-          </ImageList>
-        </Box>
-      </Dialog>
-
+            <AppBar sx={{ position: 'fixed', backgroundColor: '#f5f5f5' }}>
+              <Toolbar>
+                <IconButton edge="start" color="black" onClick={handleClose} aria-label="close">
+                  <CloseIcon />
+                </IconButton>
+                <Typography sx={{ ml: 2, flex: 1, color: 'black' }} variant="h6">
+                  {title}
+                </Typography>
+              </Toolbar>
+            </AppBar>
+            <Box sx={{ display: 'flex', mt: 10, mx: 1, pb: 3, justifyContent: 'center' }}>
+              <ImageList
+                sx={{ width: '100%', maxWidth: 700, mx: 'auto', height: 'auto' }}
+                cols={2}
+                gap={8}
+              >
+                {data.map((image, index) => {
+                  const config = imageConfig[index] || { cols: 1, rows: 1 };
+                  return (
+                    <ImageListItem
+                      key={index}
+                      cols={config.cols}
+                      rows={config.rows}
+                      onClick={() => {
+                        setCurrentIndex(index);
+                        setLightboxOpen(true);
+                      }}
+                      sx={{
+                        '&:hover': { cursor: 'pointer', filter: 'brightness(0.9)' },
+                      }}
+                    >
+                      <img
+                        src={image}
+                        alt={`Gallery Image ${index + 1}`}
+                        loading="lazy"
+                        style={{
+                          objectFit: 'cover',
+                          width: '100%',
+                          height: '100%',
+                          borderRadius: '7px',
+                        }}
+                      />
+                    </ImageListItem>
+                  );
+                })}
+              </ImageList>
+            </Box>
+            {/* Container untuk Grid Gambar */}
+          </motion.div>
+        </Dialog>
+      </AnimatePresence>
       {/* Lightbox untuk menampilkan gambar fullscreen */}
       <ReactLightbox
         open={lightboxOpen}
@@ -96,7 +108,7 @@ export default function FullScreenDialog({ open, handleClose, title, data }) {
         slides={slides}
         index={currentIndex}
         plugins={[Zoom, Fullscreen, Slideshow]}
-        carousel={{ imageFit: 'contain' }}
+        carousel={{ imageFit: 'contain' }}            
       />
     </>
   );

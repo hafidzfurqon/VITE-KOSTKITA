@@ -15,7 +15,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
   // const numberSortsortCardBy[0] === 'apartment' ?
-
+  console.log(data?.rooms?.room_prices);
   // const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const prevRef = useRef(null);
@@ -40,28 +40,6 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
     sortCardBy.includes(item.type.name.toLowerCase())
   );
   console.log(sortCardBy);
-  // const responsive = {
-  //   superLargeDesktop: {
-  //     breakpoint: { max: 3000, min: 1024 },
-  //     items: 4,
-  //     partialVisibilityGutter: 40,
-  //   },
-  //   desktop: {
-  //     breakpoint: { max: 1024, min: 768 },
-  //     items: 3,
-  //     partialVisibilityGutter: 30,
-  //   },
-  //   tablet: {
-  //     breakpoint: { max: 768, min: 464 },
-  //     items: 2,
-  //     partialVisibilityGutter: 20,
-  //   },
-  //   mobile: {
-  //     breakpoint: { max: 464, min: 0 },
-  //     items: 1,
-  //     partialVisibilityGutter: 10,
-  //   },
-  // };
 
   if (
     !filteredDataToColiving ||
@@ -94,7 +72,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   }
 
   return (
-    <Box maxWidth="100%" sx={{ px: 0, mt: 3,  }}>
+    <Box maxWidth="100%" sx={{ px: 0, mt: 3 }}>
       {/* <Box position="relative"> */}
       {/* <Box */}
       {/* displayedData */}
@@ -172,11 +150,13 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
         >
           {filteredDataToColiving?.map((property) => {
             const hasDiscount = property.discounts?.length > 0;
-            const currentDate = new Date();
+            const oneMonthPrice =
+              property?.rooms?.[0]?.room_prices?.find((price) => price.duration === '1_month')
+                ?.price ?? 'Tidak ada harga bulanan';
             const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
             const hasPromo = property.promos?.length > 0;
 
-            console.log(activePromos);
+            // console.log(activePromos);
             return (
               <SwiperSlide
                 key={property.id}
@@ -289,8 +269,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                       variant="subtitle1"
                       sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                     >
-                      {fCurrency(property.start_price)} /{' '}
-                      {property?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
+                      {fCurrency(oneMonthPrice)} /bulan
                     </Typography>
                   )}
                 </Box>

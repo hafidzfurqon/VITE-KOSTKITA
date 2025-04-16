@@ -21,6 +21,7 @@ import { Iconify } from 'src/components/iconify';
 import { LoadingButton } from '@mui/lab';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import { fCurrency } from 'src/utils/format-number';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -42,7 +43,7 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-
+  console.log(rooms);
   const discountRanges = useMemo(() => discountData || [], [discountData]);
 
   const currentMonths = useMemo(() => {
@@ -154,20 +155,9 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                     </Box>
                   ))}
                 </Box>
-
                 <Typography variant="h6" fontWeight="bold">
-                  {applicableDiscount && (
-                    <Typography
-                      component="span"
-                      sx={{ textDecoration: 'line-through', color: 'gray', mr: 1 }}
-                    >
-                      {rooms?.[0]?.start_price?.toLocaleString('id-ID') || 0}
-                    </Typography>
-                  )}
-                  {priceAfterDiscount.toLocaleString('id-ID')} /{' '}
-                  {payment === 'monthly' ? 'bulan' : 'tahun'}
+                  {fCurrency(room?.room_prices?.find((item) => item.duration === '1_month')?.price)}
                 </Typography>
-
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
                     variant="outlined"

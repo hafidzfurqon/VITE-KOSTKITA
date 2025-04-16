@@ -31,12 +31,31 @@ export function TransactionStepThree({ data }) {
     return service.filter((s) => selectedIds.includes(s.id));
   }, [service, data.additional_services]);
   console.log(detail_property);
-  const oneMonthPrice = detail_property.room_prices?.find((item) => item.duration === '1_month');
 
-  console.log(oneMonthPrice);
+  const oneMonthPrice = detail_property.room_prices?.find((item) => item.duration === '1_month');
+  const ThreeMonthPrice = detail_property.room_prices?.find((item) => item.duration === '3_month');
+  const SixMonthPrice = detail_property.room_prices?.find((item) => item.duration === '6_month');
+  const AyearMonthPrice = detail_property.room_prices?.find((item) => item.duration === '1_year');
+
+  const oneMonthPriceDiscountPrice = oneMonthPrice?.room_discounts[0].discount_value;
+  const ThreeMonthPriceDiscountPrice = ThreeMonthPrice?.room_discounts[0].discount_value;
+  const SixMonthPriceDiscountPrice = SixMonthPrice?.room_discounts[0].discount_value;
+  const AyearMonthPriceDiscountPrice = AyearMonthPrice?.room_discounts[0].discount_value;
+
+  const discountAmountOneMonth = (oneMonthPrice?.price * oneMonthPriceDiscountPrice) / 100;
+  const discountAmountThreeMonth = (ThreeMonthPrice?.price * ThreeMonthPriceDiscountPrice) / 100;
+  const discountAmountSixMonth = (SixMonthPrice?.price * SixMonthPriceDiscountPrice) / 100;
+  const discountAmountAyearMonth = (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice) / 100;
+
+  const IsServiceExist = filteredServices
+    .map((data) => data?.price)
+    .filter((price) => price > 0)
+    .reduce((total, price) => total + price, 0);
+
   if (isloadingRoomDetail || isfetchingRoomDetail || isLoadingService) {
     return <Loading />;
   }
+  console.log(data);
   return (
     <Box
       sx={{
@@ -112,20 +131,67 @@ export function TransactionStepThree({ data }) {
             <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', my: 2 }}>
               Rincian Pembayaran
             </Typography>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2">Harga Per 1 Bulan</Typography>
-              <Typography variant="subtitle1">{fCurrency(oneMonthPrice?.price)}</Typography>
-            </Box>
-            {/* Jika ada diskon */}
-            {/* 
-            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-              <Typography variant="body2">Diskon 14% untuk pemesanan 3 bulan</Typography>
-              <Typography variant="subtitle1">{fCurrency(325000)}</Typography>
-            </Box> */}
+
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2">Pesan selama {data?.duration} bulan</Typography>
-              <Typography variant="subtitle1">{fCurrency(1500000 + 1500000 + 1500000)}</Typography>
+              {data?.duration === 1 && (
+                <Typography variant="subtitle1">{fCurrency(oneMonthPrice?.price)}</Typography>
+              )}
+              {data?.duration === 3 && (
+                <Typography variant="subtitle1">{fCurrency(ThreeMonthPrice?.price)}</Typography>
+              )}
+              {data?.duration === 6 && (
+                <Typography variant="subtitle1">{fCurrency(SixMonthPrice?.price)}</Typography>
+              )}
+              {data?.duration === 12 && (
+                <Typography variant="subtitle1">{fCurrency(AyearMonthPrice?.price)}</Typography>
+              )}
             </Box>
+
+            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              {data?.duration === 1 && (
+                <Typography variant="body2">
+                  Diskon {oneMonthPriceDiscountPrice}% untuk pemesanan {data?.duration} bulan
+                </Typography>
+              )}
+              {data?.duration === 3 && (
+                <Typography variant="body2">
+                  Diskon {ThreeMonthPriceDiscountPrice}% untuk pemesanan {data?.duration} bulan
+                </Typography>
+              )}
+              {data?.duration === 6 && (
+                <Typography variant="body2">
+                  Diskon {SixMonthPriceDiscountPrice}% untuk pemesanan {data?.duration} bulan
+                </Typography>
+              )}
+              {data?.duration === 12 && (
+                <Typography variant="body2">
+                  Diskon {AyearMonthPriceDiscountPrice}% untuk pemesanan {data?.duration} bulan
+                </Typography>
+              )}
+
+              {data?.duration === 1 && (
+                <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+                  -{fCurrency(discountAmountOneMonth)}
+                </Typography>
+              )}
+              {data?.duration === 3 && (
+                <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+                  -{fCurrency(discountAmountThreeMonth)}
+                </Typography>
+              )}
+              {data?.duration === 6 && (
+                <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+                  -{fCurrency(discountAmountSixMonth)}
+                </Typography>
+              )}
+              {data?.duration === 12 && (
+                <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+                  -{fCurrency(discountAmountAyearMonth)}
+                </Typography>
+              )}
+            </Box>
+
             {filteredServices.map((data, idx) => (
               <Box
                 key={idx}
@@ -142,7 +208,29 @@ export function TransactionStepThree({ data }) {
             <Divider sx={{ mt: 2 }} />
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body2">Total</Typography>
-              <Typography variant="subtitle1">{fCurrency(4794147 - 325000)}</Typography>
+              {data?.duration === 1 && (
+                <Typography variant="subtitle1">
+                  {fCurrency(oneMonthPrice?.price - discountAmountOneMonth + IsServiceExist)}
+                </Typography>
+              )}
+              {data?.duration === 3 && (
+                <Typography variant="subtitle1">
+                  {fCurrency(ThreeMonthPrice?.price - discountAmountThreeMonth + IsServiceExist)}
+                </Typography>
+              )}
+              {data?.duration === 6 && (
+                <Typography variant="subtitle1">
+                  {fCurrency(SixMonthPrice?.price - discountAmountSixMonth + IsServiceExist)}
+                </Typography>
+              )}
+              {data?.duration === 12 && (
+                <Typography variant="subtitle1">
+                  {fCurrency(AyearMonthPrice?.price - discountAmountAyearMonth + IsServiceExist)}
+                </Typography>
+              )}
+              {/* <Typography variant="subtitle1">
+                {fCurrency(oneMonthPrice?.price - discountAmountOneMonth + IsServiceExist[0])}
+              </Typography> */}
             </Box>
           </Box>
         </Grid>

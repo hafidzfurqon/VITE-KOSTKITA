@@ -140,21 +140,29 @@ export const UpdatePropertyRoomCreate = () => {
 
   useEffect(() => {
     if (data && data.room_prices) {
+      const durationMap = {
+        Harian: 'dayly',
+        '1 Bulan': '1_month',
+        '3 Bulan': '3_month',
+        '6 Bulan': '6_month',
+        '12 Bulan / 1 Tahun': '1_year', // <- perbaiki di sini!
+      };
+
       const updatedRows = initialRows.map((row) => {
-        const matched = data.room_prices.find((price) => {
-          if (row.name === 'Harian') return price.duration === 'dayly';
-          if (row.name === '1 Bulan') return price.duration === '1_month';
-          if (row.name === '3 Bulan') return price.duration === '3_month';
-          if (row.name === '6 Bulan') return price.duration === '6_month';
-          if (row.name === '12 Bulan / 1 Tahun') return price.duration === '12_month';
-          return false;
-        });
+        const matched = data.room_prices.find((price) => price.duration === durationMap[row.name]);
 
         const hargaAsli = matched ? matched.price.toString() : '';
+        const diskonObj = matched?.room_discounts?.[0];
+
+        const diskonPersen = diskonObj?.discount_value || '';
+        const hargaDiskon =
+          hargaAsli && diskonPersen
+            ? ((+matched.price * (100 - +diskonPersen)) / 100).toString()
+            : '';
         return {
-          hargaAsli: hargaAsli,
-          hargaDiskon: '', // Kosong karena tidak ada data diskon di respons API
-          diskonPersen: '',
+          hargaAsli,
+          hargaDiskon,
+          diskonPersen,
         };
       });
 
@@ -286,7 +294,8 @@ export const UpdatePropertyRoomCreate = () => {
         enqueueSnackbar('Property Room gagal di update', { variant: 'error' });
       },
     },
-    isOwnerProperty
+    isOwnerProperty,
+    id
   );
 
   const Submitted = (data) => {
@@ -299,19 +308,25 @@ export const UpdatePropertyRoomCreate = () => {
       });
     };
 
-    Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'price') {
-        if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(`${key}[]`, item));
-        } else {
-          formData.append(key, value);
-        }
+    const durations = ['dayly', '1_month', '3_month', '6_month', '1_year'];
+    rows.forEach((row, index) => {
+      const hargaAsli = row.hargaAsli?.replace(/\./g, '').replace(',', '.') || '';
+      const diskonPersen = row.diskonPersen || '';
+
+      formData.append(`prices[${index}][price_name]`, `harga_${index}`);
+      formData.append(`prices[${index}][price_type]`, 'per_duration');
+      formData.append(`prices[${index}][duration]`, durations[index]);
+      formData.append(`prices[${index}][price]`, hargaAsli);
+
+      if (diskonPersen) {
+        formData.append(`prices[${index}][discounts][0][discount_type]`, 'percentage');
+        formData.append(`prices[${index}][discounts][0][discount_value]`, diskonPersen);
       }
     });
 
-    formData.append('price', data.price);
+    mutate(formData);
     formData.append('property_id', dataProperty);
-    formData.append('property_room_id', id);
+    // formData.append('property_room_id', id);
     formData.append('_method', 'PUT');
 
     // ✅ Gunakan filtered defaultImages
@@ -368,43 +383,23 @@ export const UpdatePropertyRoomCreate = () => {
                   error={!!errors.name}
                   helperText={errors.name?.message}
                 />
-                <Controller
-                  name="price"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: 'Harga wajib diisi' }}
-                  render={({ field, fieldState }) => (
-                    <NumericFormat
-                      {...field}
-                      customInput={TextField}
-                      label="Harga"
-                      fullWidth
-                      required
-                      prefix="Rp "
-                      thousandSeparator="."
-                      decimalSeparator=","
-                      error={!!fieldState.error}
-                      helperText={fieldState.error?.message}
-                    />
-                  )}
-                />
+                <TextField
+                  select
+                  {...register('room_type_id', { required: true })}
+                  label="Tipe Properti Ruangan"
+                  fullWidth
+                  required
+                  defaultValue={data.room_type.id || ''}
+                >
+                  {property_room_type.map((property, idx) => {
+                    return (
+                      <MenuItem key={idx} value={property.id}>
+                        {property.name}
+                      </MenuItem>
+                    );
+                  })}
+                </TextField>
               </Stack>
-              <TextField
-                select
-                {...register('room_type_id', { required: true })}
-                label="Tipe Properti Ruangan"
-                fullWidth
-                required
-                defaultValue={data.room_type.id || ''}
-              >
-                {property_room_type.map((property, idx) => {
-                  return (
-                    <MenuItem key={idx} value={property.id}>
-                      {property.name}
-                    </MenuItem>
-                  );
-                })}
-              </TextField>
               <Typography>Status : </Typography>
               <FormControlLabel
                 control={<Switch checked={isActive} onChange={handleToggle} size="medium" />}

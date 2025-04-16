@@ -177,6 +177,9 @@ export const endpoints = {
     create: '/api/admin/additional_service/create',
     update: '/api/admin/additional_service/update',
     delete: '/api/admin/additional_service/delete',
+    public: {
+      list: '/api/public/additional_service/list',
+    },
   },
   banner: {
     list: '/api/admin/banner/list',

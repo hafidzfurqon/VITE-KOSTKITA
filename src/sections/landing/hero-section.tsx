@@ -6,6 +6,7 @@ import 'react-multi-carousel/lib/styles.css';
 import { useFetchBannerPublic } from 'src/hooks/banner';
 import Loading from 'src/components/loading/loading';
 import { useFetchDetailApartement } from 'src/hooks/apartement';
+import { useFetchPromo } from 'src/hooks/promo';
 
 interface HeroSectionProps {
   children?: ReactNode;
@@ -20,24 +21,25 @@ export default function HeroSection({ children }: HeroSectionProps) {
   };
 
   const { data = [], isLoading, isFetching } = useFetchBannerPublic();
-
-  if (isLoading || isFetching) {
+  const {
+    data: promos = [],
+    isLoading: isPromoLoading,
+    isFetching: isFetchingPromo,
+  } = useFetchPromo();
+  if (isLoading || isFetching || isPromoLoading || isFetchingPromo) {
     return <Loading />;
   }
+  const promoss = promos.map((data: any) => data.promo_image_url);
+  console.log(promoss);
 
   // Pastikan data ada sebelum mapping
   const banners = Array.isArray(data) ? data : [];
 
   // Mengumpulkan semua gambar dari promo dan property
 
-  const carouselImages = banners.flatMap((banner) => {
-    const images = [];
-    images.push(banner?.image_url);
-    return images;
-  });
-
-  // console.log('Banner Images:', carouselImages);
-  console.log('Banner Imagesss:', banners);
+  const bannerImages = banners.map((b: any) => b?.image_url).filter(Boolean);
+  const promoImages = promos.map((p: any) => p.promo_image_url).filter(Boolean);
+  const carouselImages = [...bannerImages, ...promoImages];
 
   return (
     <Box

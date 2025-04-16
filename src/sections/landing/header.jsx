@@ -346,9 +346,7 @@ export default function Header() {
                   ) : notifications.length > 0 ? (
                     <Notifications data={notifications} isHome={isHome} />
                   ) : (
-                    <Typography variant="body2" color="textSecondary">
-                      Tidak ada notifikasi baru
-                    </Typography>
+                    <Notifications data={notifications} isHome={isHome} />
                   )}
                   <AccountPopover
                     data={[

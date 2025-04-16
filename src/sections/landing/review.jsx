@@ -37,8 +37,8 @@ export default function Review({ propertyId }) {
   // console.log(reviews);
   const queryClient = useQueryClient();
   // const { UserContextValue: authUser } = useAppContext();
-  const { UserContextValue } = useAppContext();
-  const user = UserContextValue?.user;
+  const { UserContextValue: authUser } = useAppContext();
+  const { user } = authUser;
 
   // console.log('Auth User Context:', authUser);
   // console.log('User:', user);

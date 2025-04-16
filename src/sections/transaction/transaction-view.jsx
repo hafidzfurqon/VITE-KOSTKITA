@@ -14,6 +14,7 @@ import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
 import Loading from 'src/components/loading/loading';
 import { TransactionStepThree } from './transaction-step3';
 import { useFieldArray } from 'react-hook-form';
+import { useRouter } from 'src/routes/hooks';
 
 export default function TransactionView() {
   const { register, handleSubmit, control, watch, setValue } = useForm({
@@ -29,10 +30,17 @@ export default function TransactionView() {
 
   const [step, setStep] = useState(2);
   const { enqueueSnackbar } = useSnackbar();
+  const routers = useRouter();
 
   const { mutate, isPending } = useMutationTransaction({
-    onSuccess: () => enqueueSnackbar('Transaksi berhasil', { variant: 'success' }),
-    onError: () => enqueueSnackbar('Transaksi Gagal', { variant: 'error' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['fetch.apartement'] });
+      routers.push('/transaction');
+      enqueueSnackbar('Transaksi berhasil dibuat', { variant: 'success' });
+    },
+    onError: () => {
+      enqueueSnackbar('Transaksi gagal dibuat', { variant: 'error' });
+    },
   });
 
   const OnSubmitData = (data) => {
@@ -40,7 +48,7 @@ export default function TransactionView() {
       setStep(step + 1);
     } else {
       console.log(data);
-      // mutate(data);
+      mutate(data);
     }
   };
 
@@ -148,7 +156,7 @@ export default function TransactionView() {
                       label="Tanggal Lahir"
                       fullWidth
                       type="date"
-                      InputLabelProps={{ shrink: true }} 
+                      InputLabelProps={{ shrink: true }}
                       {...register(`booking_user_data.${index}.date_of_birth`, { required: true })}
                     />
                   </Grid>

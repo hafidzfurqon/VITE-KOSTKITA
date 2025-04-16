@@ -202,6 +202,10 @@ export default function PropertyDetail() {
     { cols: 1, rows: 1 },
     { cols: 1, rows: 1 },
   ];
+
+  const oneMonthPrice =
+    data?.rooms?.[0]?.room_prices?.find((price) => price.duration === '1_month')?.price ??
+    'Tidak ada harga bulanan';
   return (
     <>
       <Helmet>
@@ -469,23 +473,33 @@ export default function PropertyDetail() {
                   ))}
                 </Box>
 
-                {hasDiscount ? (
-                  <>
-                    <Typography variant="h6" sx={{ textDecoration: 'line-through', color: 'gray' }}>
-                      {formatCurrency(data?.start_price)}/
-                      {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: 'black' }}>
-                      {priceAfterDiscount}/bulan
-                    </Typography>
-                  </>
-                ) : (
-                  <Typography variant="h4" sx={{ color: 'black', px: 1 }}>
-                    {formatCurrency(data?.start_price)}/
-                    {data?.payment_type === 'yearly' ? 'Tahun' : 'bulan'}
+                <Box sx={{ px: 1, display: 'flex', flexDirection: 'column' }}>
+                  <Typography variant="body2">
+                    Mulai dari{' '}
+                    <span style={{ textDecoration: ' line-through' }}>
+                      {formatCurrency(oneMonthPrice)}
+                    </span>{' '}
+                    /bulan
                   </Typography>
-                )}
-
+                  <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        backgroundColor: 'error.main',
+                        color: 'white',
+                        fontWeight: 'bold',
+                        borderRadius: '8px',
+                        px: '2px',
+                        mr: '4px',
+                      }}
+                    >
+                      -16%
+                    </Typography>
+                    <Typography variant="h4" sx={{ color: 'black' }}>
+                      {formatCurrency(oneMonthPrice)} /bulan
+                    </Typography>
+                  </Box>
+                </Box>
                 {/* Action Buttons */}
                 <Box
                   sx={{
