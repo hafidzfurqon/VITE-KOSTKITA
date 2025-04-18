@@ -89,7 +89,47 @@ const ColivingPage = () => {
       />
       <Grid container spacing={2} sx={{ placeItems: 'center', mt: 3 }}>
         {filteredDataToColiving.map((coliving: any, index: number) => {
-          const hasDiscount = coliving.discounts.length > 0;
+          const oneMonthData = (() => {
+            if (!coliving?.rooms) return null;
+
+            // Ambil semua data harga "1_month" + diskonnya
+            const pricesWithDiscount = coliving.rooms
+              .map((room: any) => {
+                const priceItem = room.room_prices.find(
+                  (price: any) => price.duration === '1_month'
+                );
+                if (!priceItem) return null;
+
+                const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+                return {
+                  price: priceItem.price,
+                  discountValue: discount?.discount_value
+                    ? parseFloat(discount.discount_value)
+                    : null,
+                };
+              })
+              .filter(Boolean); // hapus null
+
+            if (pricesWithDiscount.length === 0) return null;
+
+            // Ambil harga dengan diskon termurah
+            return pricesWithDiscount.reduce((min: any, curr: any) => {
+              const currFinal = curr.discountValue
+                ? curr.price - curr.price * (curr.discountValue / 100)
+                : curr.price;
+              const minFinal = min.discountValue
+                ? min.price - min.price * (min.discountValue / 100)
+                : min.price;
+
+              return currFinal < minFinal ? curr : min;
+            });
+          })();
+
+          const originalPrice = oneMonthData?.price ?? 0;
+          const discount = oneMonthData?.discountValue;
+          const finalPrice = discount
+            ? originalPrice - originalPrice * (discount / 100)
+            : originalPrice;
           return (
             <Grid item xs={12} sm={6} md={4} lg={3} key={coliving.id}>
               <Box sx={{ mb: 3 }}>
@@ -109,48 +149,46 @@ const ColivingPage = () => {
                   {coliving.name}
                 </Typography>
                 <Box sx={{ color: 'gray' }}>
-                  <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
+                  <Typography variant="body2" sx={{ fontSize: '12px' }}>
                     {coliving.address}, {coliving.city.name}
                   </Typography>
                 </Box>
 
                 {/* Price */}
-                {hasDiscount ? (
-                  <>
-                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                      <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                {/*  */}
+                <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '12px' }}>
+                      Mulai dari{' '}
+                      <span style={{ textDecoration: 'line-through' }}>
+                        {formatCurrency(12222)}
+                      </span>
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+                      {discount && (
+                        <Typography
+                          variant="overline"
+                          sx={{
+                            backgroundColor: 'red',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            borderRadius: '4px',
+                            px: '2px',
+                            mr: '4px',
+                          }}
+                        >
+                          -{discount}%
+                        </Typography>
+                      )}
                       <Typography
-                        variant="subtitle1"
-                        sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
+                        variant="body1"
+                        sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
                       >
-                        {formatCurrency(coliving.start_price)}
+                        {formatCurrency(finalPrice)} <span>/bulan</span>
                       </Typography>
                     </Box>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <Box
-                        sx={{
-                          backgroundColor: 'red',
-                          color: 'white',
-                          fontSize: '11px',
-                          borderRadius: '10px',
-                          px: '5px',
-                        }}
-                      >
-                        -Rp {fPercent(coliving.discounts[0]?.discount_value)}
-                      </Box>
-                      <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                        {formatCurrency(coliving.discounts[0]?.price_after_discount)}
-                      </Typography>
-                    </Box>
-                  </>
-                ) : (
-                  <Typography
-                    variant="subtitle1"
-                    sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                  >
-                    {formatCurrency(coliving.start_price)} / bulan
-                  </Typography>
-                )}
+                  </Box>
+                </Box>
               </Box>
             </Grid>
           );
@@ -160,7 +198,7 @@ const ColivingPage = () => {
   );
 };
 
-function ImageSlider({ images } : any) {
+function ImageSlider({ images }: any) {
   const [sliderRef, slider] = useKeenSlider({
     slides: { perView: 1 },
     initial: 0,
@@ -199,7 +237,7 @@ function ImageSlider({ images } : any) {
     >
       <Box ref={sliderRef} className="keen-slider">
         {images.length > 0 ? (
-          images.map((image: any, index : number) => (
+          images.map((image: any, index: number) => (
             <Box
               key={index}
               className="keen-slider__slide"
@@ -287,7 +325,7 @@ function ImageSlider({ images } : any) {
           borderRadius: '20px',
         }}
       >
-        {images.map((_ : any, idx : number) => (
+        {images.map((_: any, idx: number) => (
           <Box
             key={idx}
             onClick={() => slider.current?.moveToIdx(idx)}
