@@ -10,10 +10,12 @@ import {
   Chip,
   Stack,
   styled,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import 'keen-slider/keen-slider.min.css';
 import { useKeenSlider } from 'keen-slider/react';
-import { WhatsApp } from '@mui/icons-material';
+import { PriceCheckOutlined, WhatsApp } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAppContext } from 'src/context/user-context';
 import { useSnackbar } from 'notistack';
@@ -22,6 +24,7 @@ import { LoadingButton } from '@mui/lab';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { fCurrency } from 'src/utils/format-number';
+import { RoomWithTabs } from 'src/component/RoomPrice';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   marginBottom: theme.spacing(3),
@@ -38,34 +41,31 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
 
 const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = [] }) => {
   const navigate = useNavigate();
-  const [selectedMonthRange, setSelectedMonthRange] = useState({});
   const [bookingData, setBookingData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  console.log(rooms);
-  const discountRanges = useMemo(() => discountData || [], [discountData]);
 
-  const currentMonths = useMemo(() => {
-    return Object.values(selectedMonthRange).reduce((acc, value) => {
-      return acc + (value === 0 ? 1 : value === 1 ? 3 : value === 2 ? 6 : 12);
-    }, 0);
-  }, [selectedMonthRange]);
+  const durations = [
+    {
+      label: '1-2 bulan',
+      discount: 7,
+      price: 4300000,
+      price_after_discount: 1000000 ?? 0,
+    },
+    { label: '3-5 bulan', discount: 7, price: 4300000, price_after_discount: 1000000 ?? 0 },
+    { label: '6-11 bulan', discount: 9, price: 4300000, price_after_discount: 1000000 ?? 0 },
+    { label: '≥12 bulan', discount: 12, price: 4300000, price_after_discount: 1000000 ?? 0 },
+  ];
 
-  const applicableDiscount = useMemo(() => {
-    return (
-      discountRanges.find(
-        (discount) => currentMonths >= discount.min_month && currentMonths <= discount.max_month
-      ) || null
-    );
-  }, [currentMonths, discountRanges]);
+  const [selectedTab, setSelectedTab] = useState(0);
 
-  const priceAfterDiscount = useMemo(() => {
-    const basePrice = rooms?.[0]?.price || 0;
-    return applicableDiscount?.discount_value
-      ? basePrice * (1 - applicableDiscount.discount_value / 100)
-      : basePrice;
-  }, [applicableDiscount, rooms]);
+  const handleChange = (event, newValue) => {
+    setSelectedTab(newValue);
+  };
+
+  const selected = durations[selectedTab];
+  // const discountedPrice = selected.price - selected.price * selected.discount;
 
   const selectRoom = (roomId) => {
     setBookingData((prev) => ({
@@ -117,47 +117,9 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                     </Grid>
                   ))}
                 </Grid>
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    mb: 3,
-                    backgroundColor: '#FFD600',
-                    borderTopRightRadius: '5px',
-                    borderTopLeftRadius: '5px',
-                  }}
-                >
-                  {[0, 1, 2, 3].map((rangeIndex) => (
-                    <Box
-                      key={rangeIndex}
-                      onClick={() =>
-                        setSelectedMonthRange((prev) => ({ ...prev, [room.id]: rangeIndex }))
-                      }
-                      sx={{
-                        p: 1,
-                        flex: '1 1 25%',
-                        textAlign: 'center',
-                        cursor: 'pointer',
-                        backgroundColor:
-                          selectedMonthRange[room.id] === rangeIndex ? '#f0f7ff' : 'transparent',
-                      }}
-                    >
-                      <Typography sx={{ fontSize: '12px', fontWeight: 600 }}>
-                        {rangeIndex === 0
-                          ? '1-2'
-                          : rangeIndex === 1
-                            ? '3-5'
-                            : rangeIndex === 2
-                              ? '6-11'
-                              : '>12'}{' '}
-                        bulan
-                      </Typography>
-                    </Box>
-                  ))}
+                <Box>
+                  <RoomWithTabs key={room.id || index} room={room} />
                 </Box>
-                <Typography variant="h6" fontWeight="bold">
-                  {fCurrency(room?.room_prices?.find((item) => item.duration === '1_month')?.price)}
-                </Typography>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
                     variant="outlined"

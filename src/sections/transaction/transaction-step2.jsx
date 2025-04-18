@@ -21,12 +21,10 @@ import { fDate } from 'src/utils/format-time';
 export function TransactionStepTwo({ control, data, isOwnerProperty, setValue, watch }) {
   const { data: service = [], isLoading: isLoadingService } = useFetchAllServices();
   const [selectedProperty, setSelectedProperty] = useState(null);
-  const { data: room = [], isLoading } = useFetchAllPropertyRoom(
-    selectedProperty?.id,
-    isOwnerProperty
-  );
 
-  const rooms = room.rooms;
+  const { data: room, isLoading } = useFetchAllPropertyRoom(selectedProperty?.id, isOwnerProperty);
+
+  const rooms = room?.rooms ?? [];
 
   const checkin = watch('checkin');
   const duration = watch('duration');
@@ -51,6 +49,15 @@ export function TransactionStepTwo({ control, data, isOwnerProperty, setValue, w
       setValue('checkout', checkoutDate);
     }
   }, [checkin, duration]);
+
+  useEffect(() => {
+    if (!selectedProperty && data?.length > 0) {
+      const defaultProperty = data.find((item) => item.id === watch('property_id'));
+      if (defaultProperty) {
+        setSelectedProperty(defaultProperty);
+      }
+    }
+  }, [data, watch('property_id')]);
   //   console.log('Checkout:', field.value, typeof field.value);
 
   return (
@@ -64,9 +71,10 @@ export function TransactionStepTwo({ control, data, isOwnerProperty, setValue, w
               options={data}
               autoHighlight
               getOptionLabel={(option) => option.name}
+              value={(data ?? []).find((opt) => opt.id === watch('property_id')) || null}
               onChange={(e, value) => {
                 setSelectedProperty(value);
-                setValue('property_id', value?.id || null); // simpan ke form
+                setValue('property_id', value?.id || null);
               }}
               renderOption={(props, option) => {
                 const { key, ...optionProps } = props;
@@ -103,66 +111,67 @@ export function TransactionStepTwo({ control, data, isOwnerProperty, setValue, w
                 />
               )}
             />
-            {selectedProperty ? (
-              <Autocomplete
-                id="property-room-select"
-                options={rooms || []}
-                autoHighlight
-                loading={isLoading}
-                getOptionLabel={(option) => option.name || option.room_name || 'Tanpa Nama'}
-                onChange={(e, value) => setValue('room_number', value?.id)}
-                renderOption={(props, option) => {
-                  const { key, ...optionProps } = props;
-                  const imageUrl = option.room_files?.[0]?.file_url || '';
-                  return (
-                    <Box
-                      key={key}
-                      component="li"
-                      sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
-                      {...optionProps}
-                    >
-                      {imageUrl && (
-                        <img
-                          loading="lazy"
-                          width="40"
-                          height="40"
-                          style={{ objectFit: 'cover' }}
-                          src={imageUrl}
-                          alt={option.name}
-                        />
-                      )}
-                      {option.name}
-                    </Box>
-                  );
-                }}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Pilih Ruangan"
-                    inputProps={{
-                      ...params.inputProps,
-                      autoComplete: 'new-password',
-                    }}
-                  />
-                )}
-              />
-            ) : (
-              <TextField label="Pilih Ruangan" disabled fullWidth select></TextField>
-            )}
+
+            <Autocomplete
+              id="property-room-select"
+              options={rooms || []}
+              disabled={!selectedProperty}
+              autoHighlight
+              loading={isLoading}
+              getOptionLabel={(option) => option.name || option.room_name || 'Tanpa Nama'}
+              value={(rooms ?? []).find((room) => room.id === watch('room_number')) || null}
+              onChange={(e, value) => setValue('room_number', value?.id || null)}
+              renderOption={(props, option) => {
+                const { key, ...optionProps } = props;
+                const imageUrl = option.room_files?.[0]?.file_url || '';
+                return (
+                  <Box
+                    key={key}
+                    component="li"
+                    sx={{ '& > img': { mr: 2, flexShrink: 0 } }}
+                    {...optionProps}
+                  >
+                    {imageUrl && (
+                      <img
+                        loading="lazy"
+                        width="40"
+                        height="40"
+                        style={{ objectFit: 'cover' }}
+                        src={imageUrl}
+                        alt={option.name}
+                      />
+                    )}
+                    {option.name}
+                  </Box>
+                );
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Pilih Ruangan"
+                  inputProps={{
+                    ...params.inputProps,
+                    autoComplete: 'new-password',
+                  }}
+                />
+              )}
+            />
+
             <Autocomplete
               id="select-service"
-              // multiple
+              multiple
               limitTags={5}
               loading={isLoadingService}
-              multiple
               options={service}
               autoHighlight
               getOptionLabel={(option) => `${option.name} - ${fCurrency(option.price)}`}
+              value={(service ?? []).filter((s) =>
+                (watch('additional_services') ?? []).includes(s.id)
+              )}
               onChange={(event, value) => {
-                setSelectedProperty(value); // value sekarang array of objects
                 setValue(
                   'additional_services',
-                  value.map((v) => v.id) // ambil ID-nya untuk dikirim ke backend
+                  value.map((v) => v.id)
                 );
               }}
               renderInput={(params) => (

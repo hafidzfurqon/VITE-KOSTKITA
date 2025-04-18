@@ -18,7 +18,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import StarIcon from '@mui/icons-material/Star';
 import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetail';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import { Avatar, Button, Divider } from '@mui/material';
+import { Avatar, Button, Divider, useMediaQuery } from '@mui/material';
 import { BookmarkBorder, DateRange, WhatsApp } from '@mui/icons-material';
 import { Helmet } from 'react-helmet-async';
 import { Iconify } from 'src/components/iconify';
@@ -39,6 +39,7 @@ import FullScreenDialog from 'src/component/DialogFull';
 import PropertyBaseLocation from './PropertyLocation';
 import NearbyPlaces from './nearbly-places';
 import { LoadingButton } from '@mui/lab';
+import { RoomWithTabs } from 'src/component/RoomPrice';
 
 export default function PropertyDetail() {
   const { slug } = useParams();
@@ -63,10 +64,6 @@ export default function PropertyDetail() {
   const handleOpenDialog = () => {
     setOpened(true);
   };
-  const formatCurrency = (price) =>
-    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
-
-  // const hasDiscount = data?.discounts && data?.discounts?.length > 0;
 
   const { mutateAsync: addWishlist, isLoading: isAdding } = useMutationAddWishlist({
     onSuccess: () => {
@@ -203,9 +200,55 @@ export default function PropertyDetail() {
     { cols: 1, rows: 1 },
   ];
 
-  const oneMonthPrice =
-    data?.rooms?.[0]?.room_prices?.find((price) => price.duration === '1_month')?.price ??
-    'Tidak ada harga bulanan';
+  const oneMonthData = (() => {
+    if (!data?.rooms) return null;
+
+    // Ambil semua data harga 1 bulan + diskonnya
+    const pricesWithDiscount = data.rooms
+      .map((room) => {
+        const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+        if (!priceItem) return null;
+
+        const discount = priceItem.room_discounts?.[0];
+        const discountValue = discount?.discount_value ? parseFloat(discount.discount_value) : 0;
+
+        const finalPrice = priceItem.price - priceItem.price * (discountValue / 100);
+
+        return {
+          room,
+          price: priceItem.price,
+          discountValue,
+          finalPrice,
+        };
+      })
+      .filter(Boolean);
+
+    if (pricesWithDiscount.length === 0) return null;
+
+    // Cari finalPrice termurah
+    const minData = pricesWithDiscount.reduce((min, curr) =>
+      curr.finalPrice < min.finalPrice ? curr : min
+    );
+
+    return minData;
+  })();
+
+  const matchedRooms = (() => {
+    if (!oneMonthData || !data?.rooms) return [];
+
+    return data.rooms.filter((room) => {
+      const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+      if (!priceItem) return false;
+
+      const discount = priceItem.room_discounts?.[0];
+      const discountValue = discount?.discount_value ? parseFloat(discount.discount_value) : 0;
+
+      const finalPrice = priceItem.price - priceItem.price * (discountValue / 100);
+
+      return finalPrice === oneMonthData.finalPrice;
+    });
+  })();
+
   return (
     <>
       <Helmet>
@@ -389,7 +432,7 @@ export default function PropertyDetail() {
             </Grid>
 
             {/* Bagian Lokasi dan Jenis Properti */}
-            <Grid item xs={12} sm={8}>
+            <Grid item xs={12} sm={7}>
               <Stack direction="row" spacing={2} alignItems="center">
                 <HomeIcon color="action" />
                 <Typography>{data.type.name}</Typography>
@@ -434,73 +477,10 @@ export default function PropertyDetail() {
               </Box>
             </Grid>
             {/* Bagian Harga dengan Card */}
-            <Grid item xs={12} sm={4} sx={{ mt: 1 }}>
+            <Grid item xs={12} sm={5} sx={{ mt: 1 }}>
               <Card sx={{ p: 2, borderRadius: 2, boxShadow: 3 }}>
-                <Box sx={{ display: 'flex', mb: 3, backgroundColor: '#f5f5f5', borderRadius: 2 }}>
-                  {[0, 1, 2, 3].map((rangeIndex) => (
-                    <Box
-                      key={rangeIndex}
-                      onClick={() => setSelectedMonthRange(rangeIndex)}
-                      sx={{
-                        p: 1,
-                        flex: '1 1 25%',
-                        textAlign: 'center',
-                        borderRight: rangeIndex < 3 ? '1px solid #e0e0e0' : 'none',
-                        backgroundColor:
-                          selectedMonthRange === rangeIndex ? '#f0f7ff' : 'transparent',
-                        position: 'relative',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Typography
-                        sx={{
-                          fontSize: '14px',
-                          fontWeight: selectedMonthRange === rangeIndex ? 600 : 500,
-                        }}
-                      >
-                        {rangeIndex === 0
-                          ? '1-2'
-                          : rangeIndex === 1
-                            ? '3-5'
-                            : rangeIndex === 2
-                              ? '6-11'
-                              : '>12'}{' '}
-                        <Typography component="span" sx={{ fontSize: '12px', color: '#666' }}>
-                          bulan
-                        </Typography>
-                      </Typography>
-                    </Box>
-                  ))}
-                </Box>
-
-                <Box sx={{ px: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Typography variant="body2">
-                    Mulai dari{' '}
-                    <span style={{ textDecoration: ' line-through' }}>
-                      {formatCurrency(oneMonthPrice)}
-                    </span>{' '}
-                    /bulan
-                  </Typography>
-                  <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        backgroundColor: 'error.main',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        borderRadius: '8px',
-                        px: '2px',
-                        mr: '4px',
-                      }}
-                    >
-                      -16%
-                    </Typography>
-                    <Typography variant="h4" sx={{ color: 'black' }}>
-                      {formatCurrency(oneMonthPrice)} /bulan
-                    </Typography>
-                  </Box>
-                </Box>
-                {/* Action Buttons */}
+                {matchedRooms &&
+                  matchedRooms.map((room) => <RoomWithTabs key={room.id} room={room} />)}
                 <Box
                   sx={{
                     display: 'flex',

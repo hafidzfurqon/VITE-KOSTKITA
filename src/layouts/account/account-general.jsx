@@ -36,11 +36,13 @@ export default function AccountGeneral() {
     gender: Yup.string().nullable().oneOf(['male', 'female'], 'Jenis kelamin tidak valid'),
     photo_profile: Yup.mixed()
       .nullable()
-      .test(
-        'fileType',
-        'Format file tidak valid (hanya jpg, jpeg, png)',
-        (value) => !value || ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type)
-      ),
+      .test('fileType', 'Format file tidak valid (hanya jpg, jpeg, png)', (value) => {
+        // Jika value adalah string (URL dari default), lewati validasi
+        if (typeof value === 'string') return true;
+
+        // Jika value adalah File, validasi tipe-nya
+        return !value || ['image/jpeg', 'image/png', 'image/jpg'].includes(value.type);
+      }),
   });
 
   const methods = useForm({
@@ -78,13 +80,20 @@ export default function AccountGeneral() {
         nik: user.nik || '',
         date_of_birth: formattedDate,
         gender: user.gender || '',
-        photo_profile: user.photo_profile_url || '',
+        photo_profile: user.photo_profile_url || '', // untuk preview saja
       });
     }
     setLoading(false);
   }, [user, reset]);
 
-  const { mutateAsync: editUser } = useUpdateProfile();
+  const { mutateAsync: editUser } = useUpdateProfile({
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
 
   const onSubmit = async (data) => {
     console.log('Sebelum dikirim:', data);
@@ -94,10 +103,25 @@ export default function AccountGeneral() {
       date_of_birth: data.date_of_birth ? format(new Date(data.date_of_birth), 'yyyy-MM-dd') : null,
     };
 
-    console.log('Formatted Data:', formattedData);
-
+    // Buat FormData
     const formData = new FormData();
+
     Object.entries(formattedData).forEach(([key, value]) => {
+      const originalValue = user?.[key];
+
+      // Lewati email/phone_number kalau tidak berubah
+      if ((key === 'email' || key === 'phone_number') && originalValue && originalValue === value) {
+        return;
+      }
+
+      // Hanya tambahkan photo_profile jika itu File (upload baru)
+      if (key === 'photo_profile') {
+        if (value && typeof value === 'object') {
+          formData.append(key, value);
+        }
+        return;
+      }
+
       formData.append(key, value);
     });
 
@@ -107,19 +131,12 @@ export default function AccountGeneral() {
       const updatedUser = await editUser({ userId, data: formData });
       console.log('User setelah update:', updatedUser);
       enqueueSnackbar('Profil berhasil diperbarui', { variant: 'success' });
-      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
-
-      // setTimeout(() => {
-      //   console.log('Data terbaru dari query:', queryClient.getQueryData(['authenticated.user']));
-      // }, 2000);
-
       reset(updatedUser);
     } catch (error) {
       enqueueSnackbar('Gagal memperbarui user', { variant: 'error' });
       console.error('Error update user:', error);
     }
   };
-
   const handleDrop = useCallback(
     (acceptedFiles) => {
       const file = acceptedFiles[0];
@@ -205,7 +222,6 @@ export default function AccountGeneral() {
               <RHFTextField name="email" label="Email" />
               <RHFTextField name="phone_number" label="Nomor Telepon" />
               <RHFTextField name="nik" label="NIK" />
-              <RHFTextField name="nomor_ktp" label="Nomor KTP" />
               <RHFTextField
                 select
                 label="Jenis Kelamin"

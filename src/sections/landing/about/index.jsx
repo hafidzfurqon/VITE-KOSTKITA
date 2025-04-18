@@ -87,9 +87,8 @@ export default function About() {
         </Box>
       </Box>
       {/* Why section */}
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             background: 'white',
@@ -109,12 +108,13 @@ export default function About() {
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: { xs: 'left', md: 'center' },
+                    alignItems: 'center',
                     gap: 3,
                     justifyContent: 'center',
+                    px: { xs: 0, md: 2 },
                   }}
                 >
-                  <Box>
+                  <Box sx={{ width: '100%' }}>
                     <img
                       src={`https://images.rukita.co/buildings/building/c9fabe7b-3c0.jpg?tr=c-at_max%2Cw-1040`}
                       alt="Promo"
@@ -144,12 +144,13 @@ export default function About() {
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: { xs: 'left', md: 'center' },
+                    alignItems: 'center',
                     gap: 3,
                     justifyContent: 'center',
+                    px: { xs: 0, md: 2 }, // Tambahkan padding di wrapper utama
                   }}
                 >
-                  <Box>
+                  <Box sx={{ width: '100%' }}>
                     <img
                       src={`https://img.freepik.com/free-photo/man-doing-professional-home-cleaning-service_23-2150359015.jpg?ga=GA1.1.1374719570.1742115385&semt=ais_hybrid`}
                       alt="Promo"
@@ -161,7 +162,7 @@ export default function About() {
                       }}
                     />
                   </Box>
-                  <Box sx={{ px: { xs: 0, md: 2 } }}>
+                  <Box>
                     <Typography variant="h5" sx={{ pb: '3px', fontWeight: 'bold' }}>
                       Layanan Menyeluruh
                     </Typography>
@@ -179,12 +180,13 @@ export default function About() {
                   sx={{
                     display: 'flex',
                     flexDirection: 'column',
-                    alignItems: { xs: 'left', md: 'center' },
+                    alignItems: 'center',
                     gap: 3,
                     justifyContent: 'center',
+                    px: { xs: 0, md: 2 }, // Tambahkan padding di wrapper utama
                   }}
                 >
-                  <Box>
+                  <Box sx={{ width: '100%' }}>
                     <img
                       src={`https://img.freepik.com/free-photo/men-shake-hands-enclosure-business-agreement-understanding-business-partners_1157-44618.jpg?ga=GA1.1.1374719570.1742115385&semt=ais_hybrid`}
                       alt="Promo"
@@ -196,7 +198,7 @@ export default function About() {
                       }}
                     />
                   </Box>
-                  <Box sx={{ px: { xs: 0, md: 2 } }}>
+                  <Box>
                     <Typography variant="h5" sx={{ pb: '3px', fontWeight: 'bold' }}>
                       Harga Terjangkau
                     </Typography>
@@ -211,9 +213,8 @@ export default function About() {
         </Box>
       </Box>
       {/* Apa kata mereka section */}
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             background: '#F0EFEA',
@@ -274,9 +275,8 @@ export default function About() {
         </Box>
       </Box>
       {/* Sekilas */}
-      <Box maxWidth="xl">
+      <Box>
         <Box
-          maxWidth="xl"
           sx={{
             padding: 0,
             background: 'white',

@@ -1,10 +1,10 @@
-import { Box, Button, Divider, Radio, Typography } from '@mui/material';
+import { Box, Button, Divider, Typography } from '@mui/material';
 import { Grid, Stack } from '@mui/material';
 import { fCurrency } from 'src/utils/format-number';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useKeenSlider } from 'keen-slider/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import 'keen-slider/keen-slider.min.css';
 import { fDate } from 'src/utils/format-time';
 import { useAppContext } from 'src/context/user-context';
@@ -13,8 +13,8 @@ import Loading from 'src/components/loading/loading';
 import { useFetchAllServices } from 'src/hooks/services';
 import { Link } from 'react-router-dom';
 
-export function TransactionStepThree({ data }) {
-  // console.log();
+export function TransactionStepThree({ data, setValue, getValues }) {
+  console.log(data);
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const isOwnerProperty =
@@ -25,12 +25,16 @@ export function TransactionStepThree({ data }) {
     isLoading: isloadingRoomDetail,
     isFetching: isfetchingRoomDetail,
   } = useFetchAllPropertyRoomDetail(data.room_number, isOwnerProperty);
+  console.log(detail_property);
+
   const { data: service = [], isLoading: isLoadingService } = useFetchAllServices();
+
   const filteredServices = useMemo(() => {
     const selectedIds = data.additional_services?.map((item) => item) || [];
     return service.filter((s) => selectedIds.includes(s.id));
   }, [service, data.additional_services]);
-  console.log(detail_property);
+
+  const priceDurations = ['1_month', '3_month', '6_month', '1_year'];
 
   const oneMonthPrice = detail_property.room_prices?.find((item) => item.duration === '1_month');
   const ThreeMonthPrice = detail_property.room_prices?.find((item) => item.duration === '3_month');
@@ -47,10 +51,32 @@ export function TransactionStepThree({ data }) {
   const discountAmountSixMonth = (SixMonthPrice?.price * SixMonthPriceDiscountPrice) / 100;
   const discountAmountAyearMonth = (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice) / 100;
 
+  const prices = priceDurations.reduce((acc, duration) => {
+    const priceData = detail_property.room_prices?.find((item) => item.duration === duration);
+    acc[duration] = {
+      price: priceData?.price || 0,
+      discountValue: priceData?.room_discounts?.[0]?.discount_value || 0,
+      discountAmount:
+        (priceData?.price * (priceData?.room_discounts?.[0]?.discount_value || 0)) / 100,
+      id: priceData?.id || null,
+    };
+    return acc;
+  }, {});
+
   const IsServiceExist = filteredServices
     .map((data) => data?.price)
     .filter((price) => price > 0)
     .reduce((total, price) => total + price, 0);
+
+  useEffect(() => {
+    const current = getValues('price_id'); // pakai getValues dari useForm
+    const next =
+      prices['1_month'].id || prices['3_month'].id || prices['6_month'].id || prices['1_year'].id;
+
+    if (next && current !== next) {
+      setValue('price_id', next);
+    }
+  }, [prices, setValue]);
 
   if (isloadingRoomDetail || isfetchingRoomDetail || isLoadingService) {
     return <Loading />;
@@ -125,7 +151,7 @@ export function TransactionStepThree({ data }) {
               mt: 3,
               border: '1px solid #F1EFEC',
               borderRadius: '5px',
-              // p: 2,
+              py: 2,
             }}
           >
             <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', my: 2 }}>
@@ -201,8 +227,17 @@ export function TransactionStepThree({ data }) {
                   mb: 1, // memberi jarak antar item
                 }}
               >
-                <Typography variant="body2">+{data?.name}</Typography>
-                <Typography variant="subtitle1">{fCurrency(data?.price)}</Typography>
+                <Typography variant="body2">
+                  +{data?.name} (
+                  {data?.payment_type === 'monthly' ? `x${data?.price} / bulan` : 'Per hari'})
+                </Typography>
+                <Typography variant="subtitle1">
+                  {fCurrency(
+                    data?.payment_type === 'monthly' ? data.price * data.duration : data.price
+                  )}
+                </Typography>
+                {/* <Typography variant="body2">+{data?.name} ({data?.payment_type === 'monthly' ? 'Per Bulan' : 'Per hari'})</Typography>
+                <Typography variant="subtitle1">{fCurrency(data?.price)}</Typography> */}
               </Box>
             ))}
             <Divider sx={{ mt: 2 }} />
@@ -228,9 +263,6 @@ export function TransactionStepThree({ data }) {
                   {fCurrency(AyearMonthPrice?.price - discountAmountAyearMonth + IsServiceExist)}
                 </Typography>
               )}
-              {/* <Typography variant="subtitle1">
-                {fCurrency(oneMonthPrice?.price - discountAmountOneMonth + IsServiceExist[0])}
-              </Typography> */}
             </Box>
           </Box>
         </Grid>

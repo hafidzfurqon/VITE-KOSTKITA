@@ -15,11 +15,24 @@ import Loading from 'src/components/loading/loading';
 import { TransactionStepThree } from './transaction-step3';
 import { useFieldArray } from 'react-hook-form';
 import { useRouter } from 'src/routes/hooks';
+import { fDate } from 'src/utils/format-time';
 
 export default function TransactionView() {
-  const { register, handleSubmit, control, watch, setValue } = useForm({
+  const [userDataState, setUserDataState] = useState([
+    {
+      fullname: '',
+      phone_number: '',
+      email: '',
+      date_of_birth: '',
+      gender: '',
+      nomor_ktp: '',
+      nik: '',
+    },
+  ]);
+
+  const { register, handleSubmit, control, watch, setValue, getValues } = useForm({
     defaultValues: {
-      booking_user_data: [{}], // hanya 1 penyewa
+      booking_user_data: userDataState || [{}],
     },
   });
   // const { errors, isValid } = useFormState({ control });
@@ -28,9 +41,10 @@ export default function TransactionView() {
     name: 'booking_user_data',
   });
 
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
   const { enqueueSnackbar } = useSnackbar();
   const routers = useRouter();
+  // console.log(watch('price_id'));
 
   const { mutate, isPending } = useMutationTransaction({
     onSuccess: () => {
@@ -48,7 +62,31 @@ export default function TransactionView() {
       setStep(step + 1);
     } else {
       console.log(data);
-      mutate(data);
+      const payload = {
+        // user_id: user.id,
+        property_id: data.property_id,
+        room_id: data.room_number,
+        room_price_id: data.price_id || null,
+        property_room_discount_id: data.property_room_discount_id || null,
+        promo_id: data.promo_id || null,
+        booking_date: new Date().toISOString().split('T')[0],
+        total_booking_month: data.duration,
+        check_in: fDate(data.checkin, 'YYYY-MM-DD'),
+        check_out: fDate(data.checkout, 'YYYY-MM-DD'),
+        status: 'pending', // Atau null sesuai kebutuhanmu
+        additional_services: data.additional_services || [],
+        booking_user_data: data.booking_user_data.map((person) => ({
+          fullname: person.fullname,
+          phone_number: person.phone_number,
+          email: person.email,
+          date_of_birth: fDate(person.date_of_birth, 'YYYY-MM-DD'),
+          gender: person.gender,
+          nomor_ktp: person.nomor_ktp,
+          nik: person.nik,
+        })),
+      };
+      // console.log(payload);
+      mutate(payload);
     }
   };
 
@@ -87,6 +125,17 @@ export default function TransactionView() {
     }
     return true;
   };
+
+  useEffect(() => {
+    if (step === 1 && userDataState) {
+      userDataState.forEach((user, index) => {
+        Object.keys(user).forEach((key) => {
+          setValue(`booking_user_data.${index}.${key}`, user[key]);
+        });
+      });
+    }
+  }, [step, userDataState, setValue]);
+
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
@@ -165,7 +214,6 @@ export default function TransactionView() {
                       label="Jenis Kelamin"
                       fullWidth
                       select
-                      defaultValue=""
                       {...register(`booking_user_data.${index}.gender`, { required: true })}
                     >
                       {genders.map((option) => (
@@ -207,7 +255,9 @@ export default function TransactionView() {
           />
         )}
 
-        {step === 3 && <TransactionStepThree data={formValues} />}
+        {step === 3 && (
+          <TransactionStepThree data={formValues} setValue={setValue} getValues={getValues} />
+        )}
 
         <Box display="flex" justifyContent="space-between" mt={4} gap={3}>
           <Button

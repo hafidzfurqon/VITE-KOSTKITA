@@ -90,7 +90,19 @@ export const navData = [
   },
   {
     title: 'Input Transaksi',
-    path: '/transaction',
+    path: '#',
     icon: <ReceiptLongOutlined />,
+    children: [
+      {
+        title: 'List Transaksi',
+        path: '/transaction/list-transaction',
+        icon: <Iconify icon="mdi:hospital" />, // Ikon kategori untuk tipe properti
+      },
+      {
+        title: 'Input Transaksi',
+        path: '/transaction/add-transaction',
+        icon:  <ReceiptLongOutlined />, // Ikon kategori untuk tipe properti
+      },
+    ],
   },
 ];

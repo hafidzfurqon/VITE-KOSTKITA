@@ -2,7 +2,6 @@ import { Box, Typography, Chip, Stack, Container } from '@mui/material';
 
 import { Home, Apartment } from '@mui/icons-material';
 import Loading from 'src/components/loading/loading';
-import { fCurrency, fPercent } from 'src/utils/format-number';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -149,14 +148,46 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
           }}
         >
           {filteredDataToColiving?.map((property) => {
-            const hasDiscount = property.discounts?.length > 0;
-            const oneMonthPrice =
-              property?.rooms?.[0]?.room_prices?.find((price) => price.duration === '1_month')
-                ?.price ?? 'Tidak ada harga bulanan';
-            const activePromos = property?.promos ?? []; // Default ke array kosong jika undefined
-            const hasPromo = property.promos?.length > 0;
+            const oneMonthData = (() => {
+              if (!property?.rooms) return null;
 
-            // console.log(activePromos);
+              // Ambil semua data harga "1_month" + diskonnya
+              const pricesWithDiscount = property.rooms
+                .map((room) => {
+                  const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+                  if (!priceItem) return null;
+
+                  const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+                  return {
+                    price: priceItem.price,
+                    discountValue: discount?.discount_value
+                      ? parseFloat(discount.discount_value)
+                      : null,
+                  };
+                })
+                .filter(Boolean); // hapus null
+
+              if (pricesWithDiscount.length === 0) return null;
+
+              // Ambil harga dengan diskon termurah
+              return pricesWithDiscount.reduce((min, curr) => {
+                const currFinal = curr.discountValue
+                  ? curr.price - curr.price * (curr.discountValue / 100)
+                  : curr.price;
+                const minFinal = min.discountValue
+                  ? min.price - min.price * (min.discountValue / 100)
+                  : min.price;
+
+                return currFinal < minFinal ? curr : min;
+              });
+            })();
+
+            const originalPrice = oneMonthData?.price ?? 0;
+            const discount = oneMonthData?.discountValue;
+            const finalPrice = discount
+              ? originalPrice - originalPrice * (discount / 100)
+              : originalPrice;
+            console.log(property?.rooms);
             return (
               <SwiperSlide
                 key={property.id}
@@ -191,87 +222,41 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                     {property.name}
                   </Typography>
                   <Box sx={{ color: 'gray' }}>
-                    <Typography variant="body2" sx={{ mb: 1, fontSize: '12px' }}>
+                    <Typography variant="body2" sx={{ fontSize: '12px' }}>
                       {property.address}, {property.city.name}
                     </Typography>
                   </Box>
-                  {property.discount_profile_price ? (
-                    <Stack direction="row" alignItems="center" spacing={1}>
-                      <Typography
-                        variant="body2"
-                        sx={{ color: 'gray', textDecoration: 'line-through' }}
-                      >
-                        {fCurrency(property.start_price)}
-                      </Typography>
-                      <Chip label="-12%" color="error" size="small" />
-                    </Stack>
-                  ) : null}
-                  {/* {property.} */}
-
-                  {hasDiscount ? (
-                    <>
-                      <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                        <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                  <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                    <Typography variant="caption">
+                      Mulai dari{' '}
+                      <span style={{ textDecoration: ' line-through' }}>
+                        {formatCurrency(originalPrice)}
+                      </span>
+                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+                      {discount && (
                         <Typography
-                          variant="subtitle1"
-                          sx={{
-                            textDecoration: 'line-through',
-                            fontWeight: 700,
-                            fontSize: '12px',
-                          }}
-                        >
-                          {formatCurrency(property.start_price)}
-                        </Typography>
-                      </Box>
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <Box
+                          variant="overline"
                           sx={{
                             backgroundColor: 'red',
                             color: 'white',
-                            fontSize: '11px',
-                            borderRadius: '10px',
-                            px: '5px',
+                            fontWeight: 'bold',
+                            borderRadius: '4px',
+                            px: '2px',
+                            mr: '4px',
                           }}
                         >
-                          -Rp {fPercent(property.discounts[0]?.discount_value)}
-                        </Box>
-                        <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                          {formatCurrency(
-                            property.discounts.map((discount) => discount.price_after_discount)
-                          )}
+                          -{discount}%
                         </Typography>
-                      </Box>
-                      {/* Diskon dan Voucher */}
-                      <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                        {property.discounts.some((d) => d.discount_value >= 10) && (
-                          <Chip
-                            icon={<Home fontSize="small" />}
-                            label="Diskon sewa 12 Bulan"
-                            variant="outlined"
-                            color="primary"
-                            size="small"
-                          />
-                        )}
-
-                        {hasPromo &&
-                          activePromos.map((promo, index) => (
-                            <Chip
-                              key={index}
-                              label={promo.code} // Pastikan 'promo' memiliki properti 'code'
-                              color="primary"
-                              sx={{ position: 'absolute', top: 10, left: 10 }}
-                            />
-                          ))}
-                      </Stack>
-                    </>
-                  ) : (
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                    >
-                      {fCurrency(oneMonthPrice)} /bulan
-                    </Typography>
-                  )}
+                      )}
+                      <Typography
+                        variant="body1"
+                        sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                      >
+                        {formatCurrency(finalPrice)} <span>/bulan</span>
+                      </Typography>
+                    </Box>
+                  </Box>
                 </Box>
               </SwiperSlide>
             );

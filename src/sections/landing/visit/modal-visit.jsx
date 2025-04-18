@@ -99,15 +99,14 @@ const ModalVisit = ({ isOpen, onClose, data }) => {
           <Box>
             <Typography fontWeight="bold">{data.name}</Typography>
             <Typography variant="body2">
-              Mulai dari
+              {data?.address}, {data.sector.name}
               <Typography
                 sx={{ ml: 1, fontWeight: 'bold' }}
                 variant="body2"
                 component="span"
                 color="black"
               >
-                {formatCurrency(data.start_price)}/
-                {data.payment_type === 'monthly' ? 'bulan' : 'tahun'}
+                {data.city.name}
               </Typography>
             </Typography>
           </Box>
