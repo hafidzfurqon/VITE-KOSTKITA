@@ -206,7 +206,7 @@ export default function PropertyDetail() {
     // Ambil semua data harga 1 bulan + diskonnya
     const pricesWithDiscount = data.rooms
       .map((room) => {
-        const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+        const priceItem = room?.room_prices?.find((price) => price.duration === '1_month');
         if (!priceItem) return null;
 
         const discount = priceItem.room_discounts?.[0];
