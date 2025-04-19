@@ -138,7 +138,7 @@ const PromoDetails = () => {
           </Typography>
           <Grid container spacing={2} sx={{ placeItems: 'center', mt: 3 }}>
             {data?.property?.map((coliving, index) => {
-              const hasDiscount = coliving.discounts.length > 0;
+              // const hasDiscount = coliving.discounts.length > 0;
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <Box
@@ -168,59 +168,13 @@ const PromoDetails = () => {
                         {coliving.address}, {coliving.city.name}
                       </Typography>
                     </Box>
-                    {coliving.discount_prifile_urlce ? (
-                      <Stack direction="row" alignItems="center" spacing={1}>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: 'gray', textDecoration: 'line-through' }}
-                        >
-                          {fCurrency(coliving.start_price)}
-                        </Typography>
-                        <Chip label="-12%" color="error" size="small" />
-                      </Stack>
-                    ) : null}
-                    {hasDiscount ? (
-                      <>
-                        <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                          <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{
-                              textDecoration: 'line-through',
-                              fontWeight: 700,
-                              fontSize: '12px',
-                            }}
-                          >
-                            {fCurrency(coliving.start_price)}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <Box
-                            sx={{
-                              backgroundColor: 'red',
-                              color: 'white',
-                              fontSize: '11px',
-                              borderRadius: '10px',
-                              px: '5px',
-                            }}
-                          >
-                            -Rp {fPercent(coliving.discounts[0]?.discount_value)}
-                          </Box>
-                          <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                            {fCurrency(
-                              coliving.discounts.map((discount) => discount.price_after_discount)
-                            )}
-                          </Typography>
-                        </Box>
-                      </>
-                    ) : (
-                      <Typography
-                        variant="subtitle1"
-                        sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                      >
-                        {fCurrency(coliving.start_price)} / bulan
-                      </Typography>
-                    )}
+
+                    <Typography
+                      variant="subtitle1"
+                      sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                    >
+                      {fCurrency(coliving.start_price)} / bulan
+                    </Typography>
                   </Box>
                 </Grid>
               );

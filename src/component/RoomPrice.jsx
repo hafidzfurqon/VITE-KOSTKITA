@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Box, Tabs, Tab, Typography } from '@mui/material';
 import { fCurrency } from 'src/utils/format-number';
-import { useTheme } from '@mui/material';
-import { useMediaQuery } from '@mui/material';
 
 const formatLabel = (duration) => {
   switch (duration) {
@@ -22,38 +20,62 @@ const formatLabel = (duration) => {
   }
 };
 
-export const RoomWithTabs = ({ room }) => {
-  const [selectedTab, setSelectedTab] = useState(4);
+export const RoomWithTabs = ({ room, onSelectDuration }) => {
+  // const initialIndex = room?.room_prices?.findIndex(
+  //   (priceItem) => priceItem.duration === '1_year' || priceItem.duration === '12_month'
+  // );
+  // const [selectedTab, setSelectedTab] = useState(initialIndex !== -1 ? initialIndex : 0);
 
   const handleChange = (event, newValue) => {
     setSelectedTab(newValue);
+    const selectedDuration = durations[newValue]?.duration;
+    if (selectedDuration && onSelectDuration) {
+      onSelectDuration(room.id, selectedDuration);
+    }
   };
 
-  const durations =
-    room?.room_prices
-      ?.map((priceItem) => {
-        const label = formatLabel(priceItem.duration);
-        if (!label) return null; // Jika tidak cocok, skip item ini
+  const durations = useMemo(() => {
+    return (
+      room?.room_prices
+        ?.map((priceItem) => {
+          const label = formatLabel(priceItem.duration);
+          if (!label) return null;
 
-        const matchingDiscounts =
-          priceItem.room_discounts?.filter((discount) => discount.price_id === priceItem.id) || [];
+          const matchingDiscounts =
+            priceItem.room_discounts?.filter((discount) => discount.price_id === priceItem.id) ||
+            [];
 
-        const discountObj = matchingDiscounts[0];
-        const discount = discountObj ? parseFloat(discountObj.discount_value) : 0;
+          const discountObj = matchingDiscounts[0];
+          const discount = discountObj ? parseFloat(discountObj.discount_value) : 0;
 
-        const price = priceItem.price;
-        const price_after_discount = price - (price * discount) / 100;
+          const price = priceItem.price;
+          const price_after_discount = price - (price * discount) / 100;
 
-        return {
-          label,
-          discount,
-          price,
-          price_after_discount: Math.round(price_after_discount),
-        };
-      })
-      .filter(Boolean) || [];
+          return {
+            label,
+            duration: priceItem.duration,
+            discount,
+            price,
+            price_after_discount: Math.round(price_after_discount),
+          };
+        })
+        .filter(Boolean) || []
+    );
+  }, [room]);
+
+  const initialIndex = durations.findIndex(
+    (d) => d.duration === '1_year' || d.duration === '12_month'
+  );
+  const [selectedTab, setSelectedTab] = useState(initialIndex !== -1 ? initialIndex : 0);
 
   const selected = durations[selectedTab];
+
+  useEffect(() => {
+    const selectedDuration = durations[selectedTab]?.duration;
+    if (selectedDuration && onSelectDuration) {
+      onSelectDuration(room.id, selectedDuration);
+    }
+  }, [room.id, selectedTab]);
 
   return (
     <Box sx={{ border: '1px solid #ddd', borderRadius: 2, p: 2, my: 2 }}>
@@ -101,5 +123,3 @@ export const RoomWithTabs = ({ room }) => {
     </Box>
   );
 };
-
-// export default PropertyRoom;

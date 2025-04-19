@@ -63,7 +63,7 @@ export default function Header() {
   // console.log(userId)
   const isAdmin = user?.roles?.some((role) => role.name.toLowerCase() === 'admin');
   const isOwner = user?.roles?.some((role) => role.name === 'owner_property');
-  console.log(user)
+  // console.log(user)
   const { data: _notifications, isLoading, isError } = useFetchNontification(userId);
   // console.log(notifications);
   const mapNotifications = (data = []) => {

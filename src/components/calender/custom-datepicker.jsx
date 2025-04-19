@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Box, InputBase, Popover, Typography, IconButton } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import ClearIcon from '@mui/icons-material/Clear';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
-import ClearIcon from '@mui/icons-material/Clear';
 import { motion } from 'framer-motion';
+import dayjs from 'dayjs';
 
-export default function CustomDatePicker({ selectedDate, onDateChange }) {
+export default function CustomDatePicker({ selectedDate, onDateChange, label }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleClear = () => {
@@ -32,7 +33,7 @@ export default function CustomDatePicker({ selectedDate, onDateChange }) {
           <CalendarTodayIcon sx={{ color: '#FFD700' }} />
         </IconButton>
         <InputBase
-          value={selectedDate ? selectedDate.toLocaleDateString('id-ID') : 'Pilih Tanggal'}
+          value={selectedDate ? dayjs(selectedDate).format('DD MMM YYYY') : 'Pilih Tanggal'}
           readOnly
           sx={{
             flexGrow: 1,
@@ -52,7 +53,7 @@ export default function CustomDatePicker({ selectedDate, onDateChange }) {
         anchorEl={anchorEl}
         onClose={() => setAnchorEl(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        transitionDuration={0} // Supaya animasi dari Framer Motion yang dipakai
+        transitionDuration={0}
         slotProps={{
           paper: {
             component: motion.div,
@@ -66,7 +67,7 @@ export default function CustomDatePicker({ selectedDate, onDateChange }) {
       >
         <Box sx={{ p: 2 }}>
           <Typography variant="body1" sx={{ mb: 1 }}>
-            Pilih Tanggal
+            {label || 'Pilih Tanggal'}
           </Typography>
           <DatePicker
             value={selectedDate}
@@ -81,4 +82,3 @@ export default function CustomDatePicker({ selectedDate, onDateChange }) {
     </LocalizationProvider>
   );
 }
-    

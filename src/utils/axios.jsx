@@ -80,11 +80,11 @@ axiosInstance.interceptors.response.use(
         return axiosInstance(originalRequest);
       } catch (err) {
         processQueue(err, null);
-        alert(err);
-        if (error.response && error.response.status === 401) {
-          console.warn('Refresh token expired. Logging out user...');
-          window.location.href = '/sign-in'; // Redirect ke halaman login
-        }
+        // alert(err);
+        // if (error.response && error.response.status === 401) {
+        //   console.warn('Refresh token expired. Logging out user...');
+        //   window.location.href = '/sign-in'; // Redirect ke halaman login
+        // }
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
         return Promise.reject(err);
@@ -254,7 +254,7 @@ export const endpoints = {
   data_booking: {
     detail: '/api/admin/property/booking/all_bookings_in_property',
     change_data: '/api/admin/property/booking/change_data',
-    create_new_data : '/api/admin/property/booking/create_new_data'
+    create_new_data: '/api/admin/property/booking/create_new_data',
   },
   apartment: {
     create: '/api/admin/apartment/create',

@@ -31,16 +31,15 @@ import { useFetchPropertySlug } from 'src/hooks/property/public/usePropertyDetai
 import { userBooking } from 'src/hooks/users/userBooking';
 import { useAppContext } from 'src/context/user-context';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import ModalJasaLayanan from './bookingStep/modalJasaLayanan';
 import DetailDataPenghuni from './bookingStep/detailDataPenghuni';
 
 export default function BookingView() {
   const [step, setStep] = useState(1);
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
-  const [openModal, setOpenModal] = useState(false);
   const [modalUser, setModalUser] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
+  const [selectedPromos, setSelectedPromos] = useState([]);
   const [bookingData, setBookingData] = useState({});
   const [openSuccessModal, setOpenSuccessModal] = useState(false);
   const [bookingCode, setBookingCode] = useState(null);
@@ -66,11 +65,12 @@ export default function BookingView() {
   };
 
   const nextStep = (data) => {
+    console.log('Data dari Step 1:', data); // 👈 log di sini
     setBookingData((prev) => ({ ...prev, ...data }));
     setStep((prev) => prev + 1);
   };
 
-  const { register, handleSubmit, reset } = useForm({ defaultValues });
+  const { watch, reset, setValue } = useForm({ defaultValues });
   const { mutate, isPending } = userBooking({
     onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ['list.property'] });
@@ -113,6 +113,8 @@ export default function BookingView() {
     );
   }
 
+  const selectedRoom = defaultValues.rooms.find((room) => room.id === parseInt(roomIdFromUrl));
+
   const totalHarga =
     parseInt(bookingData.discounted_price || 0) +
     (Array.isArray(selectedServices)
@@ -137,15 +139,16 @@ export default function BookingView() {
   };
 
   return (
-    <Container maxWidth="md">
+    <Box>
       <CustomBreadcrumbs
         links={[
           { name: defaultValues?.slug, href: `/property/${slug}` },
           { name: 'Booking', href: '' },
+          { name: selectedRoom.name, href: '' },
         ]}
-        sx={{ mb: 3 }}
+        sx={{ mb: 3, px: 2 }}
       />
-      <Card>
+      <Box>
         <CardContent>
           <Stepper activeStep={step - 1} alternativeLabel>
             {steps.map((label, index) => (
@@ -160,22 +163,35 @@ export default function BookingView() {
             ))}
           </Stepper>
 
-          <Typography variant="h5" sx={{ mt: 3, mb: 2, textAlign: 'center' }}>
-            Booking Properti {defaultValues?.name}
-          </Typography>
-
-          {step === 1 && <Step1Penghuni savedata={bookingData} onNext={nextStep} user={user} />}
+          {step === 1 && (
+            <Step1Penghuni
+              room={selectedRoom}
+              savedata={bookingData}
+              step={step}
+              properti={defaultValues}
+              onNext={nextStep}
+              setStep={setStep}
+              user={user}
+              setSelectedServices={setSelectedServices}
+              selectedServices={selectedServices}
+              setValue={setValue}
+              watch={watch}
+            />
+          )}
           {step === 2 && (
             <>
               <Step2DateSelection
+                room={selectedRoom}
+                setSelectedPromos={setSelectedPromos}
+                selectedPromos={selectedPromos}
+                watch={watch}
+                setValue={setValue}
+                properti={defaultValues}
+                setStep={setStep}
                 onNext={nextStep}
-                discounts={defaultValues?.discounts || []}
-                startPrice={defaultValues?.start_price || 0}
                 savedData={bookingData}
+                prevStep={prevStep}
               />
-              <Button variant="outlined" onClick={prevStep}>
-                Kembali
-              </Button>
             </>
           )}
           {step === 3 && (
@@ -220,9 +236,7 @@ export default function BookingView() {
               </Grid>
               <Divider sx={{ mt: 2, mb: 2 }} />
               <Typography variant="body1">Layanan Tambahan:</Typography>
-              <Button variant="outlined" onClick={() => setOpenModal(true)}>
-                Pilih Jasa Layanan
-              </Button>
+
               {selectedServices.length ? (
                 selectedServices.map((service, index) => (
                   <Chip
@@ -252,13 +266,7 @@ export default function BookingView() {
             </Paper>
           )}
         </CardContent>
-      </Card>
-      <ModalJasaLayanan
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onSubmit={handleServiceSubmit}
-        bookedServices={selectedServices} // Perbaiki di sini
-      />
+      </Box>
 
       <DetailDataPenghuni open={modalUser} onClose={() => setModalUser(false)} data={bookingData} />
       <ModalBookingSuccess
@@ -283,6 +291,6 @@ export default function BookingView() {
           </Button>
         </DialogActions>
       </Dialog>
-    </Container>
+    </Box>
   );
 }

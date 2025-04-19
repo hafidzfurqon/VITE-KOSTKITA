@@ -206,7 +206,7 @@ export default function PropertyDetail() {
     // Ambil semua data harga 1 bulan + diskonnya
     const pricesWithDiscount = data.rooms
       .map((room) => {
-        const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+        const priceItem = room?.room_prices?.find((price) => price.duration === '1_month');
         if (!priceItem) return null;
 
         const discount = priceItem.room_discounts?.[0];
@@ -661,12 +661,7 @@ export default function PropertyDetail() {
         <ModalVisit isOpen={visitModal} onClose={() => setVisitModal(false)} data={data} />
         <hr />
         <Box sx={{ mt: 5, mb: 5 }} id="room">
-          <PropertyRoom
-            rooms={data?.rooms}
-            payment={data?.payment_type}
-            namaProperty={data?.name}
-            slug={data?.slug}
-          />
+          <PropertyRoom rooms={data?.rooms} namaProperty={data?.name} slug={data?.slug} />
           {/* <PropertyRoom rooms={data.rooms} data={data} /> */}
         </Box>
         <hr />

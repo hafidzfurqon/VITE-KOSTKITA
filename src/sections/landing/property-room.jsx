@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Container,
   Box,
@@ -39,33 +39,51 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
   color: 'white',
 }));
 
-const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = [] }) => {
+const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
   const navigate = useNavigate();
+  console.log(rooms)
   const [bookingData, setBookingData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
 
-  const durations = [
-    {
-      label: '1-2 bulan',
-      discount: 7,
-      price: 4300000,
-      price_after_discount: 1000000 ?? 0,
-    },
-    { label: '3-5 bulan', discount: 7, price: 4300000, price_after_discount: 1000000 ?? 0 },
-    { label: '6-11 bulan', discount: 9, price: 4300000, price_after_discount: 1000000 ?? 0 },
-    { label: '≥12 bulan', discount: 12, price: 4300000, price_after_discount: 1000000 ?? 0 },
-  ];
+  const [selectedDurations, setSelectedDurations] = useState({}); // { [roomId]: '1_month' }
 
-  const [selectedTab, setSelectedTab] = useState(0);
-
-  const handleChange = (event, newValue) => {
-    setSelectedTab(newValue);
+  const handleSelectDuration = (roomId, duration) => {
+    setSelectedDurations((prev) => ({ ...prev, [roomId]: duration }));
   };
 
-  const selected = durations[selectedTab];
-  // const discountedPrice = selected.price - selected.price * selected.discount;
+  const calculateDates = (durationKey) => {
+    const today = new Date();
+    let checkout = new Date(today);
+
+    switch (durationKey) {
+      case 'dayly':
+        checkout.setDate(today.getDate() + 1);
+        break;
+      case '1_month':
+        checkout.setMonth(today.getMonth() + 1);
+        break;
+      case '3_month':
+        checkout.setMonth(today.getMonth() + 3);
+        break;
+      case '6_month':
+        checkout.setMonth(today.getMonth() + 6);
+        break;
+      case '12_month':
+      case '1_year':
+        checkout.setFullYear(today.getFullYear() + 1);
+        break;
+      default:
+        checkout.setDate(today.getDate() + 1);
+    }
+
+    const format = (date) => date.toISOString().split('T')[0];
+    return {
+      checkInDate: format(today),
+      checkOutDate: format(checkout),
+    };
+  };
 
   const selectRoom = (roomId) => {
     setBookingData((prev) => ({
@@ -73,7 +91,9 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
       room_id: prev.room_id === roomId ? null : roomId, // Toggle jika sudah dipilih
     }));
   };
-
+  useEffect(() => {
+    console.log('Selected durations:', selectedDurations);
+  }, [selectedDurations]);
   if (!rooms.length) {
     return (
       <Container maxWidth="lg">
@@ -118,7 +138,11 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                   ))}
                 </Grid>
                 <Box>
-                  <RoomWithTabs key={room.id || index} room={room} />
+                  <RoomWithTabs
+                    key={room.id || index}
+                    room={room}
+                    onSelectDuration={handleSelectDuration}
+                  />
                 </Box>
                 <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} mt={2}>
                   <Button
@@ -140,9 +164,15 @@ const PropertyRoom = ({ rooms = [], payment, namaProperty, slug, discountData = 
                         color="inherit"
                         disabled={room.isBooked} // Disable button jika kamar sudah dibooking
                         onClick={() => {
+                          const selectedDuration = selectedDurations[room.id];
+                          const { checkInDate, checkOutDate } = calculateDates(
+                            selectedDuration || 'dayly'
+                          );
                           if (!room.isBooked) {
                             selectRoom(room.id);
-                            navigate(`/booking/${slug}?room_id=${room.id}`); // Tambahkan room_id ke URL
+                            navigate(
+                              `/booking/${slug}?room_id=${room.id}&checkInDate=${checkInDate}&checkOutDate=${checkOutDate}`
+                            );
                           }
                         }}
                       >

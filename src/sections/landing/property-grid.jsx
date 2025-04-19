@@ -152,9 +152,11 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
               if (!property?.rooms) return null;
 
               // Ambil semua data harga "1_month" + diskonnya
-              const pricesWithDiscount = property.rooms
+              const pricesWithDiscount = property?.rooms
                 .map((room) => {
-                  const priceItem = room.room_prices.find((price) => price.duration === '1_month');
+                  const priceItem = room?.room_prices?.find(
+                    (price) => price.duration === '1_month'
+                  );
                   if (!priceItem) return null;
 
                   const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
@@ -167,10 +169,10 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
                 })
                 .filter(Boolean); // hapus null
 
-              if (pricesWithDiscount.length === 0) return null;
+              if (pricesWithDiscount?.length === 0) return null;
 
               // Ambil harga dengan diskon termurah
-              return pricesWithDiscount.reduce((min, curr) => {
+              return pricesWithDiscount?.reduce((min, curr) => {
                 const currFinal = curr.discountValue
                   ? curr.price - curr.price * (curr.discountValue / 100)
                   : curr.price;

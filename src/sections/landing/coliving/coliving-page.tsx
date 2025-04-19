@@ -93,14 +93,14 @@ const ColivingPage = () => {
             if (!coliving?.rooms) return null;
 
             // Ambil semua data harga "1_month" + diskonnya
-            const pricesWithDiscount = coliving.rooms
+            const pricesWithDiscount = coliving?.rooms
               .map((room: any) => {
-                const priceItem = room.room_prices.find(
-                  (price: any) => price.duration === '1_month'
+                const priceItem = room?.room_prices?.find(
+                  (price: any) => price?.duration === '1_month'
                 );
                 if (!priceItem) return null;
 
-                const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+                const discount = priceItem?.room_discounts?.[0]; // ambil diskon pertama jika ada
                 return {
                   price: priceItem.price,
                   discountValue: discount?.discount_value
