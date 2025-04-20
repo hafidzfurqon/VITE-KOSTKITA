@@ -2,25 +2,24 @@ import { Apartment, Home } from '@mui/icons-material';
 import { Chip, Grid, Typography } from '@mui/material';
 import { Button } from '@mui/material';
 import { Box } from '@mui/material';
-import { Stack } from '@mui/material';
 import { Container } from '@mui/material';
 import { useKeenSlider } from 'keen-slider/react';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
-import Loading from 'src/components/loading/loading';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import { fPercent } from 'src/utils/format-number';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 
 interface Property {
   type: {
     name: string;
   };
+  rooms: any;
 }
 
-const data: Property[] = [
+const data: any = [
   { type: { name: 'coliving' } },
   { type: { name: 'apartement' } },
   { type: { name: 'coliving' } },
@@ -28,7 +27,7 @@ const data: Property[] = [
 
 const ColivingPage = () => {
   const { data, isLoading, isFetching } = useListProperty();
-
+  console.log(data);
   const getPropertyIcon = (type: string) => {
     if (type.toLowerCase().includes('apartment'))
       return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
@@ -39,12 +38,10 @@ const ColivingPage = () => {
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
 
   if (isLoading || isFetching) {
-    return <Loading />;
+    return <LoadingPropertyPage />;
   }
 
-  const filteredDataToColiving: Property[] = data.filter((item: Property) =>
-    ['coliving', 'kost'].includes(item.type.name.toLowerCase())
-  );
+  const filteredDataToColiving: Property[] = data.filter((item: Property) => item.rooms.length > 0);
 
   if (
     !filteredDataToColiving ||
@@ -161,7 +158,7 @@ const ColivingPage = () => {
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '12px' }}>
                       Mulai dari{' '}
                       <span style={{ textDecoration: 'line-through' }}>
-                        {formatCurrency(12222)}
+                        {formatCurrency(originalPrice)}
                       </span>
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>

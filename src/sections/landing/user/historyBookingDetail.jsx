@@ -19,6 +19,7 @@ import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import FacilityModal from '../modal-facility';
 import { fDate } from 'src/utils/format-time';
 import ModalDataPenghuni from './modalDataPenghuni';
+import { fCurrency } from 'src/utils/format-number';
 
 export default function HistoryBookingDetail() {
   const { bookingCode } = useParams();
@@ -26,6 +27,7 @@ export default function HistoryBookingDetail() {
   const [open, setOpen] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const [selectedResident, setSelectedResident] = useState(null);
+  console.log(booking);
 
   const handleOpenModal = (resident) => {
     setSelectedResident(resident);
@@ -69,14 +71,23 @@ export default function HistoryBookingDetail() {
           sx={{ mb: 3 }}
         />
 
+        <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
+          Data Penghuni
+        </Typography>
         <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
-            Data Penghuni
-          </Typography>
           <Box>
             {booking.booking_user_information?.length > 0 ? (
               booking.booking_user_information.map((resident, index) => (
-                <Box key={index} sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Box
+                  key={index}
+                  sx={{
+                    display: 'flex',
+                    gap: 3,
+                    flexDirection: { xs: 'column', md: 'row' },
+                    alignItems: 'center',
+                    mb: 2,
+                  }}
+                >
                   <Avatar
                     src={resident.photo_profile || ''}
                     alt={resident.fullname || 'Penghuni'}
@@ -95,7 +106,7 @@ export default function HistoryBookingDetail() {
                   </Box>
                   <Button
                     variant="outlined"
-                    sx={{ ml: 'auto' }}
+                    // sx={{ ml: 'auto' }}
                     onClick={() => handleOpenModal(resident)}
                   >
                     Lihat Selengkapnya
@@ -151,7 +162,7 @@ export default function HistoryBookingDetail() {
             style={{ textDecoration: 'none', display: 'block' }}
           >
             <Stack direction="row" spacing={2}>
-              {booking.property?.files?.slice(0, 3).map((file, index) => (
+              {booking.property_room?.room_files?.slice(0, 3).map((file, index) => (
                 <img
                   key={index}
                   src={file.file_url}
@@ -163,10 +174,10 @@ export default function HistoryBookingDetail() {
               ))}
             </Stack>
           </Link>
-          <Typography>{booking.property?.address || '-'}</Typography>
+          <Typography sx={{mt:2}}>{booking.property?.address || '-'}</Typography>
           <Divider sx={{ my: 2 }} />
           <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-            Rp{booking.total_price?.toLocaleString() || '0'} /bulan
+            {fCurrency(booking.total_price)} /bulan
           </Typography>
         </Box>
       </Container>

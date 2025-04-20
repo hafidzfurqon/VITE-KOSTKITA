@@ -137,7 +137,7 @@ export function OverviewAnalyticsView() {
 
         <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
-            title="Current visits"
+            title="Jumlah 4 Property Terbanyak Dilihat"
             chart={{
               series: [
                 { label: 'America', value: 3500 },

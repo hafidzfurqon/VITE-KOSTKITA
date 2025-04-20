@@ -145,6 +145,9 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
       localStorage.removeItem('token'); // Hapus token saat logout
       setOpenDeleteDialog(false);
+      setTimeout(() => {
+        window.location.reload(); // Reload halaman
+      }, 100); // 100ms cukup, atau bisa sesuaikan
     },
     onError: (error: any) => {
       enqueueSnackbar(error.message, { variant: 'error' });
@@ -164,7 +167,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
     return item;
   });
   const theme = useTheme();
-  
+
   return (
     <>
       {/* <Logo /> */}
@@ -368,7 +371,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
           </Box>
           {user?.roles?.length > 0 ? (
             <Button
-            fullWidth
+              fullWidth
               sx={{
                 pl: 2,
                 py: 1,

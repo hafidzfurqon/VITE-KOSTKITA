@@ -175,7 +175,7 @@ export function PropertyView() {
         pending={isPendingMutate}
         SubmitFormValue={handleCreate}
         open={opened}
-        title="Create Nama Tipe Property"
+        title="Tambah Nama Tipe Property"
         subTitle="Property untuk coliving maupun apartemen"
         setOpen={setOpened}
         field={FieldRHF}

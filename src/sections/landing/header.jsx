@@ -26,10 +26,6 @@ import Logo from '../../../public/assets/images/logo.png';
 import { usePathname, useRouter } from 'src/routes/hooks';
 import { AccountPopover } from 'src/layouts/components/account-popover';
 import { useAppContext } from 'src/context/user-context';
-import { useMutationLogout } from 'src/hooks/auth/useMutationLogout';
-import DialogDelete from 'src/component/DialogDelete';
-import { useSnackbar } from 'notistack';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   BookmarkBorderOutlined,
   Dashboard,

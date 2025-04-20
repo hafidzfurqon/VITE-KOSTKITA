@@ -20,53 +20,52 @@ import { Autocomplete } from '@mui/material';
 import { FormControlLabel } from '@mui/material';
 import { Checkbox } from '@mui/material';
 import { PeraturanPenghuni } from 'src/component/PeraturanPenghuni';
+import { useSnackbar } from 'notistack';
+import dayjs from 'dayjs';
 
 export default function Step2DateSelection({
   onNext,
-  startPrice,
   discounts,
   savedData,
   room,
   setValue,
   properti,
-  setSelectedPromos,
-  selectedPromos,
   watch,
-  prevStep,
+  // prevStep,
 }) {
-  const [checkIn, setCheckIn] = useState('');
+  // const [searchParams, setSearchParams] = useSearchParams();
+  const { enqueueSnackbar } = useSnackbar();
+  const [searchParams] = useSearchParams();
+  // console.log('price:', startPrice);
+  const [checkIn, setCheckIn] = useState(() => {
+    const date = searchParams.get('checkInDate');
+    console.log(date);
+    return date ? new Date(date) : null;
+  });
+  console.log(checkIn);
   const [months, setMonths] = useState(savedData?.duration || 1);
   const [open, setOpen] = useState(false);
   const [agreed, setAgreed] = useState(false);
-  const [promoCode, setPromoCode] = useState('');
-  const [searchParams] = useSearchParams();
-  // console.log(selectedPromos);
-
-  useEffect(() => {
-    const checkInParam = searchParams.get('checkInDate');
-    const promoParam = searchParams.get('promo'); // ini untuk promo
-
-    if (checkInParam) setCheckIn(new Date(checkInParam));
-    if (promoParam) setPromoCode(promoParam);
-  }, []);
-
-  useEffect(() => {
-    if (promoCode) {
-      searchParams.set('promo', promoCode);
-      setSearchParams(searchParams);
-    }
-  }, [promoCode]);
+  const [selectedPromos, setSelectedPromos] = useState([]);
 
   useEffect(() => {
     if (savedData) {
-      setCheckIn(savedData.check_in || '');
+      if (savedData.check_in) {
+        setCheckIn(new Date(savedData.check_in));
+      }
       setMonths(savedData?.duration || 1);
     }
   }, [savedData]);
 
+  useEffect(() => {
+    console.log('Selected promos: ', selectedPromos);
+  }, [selectedPromos]);
+
   const handleOpen = () => {
     return setOpen(true);
   };
+
+  const actualStartPrice = savedData?.base_price ?? 0;
 
   const applicableDiscount = useMemo(() => {
     return discounts?.find(
@@ -75,9 +74,9 @@ export default function Step2DateSelection({
   }, [months, discounts]);
 
   const discountedPrice = useMemo(() => {
-    const totalPrice = startPrice * months;
+    const totalPrice = actualStartPrice * months;
     return applicableDiscount ? applicableDiscount.price_after_discount : totalPrice;
-  }, [startPrice, months, applicableDiscount]);
+  }, [actualStartPrice, months, applicableDiscount]);
 
   const finalPrice = useMemo(() => {
     if (!selectedPromos || selectedPromos.length === 0) {
@@ -85,37 +84,47 @@ export default function Step2DateSelection({
     }
 
     let totalDiscount = 0;
-
     selectedPromos.forEach((promo) => {
       if (promo.promo_type === 'fixed_amount') {
         totalDiscount += Number(promo.promo_value);
       }
-      // kamu bisa tambahkan jenis promo lain seperti percentage di sini
+
+      if (promo.promo_type === 'percentage') {
+        const percentageValue = (Number(promo.promo_value) / 100) * discountedPrice;
+        totalDiscount += percentageValue;
+      }
     });
 
-    return Math.max(discountedPrice - totalDiscount, 0); // harga tidak boleh negatif
+    return Math.max(discountedPrice - totalDiscount, 0);
   }, [discountedPrice, selectedPromos]);
 
-  const handleNext = () => {
-    if (!checkIn) {
-      alert('Tanggal booking wajib diisi.');
-      return;
-    }
-    if (!months || months < 1) {
-      alert('Durasi booking wajib diisi.');
-      return;
-    }
+  const Voucher = discountedPrice - finalPrice;
 
+  const applicablePromos = useMemo(() => {
+    return (properti?.promos ?? []).filter((promo) => {
+      // Contoh: hanya tampilkan promo untuk properti ini
+      if (promo.apply_to === 'specific_property' && promo.applicable_to_owner_property !== 1) {
+        return false;
+      }
+      return true;
+    });
+  }, [properti?.promos]);
+
+  const handleNext = () => {
     if (!agreed) {
-      alert('Kamu harus menyetujui peraturan terlebih dahulu.');
+      enqueueSnackbar({
+        message: 'Kamu harus menyetujui peraturan terlebih dahulu.',
+        variant: 'warning',
+      });
       return;
     }
 
     const nextData = {
-      booking_date: checkIn,
+      booking_date: dayjs(checkIn).format('YYYY-MM-DD'),
       total_booking_month: months,
       discounted_price: discountedPrice,
       final_price: finalPrice,
+      biaya_akhir: savedData?.total_price - Voucher,
       promos: selectedPromos.map((p) => p.id),
     };
 
@@ -151,7 +160,7 @@ export default function Step2DateSelection({
                 id="select-service"
                 multiple
                 limitTags={5}
-                options={properti?.promos ?? []}
+                options={applicablePromos ?? []}
                 autoHighlight
                 sx={{ zIndex: 1500 }}
                 getOptionLabel={(option) => `${option.name}`}
@@ -165,6 +174,7 @@ export default function Step2DateSelection({
                   );
                   setSelectedPromos(value);
                 }}
+                noOptionsText="Belum Ada Promo Nih"
                 renderInput={(params) => (
                   <TextField
                     {...params}
@@ -178,9 +188,9 @@ export default function Step2DateSelection({
               />
             </Box>
             {selectedPromos?.length > 0 && (
-              <Box>
-                <Typography variant="caption">
-                  Yeay Kamu hemat sebesar: <strong>Rp {finalPrice.toLocaleString()}</strong>
+              <Box sx={{ mt: 1 }}>
+                <Typography variant="caption" color="success.main">
+                  {`Yeay, kamu hemat total promo sebesar: ${fCurrency(discountedPrice - finalPrice)}`}
                 </Typography>
               </Box>
             )}
@@ -208,6 +218,12 @@ export default function Step2DateSelection({
                           >
                             Lihat Detail
                           </Link>
+                          <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                            Potongan:{' '}
+                            {promo.promo_type === 'fixed_amount'
+                              ? fCurrency(promo.promo_value)
+                              : `${promo.promo_value}% dari ${fCurrency(discountedPrice)}`}
+                          </Typography>
                         </CardContent>
                       </Card>
                     </Grid>
@@ -231,7 +247,7 @@ export default function Step2DateSelection({
               </Typography>
               <Divider sx={{ mt: 2 }} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2">Harga Awal</Typography>
+                <Typography variant="body2">Harga Per {savedData?.duration} Bulan</Typography>
                 <Typography variant="body2">{fCurrency(savedData?.base_price || 0)}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -243,18 +259,40 @@ export default function Step2DateSelection({
               {selectedPromos?.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2">Promo Voucher</Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" color="error.main">
                     - {fCurrency(discountedPrice - finalPrice)}
                   </Typography>
                 </Box>
               )}
+              {savedData?.selected_services?.map((data, idx) => (
+                <Box
+                  key={idx}
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mb: 1, // memberi jarak antar item
+                  }}
+                >
+                  <Typography variant="body2">
+                    +{data?.name} (
+                    {data?.payment_type === 'monthly' ? `x${data?.price} / bulan` : 'Per hari'})
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    {fCurrency(
+                      data?.payment_type === 'monthly'
+                        ? data?.price * savedData.duration
+                        : data.price
+                    )}
+                  </Typography>
+                </Box>
+              ))}
               <Divider sx={{ my: 1 }} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="subtitle1">
                   <strong>Total Bayar</strong>
                 </Typography>
                 <Typography variant="subtitle1">
-                  {fCurrency(savedData?.total_price || 0)}
+                  {fCurrency(savedData?.total_price - Voucher || 0)}
                 </Typography>
               </Box>
             </Box>

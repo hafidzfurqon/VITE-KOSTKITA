@@ -18,13 +18,15 @@ import {
 import { Bookmark, Home } from '@mui/icons-material';
 import { useFetchWishlist } from 'src/hooks/users/useFetchWishlist';
 import { useMutationRemoveWishlist } from 'src/hooks/users/useMutationRemoveWishlist';
-import Loading from 'src/components/loading/loading';
 import { useQueryClient } from '@tanstack/react-query';
 import { enqueueSnackbar } from 'notistack';
 import { useKeenSlider } from 'keen-slider/react';
 import 'keen-slider/keen-slider.min.css';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { Apartment } from '@mui/icons-material';
+import { Link } from 'react-router-dom';
+import CloudIcon from '@mui/icons-material/WbCloudy';
+import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 
 export default function WishlistPageView() {
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -49,7 +51,7 @@ export default function WishlistPageView() {
     return <Home fontSize="small" sx={{ mr: 0.5 }} />;
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading) return <LoadingPropertyPage />;
 
   const formatCurrency = (price) =>
     new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(price);
@@ -70,14 +72,34 @@ export default function WishlistPageView() {
     }
   };
 
+  console.log(data);
+
+  if (data.length == 0) {
+    return (
+      <Box sx={{ textAlign: 'center', mt: 5, py: 3, borderRadius: 2, boxShadow: 2 }}>
+        <CloudIcon sx={{ fontSize: 60, color: '#ccc' }} />
+        <Typography variant="h6" fontWeight="bold" sx={{ mt: 2 }}>
+          Belum ada daftar wishlist
+        </Typography>
+
+        {/* Tombol Cari Hunian hanya muncul jika tabIndex = 0 (Pending) */}
+        {/* {tabIndex === 0 && ( */}
+        <Button
+          component={Link}
+          to="/"
+          variant="contained"
+          color="primary"
+          sx={{ mt: 3, textTransform: 'none' }}
+        >
+          Cari Hunian
+        </Button>
+        {/* )} */}
+      </Box>
+    );
+  }
+
   return (
     <Container sx={{ py: 4 }}>
-      {/* <Typography variant="h5" gutterBottom fontWeight="bold">
-        Daftar wishlist
-      </Typography>
-      <Typography variant="body2" color="textSecondary" gutterBottom>
-        Tempat untuk menyimpan wishlist Anda!
-      </Typography> */}
       <CustomBreadcrumbs
         heading="Daftar wishlist"
         links={[{ name: 'Home', href: '/' }, { name: 'Wishlist' }]}
@@ -87,10 +109,48 @@ export default function WishlistPageView() {
         <Grid container spacing={2}>
           {data?.map((item) => {
             const property = item.property;
-            const hasDiscount = property.discounts?.length > 0;
-            const activePromos = property.promos || [];
-            const hasPromo = activePromos.length > 0;
 
+            const oneMonthData = (() => {
+              if (!property?.rooms) return null;
+
+              // Ambil semua data harga "1_month" + diskonnya
+              const pricesWithDiscount = property?.rooms
+                .map((room) => {
+                  const priceItem = room?.room_prices?.find(
+                    (price) => price.duration === '1_month'
+                  );
+                  if (!priceItem) return null;
+
+                  const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+                  return {
+                    price: priceItem.price,
+                    discountValue: discount?.discount_value
+                      ? parseFloat(discount.discount_value)
+                      : null,
+                  };
+                })
+                .filter(Boolean); // hapus null
+
+              if (pricesWithDiscount?.length === 0) return null;
+
+              // Ambil harga dengan diskon termurah
+              return pricesWithDiscount?.reduce((min, curr) => {
+                const currFinal = curr.discountValue
+                  ? curr.price - curr.price * (curr.discountValue / 100)
+                  : curr.price;
+                const minFinal = min.discountValue
+                  ? min.price - min.price * (min.discountValue / 100)
+                  : min.price;
+
+                return currFinal < minFinal ? curr : min;
+              });
+            })();
+
+            const originalPrice = oneMonthData?.price ?? 0;
+            const discount = oneMonthData?.discountValue;
+            const finalPrice = discount
+              ? originalPrice - originalPrice * (discount / 100)
+              : originalPrice;
             return (
               <Grid item xs={12} sm={6} md={4} key={item.id}>
                 <Card sx={{ boxShadow: 3, borderRadius: 2, minHeight: 320 }}>
@@ -120,46 +180,37 @@ export default function WishlistPageView() {
                     <Typography variant="body2" color="textSecondary">
                       {property?.sector?.name}, {property?.city?.name}, {property?.state?.name}
                     </Typography>
-                    {hasDiscount ? (
-                      <>
-                        <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-                          <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                      <Typography variant="caption">
+                        Mulai dari{' '}
+                        <span style={{ textDecoration: ' line-through' }}>
+                          {formatCurrency(originalPrice)}
+                        </span>
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+                        {discount && (
                           <Typography
-                            variant="subtitle1"
-                            sx={{ textDecoration: 'line-through', fontSize: '12px' }}
-                          >
-                            {formatCurrency(property.start_price)}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                          <Box
+                            variant="overline"
                             sx={{
                               backgroundColor: 'red',
                               color: 'white',
-                              fontSize: '11px',
-                              borderRadius: '10px',
-                              px: '5px',
+                              fontWeight: 'bold',
+                              borderRadius: '4px',
+                              px: '2px',
+                              mr: '4px',
                             }}
                           >
-                            -Rp {property.discounts[0]?.discount_value}
-                          </Box>
-                          <Typography variant="subtitle1" sx={{ fontSize: '14px' }}>
-                            {formatCurrency(property.discounts[0]?.price_after_discount)}
+                            -{discount}%
                           </Typography>
-                        </Box>
-                        <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                          {hasPromo &&
-                            activePromos.map((promo, index) => (
-                              <Chip key={index} label={promo.code} color="primary" />
-                            ))}
-                        </Stack>
-                      </>
-                    ) : (
-                      <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '14px' }}>
-                        {formatCurrency(property.start_price)} /{' '}
-                        {property?.payment_type === 'yearly' ? 'Tahun' : 'Bulan'}
-                      </Typography>
-                    )}
+                        )}
+                        <Typography
+                          variant="body1"
+                          sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                        >
+                          {formatCurrency(finalPrice)} <span>/bulan</span>
+                        </Typography>
+                      </Box>
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>

@@ -53,7 +53,10 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
       navigate('/'); // Kembali ke landing page
       enqueueSnackbar('Logout berhasil', { variant: 'success' });
-      localStorage.removeItem('token'); // Hapus token saat logout
+      // localStorage.removeItem('token'); // Hapus token saat logout
+      setTimeout(() => {
+        window.location.reload(); // Reload halaman
+      }, 100); // 100ms cukup, atau bisa sesuaikan
       setOpenDeleteDialog(false);
       handleClosePopover;
     },

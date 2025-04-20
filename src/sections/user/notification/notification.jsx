@@ -1,8 +1,10 @@
 import { Box, Card, CardContent, Typography, Button, Chip, Stack } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { BadgeComponent } from 'src/component/BadgeComponent';
 import Loading from 'src/components/loading/loading';
 import { useAppContext } from 'src/context/user-context';
 import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontification';
-import { fToNow } from 'src/utils/format-time';
+import { fDate, fToNow } from 'src/utils/format-time';
 
 const NotificationPage = () => {
   const { UserContextValue: authUser } = useAppContext();
@@ -22,7 +24,8 @@ const NotificationPage = () => {
       {_notifications.data.map((data, index) => {
         //   {/* Notifikasi */}
         const { data: data_asli } = data;
-        console.log(data_asli);
+        console.log(data_asli.slug);
+        console.log(data);
         return (
           <Card
             sx={{
@@ -49,14 +52,21 @@ const NotificationPage = () => {
               <Typography mt={1} color="text.secondary">
                 {fToNow(data?.created_at)}
               </Typography>
-              <Typography
-                mt={1}
-                color="primary"
-                sx={{ textDecoration: 'underline', cursor: 'pointer' }}
-              >
-                Detail Property 
+              <Typography mt={1} color="text.secondary">
+                {fDate(data_asli?.postedAt)}
               </Typography>
-        
+              {data_asli.slug && (
+                <Button
+                  component={Link}
+                  to={`/property/${data_asli.slug}`}
+                  mt={1}
+                  color="primary"
+                  sx={{ textDecoration: 'underline', cursor: 'pointer' }}
+                >
+                  Detail Property
+                </Button>
+              )}
+              {data_asli.status && <BadgeComponent title={data_asli.status} />}
             </CardContent>
           </Card>
         );

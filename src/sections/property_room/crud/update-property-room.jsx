@@ -66,6 +66,7 @@ export const UpdatePropertyRoomCreate = () => {
     isLoading: isloadingRoomDetail,
     isFetching: isfetchingRoomDetail,
   } = useFetchAllPropertyRoomDetail(id, isOwnerProperty);
+  console.log(data);
 
   const {
     data: property_room_type = [],
@@ -100,7 +101,8 @@ export const UpdatePropertyRoomCreate = () => {
       price: '',
       status: '',
       stock: '',
-      area_size: '',
+      area_width: '',
+      area_length: '',
       property_type_id: '',
       // state_id: '',
       // city_id: '',
@@ -116,7 +118,8 @@ export const UpdatePropertyRoomCreate = () => {
       setValue('status', data.status || 'unavailable'); // Default status
       setIsActive(data.status === 'available');
       setValue('stock', data.stock || '');
-      setValue('area_size', data.area_size || '');
+      setValue('area_width', data.area_width || '');
+      setValue('area_length', data.area_length || '');
       setValue('property_type_id', data.room_type?.id || '');
       setValue('room_gender_type', data.room_gender_type || ''); // Default untuk gender type
       setValue('facilities', data.room_facilities?.map((f) => f.id) || []);
@@ -508,34 +511,45 @@ export const UpdatePropertyRoomCreate = () => {
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField
-                  {...register('area_size', { required: 'Luas Kamar Wajib Diisi' })}
+                  {...register('area_width', { required: 'Panjang kamar wajib diisi' })}
                   margin="dense"
-                  id="area_size"
-                  label="Luas Kamar" // harus ada 3 min
-                  type="text"
+                  id="area_width"
+                  label="Lebar Kamar"
+                  type="number"
                   inputMode="numeric"
                   fullWidth
                   variant="outlined"
-                  error={!!errors.area_size}
-                  helperText={errors.area_size?.message}
-                  InputProps={{
-                    endAdornment: <InputAdornment position="end">m²</InputAdornment>,
-                  }}
+                  error={!!errors.area_width}
+                  helperText={errors.area_width?.message}
                 />
 
                 <TextField
-                  {...register('stock', { required: 'Stock Wajib Diisi' })}
+                  {...register('area_length', { required: 'Lebar kamar wajib diisi' })}
                   margin="dense"
-                  id="stock"
-                  label="Stock Kamar"
-                  type="text"
+                  id="area_length"
+                  label="Panjang Kamar"
+                  type="number"
                   inputMode="numeric"
                   fullWidth
                   variant="outlined"
-                  error={!!errors.stock}
-                  helperText={errors.stock?.message}
+                  error={!!errors.area_length}
+                  helperText={errors.area_length?.message}
                 />
               </Stack>
+
+              <TextField
+                {...register('luas_seluruh_kamar')}
+                margin="dense"
+                placeholder="Luas kamar diambil dari panjang × Lebar"
+                value={data.area_length * data.area_width}
+                disabled
+                fullWidth
+                variant="outlined"
+                InputProps={{
+                  endAdornment: <InputAdornment position="end">m²</InputAdornment>,
+                }}
+              />
+
               <TextField
                 {...register('capacity')}
                 margin="dense"
@@ -544,6 +558,18 @@ export const UpdatePropertyRoomCreate = () => {
                 // rows={4}
                 fullWidth
                 variant="outlined"
+              />
+              <TextField
+                {...register('stock', { required: 'Stock Wajib Diisi' })}
+                margin="dense"
+                id="stock"
+                label="Stock Kamar"
+                type="text"
+                inputMode="numeric"
+                fullWidth
+                variant="outlined"
+                error={!!errors.stock}
+                helperText={errors.stock?.message}
               />
               {/* <Stack direction={{ xs: "column", sm: "row" }} spacing={2}> */}
               <TextField

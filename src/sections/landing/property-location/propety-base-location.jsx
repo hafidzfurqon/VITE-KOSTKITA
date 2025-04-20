@@ -37,20 +37,6 @@ const PropertyBaseLocation = () => {
           >
             Cari hunian sesuai <span style={{ color: '#FFCC00' }}>lokasi</span>
           </Typography>
-          <Link to="/promo">
-            <Button
-              sx={{
-                color: 'black',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1,
-                fontWeight: '500',
-              }}
-              endIcon={<ArrowForwardIosIcon sx={{ fontSize: { xs: '10px', md: 10 } }} />}
-            >
-              <Typography sx={{ fontSize: { xs: '12px', md: '16px' } }}>Lihat Semua</Typography>
-            </Button>
-          </Link>
         </Box>
 
         {/* Container Swiper */}

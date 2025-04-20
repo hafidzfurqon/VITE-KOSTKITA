@@ -82,6 +82,8 @@ export const PropertyRoomCreate = () => {
     defaultValues: {},
   });
 
+  // console.log(errors)
+
   const [isActive, setIsActive] = useState(false);
   const queryClient = useQueryClient();
   const { enqueueSnackbar } = useSnackbar();
@@ -134,11 +136,11 @@ export const PropertyRoomCreate = () => {
   const handleDiskonPersenChange = (index, value) => {
     const persen = parseFloat(value) || '';
     const hargaAsli = parseFloat(rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')) || 0;
-    const hargaDiskon = hargaAsli ? (hargaAsli - (hargaAsli * persen) / 100).toFixed(0) : '';
+    const hargaDiskon = hargaAsli ? hargaAsli - (hargaAsli * persen) / 100 : '';
 
     updateRow(index, {
       diskonPersen: value,
-      hargaDiskon: hargaDiskon ? hargaDiskon.toString() : '',
+      hargaDiskon: hargaDiskon ? hargaDiskon.toFixed(0) : '',
     });
   };
 
@@ -205,20 +207,23 @@ export const PropertyRoomCreate = () => {
     },
   });
 
-  const areaSize = watch('area_size');
-  const lebar = watch('lebar');
+  const areaSize = watch('area_width');
+  const lebar = watch('area_length');
+
+  const debouncedAreaSize = useDebounce(areaSize, 300);
+  const debouncedLebar = useDebounce(lebar, 300);
 
   useEffect(() => {
-    const panjangNum = parseFloat(areaSize);
-    const lebarNum = parseFloat(lebar);
+    const panjangNum = parseFloat((debouncedAreaSize || '').toString().replace(',', '.'));
+    const lebarNum = parseFloat((debouncedLebar || '').toString().replace(',', '.'));
 
-    if (!isNaN(panjangNum) && !isNaN(lebarNum)) {
+    if (!isNaN(panjangNum) && !isNaN(lebarNum) && panjangNum > 0 && lebarNum > 0) {
       const luas = panjangNum * lebarNum;
-      setValue('luas_asli_kamar', luas.toFixed(2)); // format 2 angka di belakang koma
+      setValue('luas_asli_kamar', luas.toFixed(2));
     } else {
       setValue('luas_asli_kamar', '');
     }
-  }, [areaSize, lebar, setValue]);
+  }, [debouncedAreaSize, debouncedLebar, setValue]);
 
   const { mutate, isPending } = useMutationCreatePropertyRoom(
     {
@@ -442,36 +447,36 @@ export const PropertyRoomCreate = () => {
               </Typography>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
                 <TextField
-                  {...register('area_size', { required: 'Panjang kamar wajib diisi' })}
+                  {...register('area_width', { required: 'Panjang kamar wajib diisi' })}
                   margin="dense"
-                  id="area_size"
-                  label="Panjang Kamar"
-                  type="number"
-                  inputMode="numeric"
-                  fullWidth
-                  variant="outlined"
-                  error={!!errors.area_size}
-                  helperText={errors.area_size?.message}
-                />
-
-                <TextField
-                  {...register('lebar', { required: 'Lebar kamar wajib diisi' })}
-                  margin="dense"
-                  id="lebar"
+                  id="area_width"
                   label="Lebar Kamar"
                   type="number"
                   inputMode="numeric"
                   fullWidth
                   variant="outlined"
-                  error={!!errors.lebar}
-                  helperText={errors.lebar?.message}
+                  error={!!errors.area_width}
+                  helperText={errors.area_width?.message}
+                />
+
+                <TextField
+                  {...register('area_length', { required: 'Lebar kamar wajib diisi' })}
+                  margin="dense"
+                  id="area_length"
+                  label="Panjang Kamar"
+                  type="number"
+                  inputMode="numeric"
+                  fullWidth
+                  variant="outlined"
+                  error={!!errors.area_length}
+                  helperText={errors.area_length?.message}
                 />
               </Stack>
 
               <TextField
-                {...register('luas_asli_kamar')}
+                {...register('luas_seluruh_kamar')}
                 margin="dense"
-                placeholder="Luas kamar diambil dari panjang × lebar"
+                placeholder="Luas kamar diambil dari panjang × area_length"
                 disabled
                 fullWidth
                 variant="outlined"

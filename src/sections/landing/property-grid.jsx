@@ -1,7 +1,6 @@
 import { Box, Typography, Chip, Stack, Container } from '@mui/material';
 
 import { Home, Apartment } from '@mui/icons-material';
-import Loading from 'src/components/loading/loading';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -10,6 +9,7 @@ import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
@@ -32,7 +32,7 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
   };
 
   if (isLoading || isFetching) {
-    return <Loading />;
+    return <LoadingPropertyPage />;
   }
 
   const filteredDataToColiving = data.filter((item) =>

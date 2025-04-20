@@ -5,24 +5,11 @@ import { Link } from 'react-router-dom';
 const directoryData = [
   {
     title: 'Kamu lagi cari tipe hunian apa?',
-    links: ['Cari Kost', 'Sewa Apartemen'],
-  },
-  {
-    title: 'Kost di Area Populer',
-    links: ['Kost Jakarta Selatan', 'Kost Jakarta Barat', 'Kost Jakarta Pusat', 'Kost Bandung'],
+    links: ['Cari Kost', 'Sewa Coliving'],
   },
   {
     title: 'Kost dekat Universitas',
-    links: [
-      'Bina Nusantara University',
-      'Bina Nusantara Alam Sutera',
-      'Unika Atma Jaya - Semanggi',
-      'Universitas Bunda Mulia Serpong',
-    ],
-  },
-  {
-    title: 'Kost dekat Area Perkantoran',
-    links: ['Mega Kuningan', 'Tempo Scan Tower', 'Indofood Tower', 'UOB Plaza', 'Setiabudi One'],
+    links: ['Institut Pertanian Bogor'],
   },
 ];
 

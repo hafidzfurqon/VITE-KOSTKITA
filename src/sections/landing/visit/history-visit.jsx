@@ -143,7 +143,14 @@ export default function HistoryVisit() {
                   />
 
                   <CardContent sx={{ flex: 1, width: '100%' }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        flexDirection: { xs: 'column', md: 'row' },
+                        justifyContent: 'space-between',
+                        gap: 2,
+                      }}
+                    >
                       <Typography variant="h6" fontWeight="bold">
                         {visit.property?.name || 'Nama Properti Tidak Tersedia'}
                       </Typography>
@@ -151,6 +158,7 @@ export default function HistoryVisit() {
                         label={getStatusText(visit.status)}
                         color={getStatusColor(visit.status)}
                         size="small"
+                        sx={{ mb: 2 }}
                       />
                     </Box>
 
@@ -179,10 +187,6 @@ export default function HistoryVisit() {
                     )}
 
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
-                      <Typography variant="h6" color="primary" fontWeight="bold">
-                        Rp {visit.property?.start_price?.toLocaleString('id-ID') || '—'}
-                      </Typography>
-
                       <Typography variant="body2" color="text.secondary">
                         Kode Visit: <b>{visit.visit_code || '—'}</b>
                       </Typography>

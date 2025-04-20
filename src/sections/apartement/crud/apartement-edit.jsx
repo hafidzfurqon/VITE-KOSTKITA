@@ -68,7 +68,7 @@ export const EditApartement = () => {
     isLoading: loadingPropertyType,
     isFetching: FetchingPropertyType,
   } = isOwnerProperty ? useFetchAllPropertyTypeOwner() : useFetchAllPropertyType();
-  console.log(data);
+  // console.log(data);
   const {
     control,
     register,
@@ -81,12 +81,11 @@ export const EditApartement = () => {
     defaultValues: {
       name: '',
       address: '',
-      start_price: '',
       link_googlemaps: '',
       description: '',
       land_area: '',
       property_type_id: '',
-      payment_type: '',
+      // payment_type: '',
       state_id: '',
       city_id: '',
       sector_id: '',
@@ -99,12 +98,10 @@ export const EditApartement = () => {
     if (data) {
       reset({
         name: data.name || '',
-        price: String(data.start_price || ''),
         address: data.address || '',
         // description: data.description || '',
         facilities: data.facilities?.map((f) => f.id) || [],
         property_type_id: data?.type?.id || '',
-        payment_type: data?.payment_type || '',
         state_id: data?.state?.state_code || '',
         city_id: data?.city?.city_code || '',
         sector_id: data?.sector?.sector_code || '',
@@ -119,7 +116,6 @@ export const EditApartement = () => {
 
       // setDescription(data.description || '');
       setIsActive(data.status === 'available');
-
       // Set nilai dropdown sesuai data yang di-load
       setSelectedState(data?.state?.state_code || null);
       setSelectedCity(data?.city?.city_code || null);
@@ -241,29 +237,24 @@ export const EditApartement = () => {
     const formData = new FormData();
     formData.append('description', editorContentRef.current);
     Object.entries(data).forEach(([key, value]) => {
-      if (key !== 'price') {
-        // Hindari duplikasi harga
-        if (Array.isArray(value)) {
-          value.forEach((item) => formData.append(`${key}[]`, item));
-        } else {
-          formData.append(key, value);
-        }
+      if (Array.isArray(value)) {
+        value.forEach((item) => formData.append(`${key}[]`, item));
+      } else {
+        formData.append(key, value);
       }
     });
     const existingFileIds = defaultImages.map((img) => img.id);
-    formData.append('price', cleanPrice(data.price)); // Tambahkan hanya satu price
     formData.append('_method', 'PUT');
     formData.append('existing_files[]', existingFileIds);
     console.log(data);
 
-    // mutate(formData);
+    mutate(formData);
   };
+  console.log(errors); // Debug kalau form tidak lolos validasi
+
 
   const selectedType = watch('property_type_id');
   console.log(selectedType);
-  const cleanPrice = (price) => {
-    return parseInt(price.replace(/[^\d]/g, ''), 10);
-  };
   if (
     isLoading ||
     isFetching ||
@@ -299,26 +290,6 @@ export const EditApartement = () => {
                   error={!!errors.name}
                   helperText={errors.name?.message}
                 />
-                {/* <Controller
-                  name="price"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: 'Harga wajib diisi' }}
-                  render={({ field, fieldState }) => (
-                    <NumericFormat
-                      {...field}
-                      customInput={TextField}
-                      label="Harga"
-                      fullWidth
-                      required
-                      prefix="Rp "
-                      thousandSeparator="."
-                      decimalSeparator=","
-                      error={!!fieldState.error}
-                      helperText={fieldState.error?.message}
-                    />
-                  )}
-                /> */}
                 <TextField
                   select
                   {...register('property_type_id', { required: true })}
@@ -459,7 +430,7 @@ export const EditApartement = () => {
                 <Controller
                   name="near_campus"
                   control={control}
-                  rules={{ required: 'Mohon isi nama kampus' }}
+                  // rules={{ required: 'Mohon isi nama kampus' }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       {...field}
@@ -478,7 +449,7 @@ export const EditApartement = () => {
                 <Controller
                   name="near_hospital"
                   control={control}
-                  rules={{ required: 'Mohon isi nama rumah sakit' }}
+                  // rules={{ required: 'Mohon isi nama rumah sakit' }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       {...field}

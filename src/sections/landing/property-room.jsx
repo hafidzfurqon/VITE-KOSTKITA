@@ -41,12 +41,13 @@ const AvailabilityChip = styled(Chip)(({ theme }) => ({
 
 const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
   const navigate = useNavigate();
-  console.log(rooms)
+  console.log(rooms);
   const [bookingData, setBookingData] = useState({});
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-
+  const isUserLoggedIn = user?.roles?.some((role) => role.name.toLowerCase() === 'user');
+  
   const [selectedDurations, setSelectedDurations] = useState({}); // { [roomId]: '1_month' }
 
   const handleSelectDuration = (roomId, duration) => {
@@ -125,7 +126,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                 <Stack direction="row" spacing={1} flexWrap="wrap">
                   <Chip label={`${room.capacity} Orang`} size="small" />
                   <Chip label={room.room_type.name} size="small" />
-                  <Chip label={`${room.area_size}m²`} size="small" />
+                  <Chip label={`${room.area_size }m²`} size="small" />
                 </Stack>
                 <Grid sx={{ my: 2, pb: 1 }} container spacing={2}>
                   {room.room_facilities.slice(0, 4).map((facility) => (
@@ -155,7 +156,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                   >
                     Chat KostKita
                   </Button>
-                  {user ? (
+                  {isUserLoggedIn > 0 ? (
                     !['admin', 'owner', 'owner_property'].includes(user.roles) ? (
                       <LoadingButton
                         variant="contained"
@@ -182,7 +183,9 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                   ) : (
                     <Button
                       variant="contained"
-                      color="primary"
+                      fullWidth
+                      size="large"
+                      color="inherit"
                       onClick={() => {
                         enqueueSnackbar('Anda harus login terlebih dahulu!', {
                           variant: 'error',

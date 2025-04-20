@@ -83,7 +83,7 @@ axiosInstance.interceptors.response.use(
         // alert(err);
         // if (error.response && error.response.status === 401) {
         //   console.warn('Refresh token expired. Logging out user...');
-        //   window.location.href = '/sign-in'; // Redirect ke halaman login
+          window.location.href = '/sign-in'; // Redirect ke halaman login
         // }
         localStorage.removeItem('token');
         localStorage.removeItem('refresh_token');
@@ -150,6 +150,7 @@ export const endpoints = {
     list: '/api/admin/property/visit/all_property_with_visits',
     detail: '/api/admin/property/visit/by_property_id',
     detailCode: '/api/admin/property/visit/detail/code',
+    change_data: '/api/admin/property/visit/approve_or_reject',
   },
   profile: {
     update: '/api/user/profile/update',

@@ -13,7 +13,7 @@ export default function About() {
       name: 'Muhammad Hafidz',
       position: 'Mahasiswa',
       image:
-        'https://backend-koskita.hafidzfrqn.serv00.net//storage/users_photo_profile/G8RuEIsSKlT1HpL3cnqX93L2FKH4CKXDr9TLfxNg.png',
+        'https://experiment.riansudrajat.serv00.net/storage/news_thumbnail/Hr3pdl2gzDZokLii62iSqnqccyVJP0cYs4Le6OdR.jpg',
       message:
         'Kostkita mempermudah saya ketika mencari kost sebagai mahasiswa baru di Bogor. Juga dengan harga pelajar seperti saya sangat worth it!',
     },

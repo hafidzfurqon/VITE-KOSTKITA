@@ -1,28 +1,23 @@
 import { Box, Typography, Chip, Stack, Container, Button, Grid } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import Loading from 'src/components/loading/loading';
-
-// import 'react-multi-carousel/lib/styles.css';
-import { useKeenSlider } from 'keen-slider/react';
-import { useRef, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import { useNavigate } from 'react-router-dom';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import 'keen-slider/keen-slider.min.css';
+import { useState } from 'react';
 import { Home } from '@mui/icons-material';
-import ApartmentList from './apartement/apartemen-page-list';
+// import ApartmentList from './apartement/apartemen-page-list';
 import { fCurrency } from 'src/utils/format-number';
+import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 
 export default function PropertyBudgety() {
   const { data, isLoading, isFetching } = useListProperty();
   const [selectedRange, setSelectedRange] = useState(null);
 
-  if (isLoading || isFetching) return <Loading />;
+  if (isLoading || isFetching)
+    return (
+      <Container>
+        <LoadingPropertyPage />
+      </Container>
+    );
+
   if (!data || data?.length === 0)
     return (
       <Container sx={{ textAlign: 'center', mt: 6 }}>
@@ -38,12 +33,7 @@ export default function PropertyBudgety() {
     { label: '> 5 Jt', min: 5000000, max: Infinity },
   ];
 
-  const filteredProperties = selectedRange
-    ? data.filter(
-        (property) =>
-          property.start_price >= selectedRange.min && property.start_price <= selectedRange.max
-      )
-    : data;
+  const filteredProperties = data.filter((item) => item.rooms.length > 0);
 
   return (
     <Container>
@@ -101,7 +91,41 @@ export default function PropertyBudgety() {
 }
 
 function PropertyCard({ coliving }) {
-  const hasDiscount = coliving.discounts?.length > 0;
+  const oneMonthData = (() => {
+    if (!coliving?.rooms) return null;
+
+    // Ambil semua data harga "1_month" + diskonnya
+    const pricesWithDiscount = coliving?.rooms
+      .map((room) => {
+        const priceItem = room?.room_prices?.find((price) => price.duration === '1_month');
+        if (!priceItem) return null;
+
+        const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+        return {
+          price: priceItem.price,
+          discountValue: discount?.discount_value ? parseFloat(discount.discount_value) : null,
+        };
+      })
+      .filter(Boolean); // hapus null
+
+    if (pricesWithDiscount?.length === 0) return null;
+
+    // Ambil harga dengan diskon termurah
+    return pricesWithDiscount?.reduce((min, curr) => {
+      const currFinal = curr.discountValue
+        ? curr.price - curr.price * (curr.discountValue / 100)
+        : curr.price;
+      const minFinal = min.discountValue
+        ? min.price - min.price * (min.discountValue / 100)
+        : min.price;
+
+      return currFinal < minFinal ? curr : min;
+    });
+  })();
+
+  const originalPrice = oneMonthData?.price ?? 0;
+  const discount = oneMonthData?.discountValue;
+  const finalPrice = discount ? originalPrice - originalPrice * (discount / 100) : originalPrice;
 
   return (
     <Box sx={{ mb: 3 }}>
@@ -118,43 +142,32 @@ function PropertyCard({ coliving }) {
         <Typography variant="body2" sx={{ color: 'gray', fontSize: '12px', mb: 1 }}>
           {coliving.address}, {coliving.city.name}
         </Typography>
-
-        {hasDiscount ? (
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
-              <Typography sx={{ fontSize: '14px', mr: 1 }}>mulai dari</Typography>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography variant="caption" sx={{ color: 'black' }}>
+            Mulai dari{' '}
+            <span style={{ textDecoration: ' line-through' }}>{fCurrency(originalPrice)}</span>
+          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+            {discount && (
               <Typography
-                variant="subtitle1"
-                sx={{ textDecoration: 'line-through', fontWeight: 700, fontSize: '12px' }}
-              >
-                {fCurrency(coliving.start_price)}
-              </Typography>
-            </Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Box
+                variant="overline"
                 sx={{
                   backgroundColor: 'red',
                   color: 'white',
-                  fontSize: '11px',
-                  borderRadius: '10px',
-                  px: '5px',
+                  fontWeight: 'bold',
+                  borderRadius: '4px',
+                  px: '2px',
+                  mr: '4px',
                 }}
               >
-                -Rp {fPercent(coliving.discounts[0]?.discount_value)}
-              </Box>
-              <Typography variant="subtitle1" sx={{ color: 'black', fontSize: '14px' }}>
-                {fCurrency(coliving.discounts[0]?.price_after_discount)}
+                -{discount}%
               </Typography>
-            </Box>
+            )}
+            <Typography variant="body1" sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}>
+              {fCurrency(finalPrice)} <span>/bulan</span>
+            </Typography>
           </Box>
-        ) : (
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-          >
-            {fCurrency(coliving.start_price)} / bulan
-          </Typography>
-        )}
+        </Box>
       </Box>
     </Box>
   );

@@ -88,7 +88,7 @@ export function DialogCreate({
           loading={pending}
           type="submit"
         >
-          Kirim
+          Submit
         </LoadingButton>
       </DialogActions>
     </Dialog>

@@ -17,6 +17,9 @@ import { useUpdateProfile } from 'src/hooks/users/profile/useUpdateProfile';
 import { useQueryClient } from '@tanstack/react-query';
 import { MenuItem } from '@mui/material';
 import { format } from 'date-fns';
+import { useFetchAuthenticatedUser } from 'src/hooks/auth';
+import Loading from 'src/components/loading/loading';
+import { TextField } from '@mui/material';
 
 export default function AccountGeneral() {
   const { enqueueSnackbar } = useSnackbar();
@@ -24,6 +27,9 @@ export default function AccountGeneral() {
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
   const userId = user?.id;
+  const idUser = user?.id ? true : false;
+  const { data, isLoading, isFetching } = useFetchAuthenticatedUser(idUser);
+  console.log(data);
   const [loading, setLoading] = useState(true);
 
   const UpdateUserSchema = Yup.object().shape({
@@ -63,24 +69,25 @@ export default function AccountGeneral() {
     reset,
     handleSubmit,
     setValue,
+    register,
     formState: { isSubmitting },
   } = methods;
 
   useEffect(() => {
-    if (user) {
-      const formattedDate = user.date_of_birth
-        ? format(new Date(user.date_of_birth), 'yyyy-MM-dd')
+    if (data) {
+      const formattedDate = data.date_of_birth
+        ? format(new Date(data.date_of_birth), 'yyyy-MM-dd')
         : '';
 
       reset({
-        name: user.name || '',
-        email: user.email || '',
-        phone_number: user.phone_number || '',
-        nomor_ktp: user.nomor_ktp || '',
-        nik: user.nik || '',
-        date_of_birth: formattedDate,
-        gender: user.gender || '',
-        photo_profile: user.photo_profile_url || '', // untuk preview saja
+        name: data.name || '',
+        email: data.email || '',
+        phone_number: data.phone_number || '',
+        nomor_ktp: data.nomor_ktp || '',
+        nik: data.nik || '',
+        date_of_birth: formattedDate ? formattedDate : '',
+        gender: data.gender || '',
+        photo_profile: data.photo_profile_url || '', // untuk preview saja
       });
     }
     setLoading(false);
@@ -89,6 +96,9 @@ export default function AccountGeneral() {
   const { mutateAsync: editUser } = useUpdateProfile({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 100);
     },
     onError: (err) => {
       console.log(err);
@@ -100,14 +110,14 @@ export default function AccountGeneral() {
 
     const formattedData = {
       ...data,
-      date_of_birth: data.date_of_birth ? format(new Date(data.date_of_birth), 'yyyy-MM-dd') : null,
+      date_of_birth: data.date_of_birth ? format(new Date(data.date_of_birth), 'yyyy-MM-dd') : '',
     };
 
     // Buat FormData
     const formData = new FormData();
 
     Object.entries(formattedData).forEach(([key, value]) => {
-      const originalValue = user?.[key];
+      const originalValue = data?.[key];
 
       // Lewati email/phone_number kalau tidak berubah
       if ((key === 'email' || key === 'phone_number') && originalValue && originalValue === value) {
@@ -172,14 +182,8 @@ export default function AccountGeneral() {
     };
   }, [methods.watch('photo_profile')]);
 
-  if (loading) {
-    return (
-      <Container maxWidth="xl">
-        <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh' }}>
-          <CircularProgress />
-        </Grid>
-      </Container>
-    );
+  if (loading || isLoading || isFetching) {
+    return <Loading />;
   }
 
   return (
@@ -222,17 +226,17 @@ export default function AccountGeneral() {
               <RHFTextField name="email" label="Email" />
               <RHFTextField name="phone_number" label="Nomor Telepon" />
               <RHFTextField name="nik" label="NIK" />
-              <RHFTextField
+              <TextField
                 select
+                {...register('gender', { required: true })}
                 label="Jenis Kelamin"
                 fullWidth
-                name="gender"
-                value={methods.watch('gender')}
-                onChange={(e) => setValue('gender', e.target.value)}
+                required
+                defaultValue={data.gender || 'male'}
               >
                 <MenuItem value="male">Laki-laki</MenuItem>
                 <MenuItem value="female">Perempuan</MenuItem>
-              </RHFTextField>
+              </TextField>
               <RHFTextField
                 name="date_of_birth"
                 label="Tanggal Lahir"

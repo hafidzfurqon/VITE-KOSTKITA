@@ -100,12 +100,20 @@ export default function VisitDetail() {
               size="small"
             />
           </Box>
-
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-            <AccessTimeIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
-            <Typography sx={{ fontSize: '0.875rem' }}>{formattedVisitDate}</Typography>
-          </Box>
-
+          {visit.status === 'approved' ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Typography sx={{ fontSize: '0.875rem', mr: 2 }}>
+                Visit Anda Telah di approved silahkan datang pada jam/tanggal berikut
+              </Typography>
+              <AccessTimeIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
+              <Typography sx={{ fontSize: '0.875rem' }}>{formattedVisitDate}</Typography>
+            </Box>
+          ) : (
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <AccessTimeIcon sx={{ mr: 1, color: 'grey.500', fontSize: 18 }} />
+              <Typography sx={{ fontSize: '0.875rem' }}>{formattedVisitDate}</Typography>
+            </Box>
+          )}
           <Typography sx={{ fontWeight: 'medium', mb: 0.5 }}>
             Kode Visit: {visit.visit_code}
           </Typography>
@@ -168,15 +176,6 @@ export default function VisitDetail() {
           </Box>
 
           <Divider sx={{ my: 2 }} />
-          <Typography sx={{ fontWeight: 'bold', fontSize: '1.25rem' }}>
-            Rp{visit.property?.start_price?.toLocaleString() || '0'} /bulan
-          </Typography>
-
-          {visit.status === 'pending' && !isAdmin && (
-            <Button variant="outlined" color="error" sx={{ mt: 2 }}>
-              Batalkan Visit
-            </Button>
-          )}
         </Box>
       </Container>
     </Box>

@@ -213,7 +213,7 @@ export function FasilitasView() {
         pending={isPendingMutate}
         SubmitFormValue={handleCreate}
         open={opened}
-        title="Create Nama Fasilitas"
+        title="Tambah Nama Fasilitas"
         subTitle="Fasilitas untuk coliving maupun apartemen"
         setOpen={setOpened}
         field={FieldRHF}

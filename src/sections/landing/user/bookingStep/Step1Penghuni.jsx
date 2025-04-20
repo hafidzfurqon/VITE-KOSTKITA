@@ -26,6 +26,7 @@ import Loading from 'src/components/loading/loading';
 import { Autocomplete } from '@mui/material';
 import { fCurrency } from 'src/utils/format-number';
 import CustomDatePicker from 'src/components/calender/custom-datepicker';
+import dayjs from 'dayjs';
 
 export default function Step1Penghuni({
   room,
@@ -52,15 +53,20 @@ export default function Step1Penghuni({
   const SixMonthPrice = room.room_prices?.find((item) => item.duration === '6_month');
   const AyearMonthPrice = room.room_prices?.find((item) => item.duration === '1_year');
 
-  const oneMonthPriceDiscountPrice = oneMonthPrice?.room_discounts[0].discount_value;
-  const ThreeMonthPriceDiscountPrice = ThreeMonthPrice?.room_discounts[0].discount_value;
-  const SixMonthPriceDiscountPrice = SixMonthPrice?.room_discounts[0].discount_value;
-  const AyearMonthPriceDiscountPrice = AyearMonthPrice?.room_discounts[0].discount_value;
+  const oneMonthPriceDiscountPrice = oneMonthPrice?.room_discounts[0];
+  const ThreeMonthPriceDiscountPrice = ThreeMonthPrice?.room_discounts[0];
+  const SixMonthPriceDiscountPrice = SixMonthPrice?.room_discounts[0];
+  const AyearMonthPriceDiscountPrice = AyearMonthPrice?.room_discounts[0];
 
-  const discountAmountOneMonth = (oneMonthPrice?.price * oneMonthPriceDiscountPrice) / 100;
-  const discountAmountThreeMonth = (ThreeMonthPrice?.price * ThreeMonthPriceDiscountPrice) / 100;
-  const discountAmountSixMonth = (SixMonthPrice?.price * SixMonthPriceDiscountPrice) / 100;
-  const discountAmountAyearMonth = (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice) / 100;
+  const discountAmountOneMonth =
+    (oneMonthPrice?.price * oneMonthPriceDiscountPrice.discount_value) / 100;
+  const discountAmountThreeMonth =
+    (ThreeMonthPrice?.price * ThreeMonthPriceDiscountPrice.discount_value) / 100;
+  const discountAmountSixMonth =
+    (SixMonthPrice?.price * SixMonthPriceDiscountPrice.discount_value) / 100;
+  const discountAmountAyearMonth =
+    (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice.discount_value) / 100;
+
   const [checkIn, setCheckIn] = useState(() => {
     const date = searchParams.get('checkInDate');
     return date ? new Date(date) : null;
@@ -91,8 +97,6 @@ export default function Step1Penghuni({
       setSearchParams(searchParams);
     }
   }, [checkIn, checkOut]);
-
-  
 
   useEffect(() => {
     if (checkIn && checkOut) {
@@ -133,16 +137,7 @@ export default function Step1Penghuni({
       }
     }
   }, [AllServiceAddOn]);
-useEffect(() => {
-  searchParams.set('step', step);
-  setSearchParams(searchParams);
-}, [step]);
 
-useEffect(() => {
-  searchParams.set('step', step.toString());
-  setSearchParams(searchParams);
-}, [step]);
-  // const IsServiceExist = 0;
   const totalServicePrice = selectedServices.reduce((acc, curr) => {
     if (curr.payment_type === 'monthly') {
       return acc + curr.price * duration;
@@ -230,21 +225,31 @@ useEffect(() => {
     // Hitung total harga berdasarkan durasi
     let basePrice = 0;
     let discount = 0;
+    let room_price_id = 0;
+    let property_room_discount_id = 0;
 
     switch (duration) {
       case 1:
         basePrice = oneMonthPrice?.price;
+        property_room_discount_id = oneMonthPriceDiscountPrice?.id;
+        room_price_id = oneMonthPrice?.id;
         discount = discountAmountOneMonth;
         break;
       case 3:
         basePrice = ThreeMonthPrice?.price;
+        property_room_discount_id = ThreeMonthPriceDiscountPrice?.id;
+        room_price_id = ThreeMonthPrice?.id;
         discount = discountAmountThreeMonth;
         break;
       case 6:
+        room_price_id = SixMonthPrice?.id;
+        property_room_discount_id = SixMonthPriceDiscountPrice?.id;
         basePrice = SixMonthPrice?.price;
         discount = discountAmountSixMonth;
         break;
       case 12:
+        room_price_id = AyearMonthPrice?.id;
+        property_room_discount_id = AyearMonthPriceDiscountPrice?.id;
         basePrice = AyearMonthPrice?.price;
         discount = discountAmountAyearMonth;
         break;
@@ -259,14 +264,20 @@ useEffect(() => {
       includeUser,
       booking_user_data: bookingUserData,
       selected_services: selectedServices,
+      // property_room_discount_id : ,
+      property_id: properti?.id,
       duration,
       base_price: basePrice,
       discount_amount: discount,
       total_service_price: totalServicePrice,
       total_price: finalTotal,
+      room_price_id, // ⬅️ ini ditambahkan
+      property_room_discount_id,
+      check_in: dayjs(checkIn).format('YYYY-MM-DD'),
+      check_out: dayjs(checkOut).format('YYYY-MM-DD'),
     };
 
-    console.log('Semua data lengkap dikirim:', occupantData); // debug log
+    console.log(checkOut);
 
     onNext(occupantData);
   };
@@ -472,22 +483,22 @@ useEffect(() => {
               <Box sx={{ display: 'flex', aligntItems: 'center', justifyContent: 'space-between' }}>
                 {duration === 1 && (
                   <Typography variant="body2">
-                    Diskon {oneMonthPriceDiscountPrice}% pesanan {duration} bulan
+                    Diskon {oneMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 3 && (
                   <Typography variant="body2">
-                    Diskon {ThreeMonthPriceDiscountPrice}% pesanan {duration} bulan
+                    Diskon {ThreeMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 6 && (
                   <Typography variant="body2">
-                    Diskon {SixMonthPriceDiscountPrice}% pesanan {duration} bulan
+                    Diskon {SixMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 12 && (
                   <Typography variant="body2">
-                    Diskon {AyearMonthPriceDiscountPrice}% pesanan {duration} bulan
+                    Diskon {AyearMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
 
