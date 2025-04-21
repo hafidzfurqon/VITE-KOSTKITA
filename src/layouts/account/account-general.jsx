@@ -35,11 +35,7 @@ export default function AccountGeneral() {
   const UpdateUserSchema = Yup.object().shape({
     name: Yup.string().required('Nama wajib diisi'),
     email: Yup.string().email('Email tidak valid').required('Email wajib diisi'),
-    phone_number: Yup.string().nullable(),
-    nomor_ktp: Yup.string().nullable(),
-    nik: Yup.string().nullable(),
-    date_of_birth: Yup.string().nullable(),
-    gender: Yup.string().nullable().oneOf(['male', 'female'], 'Jenis kelamin tidak valid'),
+
     photo_profile: Yup.mixed()
       .nullable()
       .test('fileType', 'Format file tidak valid (hanya jpg, jpeg, png)', (value) => {

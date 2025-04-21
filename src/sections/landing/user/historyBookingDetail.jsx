@@ -72,7 +72,7 @@ export default function HistoryBookingDetail() {
         />
 
         <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
-          Data Penghuni
+          Data Pesanan Anda
         </Typography>
         <Box sx={{ backgroundColor: 'white', p: 3, mb: 2, borderRadius: 2 }}>
           <Box>
@@ -114,7 +114,7 @@ export default function HistoryBookingDetail() {
                 </Box>
               ))
             ) : (
-              <Typography sx={{ color: 'grey.800' }}>Tidak ada data penghuni.</Typography>
+              <Typography sx={{ color: 'grey.800' }}>Berikut Data  Pesanan Anda</Typography>
             )}
 
             <ModalDataPenghuni
@@ -138,7 +138,7 @@ export default function HistoryBookingDetail() {
             {booking.property_room?.name || '-'}
           </Typography>
           <Typography sx={{ fontSize: '0.875rem', color: 'grey.600', mb: 1 }}>
-            {booking.number_of_guests} Orang
+            {/* {booking.number_of_guests} Orang */}
           </Typography>
 
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>

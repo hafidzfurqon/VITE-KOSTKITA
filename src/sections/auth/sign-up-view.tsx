@@ -109,7 +109,7 @@ export function SignUpView() {
           margin="dense"
           id="Nomor Telepon"
           name="phone_number"
-          label="e.g. 85183316262"
+          label="Nomor Telepon 0851 (XXXX) (XXXX)"
           type="number"
           inputMode="numeric"
           // InputLabelProps={{ shrink: true }}
