@@ -115,9 +115,9 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={isAdmin ? 3 : 6}>
           <AnalyticsWidgetSummary
             title="Jumlah Pengguna Booking Property"
-            total={countWithBookingCode}
+            total={isAdmin ? totalBookings : countWithBookingCode}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}      
+            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [40, 70, 50, 28, 70, 75, 7, 64],
