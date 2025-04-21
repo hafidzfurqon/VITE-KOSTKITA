@@ -18,23 +18,55 @@ const faqData = [
     category: 'Pencarian dan Pemesanan',
     icon: <Search />,
     questions: [
-      'Bagaimana saya dapat mencari dan menemukan kamar yang sesuai dengan preferensi saya?',
-      'Bagaimana jika hunian yang saya inginkan tidak tersedia?',
-      'Perlengkapan apa saja yang tersedia di hunian Rukita?',
+      {
+        q: 'Bagaimana saya dapat mencari dan menemukan kamar yang sesuai dengan preferensi saya?',
+        a: 'Gunakan fitur pencarian kami dan filter berdasarkan lokasi, harga, fasilitas, dan tipe kamar.',
+      },
+      {
+        q: 'Bagaimana jika hunian yang saya inginkan tidak tersedia?',
+        a: 'Anda dapat mengaktifkan notifikasi atau menghubungi tim kami untuk alternatif hunian serupa.',
+      },
+      {
+        q: 'Perlengkapan apa saja yang tersedia di hunian KostKita?',
+        a: 'Setiap hunian memiliki detail fasilitas masing-masing, seperti kasur, lemari, AC, dan Wi-Fi.',
+      },
     ],
   },
   {
     category: 'Seputar Check-in',
     icon: <EventNote />,
     questions: [
-      'Bagaimana proses check-in?',
-      'Dokumen apa saja yang perlu disiapkan saat check-in?',
+      {
+        q: 'Bagaimana saya dapat mencari dan menemukan kamar yang sesuai dengan preferensi saya?',
+        a: 'Gunakan fitur pencarian kami dan filter berdasarkan lokasi, harga, fasilitas, dan tipe kamar.',
+      },
+      {
+        q: 'Bagaimana jika hunian yang saya inginkan tidak tersedia?',
+        a: 'Anda dapat mengaktifkan notifikasi atau menghubungi tim kami untuk alternatif hunian serupa.',
+      },
+      {
+        q: 'Perlengkapan apa saja yang tersedia di hunian KostKita?',
+        a: 'Setiap hunian memiliki detail fasilitas masing-masing, seperti kasur, lemari, AC, dan Wi-Fi.',
+      },
     ],
   },
   {
     category: 'Check-out dan Pengembalian Deposit',
     icon: <CheckCircle />,
-    questions: ['Bagaimana proses check-out?', 'Kapan deposit saya akan dikembalikan?'],
+    questions: [
+      {
+        q: 'Bagaimana saya dapat mencari dan menemukan kamar yang sesuai dengan preferensi saya?',
+        a: 'Gunakan fitur pencarian kami dan filter berdasarkan lokasi, harga, fasilitas, dan tipe kamar.',
+      },
+      {
+        q: 'Bagaimana jika hunian yang saya inginkan tidak tersedia?',
+        a: 'Anda dapat mengaktifkan notifikasi atau menghubungi tim kami untuk alternatif hunian serupa.',
+      },
+      {
+        q: 'Perlengkapan apa saja yang tersedia di hunian KostKita?',
+        a: 'Setiap hunian memiliki detail fasilitas masing-masing, seperti kasur, lemari, AC, dan Wi-Fi.',
+      },
+    ],
   },
 ];
 
@@ -70,15 +102,13 @@ const FaqPage = () => {
             {faqData[selectedCategory].category}
           </Typography>
 
-          {faqData[selectedCategory].questions.map((question, i) => (
+          {faqData[selectedCategory].questions.map((qna, i) => (
             <Accordion key={i}>
               <AccordionSummary expandIcon={<ExpandMore />}>
-                <Typography>{question}</Typography>
+                <Typography>{qna.q}</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Typography color="text.secondary">
-                  Ini adalah jawaban dari pertanyaan: "{question}"
-                </Typography>
+                <Typography color="text.secondary">{qna.a}</Typography>
               </AccordionDetails>
             </Accordion>
           ))}

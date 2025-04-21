@@ -4,20 +4,35 @@ import { Button } from '@mui/material';
 import { Box } from '@mui/material';
 import { Container } from '@mui/material';
 import { useKeenSlider } from 'keen-slider/react';
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CustomBreadcrumbs from 'src/components/custom-breadcrumbs';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
-
+import { useResponsive } from 'src/hooks/use-responsive';
+import SearchIcon from '@mui/icons-material/Search';
+import FilterModal from 'src/component/FilterModal';
+import { useDebounce } from 'src/hooks/use-debounce';
 interface Property {
   type: {
     name: string;
   };
   rooms: any;
 }
+type Filters = {
+  query: string;
+  date: string;
+  type: string;
+  gender: string[];
+  category: string;
+  tipeHunian: string[];
+  jumlahOrang: string[];
+  priceRange: [number, number];
+  colors: string[];
+  rating: string;
+};
 
 const data: any = [
   { type: { name: 'coliving' } },
@@ -27,7 +42,199 @@ const data: any = [
 
 const ColivingPage = () => {
   const { data, isLoading, isFetching } = useListProperty();
-  console.log(data);
+  const [searchValues, setSearchValues] = useState({
+    query: '',
+    date: '',
+    type: '',
+  });
+  const debouncedQuery = useDebounce(searchValues.query);
+  const [allFilters, setAllFilters] = useState<Filters>({
+    query: '',
+    date: '',
+    type: '',
+    gender: [],
+    category: '',
+    tipeHunian: [],
+    jumlahOrang: [],
+    priceRange: [0, 10000000],
+    colors: [],
+    rating: '',
+  });
+  const [filters, setFilters] = useState({
+    gender: [],
+    category: '',
+    tipeHunian: [],
+    jumlahOrang: [],
+    priceRange: [0, 10000000],
+    colors: [],
+    rating: '',
+  });
+  const filteredDataToColiving: Property[] = data?.filter(
+    (item: Property) => item.rooms.length > 0
+  );
+  const [sortBy, setSortBy] = useState<any>();
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const handleOpenFilterModal = () => setIsFilterModalOpen(true);
+  const handleCloseFilterModal = () => setIsFilterModalOpen(false);
+  const handleFilterChange = useCallback((filters: any) => {
+    console.log('Filters updated in LandingPage:', filters);
+    setAllFilters(filters);
+  }, []);
+  const onFilterChange = handleFilterChange;
+  const handleApplyFilters = (newFilters: any) => {
+    setFilters(newFilters);
+    onFilterChange({ ...searchValues, ...newFilters }); // Send all filters to parent
+  };
+  const handleResetFilters = () => {
+    const resetFilters = {
+      gender: [],
+      category: '',
+      tipeHunian: [],
+      jumlahOrang: [],
+      priceRange: [0, 10000000],
+      colors: [],
+      rating: '',
+    };
+    setFilters(resetFilters);
+    onFilterChange({ ...searchValues, ...resetFilters }); // Update parent with reset filters
+  };
+
+  const filteredData = useMemo(() => {
+    if (!filteredDataToColiving) return [];
+
+    return filteredDataToColiving.filter((property: any) => {
+      // Text search filters
+      const query = allFilters.query?.trim().toLowerCase();
+      const matchesQuery = query
+        ? [
+            property.name,
+            property.state?.name,
+            property.city?.name,
+            property.sector?.name,
+            property.address,
+          ]
+            .filter(Boolean)
+            .some((item) => item.toLowerCase().includes(query))
+        : true;
+
+      // Type filters
+      const matchesType = allFilters.type
+        ? property.type?.name?.toLowerCase().includes(allFilters.type.toLowerCase())
+        : true;
+
+      // Date filters
+      const matchesDate = allFilters.date ? property.created_at === allFilters.date : true;
+
+      // Tipe Hunian filter
+      const matchesTipeHunian =
+        allFilters.tipeHunian && allFilters.tipeHunian.length > 0
+          ? allFilters.tipeHunian.includes(property.type?.name)
+          : true;
+
+      // Price range filter
+      const [minPrice, maxPrice] = allFilters.priceRange || [0, 10000000];
+
+      // Ambil semua harga "1_month" dari setiap room (kalau ada)
+      const monthlyPrices = property.rooms
+        ?.map(
+          (room: any) => room.room_prices?.find((price: any) => price.duration === '1_month')?.price
+        )
+        .filter(Boolean); // Buang undefined
+
+      // Ambil harga terkecil (atau bisa juga terbesar, tergantung keperluan)
+      const lowestMonthlyPrice = Math.min(...monthlyPrices);
+
+      // Bandingkan apakah harga itu masuk dalam rentang
+      const matchesPriceRange = lowestMonthlyPrice >= minPrice && lowestMonthlyPrice <= maxPrice;
+
+      // Only filter by sortBy if it's specified
+      const matchesPropertyType =
+        Array.isArray(sortBy) && sortBy.length > 0
+          ? sortBy.includes(property.type?.name?.toLowerCase())
+          : true;
+
+      // Gender filter
+      const matchesGender =
+        allFilters.gender && allFilters.gender.length > 0
+          ? allFilters.gender.includes(property.gender) || property.gender === 'both'
+          : true;
+
+      // Category filter (payment type)
+      const matchesCategory =
+        allFilters.category && allFilters.category !== 'all'
+          ? property.payment_type === allFilters.category
+          : true;
+
+      // Jumlah Orang filter
+      const matchesJumlahOrang =
+        allFilters.jumlahOrang && allFilters.jumlahOrang.length > 0
+          ? property.rooms?.some((room: any) =>
+              allFilters.jumlahOrang.includes(String(room.capacity))
+            )
+          : true;
+
+      // Rating filter
+      const matchesRating = allFilters.rating
+        ? property.rooms?.some((room: any) => room.average_rating >= parseFloat(allFilters.rating))
+        : true;
+
+      return (
+        matchesQuery &&
+        matchesType &&
+        matchesDate &&
+        matchesTipeHunian &&
+        matchesPriceRange &&
+        matchesPropertyType &&
+        matchesGender &&
+        matchesCategory &&
+        matchesJumlahOrang &&
+        matchesRating
+      );
+    });
+  }, [filteredDataToColiving, allFilters, sortBy]);
+
+  const categoryOptions = useMemo(() => {
+    if (!data || data.length === 0) return ['all'];
+    const all = data.map((p: any) => p?.payment_type).filter(Boolean);
+    return ['all', ...Array.from(new Set(all))];
+  }, [data]);
+
+  const tipeHunianOptions = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    return Array.from(new Set(data.map((p: any) => p?.type?.name).filter(Boolean)));
+  }, [data]);
+
+  const jumlahOrangOptions = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    const capacities = data.flatMap((p: any) =>
+      p.rooms?.map((r: any) => r?.capacity).filter(Boolean)
+    );
+    return Array.from(new Set(capacities));
+  }, [data]);
+
+  const ratingOptions = useMemo(() => {
+    if (!data || data.length === 0) return [];
+    const ratings = data.flatMap((p: any) =>
+      p.rooms?.map((r: any) => r?.average_rating).filter(Boolean)
+    );
+    return Array.from(new Set(ratings));
+  }, [data]);
+
+  // Update parent component with search values changes
+  useEffect(() => {
+    onFilterChange({ ...searchValues, ...filters });
+  }, [searchValues, onFilterChange]);
+
+  const handleChange = (field: any, value: any) => {
+    setSearchValues((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const isMobile = useResponsive('down', 'sm');
+
+  console.log(filteredDataToColiving);
   const getPropertyIcon = (type: string) => {
     if (type.toLowerCase().includes('apartment'))
       return <Apartment fontSize="small" sx={{ mr: 0.5 }} />;
@@ -40,8 +247,6 @@ const ColivingPage = () => {
   if (isLoading || isFetching) {
     return <LoadingPropertyPage />;
   }
-
-  const filteredDataToColiving: Property[] = data.filter((item: Property) => item.rooms.length > 0);
 
   if (
     !filteredDataToColiving ||
@@ -76,16 +281,43 @@ const ColivingPage = () => {
   // console.log(filteredDataToColiving)
   return (
     <>
-      <CustomBreadcrumbs
-        links={[{ name: 'Home', href: '/' }, { name: 'Kost & Coliving' }]}
-        sx={{ mb: { xs: 2, md: 3 } }}
-        action={null}
-        heading=""
-        moreLink={[]}
-        activeLast={true}
-      />
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <CustomBreadcrumbs
+          links={[{ name: 'Home', href: '/' }, { name: 'Kost & Coliving' }]}
+          sx={{ mb: { xs: 2, md: 3 } }}
+          action={null}
+          heading=""
+          moreLink={[]}
+          activeLast={true}
+        />
+        <Button
+          onClick={handleOpenFilterModal}
+          variant="contained"
+          sx={{
+            bgcolor: '#FFD700',
+            color: 'black',
+            p: 2,
+            minWidth: '150px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 1,
+            '&:hover': { bgcolor: '#FFC107' },
+          }}
+        >
+          <SearchIcon />
+          {!isMobile && 'Filter'}
+        </Button>
+      </Box>
       <Grid container spacing={2} sx={{ placeItems: 'center', mt: 3 }}>
-        {filteredDataToColiving.map((coliving: any, index: number) => {
+        {filteredData.map((coliving: any, index: number) => {
           const oneMonthData = (() => {
             if (!coliving?.rooms) return null;
 
@@ -191,6 +423,23 @@ const ColivingPage = () => {
           );
         })}
       </Grid>
+      <FilterModal
+        open={isFilterModalOpen}
+        onClose={handleCloseFilterModal}
+        onOpen={handleOpenFilterModal}
+        filters={filters}
+        onFilters={handleApplyFilters}
+        canReset={Object.values(filters).some((val) =>
+          Array.isArray(val)
+            ? val.length > 0
+            : val !== '' && JSON.stringify(val) !== JSON.stringify([0, 10000000])
+        )}
+        onResetFilters={handleResetFilters}
+        ratingOptions={ratingOptions as any}
+        categoryOptions={categoryOptions as any}
+        tipeHunianOptions={tipeHunianOptions as any}
+        jumlahOrangOptions={jumlahOrangOptions as any}
+      />
     </>
   );
 };

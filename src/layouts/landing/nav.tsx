@@ -131,6 +131,7 @@ export function NavMobileLanding({
 
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
   const pathname = usePathname();
+  // console.log(data)
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
   const [openCollapse, setOpenCollapse] = useState<{ [key: string]: boolean }>({});

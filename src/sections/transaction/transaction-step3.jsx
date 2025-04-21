@@ -282,7 +282,6 @@ export function TransactionStepThree({ data, setValue, getValues }) {
             <Typography sx={{ fontWeight: 'bold', fontSize: '1.125rem', mb: 2 }}>
               Pesanan
             </Typography>
-            {/* https://images.rukita.co/buildings/roomvariantphoto/photo/2bb5274e-3c6.jpg?tr=c-at_max%2Cw-800 */}
             <ImageSlider images={detail_property?.room_files || []} />
             <Box
               sx={{

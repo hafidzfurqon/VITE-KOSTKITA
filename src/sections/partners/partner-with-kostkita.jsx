@@ -409,7 +409,7 @@ export function PartnerWithKostKita() {
         <Box
           sx={{
             padding: 0,
-            backgroundImage: `url('https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg')`,
+            backgroundImage: `url('/assets/background/background-property.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             borderTopRightRadius: '70px',

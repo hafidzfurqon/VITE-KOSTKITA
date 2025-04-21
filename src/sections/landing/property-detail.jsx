@@ -46,6 +46,7 @@ export default function PropertyDetail() {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
   const { data, isLoading, isFetching, error } = useFetchPropertySlug(slug);
+  console.log(data);
   const [open, setOpen] = useState(false);
   const [opened, setOpened] = useState(false);
   const [visitModal, setVisitModal] = useState(false);
@@ -459,12 +460,12 @@ export default function PropertyDetail() {
                 >
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px: 2 }}>
                     <Avatar
-                      src={`https:\/\/backend-koskita.hafidzfrqn.serv00.net\/\/storage\/users_photo_profile\/G8RuEIsSKlT1HpL3cnqX93L2FKH4CKXDr9TLfxNg.png`}
+                      src={`/assets/images/Kost.pdf (1).jpg`}
                       sx={{ width: 48, height: 48 }}
                     />
                     <Box>
                       <Typography variant="body1" fontWeight={600}>
-                        Dikelola oleh Hafidz
+                        Dikelola oleh KostKita.id
                       </Typography>
                       <Typography variant="body2" color="gray">
                         sejak November 2024

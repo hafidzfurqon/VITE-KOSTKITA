@@ -47,7 +47,7 @@ export default function PartnerColivingWithKostKita() {
     },
     {
       label: 'Nikmati Hasilnya',
-      description: 'Duduk manis dan nikmati hasil dari Rukita',
+      description: 'Duduk manis dan nikmati hasil dari KostKita',
     },
   ];
 
@@ -60,17 +60,17 @@ export default function PartnerColivingWithKostKita() {
     {
       question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
       answer:
-        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional KostKita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
     },
     {
       question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
       answer:
-        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional KostKita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
     },
     {
       question: 'Saya menangani banyak aset yang sulit laku, apa solusi KostKita?',
       answer:
-        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional Rukita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
+        'KostKita dapat membantu pemilik aset, seperti tanah kosong, ruko, atau properti apa pun yang sulit laku, menjadi bisnis kost coliving bernilai tinggi. Semua operasional KostKita yang urus sehingga pemilik aset tinggal merasakan income tak terbatas tanpa ribet.',
     },
   ];
 
@@ -202,7 +202,6 @@ export default function PartnerColivingWithKostKita() {
   return (
     <>
       <Box
-       
         sx={{
           display: 'flex',
           alignItems: 'center',
@@ -287,7 +286,6 @@ export default function PartnerColivingWithKostKita() {
       </Box>
       <Box>
         <Box
-         
           sx={{
             padding: 0,
             background: 'white',
@@ -298,7 +296,7 @@ export default function PartnerColivingWithKostKita() {
           }}
         >
           <Typography variant="h3" sx={{ textAlign: 'center', pb: 5 }}>
-            Kenapa Perlu Menjadi Partner KostKita?
+            Kenapa harus kerjasama dengan Kostkita.id
           </Typography>
           <Grid container spacing={3} sx={{ display: 'flex', justifyContent: 'center' }}>
             <Grid item xs={12} sm={4}>
@@ -331,11 +329,11 @@ export default function PartnerColivingWithKostKita() {
                   </svg>
                 </Box>
                 <Typography variant="h6" sx={{ pb: '3px', fontWeight: 'bold' }}>
-                  Penghasilan Bebas Ribet
+                  Penghubung antara penyewa kost dan penyewa potensial 🎯
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#4D4D4D' }}>
-                  Kami mengelola aset properti Anda dan menjalankannya bisnisnya sebagai properti
-                  rental yang menguntungkan.
+                  Platform ini dirancang khusus untuk menghubungkan pemilik kost dengan mahasiswa
+                  yang sedang mencari tempat tinggal di sekitar kampus.
                 </Typography>
               </CardContent>
             </Grid>
@@ -405,7 +403,7 @@ export default function PartnerColivingWithKostKita() {
                   </svg>
                 </Box>
                 <Typography variant="h6" sx={{ pb: '3px', fontWeight: 'bold' }}>
-                  Aman dari Penyalahgunaan
+                  Aman dari Penyalahgunaan 🛡️
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#4D4D4D' }}>
                   Dengan sistem yang terintegrasi teknologi, kami membuat bisnis properti jadi lebih
@@ -418,7 +416,6 @@ export default function PartnerColivingWithKostKita() {
                 sx={{
                   display: 'flex',
                   alignItems: { xs: 'left', md: 'center' },
-                  // gap: 3,
                   textAlign: 'center',
                   justifyContent: 'center',
                   flexDirection: 'column',
@@ -442,11 +439,12 @@ export default function PartnerColivingWithKostKita() {
                   </svg>
                 </Box>
                 <Typography variant="h6" sx={{ pb: '3px', fontWeight: 'bold' }}>
-                  Pemasukan & Bagi Hasil Terjamin
+                  Pemasukan & Bagi Hasil Terjamin 💰
                 </Typography>
                 <Typography variant="body2" sx={{ color: '#4D4D4D' }}>
-                  Dengan sistem yang terintegrasi teknologi, kami membuat bisnis properti jadi lebih
-                  praktis dan canggih.
+                  Listing di KostKita.id dibuat eye-catching dan dengan optimasi foto, deskripsi
+                  menarik, dan ranking berbasis performa agar lebih mudah ditemukan oleh calon
+                  penyewa.
                 </Typography>
               </CardContent>
             </Grid>
@@ -455,7 +453,6 @@ export default function PartnerColivingWithKostKita() {
       </Box>
       <Box>
         <Box
-         
           sx={{
             bgcolor: '#F0EFEA',
             display: 'flex',
@@ -509,24 +506,8 @@ export default function PartnerColivingWithKostKita() {
                   justifyContent: 'center',
                 }}
               >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 8,
-                    left: 10,
-                    p: 1,
-                    borderRadius: 1,
-                    boxShadow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>
-                    KostKita X IPB Bogors
-                  </Typography>
-                </Box>
                 <img
-                  src="https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg"
+                  src="/public/assets/illustrations/illustration-dashboard.webp"
                   alt="Property Image"
                   loading="lazy"
                   style={{
@@ -548,26 +529,8 @@ export default function PartnerColivingWithKostKita() {
                   justifyContent: 'center',
                 }}
               >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 8,
-                    left: 10,
-                    backgroundColor: '',
-                    // backgroundColor: 'grey.800',
-                    p: 1,
-                    borderRadius: 1,
-                    boxShadow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>
-                    KostKita X IPB Bogor
-                  </Typography>
-                </Box>
                 <img
-                  src="https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/3/839f45fa-f3f.jpg"
+                  src="https://img.freepik.com/free-photo/unrecognizable-man-writing-office_23-2147717377.jpg?t=st=1745159435~exp=1745163035~hmac=69564f9ed84df83e996746af8af471c2c8e4d9cb0f7afc7187c98d63419f39e2&w=1380"
                   alt="Property Image"
                   loading="lazy"
                   style={{
@@ -589,26 +552,8 @@ export default function PartnerColivingWithKostKita() {
                   justifyContent: 'center',
                 }}
               >
-                <Box
-                  sx={{
-                    position: 'absolute',
-                    bottom: 8,
-                    left: 10,
-                    backgroundColor: '',
-                    // backgroundColor: 'grey.800',
-                    p: 1,
-                    borderRadius: 1,
-                    boxShadow: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: 'bold', color: 'white' }}>
-                    KostKita X IPB Bogor
-                  </Typography>
-                </Box>
                 <img
-                  src="https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/2/ff8357cd-cf2.jpg"
+                  src="/assets/background/background-property.jpg"
                   alt="Property Image"
                   loading="lazy"
                   style={{
@@ -671,10 +616,9 @@ export default function PartnerColivingWithKostKita() {
       </Box>
       <Box>
         <Box
-         
           sx={{
             padding: 0,
-            backgroundImage: `url('https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg')`,
+            backgroundImage: `url('/assets/background/background-property.jpg')`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             color: 'white',

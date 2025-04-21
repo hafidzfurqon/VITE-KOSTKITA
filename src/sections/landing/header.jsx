@@ -120,11 +120,15 @@ export default function Header() {
     },
     // { label: 'For Business', icon: <BusinessIcon />, path: '/bussines' },
     { label: 'Tentang KostKita', icon: <InfoIcon />, path: '/about-us' },
-    user?.roles?.length > 0 && {
-      label: 'Wishlist',
-      icon: <BookmarkBorderOutlined />,
-      path: '/wishlist',
-    },
+    ...(user && Array.isArray(user.roles) && user.roles.length > 0 && user.roles[0]?.name === 'user'
+      ? [
+          {
+            label: 'Wishlist',
+            icon: <BookmarkBorderOutlined />,
+            path: '/wishlist',
+          },
+        ]
+      : []),
     { label: 'F.A.Q', icon: <InfoIcon />, path: '/faq' },
   ];
 

@@ -50,7 +50,7 @@ const PromoDetails = () => {
         sx={{
           width: '100%',
           height: '100%',
-          maxHeight: 500,
+          // maxHeight: 500,
           borderRadius: '10px',
           objectFit: 'cover',
         }}
@@ -138,6 +138,47 @@ const PromoDetails = () => {
           </Typography>
           <Grid container spacing={2} sx={{ placeItems: 'center', mt: 3 }}>
             {data?.property?.map((coliving, index) => {
+              const oneMonthData = (() => {
+                if (!coliving?.rooms) return null;
+
+                // Ambil semua data harga "1_month" + diskonnya
+                const pricesWithDiscount = coliving?.rooms
+                  .map((room) => {
+                    const priceItem = room?.room_prices?.find(
+                      (price) => price.duration === '1_month'
+                    );
+                    if (!priceItem) return null;
+
+                    const discount = priceItem.room_discounts?.[0]; // ambil diskon pertama jika ada
+                    return {
+                      price: priceItem.price,
+                      discountValue: discount?.discount_value
+                        ? parseFloat(discount.discount_value)
+                        : null,
+                    };
+                  })
+                  .filter(Boolean); // hapus null
+
+                if (pricesWithDiscount?.length === 0) return null;
+
+                // Ambil harga dengan diskon termurah
+                return pricesWithDiscount?.reduce((min, curr) => {
+                  const currFinal = curr.discountValue
+                    ? curr.price - curr.price * (curr.discountValue / 100)
+                    : curr.price;
+                  const minFinal = min.discountValue
+                    ? min.price - min.price * (min.discountValue / 100)
+                    : min.price;
+
+                  return currFinal < minFinal ? curr : min;
+                });
+              })();
+
+              const originalPrice = oneMonthData?.price ?? 0;
+              const discount = oneMonthData?.discountValue;
+              const finalPrice = discount
+                ? originalPrice - originalPrice * (discount / 100)
+                : originalPrice;
               // const hasDiscount = coliving.discounts.length > 0;
               return (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -169,12 +210,39 @@ const PromoDetails = () => {
                       </Typography>
                     </Box>
 
-                    <Typography
-                      variant="subtitle1"
-                      sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
-                    >
-                      {fCurrency(coliving.start_price)} / bulan
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', color: 'gray' }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700, fontSize: '12px' }}>
+                          Mulai dari{' '}
+                          <span style={{ textDecoration: 'line-through' }}>
+                            {fCurrency(originalPrice)}
+                          </span>
+                        </Typography>
+                        <Box sx={{ display: 'flex', alignItems: 'center', pt: '2px' }}>
+                          {discount && (
+                            <Typography
+                              variant="overline"
+                              sx={{
+                                backgroundColor: 'red',
+                                color: 'white',
+                                fontWeight: 'bold',
+                                borderRadius: '4px',
+                                px: '2px',
+                                mr: '4px',
+                              }}
+                            >
+                              -{discount}%
+                            </Typography>
+                          )}
+                          <Typography
+                            variant="body1"
+                            sx={{ fontWeight: 700, color: 'black', fontSize: '14px' }}
+                          >
+                            {fCurrency(finalPrice)} <span>/bulan</span>
+                          </Typography>
+                        </Box>
+                      </Box>
+                    </Box>
                   </Box>
                 </Grid>
               );

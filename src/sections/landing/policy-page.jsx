@@ -14,7 +14,7 @@ export default function PolicyPage({ description, name }) {
         </Typography>
         <Typography variant="body1">
           Penambahan jumlah penghuni tergantung dengan kebijakan tiap hunian dan ketersediaan.
-          Hubungi Rukita untuk informasi lebih lanjut.
+          Hubungi KostKita untuk informasi lebih lanjut.
         </Typography>
       </Box>
 

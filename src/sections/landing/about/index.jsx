@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'; // ✅ Impor dengan benar
 import { Pagination } from 'swiper/modules'; // ✅ Impor modul yang diperlukan
 import 'swiper/css';
 import 'swiper/css/pagination';
-import { GitHub, YouTube, LinkedIn } from '@mui/icons-material';
+import { YouTube, Instagram, X } from '@mui/icons-material';
 
 export default function About() {
   const testimonials = [
@@ -298,11 +298,11 @@ export default function About() {
                     Sekilas Tentang KostKita
                   </Typography>
                   <Typography variant="body1" color="text.secondary">
-                    Lorem, ipsum dolor sit amet consectetur adipisicing elit. Inventore, nesciunt
-                    illo atque id laborum cupiditate adipisci reiciendis quae optio ipsum placeat
-                    totam doloremque velit at fugiat. Totam odio at sed, sequi est neque quibusdam,
-                    doloremque suscipit velit ab, accusamus nihil? Dignissimos et totam sunt,
-                    perspiciatis tenetur voluptas vitae! Nisi, nostrum.
+                    KostKita.id adalah platform inovatif yang menghubungkan pemilik kos dengan
+                    mahasiswa yang mencari hunian. Dengan sistem pencarian yang mudah, dan promosi
+                    efektif, pemilik kos dapat lebih cepat mendapatkan penyewa tanpa repot.
+                    Meningkatkan income pemilik kost melalui okupansi maksimal dan promosi digital
+                    yang tepat sasaran
                   </Typography>
                 </Grid>
 
@@ -312,22 +312,27 @@ export default function About() {
                     Dimana menemukan Kami?
                   </Typography>
                   <Typography variant="body1" color="text.secondary" gutterBottom>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim culpa ex suscipit
-                    ut neque nesciunt quibusdam! Id sit eum fugiat porro, exercitationem ea odit
-                    dicta provident. Natus cum quos recusandae. Lorem ipsum dolor sit amet
-                    consectetur, adipisicing elit. Dicta, animi?
+                    Kami hadir di berbagai platform digital untuk memudahkan Anda menemukan properti
+                    impian. Kunjungi website kami atau ikuti akun media sosial resmi KostKita untuk
+                    mendapatkan informasi terbaru seputar hunian, penawaran spesial, dan kerjasama
+                    properti.
+                  </Typography>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                    Tim kami juga siap membantu Anda secara langsung melalui layanan pelanggan yang
+                    dapat diakses setiap hari. Dimanapun Anda berada, KostKita selalu dekat untuk
+                    memenuhi kebutuhan tempat tinggal Anda.
                   </Typography>
                   <Box sx={{ display: 'flex', gap: 2 }}>
                     <IconButton
-                      color="primary"
+                      color="default"
                       component="a"
                       href="https://github.com/HapidzGIT"
                       target="_blank"
                     >
-                      <GitHub />
+                      <Instagram />
                     </IconButton>
                     <IconButton
-                      color="primary"
+                      color="error"
                       component="a"
                       href="https://youtube.com"
                       target="_blank"
@@ -335,12 +340,12 @@ export default function About() {
                       <YouTube />
                     </IconButton>
                     <IconButton
-                      color="primary"
+                      color="inherit"
                       component="a"
                       href="https://linkedin.com"
                       target="_blank"
                     >
-                      <LinkedIn />
+                      <X />
                     </IconButton>
                   </Box>
                 </Grid>

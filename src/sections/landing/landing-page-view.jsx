@@ -20,60 +20,32 @@ import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
 import { PostSort } from '../blog/post-sort';
 import { useListProperty } from 'src/hooks/property/public/useListProperty';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import Directory from 'src/component/QuickAccessPage';
 
 export function LandingPage() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('kost');
+  const [allFilters, setAllFilters] = useState({
+    query: '',
+    date: '',
+    type: '',
+    gender: [],
+    category: '',
+    tipeHunian: [],
+    jumlahOrang: [],
+    priceRange: [0, 10000000],
+    colors: [],
+    rating: '',
+  });
   const [selectedSubCategory, setSelectedSubCategory] = useState('Terbaru'); // Default ke "Populer"
   const [sortBy, setSortBy] = useState(['coliving', 'kost']);
   const { data, isLoading, isFetching } = useListProperty();
-  // const [searchParams, setSearchParams] = useState({
-  //   query: '',
-  //   date: '',
-  //   type: '',
-  // });
 
-  // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
-  //   ? data?.filter((property) => {
-  //       const query = searchParams.query.trim().toLowerCase();
-  //       const dateQuery = searchParams.date.trim();
-  //       const typeQuery = searchParams.type.trim().toLowerCase();
-  // const [searchParams, setSearchParams] = useState({
-  //   query: '',
-  //   date: '',
-  //   type: '',
-  // });
-
-  // const filteredData = Object.values(searchParams).some((val) => val.trim() !== '')
-  //   ? data?.filter((property) => {
-  //       const query = searchParams.query.trim().toLowerCase();
-  //       const dateQuery = searchParams.date.trim();
-  //       const typeQuery = searchParams.type.trim().toLowerCase();
-
-  //       const matchesQuery = query
-  //         ? [
-  //             property.name,
-  //             property.state?.name,
-  //             property.city?.name,
-  //             property.sector?.name,
-  //             property.address,
-  //           ]
-  //             .filter(Boolean)
-  //             .map((item) => item.toLowerCase())
-  //             .some((item) => item.includes(query))
-  //         : true;
-
-  //       const matchesDate = dateQuery ? property.created_at === dateQuery : true;
-
-  //       const matchesType = typeQuery
-  //         ? property.type?.name?.toLowerCase().includes(typeQuery)
-  //         : true;
-
-  //       return matchesQuery && matchesDate && matchesType;
-  //     })
-  //   : data;
+  const handleFilterChange = useCallback((filters) => {
+    console.log('Filters updated in LandingPage:', filters);
+    setAllFilters(filters);
+  }, []);
 
   const handleSort = useCallback((newSort) => {
     setSortBy(newSort);
@@ -86,6 +58,99 @@ export function LandingPage() {
     ],
     apartemen: [{ name: 'Bogor', icon: <LocationCityIcon sx={{ color: 'black' }} /> }],
   };
+
+  const filteredData = useMemo(() => {
+    if (!data) return [];
+
+    return data.filter((property) => {
+      // Text search filters
+      const query = allFilters.query?.trim().toLowerCase();
+      const matchesQuery = query
+        ? [
+            property.name,
+            property.state?.name,
+            property.city?.name,
+            property.sector?.name,
+            property.address,
+          ]
+            .filter(Boolean)
+            .some((item) => item.toLowerCase().includes(query))
+        : true;
+
+      // Type filters
+      const matchesType = allFilters.type
+        ? property.type?.name?.toLowerCase().includes(allFilters.type.toLowerCase())
+        : true;
+
+      // Date filters
+      const matchesDate = allFilters.date ? property.created_at === allFilters.date : true;
+
+      // Tipe Hunian filter
+      const matchesTipeHunian =
+        allFilters.tipeHunian && allFilters.tipeHunian.length > 0
+          ? allFilters.tipeHunian.includes(property.type?.name)
+          : true;
+
+      // Price range filter
+      const [minPrice, maxPrice] = allFilters.priceRange || [0, 10000000];
+
+      // Ambil semua harga "1_month" dari setiap room (kalau ada)
+      const monthlyPrices = property.rooms
+        ?.map((room) => room.room_prices?.find((price) => price.duration === '1_month')?.price)
+        .filter(Boolean); // Buang undefined
+
+      // Ambil harga terkecil (atau bisa juga terbesar, tergantung keperluan)
+      const lowestMonthlyPrice = Math.min(...monthlyPrices);
+
+      // Bandingkan apakah harga itu masuk dalam rentang
+      const matchesPriceRange = lowestMonthlyPrice >= minPrice && lowestMonthlyPrice <= maxPrice;
+
+      // Only filter by sortBy if it's specified
+      const matchesPropertyType =
+        Array.isArray(sortBy) && sortBy.length > 0
+          ? sortBy.includes(property.type?.name?.toLowerCase())
+          : true;
+
+      // Gender filter
+      const matchesGender =
+        allFilters.gender && allFilters.gender.length > 0
+          ? allFilters.gender.includes(property.gender) || property.gender === 'both'
+          : true;
+
+      // Category filter (payment type)
+      const matchesCategory =
+        allFilters.category && allFilters.category !== 'all'
+          ? property.payment_type === allFilters.category
+          : true;
+
+      // Jumlah Orang filter
+      const matchesJumlahOrang =
+        allFilters.jumlahOrang && allFilters.jumlahOrang.length > 0
+          ? property.rooms?.some((room) => allFilters.jumlahOrang.includes(String(room.capacity)))
+          : true;
+
+      // Rating filter
+      const matchesRating = allFilters.rating
+        ? property.rooms?.some((room) => room.average_rating >= parseFloat(allFilters.rating))
+        : true;
+
+      return (
+        matchesQuery &&
+        matchesType &&
+        matchesDate &&
+        matchesTipeHunian &&
+        matchesPriceRange &&
+        matchesPropertyType &&
+        matchesGender &&
+        matchesCategory &&
+        matchesJumlahOrang &&
+        matchesRating
+      );
+    });
+  }, [data, allFilters, sortBy]);
+
+  console.log(filteredData);
+
   const WhatsAppButton = (
     <Box
       sx={{
@@ -154,7 +219,7 @@ export function LandingPage() {
         <Box sx={{ flexShrink: 0 }}>
           <HeroSection>
             <Header />
-            <HeroContent data={data} />
+            <HeroContent onFilterChange={handleFilterChange} />
           </HeroSection>
         </Box>
 
@@ -247,7 +312,7 @@ export function LandingPage() {
           }}
         >
           <PropertyGrid
-            data={data}
+            data={filteredData}
             isLoading={isLoading}
             isFetching={isFetching}
             sortCardBy={sortBy}
@@ -393,7 +458,7 @@ export function LandingPage() {
                     </Typography>
                   </Card>
                   <img
-                    src="https://backend-koskita.hafidzfrqn.serv00.net//storage/banner_images/2/8sfikdpc48ilITfQXbYUQPA62kJU0sDaOUhtn5R8.jpg"
+                    src="/assets/background/background-property.jpg"
                     alt="Muhammad Hafidz"
                     loading="lazy"
                     style={{ width: '100%', borderRadius: '8px', objectFit: 'cover' }}

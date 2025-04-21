@@ -8,7 +8,6 @@ import Typography from '@mui/material/Typography';
 import TableContainer from '@mui/material/TableContainer';
 import TablePagination from '@mui/material/TablePagination';
 import { DashboardContent } from 'src/layouts/dashboard';
-import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableNoData } from '../table-no-data';
 import { BookedPropertyTableRow } from '../booked-property-table-row';
@@ -17,28 +16,17 @@ import { TableEmptyRows } from '../table-empty-rows';
 import { BookedPropertyTableToolbar } from '../booked-property-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 import Loading from 'src/components/loading/loading';
-
-import { useFetchFacilities, useMutationCreateFacilities } from 'src/hooks/facilities';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
-import { useForm } from 'react-hook-form';
-import { TextField } from '@mui/material';
-import { DialogCreate } from 'src/component/DialogCreate';
 import { useAppContext } from 'src/context/user-context';
-import {
-  useFetchFacilityPropertyOwner,
-  useMutationCreateFacilitiesOwner,
-} from 'src/hooks/owner_property/fasilitas';
 import { useFetchAllBooking } from 'src/hooks/booking_admin';
 
 export function BookedPropertyView() {
   const table = useTable();
   const { UserContextValue: authUser }: any = useAppContext();
   const { user } = authUser;
-  // Pastikan user.roles ada dan memeriksa apakah user memiliki role "owner_property"
-  // const isOwnerProperty = user?.roles?.some((role: any) => role.name === 'owner_property');
   const { data = [], isLoading, isFetching } = useFetchAllBooking();
-  // console.log(data);
+  const filteredData = data.filter(
+    (item: any) => Array.isArray(item.bookings) && item.bookings.length > 0
+  );
   const [filterName, setFilterName] = useState('');
 
   // Menghindari re-render berulang saat data berubah
@@ -83,7 +71,7 @@ export function BookedPropertyView() {
                 <BookedPropertyTableHead
                   order={table.order}
                   orderBy={table.orderBy}
-                  rowCount={data.length}
+                  rowCount={filteredData.length}
                   numSelected={table.selected.length}
                   onSort={table.onSort}
                   onSelectAllRows={(checked: any) =>
@@ -125,7 +113,7 @@ export function BookedPropertyView() {
 
                   <TableEmptyRows
                     height={68}
-                    emptyRows={emptyRows(table.page, table.rowsPerPage, data.length)}
+                    emptyRows={emptyRows(table.page, table.rowsPerPage, filteredData.length)}
                   />
                   {notFound && <TableNoData searchQuery={filterName} />}
                 </TableBody>
@@ -136,7 +124,7 @@ export function BookedPropertyView() {
           <TablePagination
             component="div"
             page={table.page}
-            count={data.length}
+            count={filteredData.length}
             rowsPerPage={table.rowsPerPage}
             onPageChange={table.onChangePage}
             rowsPerPageOptions={[5, 10, 25]}

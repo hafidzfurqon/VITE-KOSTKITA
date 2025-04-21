@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Box,
   Typography,
@@ -15,24 +15,84 @@ import CustomDatePicker from 'src/components/calender/custom-datepicker';
 import { useResponsive } from 'src/hooks/use-responsive';
 import SearchProperty from './searchProperty';
 import { useDebounce } from 'src/hooks/use-debounce';
-import { useSearchProperty } from 'src/hooks/property/public/useListProperty';
+import { useListProperty, useSearchProperty } from 'src/hooks/property/public/useListProperty';
 import { paths } from 'src/routes/paths';
+import FilterModal from 'src/component/FilterModal';
 
-export default function HeroContent({ data }) {
+export default function HeroContent({ onFilterChange }) {
+  const { data: properties, isLoading: propertiesLoading } = useListProperty();
   const [searchValues, setSearchValues] = useState({
     query: '',
     date: '',
     type: '',
   });
-
-  // const isMobile = useResponsive('down', 'sm');
   const debouncedQuery = useDebounce(searchValues.query);
 
-  const { searchResults, searchLoading } = useSearchProperty({
-    name: debouncedQuery,
-    location: debouncedQuery,
-    address: debouncedQuery,
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const handleOpenFilterModal = () => setIsFilterModalOpen(true);
+  const handleCloseFilterModal = () => setIsFilterModalOpen(false);
+
+  // Initialize filters object
+  const [filters, setFilters] = useState({
+    gender: [],
+    category: '',
+    tipeHunian: [],
+    jumlahOrang: [],
+    priceRange: [0, 10000000],
+    colors: [],
+    rating: '',
   });
+
+  // Handle all filter changes from FilterModal
+  const handleApplyFilters = (newFilters) => {
+    setFilters(newFilters);
+    onFilterChange({ ...searchValues, ...newFilters }); // Send all filters to parent
+  };
+
+  const handleResetFilters = () => {
+    const resetFilters = {
+      gender: [],
+      category: '',
+      tipeHunian: [],
+      jumlahOrang: [],
+      priceRange: [0, 10000000],
+      colors: [],
+      rating: '',
+    };
+    setFilters(resetFilters);
+    onFilterChange({ ...searchValues, ...resetFilters }); // Update parent with reset filters
+  };
+
+  // Extract options from property data
+  const categoryOptions = useMemo(() => {
+    if (!properties || properties.length === 0) return ['all'];
+    const all = properties.map((p) => p?.payment_type).filter(Boolean);
+    return ['all', ...Array.from(new Set(all))];
+  }, [properties]);
+
+  const tipeHunianOptions = useMemo(() => {
+    if (!properties || properties.length === 0) return [];
+    return Array.from(new Set(properties.map((p) => p?.type?.name).filter(Boolean)));
+  }, [properties]);
+
+  const jumlahOrangOptions = useMemo(() => {
+    if (!properties || properties.length === 0) return [];
+    const capacities = properties.flatMap((p) => p.rooms?.map((r) => r?.capacity).filter(Boolean));
+    return Array.from(new Set(capacities));
+  }, [properties]);
+
+  const ratingOptions = useMemo(() => {
+    if (!properties || properties.length === 0) return [];
+    const ratings = properties.flatMap((p) =>
+      p.rooms?.map((r) => r?.average_rating).filter(Boolean)
+    );
+    return Array.from(new Set(ratings));
+  }, [properties]);
+
+  // Update parent component with search values changes
+  useEffect(() => {
+    onFilterChange({ ...searchValues, ...filters });
+  }, [searchValues, onFilterChange]);
 
   const handleChange = (field, value) => {
     setSearchValues((prev) => ({
@@ -41,14 +101,13 @@ export default function HeroContent({ data }) {
     }));
   };
 
-  const handleSearch = useCallback(() => {
-    if (!searchValues.query.trim() && !searchValues.date && !searchValues.type) return;
-    console.log('Searching with:', searchValues);
-  }, [searchValues]);
+  const isMobile = useResponsive('down', 'sm');
 
-  useEffect(() => {
-    handleSearch();
-  }, [debouncedQuery]);
+  const { searchResults, searchLoading } = useSearchProperty({
+    name: debouncedQuery,
+    location: debouncedQuery,
+    address: debouncedQuery,
+  });
 
   return (
     <Box sx={{ position: 'relative', pt: 8, px: 4, color: 'white' }}>
@@ -88,53 +147,47 @@ export default function HeroContent({ data }) {
           hrefItem={(slug) => `/property/${slug}`}
         />
 
-        {/* Tanggal */}
-        {/* <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
-          <CustomDatePicker
-            selectedDate={searchValues.date}
-            onDateChange={(newDate) => handleChange('date', newDate)}
-          />
-        </Box> */}
-
-        {/* Tipe Properti */}
-        {/* <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minWidth: '200px' }}>
-          <FormControl fullWidth>
-            <InputLabel shrink>Tipe Properti</InputLabel>
-            <Select
-              value={searchValues.type}
-              onChange={(e) => handleChange('type', e.target.value)}
-              displayEmpty
-              fullWidth
-            >
-              <MenuItem value="">Semua Tipe</MenuItem>
-              <MenuItem value="Apartment">Apartment</MenuItem>
-              <MenuItem value="Coliving">Coliving</MenuItem>
-            </Select>
-          </FormControl>
-        </Box> */}
-
-        {/* Tombol Cari */}
-        {/* <Button
-          onClick={handleSearch}
+        <Button
+          onClick={handleOpenFilterModal}
           variant="contained"
           sx={{
             bgcolor: '#FFD700',
             color: 'black',
             p: 2,
-            width: { xs: '100%', sm: 'auto', md: '180px' },
             minWidth: '150px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: 1,
-            flexGrow: 0,
-            alignSelf: 'center',
             '&:hover': { bgcolor: '#FFC107' },
           }}
         >
           <SearchIcon />
-          {!isMobile && 'Cari hunian'}
-        </Button> */}
+          {!isMobile && 'Filter'}
+        </Button>
+
+        <FilterModal
+          open={isFilterModalOpen}
+          onClose={handleCloseFilterModal}
+          onOpen={handleOpenFilterModal}
+          filters={filters}
+          onFilters={handleApplyFilters}
+          canReset={Object.values(filters).some((val) =>
+            Array.isArray(val)
+              ? val.length > 0
+              : val !== '' && JSON.stringify(val) !== JSON.stringify([0, 10000000])
+          )}
+          onResetFilters={handleResetFilters}
+          genderOptions={[
+            { value: 'male', label: 'Pria' },
+            { value: 'female', label: 'Wanita' },
+          ]}
+          colorOptions={['red', 'blue', 'green', 'yellow']}
+          ratingOptions={ratingOptions}
+          categoryOptions={categoryOptions}
+          tipeHunianOptions={tipeHunianOptions}
+          jumlahOrangOptions={jumlahOrangOptions}
+        />
       </Box>
     </Box>
   );

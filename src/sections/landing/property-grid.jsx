@@ -14,7 +14,6 @@ import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
   // const { data, isLoading, isFetching } = useListProperty();
   // const numberSortsortCardBy[0] === 'apartment' ?
-  console.log(data?.rooms?.room_prices);
   // const router = useRouter();
   const [isHovered, setIsHovered] = useState(false);
   const prevRef = useRef(null);
@@ -54,11 +53,6 @@ export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }
             justifyContent: 'center',
           }}
         >
-          {/* <img
-            src="/assets/no-data.svg"
-            alt="No Data"
-            style={{ width: 250, marginBottom: 16 }}
-          /> */}
           <Typography variant="h6" color="textSecondary">
             Tidak ada data properti yang tersedia.
           </Typography>
