@@ -46,7 +46,8 @@ export default function Step1Penghuni({
   const { data: AllServiceAddOn = [], isLoading, isFetching } = useFetchAllServices();
   const [searchParams, setSearchParams] = useSearchParams();
   const [duration, setDuration] = useState('');
-  console.log(room);
+  // console.log(room);
+
   const DaylyPrice = room.room_prices?.find((item) => item?.duration === 'dayly');
   const oneMonthPrice = room.room_prices?.find((item) => item?.duration === '1_month');
   const ThreeMonthPrice = room.room_prices?.find((item) => item?.duration === '3_month');
@@ -69,8 +70,6 @@ export default function Step1Penghuni({
   const discountAmountAyearMonth =
     (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice?.discount_value) / 100;
 
-  const DiscounHarianLength = discountAmountDayly.length > 0 ? discountAmountDayly : 0;
-
   const [checkIn, setCheckIn] = useState(() => {
     const date = searchParams.get('checkInDate');
     return date ? new Date(date) : null;
@@ -82,6 +81,8 @@ export default function Step1Penghuni({
   });
   const [anchorEl, setAnchorEl] = useState(null);
   const durationDay = dayjs(checkOut).diff(dayjs(checkIn), 'day');
+  const DiscounHarianLength = discountAmountDayly * durationDay;
+
   const handleOpenDatePicker = (event) => {
     setAnchorEl(event.currentTarget); // elemen yang diklik
     setOpenDatePicker(true);
@@ -240,7 +241,7 @@ export default function Step1Penghuni({
         basePrice = DaylyPrice?.price;
         property_room_discount_id = DaylyPriceDiscountPrice?.id;
         room_price_id = DaylyPrice?.id;
-        discount = discountAmountDayly;
+        discount = DiscounHarianLength;
         total_booking_dikali_hari = DaylyPrice?.price * durationDay;
         type_book = 'dayly';
         break;
@@ -541,7 +542,7 @@ export default function Step1Penghuni({
 
                 {duration === 0 && DaylyPriceDiscountPrice && (
                   <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
-                    -{fCurrency(discountAmountDayly)}
+                    -{fCurrency(DiscounHarianLength)}
                   </Typography>
                 )}
                 {duration === 1 && (
@@ -807,30 +808,14 @@ export default function Step1Penghuni({
           />
         </>
       )}
-      <Box
-        display="flex"
-        flexDirection={{ xs: 'column', md: 'row' }}
-        justifyContent="space-between"
-        // mt={4}
-        gap={{ xs: 0, md: 3 }}
-      >
-        <Button
-          fullWidth
-          variant="outlined"
-          color="inherit"
-          sx={{ mt: 3, py: '12px' }}
-          // onClick={handleBack}
-          // disabled={step === 1}
-        >
-          Kembali
-        </Button>
+      <Box maxWidth="sm">
         <Button
           onClick={handleNext}
-          sx={{ mt: 3, py: '12px' }}
-          fullWidth
+          sx={{ mt: 3, py: '12px', mr: 5 }}
           variant="contained"
           color="inherit"
           disabled={!isFormValid}
+          fullWidth
         >
           Lanjut Ke Pembayaran
         </Button>

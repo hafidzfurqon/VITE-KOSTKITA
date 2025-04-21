@@ -28,7 +28,7 @@ export default function AccountGeneral() {
   const { user } = authUser;
   const userId = user?.id;
   const idUser = user?.id ? true : false;
-  const { data, isLoading, isFetching } = useFetchAuthenticatedUser(idUser);
+  const { data, refetch, isLoading, isFetching } = useFetchAuthenticatedUser(idUser);
   console.log(data);
   const [loading, setLoading] = useState(true);
 
@@ -80,25 +80,24 @@ export default function AccountGeneral() {
         : '';
 
       reset({
-        name: data.name || user.name || '',
-        email: data.email || user.email || '',
-        phone_number: data.phone_number || user.phone_number || '',
-        nomor_ktp: data.nomor_ktp || user.nomor_ktp || '',
-        nik: data.nik || user.nik || '',
+        name: data.name || data.name || '',
+        email: data.email || data.email || '',
+        phone_number: data.phone_number || data.phone_number || '',
+        nomor_ktp: data.nomor_ktp || data.nomor_ktp || '',
+        nik: data.nik || data.nik || '',
         date_of_birth: formattedDate ? formattedDate : '',
-        gender: data.gender || user.gender || '',
-        photo_profile: data.photo_profile_url || user.photo_profile_url || '',
+        gender: data.gender || data.gender || '',
+        photo_profile: data.photo_profile_url || data.photo_profile_url || '',
       });
     }
     setLoading(false);
-  }, [user, reset]);
+  }, [data, reset]);
 
   const { mutateAsync: editUser } = useUpdateProfile({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['authenticated.user'] });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 100);
+      // queryClient.setQueryData(['authenticated.user'], data);
+      refetch();
+      // console.log('success');
     },
     onError: (err) => {
       console.log(err);

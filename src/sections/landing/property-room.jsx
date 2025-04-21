@@ -174,7 +174,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                         fullWidth
                         size="large"
                         color="inherit"
-                        disabled={room.isBooked} // Disable button jika kamar sudah dibooking
+                        disabled={room.stock === 0} // Disable button jika kamar sudah dibooking
                         onClick={() => {
                           const selectedDuration = selectedDurations[room.id];
                           const { checkInDate, checkOutDate } = calculateDates(
@@ -188,7 +188,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                           }
                         }}
                       >
-                        {room.isBooked ? 'Sudah Dibooking' : `Pilih Kamar`}
+                        {room.stock === 0 ? 'Kamar Sedang Penuh' : `Pilih Kamar`}
                       </LoadingButton>
                     ) : null
                   ) : (

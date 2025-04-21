@@ -200,67 +200,6 @@ export function PartnerWithKostKita() {
                 </Box>
               </Card>
             </Grid>
-            <Grid item xs={12} sm={6} sx={{ display: 'flex' }}>
-              <Card sx={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <CardContent
-                  sx={{
-                    display: 'flex',
-                    flexDirection: { xs: 'column', md: 'row' },
-                    alignItems: { xs: 'left', md: 'center' },
-                    gap: 3,
-                    p: 3,
-                    justifyContent: 'center',
-                    flexGrow: 1,
-                  }}
-                >
-                  <Box sx={{ color: '#FFCC00' }}>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      width="70"
-                      role="img"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z"
-                      />
-                    </svg>
-                  </Box>
-                  <Box>
-                    <Typography variant="h6" sx={{ py: 1, fontWeight: 'bold' }}>
-                      Apartement
-                    </Typography>
-                    <Typography variant="body1">
-                      Ubah aset pasif Anda menjadi bisnis properti yang menguntungkan.
-                    </Typography>
-                  </Box>
-                </CardContent>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'end',
-                    px: 3,
-                    pb: 5,
-                    justifyContent: 'end',
-                  }}
-                >
-                  {/* {' '} */}
-                  <Button
-                    // fullWidth
-                    // sx={{ my: { xs: 2, md: 1 } }}
-                    size="medium"
-                    color="inherit"
-                    variant="outlined"
-                  >
-                    Lihat Selengkapnya
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
           </Grid>
         </Box>
       </Box>

@@ -81,6 +81,7 @@ export function BookedPropertyView() {
                     )
                   }
                   headLabel={[
+                    { id: 'image_property', label: 'Gambar Property' },
                     { id: 'nama', label: 'Nama Property Di Bookng' },
                     // { id: 'nama_user', label: 'Nama Pengguna' },
                     { id: 'action', label: 'Action' },

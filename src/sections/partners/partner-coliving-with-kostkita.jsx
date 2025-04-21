@@ -27,6 +27,8 @@ import { Container } from '@mui/material';
 import { useTheme } from '@mui/material';
 import { useMediaQuery } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { useMutationCreateUser } from 'src/hooks/users/mutation';
+import { useSnackbar } from 'notistack';
 
 export default function PartnerColivingWithKostKita() {
   const [opened, setOpened] = useState(false);
@@ -35,6 +37,18 @@ export default function PartnerColivingWithKostKita() {
   const countryCodes = [{ code: '+62', label: 'Indonesia' }];
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const handleClickOpened = useCallback(() => setOpened(true), []);
+  const handleClose = useCallback(() => setOpened(false), []);
+  const { mutate, isPending } = useMutationCreateUser({
+    onSuccess: () => {
+      enqueueSnackbar('Berhasil Mendaftar Silahkan Check E-mail anda', { variant: 'success' });
+      reset();
+    },
+    onError: (err) => {
+      console.log('Error', err);
+    },
+  });
 
   const steps = [
     {
@@ -111,6 +125,20 @@ export default function PartnerColivingWithKostKita() {
       </Box>
     );
   }
+
+  const handleCreate = useCallback(
+    (data) => {
+      const updatedData = {
+        ...data,
+        role: 'owner_property',
+      };
+
+      mutate(updatedData);
+      handleClose();
+    },
+    [mutate, handleClose]
+  );
+
   const FieldRHF = (
     <>
       <TextField
@@ -195,7 +223,7 @@ export default function PartnerColivingWithKostKita() {
       />
     </>
   );
-  const handleClickOpened = useCallback(() => setOpened(true), []);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -249,6 +277,8 @@ export default function PartnerColivingWithKostKita() {
             <Button
               variant="outlined"
               // fullWidth
+              target="_blank"
+              href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya Berminat Untuk Mendaftarkan Property Saya, Boleh dibantu?\n\nTerima kasih`)}`}
               sx={{
                 mt: 3,
                 width: { xs: '100%' },
@@ -263,7 +293,7 @@ export default function PartnerColivingWithKostKita() {
             >
               <Iconify width={24} icon="ic:baseline-whatsapp" sx={{ mr: 1 }} /> Hubungi Tim KostKita
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               // fullWidth
               sx={{
@@ -280,7 +310,7 @@ export default function PartnerColivingWithKostKita() {
               onClick={handleClickOpened}
             >
               Daftarkan Properti Anda
-            </Button>
+            </Button> */}
           </Box>
         </Box>
       </Box>
@@ -644,21 +674,24 @@ export default function PartnerColivingWithKostKita() {
             <Button
               variant="outlined"
               // fullWidth
+              target="_blank"
+              href={`https://wa.me/6289668078854?text=${encodeURIComponent(`Halo KostKita,\n\nSaya Berminat Untuk Mendaftarkan Property Saya, Boleh dibantu?\n\nTerima kasih`)}`}
               sx={{
                 mt: 3,
-                width: { xs: '100%' },
+                width: { xs: '100%', md: '80%' },
                 borderColor: '#25D366',
                 color: 'common.white',
                 textTransform: 'none',
                 padding: '10px 20px',
                 fontSize: '1rem',
                 borderRadius: '8px',
+                color: 'black',
                 // ':hover': { backgroundColor: '#ddd' },
               }}
             >
               <Iconify width={24} icon="ic:baseline-whatsapp" sx={{ mr: 1 }} /> Hubungi Tim KostKita
             </Button>
-            <Button
+            {/* <Button
               variant="contained"
               // fullWidth
               sx={{
@@ -675,15 +708,14 @@ export default function PartnerColivingWithKostKita() {
               onClick={handleClickOpened}
             >
               Daftarkan Properti Anda
-            </Button>
+            </Button> */}
           </Box>
         </Box>
       </Box>
       <DialogCreate
-        // pending={isPendingMutate}
-        // SubmitFormValue={handleCreate}
-        // coliving={true}
         info={`Mohon Isi Form Berikut Agar Tim KostKita Bisa menghubungi anda`}
+        SubmitFormValue={handleCreate}
+        pending={isPending}
         open={opened}
         title="Pendaftaran Property"
         subTitle="Form pendaftaran properti"

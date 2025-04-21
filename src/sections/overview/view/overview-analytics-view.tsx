@@ -20,6 +20,7 @@ import { useFetchAllPropertyOwner } from 'src/hooks/owner_property/property';
 import { useFetchAllBookingOwner } from 'src/hooks/owner/property/statistic/useFetchStatisticPropertyOwner';
 import { useQuery } from '@tanstack/react-query';
 import axiosInstance from 'src/utils/axios';
+import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontification';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +50,8 @@ export function OverviewAnalyticsView() {
     isLoading: LoadingPromo,
     isFetching: FecthingPromo,
   } = isAdmin ? useFetchPromo() : { data: null, isLoading: false, isFetching: false };
+  const userId = user?.id;
+  const { data: _notifications, isLoading: LoadingNotification } = useFetchNontification(userId);
   if (
     isLoading ||
     isFetching ||
@@ -57,7 +60,8 @@ export function OverviewAnalyticsView() {
     LoadingBooking ||
     FecthingBooking ||
     LoadingPromo ||
-    FecthingPromo
+    FecthingPromo ||
+    LoadingNotification
   ) {
     return <Loading />;
   }
@@ -67,6 +71,10 @@ export function OverviewAnalyticsView() {
       (acc: number, property: { bookings: any[] }) => acc + property.bookings.length,
       0
     ) ?? 0;
+
+  const countWithBookingCode = _notifications.data.filter((notification: any) => {
+    return notification.data?.booking_code;
+  }).length;
 
   return (
     <DashboardContent maxWidth="xl">
@@ -107,11 +115,9 @@ export function OverviewAnalyticsView() {
         <Grid xs={12} sm={6} md={isAdmin ? 3 : 6}>
           <AnalyticsWidgetSummary
             title="Jumlah Pengguna Booking Property"
-            // percent={2.8}
-            total={totalBookings}
-            // total={5}
+            total={countWithBookingCode}
             color="warning"
-            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}
+            icon={<img alt="icon" src="/assets/icons/glass/ic-glass-buy.svg" />}      
             chart={{
               categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
               series: [40, 70, 50, 28, 70, 75, 7, 64],
@@ -135,7 +141,7 @@ export function OverviewAnalyticsView() {
           </Grid>
         )}
 
-        <Grid xs={12} md={6} lg={4}>
+        {/* <Grid xs={12} md={6} lg={4}>
           <AnalyticsCurrentVisits
             title="Properti Dengan Klik WhatsApp Terbanyak"
             chart={{
@@ -161,10 +167,10 @@ export function OverviewAnalyticsView() {
               ],
             }}
           />
-        </Grid>
+        </Grid> */}
 
         <Grid xs={12} md={6} lg={10}>
-          <AnalyticsNews title="Pengguna Baru" list={_posts.slice(0, 5)} />
+          <AnalyticsNews title="Notifikasi Baru" list={_notifications.data} />
         </Grid>
       </Grid>
     </DashboardContent>

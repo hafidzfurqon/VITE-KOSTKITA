@@ -125,7 +125,7 @@ export const CreateUser = () => {
                 required
               >
                 <MenuItem value="user">User</MenuItem>
-                <MenuItem value="owner">Owner Property</MenuItem>
+                <MenuItem value="owner_property">Owner Property</MenuItem>
                 <MenuItem value="admin">Admin</MenuItem>
               </TextField>
             </Stack>

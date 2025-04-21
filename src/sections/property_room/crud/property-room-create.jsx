@@ -473,7 +473,7 @@ export const PropertyRoomCreate = () => {
                 />
               </Stack>
 
-              <TextField
+              {/* <TextField
                 {...register('luas_seluruh_kamar')}
                 margin="dense"
                 placeholder="Luas kamar diambil dari panjang × area_length"
@@ -483,7 +483,7 @@ export const PropertyRoomCreate = () => {
                 InputProps={{
                   endAdornment: <InputAdornment position="end">m²</InputAdornment>,
                 }}
-              />
+              /> */}
               <TextField
                 {...register('capacity')}
                 margin="dense"

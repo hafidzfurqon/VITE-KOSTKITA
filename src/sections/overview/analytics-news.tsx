@@ -8,7 +8,7 @@ import Avatar from '@mui/material/Avatar';
 import CardHeader from '@mui/material/CardHeader';
 import ListItemText from '@mui/material/ListItemText';
 
-import { fToNow } from 'src/utils/format-time';
+import { fDate, fToNow } from 'src/utils/format-time';
 
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
@@ -51,7 +51,8 @@ export function AnalyticsNews({ title, subheader, list, ...other }: Props) {
 
 // ----------------------------------------------------------------------
 
-function PostItem({ sx, item, ...other }: BoxProps & { item: Props['list'][number] }) {
+function PostItem({ sx, item, ...other }: any) {
+  console.log(item);
   return (
     <Box
       sx={{
@@ -67,20 +68,20 @@ function PostItem({ sx, item, ...other }: BoxProps & { item: Props['list'][numbe
     >
       <Avatar
         variant="rounded"
-        alt={item.title}
-        src={item.coverUrl}
+        alt={item.data.title}
+        src={item.data.image}
         sx={{ width: 48, height: 48, flexShrink: 0 }}
       />
 
       <ListItemText
-        primary={item.title}
-        secondary={item.description}
+        primary={item.data.title}
+        secondary={item.data.booking_code ? 'Notifikasi Booking Pengguna' : 'Notifikasi Baru'}
         primaryTypographyProps={{ noWrap: true, typography: 'subtitle2' }}
         secondaryTypographyProps={{ mt: 0.5, noWrap: true, component: 'span' }}
       />
 
       <Box sx={{ flexShrink: 0, color: 'text.disabled', typography: 'caption' }}>
-        {fToNow(item.postedAt)}
+        {fDate(item.updated_at)}
       </Box>
     </Box>
   );
