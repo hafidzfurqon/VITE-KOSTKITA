@@ -127,22 +127,9 @@ export function PostItem({
     DeletePromo(post.id);
   };
 
-  const properties = [
-    {
-      id: 1,
-      name: 'Property Pertama',
-      files: [
-        {
-          file_url:
-            'https://backend-koskita.hafidzfrqn.serv00.net//storage/property_files/6/LrNRxWalSMh1Pw39eYGwu5Sip3PBskEv7GUaS5At.webp',
-        },
-      ],
-    },
-  ];
-
   return (
     <>
-      <Card sx={{ maxWidth: 380, minWidth: 345 }}>
+      <Card>
         <CardMedia component="img" height="194" image={post.promo_image_url} alt="Paella dish" />
         <CardContent>
           <Typography variant="subtitle1" sx={{ color: 'text.secondary' }}>
@@ -150,28 +137,31 @@ export function PostItem({
           </Typography>
         </CardContent>
         <CardActions disableSpacing sx={{ pb: 2, px: 1 }}>
-          {isAdmin && (
-            <>
-              <Links to={`/promo/${post.slug}`} target="_blank">
-                <Button sx={{ color: 'secondary.main' }}>
-                  <Iconify icon="solar:eye-bold" />
-                  Lihat
+          <Box>
+            {isAdmin && (
+              <Box>
+                <Links to={`/management-promo/edit/${post.slug}`}>
+                  <Button sx={{ color: 'primary.main' }}>
+                    <Iconify icon="solar:pen-bold" />
+                    Edit
+                  </Button>
+                </Links>
+                <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
+                  <Iconify icon="solar:trash-bin-trash-bold" />
+                  Delete
                 </Button>
-              </Links>
-              {/* <Button>
-                <Iconify icon="solar:pen-bold" />
-                Edit
-              </Button> */}
-              <Button onClick={handleClickOpen} sx={{ color: 'error.main' }}>
-                <Iconify icon="solar:trash-bin-trash-bold" />
-                Delete
-              </Button>
-            </>
-          )}
-          <Button variant="outlined" component={Links} to={`/management-promo/follow/${post.id}`}>
-            <Iconify icon="mingcute:add-line" />
-            Add Property
-          </Button>
+              </Box>
+            )}
+            <Button
+              variant="outlined"
+              sx={{ color: 'secondary.main' }}
+              component={Links}
+              to={`/management-promo/follow/${post.id}`}
+            >
+              <Iconify icon="mingcute:add-line" />
+              Tambah Diskon
+            </Button>
+          </Box>
           <ExpandMore
             expand={expanded}
             onClick={handleExpandClick}

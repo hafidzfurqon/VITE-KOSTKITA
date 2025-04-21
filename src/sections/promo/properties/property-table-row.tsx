@@ -144,6 +144,7 @@ export function PropertyTableRow({ row, selected }: PropertyTableRowProps) {
         title="Tambahkan Property ini ke promo ?"
         description="setelah anda menekan Yakin, Maka property akan diberikan promo"
         setOpen={setOpen}
+        color={'orange'}
         open={open}
         Submit={handleSubmit}
         pending={isPending}

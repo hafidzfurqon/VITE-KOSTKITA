@@ -461,15 +461,15 @@ export default function PropertyDetail() {
                   <Box sx={{ display: 'flex', alignItems: 'center', gap: 3, px: 2 }}>
                     <Avatar
                       src={`/assets/images/Kost.pdf (1).jpg`}
-                      sx={{ width: 48, height: 48 }}
+                      sx={{ width: 60, height: 60 }}
                     />
                     <Box>
                       <Typography variant="body1" fontWeight={600}>
                         Dikelola oleh KostKita.id
                       </Typography>
-                      <Typography variant="body2" color="gray">
+                      {/* <Typography variant="body2" color="gray">
                         sejak November 2024
-                      </Typography>
+                      </Typography> */}
                     </Box>
                   </Box>
                   {/* <ArrowForwardIosIcon sx={{ color: 'gray', fontSize: 16 }} /> */}

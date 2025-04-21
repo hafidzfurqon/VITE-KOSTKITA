@@ -231,6 +231,13 @@ export default function BookingView() {
   const FEE = bookingData?.biaya_akhir * 0.02;
   const PPN = bookingData?.biaya_akhir * 0.11;
 
+  const totalHarga = bookingData.total_harian + bookingData.total_service_price;
+
+  const dailyPPN = totalHarga * 0.11;
+  const dailyFEE = totalHarga * 0.02;
+
+  console.log(bookingData);
+
   return (
     <Box>
       <CustomBreadcrumbs
@@ -381,20 +388,46 @@ export default function BookingView() {
                           Rincian Pembayaran
                         </Typography>
                         <Divider sx={{ mt: 2 }} />
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2">
-                            Harga Per {bookingData?.duration} Bulan
-                          </Typography>
-                          <Typography variant="body2">
-                            {fCurrency(bookingData?.base_price || 0)}
-                          </Typography>
-                        </Box>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <Typography variant="body2">Diskon Durasi</Typography>
-                          <Typography variant="body2" color="error.main">
-                            - {fCurrency(bookingData?.discount_amount || 0)}
-                          </Typography>
-                        </Box>
+                        {bookingData?.duration === 0 ? (
+                          <>
+                            {' '}
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <Typography variant="body2">
+                                Harga Per {bookingData?.jumlah_hari} Hari
+                              </Typography>
+                              <Typography variant="body2">
+                                {fCurrency(bookingData?.total_harian || 0)}
+                              </Typography>
+                            </Box>
+                            {bookingData?.property_room_discount_id && (
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Typography variant="body2">Diskon Durasi</Typography>
+                                <Typography variant="body2" color="error.main">
+                                  - {fCurrency(bookingData?.discount_amount || 0)}
+                                </Typography>
+                              </Box>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                              <Typography variant="body2">
+                                Harga Per {bookingData?.duration} Bulan
+                              </Typography>
+                              <Typography variant="body2">
+                                {fCurrency(bookingData?.base_price || 0)}
+                              </Typography>
+                            </Box>
+                            {bookingData?.property_room_discount_id && (
+                              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                <Typography variant="body2">Diskon Durasi</Typography>
+                                <Typography variant="body2" color="error.main">
+                                  - {fCurrency(bookingData?.discount_amount || 0)}
+                                </Typography>
+                              </Box>
+                            )}
+                          </>
+                        )}
 
                         {bookingData?.selected_services?.map((data, idx) => (
                           <Box
@@ -423,20 +456,39 @@ export default function BookingView() {
                         ))}
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                           <Typography variant="body2">Platform Fee (2%)</Typography>
-                          <Typography variant="body2">{fCurrency(FEE)}</Typography>
+                          <Typography variant="body2">
+                            {bookingData.book_type === 'dayly'
+                              ? fCurrency(dailyFEE)
+                              : fCurrency(FEE)}
+                          </Typography>
                         </Box>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                           <Typography variant="body2">PPN (11%)</Typography>
-                          <Typography variant="body2">{fCurrency(PPN)}</Typography>
+                          <Typography variant="body2">
+                            {bookingData.book_type === 'dayly'
+                              ? fCurrency(dailyPPN)
+                              : fCurrency(PPN)}
+                          </Typography>
                         </Box>
                         <Divider sx={{ my: 1 }} />
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                           <Typography variant="subtitle1">
                             <strong>Total Bayar</strong>
                           </Typography>
-                          <Typography variant="subtitle1">
-                            {fCurrency(bookingData?.biaya_akhir + PPN + FEE)}
-                          </Typography>
+                          {bookingData.book_type === 'dayly' ? (
+                            <Typography variant="subtitle1">
+                              {fCurrency(
+                                bookingData?.total_harian +
+                                  dailyPPN +
+                                  dailyFEE +
+                                  bookingData?.total_service_price
+                              )}
+                            </Typography>
+                          ) : (
+                            <Typography variant="subtitle1">
+                              {fCurrency(bookingData?.biaya_akhir + PPN + FEE)}
+                            </Typography>
+                          )}
                         </Box>
                       </Box>
                       <Box

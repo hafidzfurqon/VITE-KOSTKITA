@@ -34,7 +34,7 @@ import {
   Person,
   Person2Outlined,
   PersonPinCircle,
-  PersonPinCircleOutlined,
+  AddHome,
   SpaceBarTwoTone,
 } from '@mui/icons-material';
 import { useFetchNontification } from 'src/hooks/users/profile/useFetchNontification';
@@ -44,6 +44,7 @@ import { Fade } from '@mui/material';
 import { NavMobileLanding } from 'src/layouts/landing/nav';
 import { Iconify } from 'src/components/iconify';
 import { Badge } from '@mui/material';
+import AddHomeWorkIcon from '@mui/icons-material/AddHomeWork';
 
 export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -109,12 +110,12 @@ export default function Header() {
         {
           label: 'Semua Kerjasama Properti',
           path: '/kerja-sama',
-          icon: <PersonPinCircleOutlined />,
+          icon: <AddHomeWorkIcon />,
         },
         {
           label: 'Kerjasama Properti Coliving',
           path: '/kerja-sama-coliving',
-          icon: <PersonPinCircleOutlined />,
+          icon: <AddHome />,
         },
       ],
     },
@@ -156,12 +157,12 @@ export default function Header() {
         {
           title: 'Semua Kerjasama Properti',
           path: '/kerja-sama',
-          icon: <PersonPinCircleOutlined />,
+          icon: <AddHomeWorkIcon />,
         },
         {
           title: 'Kerjasama Properti Coliving',
           path: '/kerja-sama-coliving',
-          icon: <PersonPinCircleOutlined />,
+          icon: <AddHome />,
         },
       ],
     },

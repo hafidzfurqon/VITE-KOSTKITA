@@ -34,7 +34,6 @@ export default function Step1Penghuni({
   setSelectedServices,
   selectedServices,
   onNext,
-  step,
   user,
   savedata,
   setValue,
@@ -47,25 +46,30 @@ export default function Step1Penghuni({
   const { data: AllServiceAddOn = [], isLoading, isFetching } = useFetchAllServices();
   const [searchParams, setSearchParams] = useSearchParams();
   const [duration, setDuration] = useState('');
+  console.log(room);
+  const DaylyPrice = room.room_prices?.find((item) => item?.duration === 'dayly');
+  const oneMonthPrice = room.room_prices?.find((item) => item?.duration === '1_month');
+  const ThreeMonthPrice = room.room_prices?.find((item) => item?.duration === '3_month');
+  const SixMonthPrice = room.room_prices?.find((item) => item?.duration === '6_month');
+  const AyearMonthPrice = room.room_prices?.find((item) => item?.duration === '1_year');
 
-  const oneMonthPrice = room.room_prices?.find((item) => item.duration === '1_month');
-  const ThreeMonthPrice = room.room_prices?.find((item) => item.duration === '3_month');
-  const SixMonthPrice = room.room_prices?.find((item) => item.duration === '6_month');
-  const AyearMonthPrice = room.room_prices?.find((item) => item.duration === '1_year');
-
+  const DaylyPriceDiscountPrice = DaylyPrice?.room_discounts[0];
   const oneMonthPriceDiscountPrice = oneMonthPrice?.room_discounts[0];
   const ThreeMonthPriceDiscountPrice = ThreeMonthPrice?.room_discounts[0];
   const SixMonthPriceDiscountPrice = SixMonthPrice?.room_discounts[0];
   const AyearMonthPriceDiscountPrice = AyearMonthPrice?.room_discounts[0];
 
+  const discountAmountDayly = (DaylyPrice?.price * DaylyPriceDiscountPrice?.discount_value) / 100;
   const discountAmountOneMonth =
-    (oneMonthPrice?.price * oneMonthPriceDiscountPrice.discount_value) / 100;
+    (oneMonthPrice?.price * oneMonthPriceDiscountPrice?.discount_value) / 100;
   const discountAmountThreeMonth =
-    (ThreeMonthPrice?.price * ThreeMonthPriceDiscountPrice.discount_value) / 100;
+    (ThreeMonthPrice?.price * ThreeMonthPriceDiscountPrice?.discount_value) / 100;
   const discountAmountSixMonth =
-    (SixMonthPrice?.price * SixMonthPriceDiscountPrice.discount_value) / 100;
+    (SixMonthPrice?.price * SixMonthPriceDiscountPrice?.discount_value) / 100;
   const discountAmountAyearMonth =
-    (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice.discount_value) / 100;
+    (AyearMonthPrice?.price * AyearMonthPriceDiscountPrice?.discount_value) / 100;
+
+  const DiscounHarianLength = discountAmountDayly.length > 0 ? discountAmountDayly : 0;
 
   const [checkIn, setCheckIn] = useState(() => {
     const date = searchParams.get('checkInDate');
@@ -77,7 +81,7 @@ export default function Step1Penghuni({
     return date ? new Date(date) : null;
   });
   const [anchorEl, setAnchorEl] = useState(null);
-
+  const durationDay = dayjs(checkOut).diff(dayjs(checkIn), 'day');
   const handleOpenDatePicker = (event) => {
     setAnchorEl(event.currentTarget); // elemen yang diklik
     setOpenDatePicker(true);
@@ -227,8 +231,19 @@ export default function Step1Penghuni({
     let discount = 0;
     let room_price_id = 0;
     let property_room_discount_id = 0;
+    let total_booking_dikali_hari = 0;
+    let type_book = 'monthly';
+    let jumlah_hari = durationDay;
 
     switch (duration) {
+      case 0:
+        basePrice = DaylyPrice?.price;
+        property_room_discount_id = DaylyPriceDiscountPrice?.id;
+        room_price_id = DaylyPrice?.id;
+        discount = discountAmountDayly;
+        total_booking_dikali_hari = DaylyPrice?.price * durationDay;
+        type_book = 'dayly';
+        break;
       case 1:
         basePrice = oneMonthPrice?.price;
         property_room_discount_id = oneMonthPriceDiscountPrice?.id;
@@ -266,11 +281,14 @@ export default function Step1Penghuni({
       selected_services: selectedServices,
       // property_room_discount_id : ,
       property_id: properti?.id,
+      book_type: type_book,
       duration,
       base_price: basePrice,
+      total_harian: total_booking_dikali_hari,
       discount_amount: discount,
       total_service_price: totalServicePrice,
       total_price: finalTotal,
+      jumlah_hari: jumlah_hari,
       room_price_id, // ⬅️ ini ditambahkan
       property_room_discount_id,
       check_in: dayjs(checkIn).format('YYYY-MM-DD'),
@@ -302,7 +320,6 @@ export default function Step1Penghuni({
     return <Loading />;
   }
   console.log(AllServiceAddOn);
-  console.log(user);
 
   return (
     <Box sx={{ mt: 5 }}>
@@ -394,7 +411,11 @@ export default function Step1Penghuni({
                 <Typography variant="body2">Check-out: {fDate(checkOut)}</Typography>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <DateRange />
-                  <Typography variant="body2">Durasi: {duration} Bulan</Typography>
+                  {duration === 0 ? (
+                    <Typography variant="body2">Durasi: {durationDay} Hari</Typography>
+                  ) : (
+                    <Typography variant="body2">Durasi: {duration} Bulan</Typography>
+                  )}
                 </Box>
                 <Button
                   sx={{ mt: 3, py: '12px' }}
@@ -465,7 +486,16 @@ export default function Step1Penghuni({
               </Typography>
 
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2">Pesan selama {duration} bulan</Typography>
+                {duration === 0 ? (
+                  <Typography variant="body2">Pesan Selama {durationDay} Hari</Typography>
+                ) : (
+                  <Typography variant="body2">Pesan selama {duration} bulan</Typography>
+                )}
+                {duration === 0 && (
+                  <Typography variant="subtitle1">
+                    {fCurrency(DaylyPrice?.price * durationDay)}
+                  </Typography>
+                )}
                 {duration === 1 && (
                   <Typography variant="subtitle1">{fCurrency(oneMonthPrice?.price)}</Typography>
                 )}
@@ -481,27 +511,39 @@ export default function Step1Penghuni({
               </Box>
 
               <Box sx={{ display: 'flex', aligntItems: 'center', justifyContent: 'space-between' }}>
+                {duration === 0 && DaylyPriceDiscountPrice && (
+                  <>
+                    <Typography variant="body2">
+                      Diskon {DaylyPriceDiscountPrice?.discount_value}% pesanan harian
+                    </Typography>
+                  </>
+                )}
                 {duration === 1 && (
                   <Typography variant="body2">
-                    Diskon {oneMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
+                    Diskon {oneMonthPriceDiscountPrice?.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 3 && (
                   <Typography variant="body2">
-                    Diskon {ThreeMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
+                    Diskon {ThreeMonthPriceDiscountPrice?.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 6 && (
                   <Typography variant="body2">
-                    Diskon {SixMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
+                    Diskon {SixMonthPriceDiscountPrice?.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
                 {duration === 12 && (
                   <Typography variant="body2">
-                    Diskon {AyearMonthPriceDiscountPrice.discount_value}% pesanan {duration} bulan
+                    Diskon {AyearMonthPriceDiscountPrice?.discount_value}% pesanan {duration} bulan
                   </Typography>
                 )}
 
+                {duration === 0 && DaylyPriceDiscountPrice && (
+                  <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+                    -{fCurrency(discountAmountDayly)}
+                  </Typography>
+                )}
                 {duration === 1 && (
                   <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
                     -{fCurrency(discountAmountOneMonth)}
@@ -547,6 +589,13 @@ export default function Step1Penghuni({
               <Divider sx={{ mt: 2 }} />
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2">Total</Typography>
+                {duration === 0 && (
+                  <Typography variant="subtitle1">
+                    {fCurrency(
+                      DaylyPrice?.price * durationDay - DiscounHarianLength + totalServicePrice
+                    )}
+                  </Typography>
+                )}
                 {duration === 1 && (
                   <Typography variant="subtitle1">
                     {fCurrency(oneMonthPrice?.price - discountAmountOneMonth + totalServicePrice)}
@@ -607,7 +656,8 @@ export default function Step1Penghuni({
               <Typography variant="caption" sx={{ mt: 2 }}>
                 {room?.capacity} Orang • {room.room_gender_type === 'both' && 'Umum'}{' '}
                 {room.room_gender_type === 'male' && 'Laki-Laki'}{' '}
-                {room.room_gender_type === 'female' && 'Perempuan'} • 8.4m² • Lantai {room?.floor}
+                {room.room_gender_type === 'female' && 'Perempuan'} •{' '}
+                {room.area_width * room.area_length}m² • Lantai {room?.floor}
               </Typography>
               <Typography
                 variant="body2"

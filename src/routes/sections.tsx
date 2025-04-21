@@ -36,6 +36,7 @@ import VisitDetail from 'src/sections/landing/visit/visit-detail';
 import About from 'src/sections/landing/about';
 import { CreateUser } from 'src/sections/user/crud/create-user';
 import { LayananCreate } from 'src/sections/services/crud/layanan-create';
+import { EditPromo } from 'src/sections/promo/Edit-promo';
 
 // ----------------------------------------------------------------------
 
@@ -180,6 +181,10 @@ export function Router() {
             {
               path: '',
               element: <BlogPage />,
+            },
+            {
+              path: 'edit/:id',
+              element: <EditPromo/>,
             },
             {
               path: 'create',

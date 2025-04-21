@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Grid from '@mui/material/Unstable_Grid2';
+import { Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Pagination from '@mui/material/Pagination';
 
@@ -66,13 +66,11 @@ export function BlogView() {
       </Box>
 
       <Grid container spacing={3}>
-        {data.map((post: any, index: number) => {
-          return (
-            <Grid key={post.id}>
-              <PostItem post={post} />
-            </Grid>
-          );
-        })}
+        {data.map((post: any, index: number) => (
+          <Grid item xs={12} sm={6} md={4} key={index}>
+            <PostItem post={post} />
+          </Grid>
+        ))}
       </Grid>
 
       <Pagination count={10} color="primary" sx={{ mt: 8, mx: 'auto' }} />

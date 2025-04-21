@@ -46,8 +46,6 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
   const { enqueueSnackbar } = useSnackbar();
   const { UserContextValue: authUser } = useAppContext();
   const { user } = authUser;
-  const isUserLoggedIn = user?.roles?.some((role) => role.name.toLowerCase() === 'user');
-  
   const [selectedDurations, setSelectedDurations] = useState({}); // { [roomId]: '1_month' }
 
   const handleSelectDuration = (roomId, duration) => {
@@ -126,7 +124,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                 <Stack direction="row" spacing={1} flexWrap="wrap">
                   <Chip label={`${room.capacity} Orang`} size="small" />
                   <Chip label={room.room_type.name} size="small" />
-                  <Chip label={`${room.area_size }m²`} size="small" />
+                  <Chip label={`${room.area_width * room.area_length}m²`} size="small" />
                 </Stack>
                 <Grid sx={{ my: 2, pb: 1 }} container spacing={2}>
                   {room.room_facilities.slice(0, 4).map((facility) => (
@@ -138,6 +136,19 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                     </Grid>
                   ))}
                 </Grid>
+                {/* <Button
+                  variant="body2"
+                  sx={{
+                    mt: 2,
+                    fontWeight: 'bold',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 1,
+                  }}
+                >
+                  <span>Lihat Detail</span>
+                  <ArrowForwardIosIcon fontSize="inherit" />
+                </Button> */}
                 <Box>
                   <RoomWithTabs
                     key={room.id || index}
@@ -156,7 +167,7 @@ const PropertyRoom = ({ rooms = [], namaProperty, slug }) => {
                   >
                     Chat KostKita
                   </Button>
-                  {isUserLoggedIn > 0 ? (
+                  {user?.roles?.length > 0 ? (
                     !['admin', 'owner', 'owner_property'].includes(user.roles) ? (
                       <LoadingButton
                         variant="contained"

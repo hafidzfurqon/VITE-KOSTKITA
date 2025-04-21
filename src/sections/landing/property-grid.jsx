@@ -12,6 +12,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import LoadingPropertyPage from 'src/components/loading/LoadingPropertyPage';
 
 export default function PropertyGrid({ data, isLoading, isFetching, sortCardBy }) {
+  console.log(data)
   // const { data, isLoading, isFetching } = useListProperty();
   // const numberSortsortCardBy[0] === 'apartment' ?
   // const router = useRouter();

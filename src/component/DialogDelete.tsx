@@ -8,7 +8,15 @@ import {
   Dialog,
 } from '@mui/material';
 
-export default function DialogDelete({ title, description, Submit, open, setOpen, pending }) {
+export default function DialogDelete({
+  title,
+  description,
+  Submit,
+  open,
+  setOpen,
+  pending,
+  color,
+}: any) {
   const handleClose = () => {
     setOpen(false);
   };
@@ -45,7 +53,7 @@ export default function DialogDelete({ title, description, Submit, open, setOpen
         <LoadingButton
           onClick={handleSubmit}
           sx={{
-            bgcolor: 'red',
+            bgcolor: color ? color : 'red',
             color: 'white',
             '&:hover': {
               bgcolor: 'red',

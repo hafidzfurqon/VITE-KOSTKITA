@@ -68,6 +68,8 @@ export const RoomWithTabs = ({ room, onSelectDuration }) => {
   );
   const [selectedTab, setSelectedTab] = useState(initialIndex !== -1 ? initialIndex : 0);
 
+  console.log(selectedTab);
+
   const selected = durations[selectedTab];
 
   useEffect(() => {

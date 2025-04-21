@@ -80,14 +80,14 @@ export default function AccountGeneral() {
         : '';
 
       reset({
-        name: data.name || '',
-        email: data.email || '',
-        phone_number: data.phone_number || '',
-        nomor_ktp: data.nomor_ktp || '',
-        nik: data.nik || '',
+        name: data.name || user.name || '',
+        email: data.email || user.email || '',
+        phone_number: data.phone_number || user.phone_number || '',
+        nomor_ktp: data.nomor_ktp || user.nomor_ktp || '',
+        nik: data.nik || user.nik || '',
         date_of_birth: formattedDate ? formattedDate : '',
-        gender: data.gender || '',
-        photo_profile: data.photo_profile_url || '', // untuk preview saja
+        gender: data.gender || user.gender || '',
+        photo_profile: data.photo_profile_url || user.photo_profile_url || '',
       });
     }
     setLoading(false);
@@ -182,7 +182,7 @@ export default function AccountGeneral() {
     };
   }, [methods.watch('photo_profile')]);
 
-  if (loading || isLoading || isFetching) {
+  if (isLoading || isFetching) {
     return <Loading />;
   }
 

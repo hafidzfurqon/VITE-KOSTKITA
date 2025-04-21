@@ -29,18 +29,18 @@ export const CreateUser = () => {
   } = useForm();
   const { mutate, isPending } = useMutationCreateUser({
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['list.banner'] });
-      router.push('/sign-in');
+      queryClient.invalidateQueries({ queryKey: ['all.users'] });
+      router.push('/user');
       enqueueSnackbar('Pendaftaran Berhasil', { variant: 'success' });
     },
     onError: (err) => {
       const errors = err.response?.data?.errors; // Ambil bagian errors dari response
 
       if (errors?.phone_number) {
-        enqueueSnackbar('No Telepon Wajib Diisi', { variant: 'error' });
+        enqueueSnackbar(errors?.phone_number[0], { variant: 'error' });
       }
       if (errors?.email) {
-        enqueueSnackbar('Email Wajib Diisi', { variant: 'error' });
+        enqueueSnackbar(errors?.email[0], { variant: 'error' });
       }
       if (errors?.password) {
         enqueueSnackbar(errors.password[0], { variant: 'error' });

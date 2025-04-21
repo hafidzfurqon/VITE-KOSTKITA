@@ -246,16 +246,40 @@ export default function Step2DateSelection({
                 Rincian Pembayaran
               </Typography>
               <Divider sx={{ mt: 2 }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2">Harga Per {savedData?.duration} Bulan</Typography>
-                <Typography variant="body2">{fCurrency(savedData?.base_price || 0)}</Typography>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2">Diskon Durasi</Typography>
-                <Typography variant="body2" color="error.main">
-                  - {fCurrency(savedData?.discount_amount || 0)}
-                </Typography>
-              </Box>
+              {savedData?.duration === 0 ? (
+                <>
+                  {' '}
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2">Harga Per {savedData?.jumlah_hari} Hari</Typography>
+                    <Typography variant="body2">
+                      {fCurrency(savedData?.total_harian || 0)}
+                    </Typography>
+                  </Box>
+                  {savedData?.property_room_discount_id && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2">Diskon Durasi</Typography>
+                      <Typography variant="body2" color="error.main">
+                        - {fCurrency(savedData?.discount_amount || 0)}
+                      </Typography>
+                    </Box>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Typography variant="body2">Harga Per {savedData?.duration} Bulan</Typography>
+                    <Typography variant="body2">{fCurrency(savedData?.base_price || 0)}</Typography>
+                  </Box>
+                  {savedData?.property_room_discount_id && (
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Typography variant="body2">Diskon Durasi</Typography>
+                      <Typography variant="body2" color="error.main">
+                        - {fCurrency(savedData?.discount_amount || 0)}
+                      </Typography>
+                    </Box>
+                  )}
+                </>
+              )}
               {selectedPromos?.length > 0 && (
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2">Promo Voucher</Typography>
@@ -287,14 +311,27 @@ export default function Step2DateSelection({
                 </Box>
               ))}
               <Divider sx={{ my: 1 }} />
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="subtitle1">
-                  <strong>Total Bayar</strong>
-                </Typography>
-                <Typography variant="subtitle1">
-                  {fCurrency(savedData?.total_price - Voucher || 0)}
-                </Typography>
-              </Box>
+              {savedData?.book_type === 'dayly' ? (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="subtitle1">
+                    <strong>Total Bayar</strong>
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    {fCurrency(
+                      savedData?.total_harian + savedData?.total_service_price - Voucher || 0
+                    )}
+                  </Typography>
+                </Box>
+              ) : (
+                <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <Typography variant="subtitle1">
+                    <strong>Total Bayar</strong>
+                  </Typography>
+                  <Typography variant="subtitle1">
+                    {fCurrency(savedData?.total_price - Voucher || 0)}
+                  </Typography>
+                </Box>
+              )}
             </Box>
             <Box
               sx={{
