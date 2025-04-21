@@ -66,6 +66,7 @@ export const PartnerWithUs = lazy(() => import('src/pages/partner-with-us'));
 export const PartnerColivingWithUs = lazy(() => import('src/pages/partner-coliving-with-kostkita'));
 export const TransactionPage = lazy(() => import('src/pages/transaction'));
 export const NotificationPage = lazy(() => import('src/pages/notification-page'));
+export const PaymentSuccessPage = lazy(() => import('src/pages/payment-success'));
 
 // ----------------------------------------------------------------------
 
@@ -184,7 +185,7 @@ export function Router() {
             },
             {
               path: 'edit/:id',
-              element: <EditPromo/>,
+              element: <EditPromo />,
             },
             {
               path: 'create',
@@ -382,6 +383,10 @@ export function Router() {
         {
           path: '/promo',
           element: <PromoPage />,
+        },
+        {
+          path: '/payment/success',
+          element: <PaymentSuccessPage />,
         },
         {
           path: '/coliving',

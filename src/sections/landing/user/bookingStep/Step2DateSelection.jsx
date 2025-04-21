@@ -122,6 +122,8 @@ export default function Step2DateSelection({
     const nextData = {
       booking_date: dayjs(checkIn).format('YYYY-MM-DD'),
       total_booking_month: months,
+      harga_per_bulanan_dikali_bulan: savedData?.base_price * savedData?.duration,
+      harga_promo_bulanan_dikali_bulan: savedData?.discount_amount * savedData?.duration,
       discounted_price: discountedPrice,
       final_price: finalPrice,
       biaya_akhir: savedData?.total_price - Voucher,
@@ -130,6 +132,9 @@ export default function Step2DateSelection({
 
     onNext(nextData);
   };
+
+  const BulananPriceDikaliMonth = savedData?.base_price * savedData?.duration;
+  const BulananPromoDikaliMonth = savedData?.discount_amount * savedData?.duration;
 
   return (
     <Box sx={{ mt: 5 }}>
@@ -268,13 +273,15 @@ export default function Step2DateSelection({
                 <>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography variant="body2">Harga Per {savedData?.duration} Bulan</Typography>
-                    <Typography variant="body2">{fCurrency(savedData?.base_price || 0)}</Typography>
+                    <Typography variant="body2">
+                      {fCurrency(savedData?.base_price * savedData?.duration || 0)}
+                    </Typography>
                   </Box>
                   {savedData?.property_room_discount_id && (
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Typography variant="body2">Diskon Durasi</Typography>
                       <Typography variant="body2" color="error.main">
-                        - {fCurrency(savedData?.discount_amount || 0)}
+                        - {fCurrency(savedData?.discount_amount * savedData?.duration || 0)}
                       </Typography>
                     </Box>
                   )}
@@ -328,7 +335,7 @@ export default function Step2DateSelection({
                     <strong>Total Bayar</strong>
                   </Typography>
                   <Typography variant="subtitle1">
-                    {fCurrency(savedData?.total_price - Voucher || 0)}
+                    {fCurrency(BulananPriceDikaliMonth - BulananPromoDikaliMonth - Voucher || 0)}
                   </Typography>
                 </Box>
               )}
