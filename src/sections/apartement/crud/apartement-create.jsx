@@ -361,7 +361,6 @@ export const CreateApartement = () => {
                 <Controller
                   name="near_campus"
                   control={control}
-                  rules={{ required: 'Mohon isi nama kampus' }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       {...field}
@@ -378,9 +377,8 @@ export const CreateApartement = () => {
                   )}
                 />
                 <Controller
-                  name="near_hospital"
+                  name="near_hostpital"
                   control={control}
-                  rules={{ required: 'Mohon isi nama rumah sakit' }}
                   render={({ field, fieldState: { error } }) => (
                     <TextField
                       {...field}

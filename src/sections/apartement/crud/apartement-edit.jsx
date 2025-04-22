@@ -86,6 +86,8 @@ export const EditApartement = () => {
       land_area: '',
       property_type_id: '',
       // payment_type: '',
+      near_campus: '',
+      near_hospital: '',
       state_id: '',
       city_id: '',
       sector_id: '',
@@ -99,6 +101,8 @@ export const EditApartement = () => {
       reset({
         name: data.name || '',
         address: data.address || '',
+        near_campus: data.near_campus || '',
+        near_hospital: data.near_hospital || '',
         // description: data.description || '',
         facilities: data.facilities?.map((f) => f.id) || [],
         property_type_id: data?.type?.id || '',
@@ -251,7 +255,6 @@ export const EditApartement = () => {
     mutate(formData);
   };
   console.log(errors); // Debug kalau form tidak lolos validasi
-
 
   const selectedType = watch('property_type_id');
   console.log(selectedType);
