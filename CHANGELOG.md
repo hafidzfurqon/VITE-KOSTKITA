@@ -5,6 +5,7 @@
 - [New] Migrate to typescript.
 - Upgrade and restructure the directory.
 - Upgrade some dependencies to the latest versions.
+- This change is from the keyboard alfaridzi.
 
 ---
 

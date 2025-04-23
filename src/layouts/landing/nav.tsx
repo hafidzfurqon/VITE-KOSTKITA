@@ -195,16 +195,10 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
           >
             <Box
               component="img"
-              src={
-                user?.photo_profile_url
-                  ? user.photo_profile_url
-                  : user?.gender === 'male'
-                    ? '/assets/images/avatar/avatar-25.webp'
-                    : '/assets/images/avatar/avatar-5.webp'
-              } // Ganti dengan path default kalau belum ada avatar
+              src={user?.photo_profile_url} // Ganti dengan path default kalau belum ada avatar
               alt={user.name}
               sx={{
-                width: 64,
+                width: 64,  
                 height: 64,
                 borderRadius: '50%',
                 mb: 1,
