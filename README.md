@@ -1,3 +1,7 @@
+## Reposirty ini mempunyai backend, berikut adalah link backend project ini :
+
+- [Backend-KostKita](https://github.com/Junior-Teamz/backend_Project-KosKita.id)
+
 ## Minimal UI ([Free version](https://free.minimals.cc/))
 
 ![license](https://img.shields.io/badge/license-MIT-blue.svg)
