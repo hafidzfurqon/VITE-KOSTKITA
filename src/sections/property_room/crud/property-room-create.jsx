@@ -15,7 +15,7 @@ import {
   TableRow,
   Paper,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useEffect, useRef, useState } from 'react';
 // import "react-quill/dist/quill.snow.css";
 import { MenuItem } from '@mui/material';
@@ -41,6 +41,9 @@ import ImageIcon from '@mui/icons-material/Image';
 import { Iconify } from 'src/components/iconify';
 import { useDebounce } from 'src/hooks/use-debounce';
 import { NumericFormat } from 'react-number-format';
+import { FormControl } from '@mui/material';
+import { InputLabel } from '@mui/material';
+import { Input } from '@mui/material';
 // import { useFetchAllPropertyTypeOwner } from 'src/hooks/owner/useFetchAllTypePropertyOwner';
 
 const initialRows = [
@@ -72,7 +75,7 @@ export const PropertyRoomCreate = () => {
   } = useFetchAllPropertyRoomType(isOwnerProperty);
 
   const {
-    // control,
+    control,
     register,
     handleSubmit,
     setValue,
@@ -282,6 +285,77 @@ export const PropertyRoomCreate = () => {
     mutate(formData);
   };
 
+  const renderPriceFields = (prefix, control) => (
+    <>
+      <Typography variant="body2" sx={{ pt: 2 }}>
+        Harga Asli
+      </Typography>
+      <FormControl fullWidth sx={{ my: 1 }} variant="standard">
+        <Controller
+          name={`${prefix}.hargaAsli`}
+          control={control}
+          render={({ field }) => (
+            <NumericFormat
+              {...field}
+              customInput={TextField}
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix="Rp "
+              allowNegative={false}
+              fullWidth
+              variant="standard"
+            />
+          )}
+        />
+      </FormControl>
+
+      <Typography variant="body2" sx={{ pt: 2 }}>
+        Diskon (%)
+      </Typography>
+      <FormControl fullWidth sx={{ my: 1 }} variant="standard">
+        <Controller
+          name={`${prefix}.diskon`}
+          control={control}
+          render={({ field }) => (
+            <NumericFormat
+              {...field}
+              customInput={TextField}
+              suffix="%"
+              allowNegative={false}
+              decimalScale={2}
+              fullWidth
+              variant="standard"
+            />
+          )}
+        />
+      </FormControl>
+
+      <Typography variant="body2" sx={{ pt: 2 }}>
+        Harga Setelah Diskon
+      </Typography>
+      <FormControl fullWidth sx={{ my: 1 }} variant="standard">
+        <Controller
+          name={`${prefix}.hargaSetelahDiskon`}
+          control={control}
+          render={({ field }) => (
+            <NumericFormat
+              {...field}
+              customInput={TextField}
+              thousandSeparator="."
+              decimalSeparator=","
+              prefix="Rp "
+              allowNegative={false}
+              fullWidth
+              variant="standard"
+              valueIsNumericString
+              disabled
+            />
+          )}
+        />
+      </FormControl>
+    </>
+  );
+
   if (isLoading || isFetching || loadingPropertyType || FetchingPropertyType) {
     return <Loading />;
   }
@@ -347,98 +421,65 @@ export const PropertyRoomCreate = () => {
             </Stack>
           </Container>
         </Card>
-        <Card sx={{ mt: 5 }}>
-          <Container>
-            <Stack spacing={3} sx={{ px: 3, py: 3 }}>
-              <Typography variant="subtitle1" sx={{ py: 2 }}>
-                Harga
-              </Typography>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="caption table">
-                  <caption>Harga per tipe (harian & bulanan)</caption>
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Tipe Harga</TableCell>
-                      <TableCell align="center">Harga Awal</TableCell>
-                      <TableCell align="center">Harga Diskon</TableCell>
-                      <TableCell align="center">Diskon (%)</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {initialRows.map((field, index) => (
-                      <TableRow key={index}>
-                        <TableCell>{field.name}</TableCell>
+        <Grid container spacing={3} sx={{ mt: 5 }}>
+          {/* Harga Harian */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ py: 2 }}>
+                  Harga Harian
+                </Typography>
+                {renderPriceFields('hargaHarian', control)}
+              </Box>
+            </Card>
+          </Grid>
 
-                        {/* Harga Asli */}
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            fullWidth
-                            value={rows[index].hargaAsli}
-                            onValueChange={(values) => handleHargaAsliChange(index, values.value)}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            prefix="Rp "
-                          />
-                        </TableCell>
+          {/* Harga Bulanan */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ py: 2 }}>
+                  Harga Per Bulan
+                </Typography>
+                {renderPriceFields('hargaBulanan', control)}
+              </Box>
+            </Card>
+          </Grid>
 
-                        {/* Harga Diskon */}
-                        <TableCell align="center">
-                          <NumericFormat
-                            customInput={TextField}
-                            fullWidth
-                            value={rows[index].hargaDiskon}
-                            onValueChange={(values) => handleHargaDiskonChange(index, values.value)}
-                            thousandSeparator="."
-                            decimalSeparator=","
-                            prefix="Rp "
-                          />
-                        </TableCell>
-
-                        {/* Diskon % */}
-                        <TableCell align="center">
-                          <Box
-                            style={{
-                              display: 'flex',
-                              flexDirection: 'column',
-                              alignItems: 'start',
-                            }}
-                          >
-                            <TextField
-                              fullWidth
-                              type="number"
-                              value={rows[index].diskonPersen}
-                              onChange={(e) => handleDiskonPersenChange(index, e.target.value)}
-                              InputProps={{
-                                endAdornment: <InputAdornment position="start">%</InputAdornment>,
-                              }}
-                            />
-
-                            {/* Potongan */}
-                            <Typography variant="caption" color="textSecondary" mt={1}>
-                              {rows[index].hargaAsli && rows[index].hargaDiskon
-                                ? `Potongan Rp${(
-                                    parseFloat(
-                                      rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')
-                                    ) -
-                                    parseFloat(
-                                      rows[index].hargaDiskon.replace(/\./g, '').replace(',', '.')
-                                    )
-                                  )
-                                    .toLocaleString('id-ID')
-                                    .replace(',', '.')}`
-                                : ''}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Stack>
-          </Container>
-        </Card>
+          {/* Harga 3 Bulan */}
+          <Grid item xs={12} md={6}>
+            <Card>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ py: 2 }}>
+                  Harga 3 Bulan
+                </Typography>
+                {renderPriceFields('harga3Bulan', control)}
+              </Box>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Card>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ py: 2 }}>
+                  Harga 6 Bulan
+                </Typography>
+                {renderPriceFields('harga6Bulan', control)}
+              </Box>
+            </Card>
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} sx={{ mt: 1 }}>
+          <Grid item xs={12} md={12}>
+            <Card>
+              <Box sx={{ p: 3 }}>
+                <Typography variant="subtitle1" sx={{ py: 2 }}>
+                  Harga Per Tahun
+                </Typography>
+                {renderPriceFields('hargaTahunan', control)}
+              </Box>
+            </Card>
+          </Grid>
+        </Grid>
         <Card sx={{ mt: 5 }}>
           <Container>
             <Stack spacing={3} sx={{ px: 3, py: 3 }}>

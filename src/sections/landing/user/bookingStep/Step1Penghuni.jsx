@@ -166,21 +166,21 @@ export default function Step1Penghuni({
     savedata?.booking_user_data?.occupants || [defaultOccupant]
   );
 
-  useEffect(() => {
-    if (occupant === 'user') {
-      setOccupants([
-        {
-          fullname: user.name || '',
-          phone_number: user.phone_number || '',
-          email: user.email || '',
-          nomor_ktp: user.nomor_ktp || '',
-          nik: user.nik || '',
-          gender: user.gender === 'Laki-laki' ? 'male' : 'female',
-          date_of_birth: user.date_of_birth || '',
-        },
-      ]);
-    }
-  }, [occupant, user]);
+  // useEffect(() => {
+  //   if (occupant === 'user') {
+  //     setOccupants([
+  //       {
+  //         fullname: user.name || '',
+  //         phone_number: user.phone_number || '',
+  //         email: user.email || '',
+  //         nomor_ktp: user.nomor_ktp || '',
+  //         nik: user.nik || '',
+  //         gender: user.gender === 'Laki-laki' ? 'male' : 'female',
+  //         date_of_birth: user.date_of_birth || '',
+  //       },
+  //     ]);
+  //   }
+  // }, [occupant, user]);
 
   const handleChange = (index, e) => {
     const { name, value } = e.target;

@@ -46,3 +46,67 @@ Distributed under the [MIT](https://github.com/minimal-ui-kit/minimal.free/blob/
 ## Contact us
 
 Email: support@minimals.cc
+
+
+                        {/* Harga Asli */}
+                        {/* <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaAsli}
+                            onValueChange={(values) => handleHargaAsliChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell> */}
+
+                        {/* Harga Diskon */}
+                        {/* <TableCell align="center">
+                          <NumericFormat
+                            customInput={TextField}
+                            fullWidth
+                            value={rows[index].hargaDiskon}
+                            onValueChange={(values) => handleHargaDiskonChange(index, values.value)}
+                            thousandSeparator="."
+                            decimalSeparator=","
+                            prefix="Rp "
+                          />
+                        </TableCell> */}
+
+                        {/* Diskon % */}
+                        {/* <TableCell align="center">
+                          <Box
+                            style={{
+                              display: 'flex',
+                              flexDirection: 'column',
+                              alignItems: 'start',
+                            }}
+                          >
+                            <TextField
+                              fullWidth
+                              type="number"
+                              value={rows[index].diskonPersen}
+                              onChange={(e) => handleDiskonPersenChange(index, e.target.value)}
+                              InputProps={{
+                                endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                              }}
+                            />
+
+
+                            <Typography variant="caption" color="textSecondary" mt={1}>
+                              {rows[index].hargaAsli && rows[index].hargaDiskon
+                                ? `Potongan Rp${(
+                                    parseFloat(
+                                      rows[index].hargaAsli.replace(/\./g, '').replace(',', '.')
+                                    ) -
+                                    parseFloat(
+                                      rows[index].hargaDiskon.replace(/\./g, '').replace(',', '.')
+                                    )
+                                  )
+                                    .toLocaleString('id-ID')
+                                    .replace(',', '.')}`
+                                : ''}
+                            </Typography>
+                          </Box>
+                        </TableCell> */}
